@@ -1,0 +1,21 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float: left;"><a href="javascript:history.go(-1)">&lt;&lt; Back</a></div><br/>
+  {% if dspatterns %}
+    <h2>Dspatterns ({{ dspatterns|length }})</h2>
+    <table class="list">
+    {% for dspattern in dspatterns %}
+      <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
+          onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';">
+        <td>{{ dspattern.id }}.-</td><td>{{ dspattern.pattern }}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <h2>Dspatterns</h2>
+    No entries.
+  {% endif %}
+
+{% endblock %}

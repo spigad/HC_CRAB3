@@ -1,0 +1,22 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  {% if templates %}
+    <h2>Templates ({{ templates|length }})</h2>
+    <table class="list">
+    {% for template in templates %}
+      <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
+          onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
+          onclick="DoNav('{% url template-view app template.id %}');">
+        <td>{{ template.id }}.-</td><td>{{ template.description }}</td><td>&raquo;</td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <h2>Templates</h2>
+    No entries.
+  {% endif %}
+
+{% endblock %}

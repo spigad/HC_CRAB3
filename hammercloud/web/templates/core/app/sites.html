@@ -1,0 +1,22 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  {% if sites %}
+    <h2>Sites ({{ sites|length }})</h2>
+    <table class="list">
+    {% for site in sites %}
+      <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
+          onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
+          onclick="DoNav('{% url site-view app site.id %}');">
+        <td>{{ site.id }}.-</td><td>{{ site.name }}</td><td>&raquo;</td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <h2>Sites</h2>
+    No entries.
+  {% endif %}
+
+{% endblock %}

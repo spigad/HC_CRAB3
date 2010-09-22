@@ -1,0 +1,43 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+
+  <div id="standard">
+    <h2>
+      {{ cloud.name }}
+      <a href="{% url portal-view %}feed/app/{{app}}/cloud/{{cloud.id}}/"><img src="{{ MEDIA_URL }}images/rss_{{app}}.ico" border="0"></a>
+    </h2>
+    <div id="standard_menu">
+       <a href="{% url statistics-view app %}?type=plot&cloud={{cloud.id}}&sort_by=cloud">&nbsp;PLOTS&nbsp;</a>
+       <a href="{% url statistics-view app%}?type=timeline&cloud={{cloud.id}}&sort_by=cloud">&nbsp;TIMELINES&nbsp;</a>
+       <a href="{% url statistics-view app %}?type=rank&cloud={{cloud.id}}&sort_by=cloud">&nbsp;RANKS&nbsp;</a>
+    </div>
+    <table>
+      <tr><th>Id:</th><td colspan="3">{{ cloud.id }}</td></tr>
+      <tr><th>Code:</th><td colspan="3">{{ cloud.code }}</td></tr>
+      <tr><td colspan="4">&nbsp;</td></tr>
+      <tr><th>Sites ({{ cloud.sites|length }}):</th><th>DDM</th><th>Queue</th><th>Enabled</th></tr>
+      {% if cloud.sites %}
+        {% for site in cloud.sites %}
+          <tr>
+            <td><a href="{% url site-view app site.id %}">{{ site.name }}</a></td>
+            <td>{{ site.ddm }}</td>
+            <td>{{ site.queue }}</td>
+            <td>
+              {% if site.enabled %}
+                <img src="{{ MEDIA_URL }}admin/img/admin/icon-yes.gif" alt='True'>
+              {% else %}
+                <img src="{{ MEDIA_URL }}admin/img/admin/icon-no.gif" alt='False'>
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      {% else %}
+        <tr><td colspan="4"> No sites for this cloud.</td><tr>
+      {% endif %}      
+    </table>
+  </div>
+
+{% endblock %}

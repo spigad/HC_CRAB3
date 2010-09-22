@@ -1,0 +1,35 @@
+{
+    "sEcho": {{sEcho}},
+    "iTotalRecords": {{iTotalRecords}},
+    "iTotalDisplayRecords": {{iTotalDisplayRecords}},
+    "aaData":[
+    {% for sum in querySet %}
+    [   
+        "{{sum.test_site.site.name}}",
+        "{{sum.submitted}}",
+        "{{sum.running}}",
+        "{{sum.completed}}",
+        "{{sum.failed}}",
+        "{{sum.test_site.num_datasets_per_bulk}}",
+        "{{sum.test_site.min_queue_depth}}",
+        "{{sum.test_site.max_running_jobs}}",
+        {% if sum.test_site.resubmit_enabled  %}
+        "yes",
+        {% else %}
+        "no",
+        {% endif  %}
+        {% if sum.test_site.resubmit_force %} 
+        "yes",
+        {% else %}
+        "no",
+        {% endif  %}
+        "<a href='{#% url backendsite-view summary.testsite.test.id,summary.testsite.site.id,"all" %#}'>&raquo;</a>"
+    ]
+
+    {% if not forloop.last %}
+    ,
+    {% endif %}
+    {% endfor %}
+    ]
+}
+

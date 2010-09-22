@@ -1,0 +1,22 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  {% if hosts %}
+    <h2>Hosts ({{ hosts|length }})</h2>
+    <table class="list">{% load hc_tags %}
+    {% for host in hosts %}
+      <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
+          onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
+          onclick="DoNav('{% url host-view app host.id %}');">
+        <td>{{ host.id }}.-</td><td>{{ host|hostEntity }}</td><td>&raquo;</td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <h2>Hosts</h2>
+    No entries.
+  {% endif %}
+
+{% endblock %}

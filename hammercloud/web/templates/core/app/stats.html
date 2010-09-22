@@ -1,0 +1,85 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+
+  <h2>HC Statistics</h2>
+
+  <div id="section">
+    <p>Overall.</p>
+    <div id="sec_table">
+      <table>
+        <tr><th>Service since:</th><td>{{since|date:"D d M Y"}}</td></tr>
+        <tr><th>Version:</th><td>{{version}}</td></tr>
+        <tr><th>Version {{version}} since:</th><td>{{vsince|date:"D d M Y"}}</td></tr>
+        <tr><th>Total jobs:</th><td>{{total}}</td></tr>
+        <tr><th>Completed jobs:</th><td>{{completed}} ({{completed_total|floatformat}}%)</td></tr>
+        <tr><th>Failed jobs:</th><td>{{failed}} ({{failed_total|floatformat}}%)</td></tr>
+      </table>
+    </div>
+    <div id="sec_img">
+      <img src="{{overall_url}}" width='200px' height='150px'/>
+    </div>
+    <div style="clear:both;"></div>
+  </div>
+  <div id="section">
+    <p>Sites & clouds.</p>
+    <div id="sec_table">
+    <table>
+      <tr><th>Sites:</th><td>{{sites}}</td></tr>
+      <tr><th>Clouds:</th><td>{{clouds}}</td></tr>
+      {% if max_site_per_cloud %}
+        {% for count,cloud in max_site_per_cloud %}
+          <tr><th>Most populated cloud:</th><td>{{cloud.name}} ({{count}} sites)</td></tr>
+        {% endfor %}
+      {% endif %}
+      {% if min_site_per_cloud %}
+        {% for count,cloud in min_site_per_cloud %}
+          <tr><th>Less populated cloud:</th><td>{{cloud.name}} ({{count}} sites)</td></tr>
+        {% endfor %}
+      {% endif %}
+      <tr><th>Sites/Cloud (avg):</th><td>{{sites_per_cloud|floatformat}}</td></tr>
+    </table>
+    </div>
+    <div id="sec_img">
+      <img src="{{sites_url}}" width='200px' height='150px'/>
+    </div>
+    <div style="clear:both;"></div>
+  </div>
+  <div id="section">
+    <p>Users.</p>
+    <div id="sec_table">
+    <table>  
+      <tr><th>Users:</th><td>{{users}}</td></tr>
+    </table>
+    </div>
+    <div style="clear:both;"></div>
+  </div>
+  <div id="section">
+    <p>Tests.</p>
+    <div id="sec_table">
+    <table>
+      <tr><th>Templates:</th><td>{{templates}}</td></tr>
+      <tr><th>Tests:</th><td>{{tests}}</td></tr>
+      {% if max_test_per_template %}
+        {% for count,template in max_test_per_template %}
+          <tr><th>Most used template:</th><td>{{template.description}} ({{count}})</td></tr>
+        {% endfor %}
+      {% endif %}
+      {% if min_test_per_template %}
+        {% for count,template in min_test_per_template %}
+          <tr><th>Less used template:</th><td>{{template.description}} ({{count}})</td></tr>
+        {% endfor %}
+      {% endif %}
+      <tr><th>Tests/Template (avg):</th><td>{{tests_per_template|floatformat}}</td></tr>
+    </table>
+    </div>
+    <div id="sec_img">
+      <img src="{{tests_url}}" width='200px' height='150px'/>
+    </div>
+    <div style="clear:both;"></div>
+    </div>
+
+
+{% endblock %}

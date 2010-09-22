@@ -1,0 +1,21 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  {% if usercodes %}
+    <h2>UserCodes ({{ usercodes|length }})</h2>
+    <table class="list">
+    {% for usercode in usercodes %}
+      <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
+          onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';">
+        <td>{{ usercode.id }}.-</td><td>{{ usercode.path }}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <h2>UserCodes</h2>
+    No entries.
+  {% endif %}
+
+{% endblock %}

@@ -1,0 +1,31 @@
+body {
+        font-size: 82.5%;
+        font-family: "Verdana", "sans-serif";
+        color: #20548E;
+}
+
+#banner {
+       margin: 150px auto 0 auto;      
+       width: 500px;
+}
+
+#content {
+        margin: auto;
+        width:350px;
+        height:200px;
+        border: solid 1px;
+        border-radius: 10px 10px 10px 10px;
+        -ms-border-radius: 10px 10px 10px 10px;
+        -moz-border-radius: 10px 10px 10px 10px;
+        -webkit-border-radius: 10px 10px 10px 10px;
+        -khtml-border-radius: 10px 10px 10px 10px;
+
+}
+
+form{
+     padding:50px;
+}
+
+.submit{
+    margin-left: 100px;
+}

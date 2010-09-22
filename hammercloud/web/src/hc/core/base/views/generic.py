@@ -1,0 +1,656 @@
+from django.http import HttpResponse,Http404
+from django.template import Context, loader, RequestContext
+
+from django.shortcuts import get_object_or_404,render_to_response
+
+from hc.core.utils.hc.datahelper import Datahelper
+from hc.core.utils.hc.stats import Stats
+
+from hc.core.base.views.json.records import get_records
+from django.db.models import Min,Max,Count
+
+
+#######################################################
+## DEFAULT CONTEXT
+#######################################################
+
+def defaultContext(request):
+
+  request_path = request.path
+
+  app = request_path.split('/')[3]
+  if request_path.find('admin')>-1:
+    request_path = reverse('index-view')
+
+  return {'app':app, 'user':request.user, 'request_path':request_path}
+
+#######################################################
+## LOGIN VIEWS
+#######################################################
+#
+#def logout(request):
+#  logout_user(request)
+#  next = request.GET.get('next', None)
+#  if next:
+#    return HttpResponseRedirect(next)
+#  else:
+#    raise Http404
+
+class GenericView():
+
+#######################################################
+## INDEX BLOCK
+#######################################################
+
+  def index(self,request,dic={'Test':None},*args,**kwargs):
+
+    test = dic['Test']
+    app  = test.__module__.split('.')[1]
+
+    stress, functional = [], []
+
+    stress +=  test.objects.jobs('running'    ,'stress'     ,1)
+    stress +=  test.objects.jobs('running'    ,'functional' ,0)
+    stress +=  test.objects.jobs('submitting' ,'stress'     ,1)
+    stress +=  test.objects.jobs('submitting' ,'functional' ,0)
+    stress +=  test.objects.jobs('scheduled'  ,'stress'     ,1)
+    stress +=  test.objects.jobs('scheduled'  ,'functional' ,0)
+             
+    
+    functional +=  test.objects.jobs('running'    ,'functional' ,1) 
+    functional +=  test.objects.jobs('submitting' ,'functional' ,1) 
+    functional +=  test.objects.jobs('scheduled'  ,'functional' ,1)
+                 
+
+    dh         = Datahelper()
+    stress     = dh.annotateTests(stress)
+    functional = dh.annotateTests(functional)
+
+    tests = {'stress':stress,'functional':functional}
+
+    t = loader.select_template(['%s/index.html'%(app),'core/app/index.html'])
+    c = RequestContext(request,
+                       {'tests':tests},
+                       [defaultContext]
+                       )
+    return HttpResponse(t.render(c))
+
+#######################################################
+## CLOUDS BLOCK
+#######################################################
+
+  def clouds(self,request,dic={'Cloud':None},*args,**kwargs):
+
+    cloud = dic['Cloud']
+    app   = cloud.__module__.split('.')[1]
+
+#    clouds = Cloud.objects.exclude(name__startswith='ALL').order_by('code')
+    try:
+      clouds = cloud.objects.all().order_by('code') 
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/clouds.html'%(app),'core/app/clouds.html'])
+    c = RequestContext(request,
+                       {'clouds': clouds},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+  def cloud(self,request,cloud_id,dic={'Cloud':None},*args,**kwargs):
+
+    cloud = dic['Cloud']
+    app   = cloud.__module__.split('.')[1]
+
+    try:
+      cloud = cloud.objects.get(pk=cloud_id)
+    except:
+      raise Http404
+
+#    #ALL_PANDA and ALL_LCG are not displayed
+#    if cloud.name.startswith('ALL'):
+#      raise Http404
+
+#    dh = HCDataHelper()
+    cloud.charts = []
+#    cloud.charts.append(dh.getChartUsg('running','Running Jobs',cloud_id=cloud_id))
+#   cloud.charts.append(dh.getChartUsg('completed','Completed Jobs',cloud=cloud_id))
+    cloud.sites = cloud.getSites_for_cloud.all()
+   
+    t = loader.select_template(['%s/cloud.html'%(app),'core/app/cloud.html'])
+    c = RequestContext(request,
+                       {'cloud': cloud},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+
+#######################################################
+## DSPATTERNS BLOCK
+#######################################################
+
+  def dspatterns(self,request,dic={'Dspattern':None},*args,**kwargs):
+
+    dspattern = dic['Dspattern']
+    app       = dspattern.__module__.split('.')[1]
+
+    try:
+      dspatterns = dspattern.objects.all()
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/dspatterns.html'%(app),'core/app/dspatterns.html'])
+    c = RequestContext(request,
+                       {'dspatterns': dspatterns},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+
+#######################################################
+## HOSTS BLOCK
+#######################################################
+
+  def hosts(self,request,dic={'Host':None},*args,**kwargs):
+
+    host = dic['Host']
+    app  = host.__module__.split('.')[1]
+
+    try:
+      hosts = host.objects.all()
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/hosts.html'%(app),'core/app/hosts.html'])
+    c = RequestContext(request,
+                       {'hosts': hosts},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+  def host(self,request,host_id,dic={'Host':None},*args,**kwargs):
+
+    host = dic['Host']
+    app  = host.__module__.split('.')[1]
+
+    try:
+      host = host.objects.get(pk=host_id)
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/host.html'%(app),'core/app/host.html'])
+    c = RequestContext(request,
+                       {'host': host},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+#######################################################
+## JOBTEMPLATES BLOCK
+#######################################################
+
+  def jobtemplates(self,request,dic={'JobTemplate':None},*args,**kwargs):
+
+    jobtemplate = dic['JobTemplate']
+    app         = jobtemplate.__module__.split('.')[1]
+
+    try:
+      jobtemplates = jobtemplate.objects.all()
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/jobtemplates.html'%(app),'core/app/jobtemplates.html'])
+    c = RequestContext(request,
+                       {'jobtemplates': jobtemplates},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+#######################################################
+## METRICS BLOCK
+#######################################################
+
+  def metric_types(self,request,dic={'MetricType':None},*args,**kwargs):
+
+    metric_type = dic['MetricType']
+    app         = metric_type.__module__.split('.')[1]
+
+    try:
+      metric_types = metric_type.objects.all()
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/metric_types.html'%(app),'core/app/metric_types.html'])
+    c = RequestContext(request,
+                       {'metric_types': metric_types},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+  def metric_type(self,request,metric_type_id,dic={'MetricType':None},*args,**kwargs):
+
+    metric_type = dic['MetricType']
+    app         = metric_type.__module__.split('.')[1]
+
+    try:
+      metric_type = metric_type.objects.get(pk=metric_type_id)
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/metric_type.html'%(app),'core/app/metric_type.html'])
+    c = RequestContext(request,
+                       {'metric_type': metric_type},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+
+#######################################################
+## OPTIONFILES BLOCK
+#######################################################
+
+  def optionfiles(self,request,dic={'OptionFile':None},*args,**kwargs):
+
+    optionfile = dic['OptionFile']
+    app        = optionfile.__module__.split('.')[1]
+
+    try:
+      optionfiles = optionfile.objects.all()
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/optionfiles.html'%(app),'core/app/optionfiles.html'])
+    c = RequestContext(request,
+                       {'optionfiles': optionfiles},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+
+#######################################################
+## SITES BLOCK
+#######################################################
+
+  def sites(self,request,dic={'Site':None},*args,**kwargs):
+
+    site = dic['Site']
+    app  = site.__module__.split('.')[1]
+
+    try:
+      sites = site.objects.all()
+#    except ObjectDoesNotExist:
+#      raise Http404
+#    except AttributeError:
+#      raise Http500
+    except:
+      raise Http404
+ 
+    t = loader.select_template(['%s/sites.html'%(app),'core/app/sites.html'])
+    c = RequestContext(request,
+                      {'sites': sites},
+                      [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+  def site(self,request,site_id,dic={'Site':None},*args,**kwargs):
+
+    app = dic['Site'].__module__.split('.')[1]
+
+    try:
+      site = dic['Site'].objects.get(pk=site_id)
+#    except ObjectDoesNotExist:
+#      raise Http404
+#    except AttributeError:
+#      raise Http500
+    except:
+      raise Http404
+
+#    dh = HCDataHelper()
+    site.charts = []
+#    site.charts.append(dh.getChartUsg('running','Running Jobs',site=site_id))
+#        site.charts.append(dh.getChartUsg('completed','Completed Jobs',site=site_id))
+   
+    t = loader.select_template(['%s/site.html'%(app),'core/app/site.html'])
+    c = RequestContext(request,
+                       {'site': site},
+                       [defaultContext]
+                       )
+    return HttpResponse(t.render(c))
+
+
+#######################################################
+## TEMPLATES BLOCK
+#######################################################
+
+  def templates(self,request,dic={'Template':None},*args,**kwargs):
+
+    template = dic['Template']
+    app      = template.__module__.split('.')[1]
+
+    try:
+      templates = template.objects.all()
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/templates.html'%(app),'core/app/templates.html'])
+    c = RequestContext(request,
+                       {'templates': templates},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))   
+
+  def template(self,request,template_id,dic={'Template':None},*args,**kwargs):
+
+    template = dic['Template']
+    app      = template.__module__.split('.')[1]
+
+    try:
+      template = template.objects.get(pk=template_id)
+#    except ObjectDoesNotExist:
+#      raise Http404
+#    except AttributeError:
+#      raise Http500
+    except:
+      raise Http404
+
+    template.hosts      = template.getTemplateHosts_for_template.all()
+    template.sites      = template.getTemplateSites_for_template.all()
+    template.dspatterns = template.getTemplateDspatterns_for_template.all()
+
+    t = loader.select_template(['%s/template.html'%(app),'core/app/template.html'])
+    c = RequestContext(request,
+                       {'template': template},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+
+#######################################################
+## USERCODES BLOCK
+#######################################################
+
+  def usercodes(self,request,dic={'UserCode':None},*args,**kwargs):
+
+    usercode = dic['UserCode']
+    app      = usercode.__module__.split('.')[1]
+
+    try:
+      usercodes = usercode.objects.all()
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/usercodes.html'%(app),'core/app/usercodes.html'])
+    c = RequestContext(request,
+                       {'usercodes': usercodes},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+
+#######################################################
+## TESTS BLOCK
+#######################################################
+
+
+  def test(self,request,test_id,dic={'Test':None},*args,**kwargs):
+
+    test = dic['Test']
+    app  = test.__module__.split('.')[1]
+
+    test = get_object_or_404(test,pk=test_id)
+    dh         = Datahelper()
+    test = dh.annotateTest(test)
+
+    metricpermissions = test.metricpermission.index.all()
+
+    summary = ''
+    if test.getSummaryTests_for_test.count():
+      summary = test.getSummaryTests_for_test.all()[0]  
+
+    #Independently of the number of metrics selected on the MetricPermissions.index,
+    #for the test main page only the 3 first ones are selected.
+
+    test_metrics = test.getTestMetrics_for_test.filter(metric__metric_type__in=metricpermissions)[:3]
+
+    t = loader.select_template(['%s/test.html'%(app),'core/app/test.html'])
+    c = RequestContext(request,
+                      {'test': test,'test_metrics':test_metrics,'summary':summary},
+                      [defaultContext] 
+                    )
+    return HttpResponse(t.render(c))
+
+  def testlist(self,request,list_type,dic={'Test':None},*args,**kwargs):
+
+    test = dic['Test']
+    app  = test.__module__.split('.')[1]
+
+    if not list_type in  ['all','scheduled','submitting','error','running','completed']:
+        raise Http404
+
+    list_type = 'testlist'+str(list_type)
+
+    #Here there is no customization allowed.
+    return render_to_response('core/app/testlist.html', locals(), context_instance = RequestContext(request))
+
+
+#######################################################
+## AJAX BLOCK
+#######################################################
+
+  def get_list(self,request,type,test_id,dic={'SummaryTest':None,'SummaryTestSite':None},*args,**kwargs):
+
+    summary_test = dic['SummaryTest']
+    app          = summary_test.__module__.split('.')[1]
+
+    summary_test_site = dic['SummaryTestSite']
+
+    searchableColumns = []
+    jsonTemplatePath = 'core/app/json/'
+
+    if type == 'testsites':
+      querySet = summary_test_site.objects.filter(test__id=test_id)
+      columnIndexNameMap = {0:'test_site__site__name',1:'submitted',2:'running',3:'completed',4:'failed',5:'test_site__num_datasets_per_bulk',6:'test_site__min_queue_depth',7:'test_site__max_running_jobs',8:'test_site__resubmit_enabled',9:'test_site__resubmit_force',10:'test_site__site__name'}
+      jsonTemplatePath += 'testsites.txt'
+
+    elif type == 'testsummary':
+      querySet = summary_test_site.objects.filter(test__id=test_id)
+      metr = querySet[0].test.metricpermission.summary.all() 
+      columnIndexNameMap = {0:'test_site__site__name'} 
+      for i in xrange(0,len(metr)):
+#        table_redirect = ''
+        metric = metr[i].name
+#        if not metric in ['submitted','running','completed','failed','total','c_cf','c_t','s_t','r_t','f_t']:        
+#          table_redirect = 's_metric__'
+        columnIndexNameMap[i+1] = metr[i].name
+
+      searchableColumns = {'site':'testsite__site__name'}
+      jsonTemplatePath = str(app)+'/json/'+str(querySet[0].test.metricpermission.name)+'.txt'
+
+    elif type.startswith('testlist'):
+
+      mode = type.replace('testlist','')
+      if mode == 'all':
+        querySet = summary_test.objects.all()
+      elif mode in ['scheduled','submitting','error','running','completed']:
+        querySet = summary_test.objects.filter(test__state=mode)
+      else:
+        raise Http404
+
+      columnIndexNameMap = {0:'test__id',1:'test__state',2:'test__host__name',3:'clouds',4:'test__template__id',5:'test__inputtype',6:'test__starttime',7:'test__endtime',8:'nr_sites',9:'total',10:'test__id'}
+      jsonTemplatePath += 'testlist.txt'
+
+    else:
+      raise Http404
+
+    return get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTemplatePath, type, app)
+
+
+  def testaccordion(self,request,test_id,type,dic={'Test':None},*args,**kwargs):
+
+    test = dic['Test']
+    app  = test.__module__.split('.')[1]
+
+    ACCORDION = ['testsites','testsummary','testbackend','testapplication','testreasons','testcompleted','teststdouterr']
+    list = False
+
+    if not type in ACCORDION:
+      raise Http404
+
+    test = get_object_or_404(test,pk=test_id)
+    table = type
+
+    items = []
+    if type == 'testsummary':
+      table = test.metricpermission.name
+
+#    elif type == 'testbackend':
+#        dh = HCDataHelper()
+#        items = dh.annotateBackendExitCodes(test)
+#    elif type == 'testapplication':
+#        dh = HCDataHelper()
+#        items = dh.annotateApplicationExitCodes(test)
+#    elif type == 'testreasons':
+#        dh = HCDataHelper()
+#        items = dh.annotateBackendReasons(test)
+#    elif type == 'testcompleted':
+#        dh = HCDataHelper()
+#        items = dh.annotateExampleCompletedJobs(test)
+#    elif type == 'teststdouterr':
+#        dh = HCDataHelper()
+#        items = dh.annotateStdouterr(test)
+
+    t = loader.select_template(['%s/ajax/%s.html'%(app,table),'core/app/ajax/%s.html'%(table)])
+    c = Context({'test_id': test_id,'list':list,'type':type,'items':items,'app':app})
+    return HttpResponse(t.render(c))
+
+
+#  def ajaxtestmetrics(self,request,test_id,dic={'Test':None},*args,**kwargs):
+#    app = dic['Test'].__module__.split('.')[1]
+#    try:
+#      test = dic['Test'].objects.get(pk=test_id)
+#    except:
+#      raise Http404
+#    dh   = Datahelper()
+#    test = dh.annotateTestPerMetric(test)
+#    t = loader.select_template(['%s/testmetrics.html'%(app),'core/app/testmetrics.html'])
+#    c = Context({'test': test})
+#    return HttpResponse(t.render(c))
+
+
+#  def ajaxsitemetrics(self,request,test_id,dic={'Test':None},*args,**kwargs):
+#    app = dic['Test'].__module__.split('.')[1]
+#    try:
+#      test = dic['Test'].objects.get(pk=test_id)
+#    except:
+#      raise Http404
+#    dh   = Datahelper()
+#    test = dh.annotateTestPerSite(test)
+#    t = loader.select_template(['%s/sitemetrics.html'%(app),'core/app/sitemetrics.html'])
+#    c = Context({'test': test})
+#    return HttpResponse(t.render(c))
+
+
+#######################################################
+## ROBOT BLOCK
+#######################################################
+
+  def robot(self,request,dic={'Site':None,'Cloud':None,'Backend':None},*args,**kwargs):
+
+    site = dic['Site']
+    app  = site.__module__.split('.')[1]
+  
+    sites    = site.objects.order_by('cloud')
+    cloud    = dic['Cloud']
+    clouds   = cloud.objects.all()
+    backend  = dic['Backend']
+    backends = backend.objects.all()
+
+    dh = Datahelper()
+
+    sites = dh.annotateSitesEfficiency(sites)  
+
+    t = loader.select_template(['%s/robot.html'%(app),'core/app/robot.html'])
+    c = RequestContext(request,
+                      {'sites': sites,'clouds':clouds,'backends':backends},
+                      [defaultContext]
+                    )
+    return HttpResponse(t.render(c))
+
+#######################################################
+## STATS BLOCK
+#######################################################
+
+  def stats(self,request,dic={'Site':None,'Result':None,'Cloud':None,'Template':None,'Test':None},*args,**kwargs):
+
+    site = dic['Site']
+    app  = site.__module__.split('.')[1]
+
+    stats = Stats()
+    since,version,vsince,total,completed,completed_total,failed,failed_total,overall_url     = stats.overview_basic(dic)
+    sites,clouds,max_site_per_cloud,min_site_per_cloud,sites_per_cloud,sites_url             = stats.overview_sites(dic)
+    users                                                                                    = stats.overview_users(dic)
+    templates,tests,max_test_per_template,min_test_per_template,tests_per_template,tests_url = stats.overview_tests(dic)
+
+
+    t = loader.select_template(['%s/stats.html'%(app),'core/app/stats.html'])
+    c = RequestContext(request,
+                      locals(),
+                      [defaultContext]
+                    )
+    return HttpResponse(t.render(c))
+
+  def statistics(self,request,dic={'MetricType':None,'Test':None,'Site':None,'Cloud':None,'Template':None},*args,**kwargs):
+
+    metric_type = dic['MetricType']
+    app = metric_type.__module__.split('.')[1]
+
+    stats = Stats()
+    Qobjects,commands,obj,error = stats.parseQuery(request,dic)
+
+    if not commands['go']:
+
+      type = ''
+      if commands.has_key('type'):
+        type = commands['type']
+
+      if not error:
+        dialog = stats.getDialog(obj,Qobjects)
+      else:
+        dialog = []
+      c = RequestContext(request,
+                      {'dialog':dialog,'type':type,'sort_by':commands['sort_by'],'error':error},
+                      [defaultContext]
+                    )
+    else:
+
+      statistics = {}
+      stats = Stats()
+
+      if commands['type'] == 'timeline':
+
+        titles,statistics = [],[]
+        if not error:
+          titles,statistics,error = stats.process(Qobjects,commands)
+        c = RequestContext(request,
+                           {'titles':titles,'statistics':statistics,'error':error,'type':commands['type']},
+                           [defaultContext]
+                          )
+
+      else:
+
+        metrics = []
+        if Qobjects.has_key('metric_type'):
+          metrics = Qobjects['metric_type']
+
+          statistics = []
+          if not error:
+            statistics,error = stats.process(Qobjects,commands)
+
+        c = RequestContext(request,
+                           {'statistics':statistics,'error':error,'type':commands['type'],'metrics':metrics},
+                           [defaultContext]
+                          )  
+
+    t = loader.select_template(['%s/statistics.html'%(app),'core/app/statistics.html'])
+    return HttpResponse(t.render(c))
+

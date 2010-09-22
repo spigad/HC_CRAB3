@@ -1,0 +1,22 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  {% if clouds %}
+    <h2>Clouds ({{ clouds|length }})</h2>
+    <table class="list">
+    {% for cloud in clouds %}
+      <tr onmouseover="ChangeBiColor(this, true,{{ forloop.counter }}); this.style.cursor='hand';"
+          onmouseout="ChangeBiColor(this, false,0); this.style.cursor='default';"
+          onclick="DoNav('{% url cloud-view app cloud.id %}');">
+        <td>{{ cloud.id }}.-</td><td>{{ cloud.code }}</td><td>&raquo;</td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <h2>Clouds</h2>
+    No entries.
+  {% endif %}
+
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  {% if metric_types %}
+    <h2>Metrics ({{ metric_types|length }})</h2>
+    <table class="list">
+    {% for metric in metric_types %}
+      <tr onmouseover="ChangeBiColor(this, true,{{ forloop.counter }}); this.style.cursor='hand';"
+          onmouseout="ChangeBiColor(this, false,0); this.style.cursor='default';"
+          onclick="DoNav('{% url metric_type-view app metric.id %}');">
+        <td>{{ metric.id }}.-</td><td>{{ metric.title }}</td><td>&raquo;</td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <h2>Metrics</h2>
+    No entries.
+  {% endif %}
+
+{% endblock %}

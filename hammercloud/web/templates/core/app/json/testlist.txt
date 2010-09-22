@@ -1,0 +1,29 @@
+{
+    "sEcho": {{sEcho}},
+    "iTotalRecords": {{iTotalRecords}},
+    "iTotalDisplayRecords": {{iTotalDisplayRecords}},
+    "aaData":[
+    {% load hc_tags %}
+
+    {% for sum in querySet %}
+    [   
+        "{{sum.test.id}}",
+        "{{sum.test.state}}",
+        "{% if sum.test.host %}<a href='{% url host-view app sum.test.host.id %}'>{{sum.test.host|hostEntity}}</a>{% else %}--{% endif %}",
+        "{{sum.clouds|cutcsv:2|safe}}",
+        "<a href='{% url template-view app sum.test.template.id %}'>{{sum.test.template.id}}</a>",
+        "{{sum.test.inputtype}}",
+        "{{sum.test.starttime}}",
+        "{{sum.test.endtime}}",
+        "{{sum.nr_sites}}",
+        "{{sum.total}}",
+        "<a href='{% url test-view app sum.test.id %}'>&raquo;</a>",
+    ]
+
+    {% if not forloop.last %}
+    ,
+    {% endif %}
+    {% endfor %}
+    ]
+}
+

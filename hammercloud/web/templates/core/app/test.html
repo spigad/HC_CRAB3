@@ -1,0 +1,100 @@
+{% extends 'core/app/base.html' %}
+
+{% block css %}
+  {{block.super}}
+  <link type="text/css" href="{{ MEDIA_URL }}css/datatables.css" rel="stylesheet"/>
+{% endblock %}
+
+{% block javascript %}
+  {{block.super}}
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script> 
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.dataTables.js"></script>
+{% endblock %}
+
+{% block docready %}
+  {{block.super}}
+  $("#tabs").tabs({ cache: true, spinner: 'Retrieving data...', remote: true })
+  $("#accordionoverall").accordion({ autoHeight:false,active:false,collapsible:true});
+  $('#accordionoverall').tabs('option', 'spinner', 'Retrieving data...')
+  $('#accordionoverall> h3').click(function() {
+    $('#'+String(this.id)+'_div').load("{% url index-view app %}ajax/test/{{test.id}}/"+String(this.id));
+  });
+  $('#tabs').tabs('option', 'spinner', 'Retrieving data...')
+{% endblock %}
+
+{% block content %}
+
+  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  <h2>Test {{ test.id }}
+    <a href="{% url portal-view %}feed/app/{{app}}/test/{{test.id}}/"><img src="{{ MEDIA_URL }}images/rss_{{app}}.ico" border="0"></a>
+  </h2>
+  <div style="float:right;">
+        &nbsp;<a href="{#% url testadminclone-view sum_test.test %#}">Clone</a>
+        &nbsp;-&nbsp;<a href="{#% url testadmin-view sum_test.test %#}">Modify</a>
+  </div><br/>
+
+  <div id="tabs">{% load hc_tags %}
+    <ul>
+      <li><a href="#tabs-overall">Overall</a></li>
+      <li><a href="#tabs-overall">Sites</a></li>
+      <li><a href="#tabs-overall">Metrics</a></li>
+    </ul>
+    <div id="tabs-overall">
+      <h3>Summary</h3>
+      <table class="testslist">
+        <thead>
+          <tr>
+            <th>state</th><th>id</th><th>host</th>
+            <th>clouds</th><th>start time (CET)</th>
+            <th>end time (CET)</th>
+            <th>total<br />jobs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="box-{{ test.state }}">{{ test.state }}</td>
+            <td>{{ test.id }}</td>
+            <td>
+              {% if test.host %}
+                <a href="{% url host-view app test.host.id %}">{{ test.host|hostEntity }}</a>
+              {% endif %}
+            </td>
+            <td>{{ test.clouds|trunc:3|safe }}</td>
+            <td>{{ test.starttime }}</td>
+            <td>{{ test.endtime }}</td>
+            <td>{{ summary.total }}</td>
+          </tr>
+        </tbody>
+        </table>
+        {% block testlog %}
+          <p class='testlog'>
+            Input type: {{ test.inputtype }}<br />
+            Input DS Patterns: {% for p in patterns %}{{ p.pattern }}{% if not forloop.last %}, {% endif %}{% endfor %}<br />
+            Ganga Job Template: {{ test.jobtemplate }}<br />
+            User code: {{ test.usercode }}<br />
+            Option file: {{ test.option_file }}<br />
+            Template: <a href="{% url template-view app test.template.id %}">{{ test.template.description }}</a>
+          </p>
+        {% endblock %}
+        {% for tm in test_metrics %}
+          {% if tm.metric.url %}
+            <img src="{{ tm.metric.url }}" alt="{{ tm.metric.title }}" width="280px" style="vertical-align: middle; margin: 2px;"  />
+          {% endif %}
+        {% endfor %}
+        <p class='more_plots'><a href="{% url statistics-view app %}?type=plot&test={{test.id}}&sort_by=test">more plots &raquo;</a></p>
+        <div id="accordionoverall">
+          {% block accordionoverall %}
+          <h3 id="testsites">Sites</h3><div id="testsites_div" class="test-accordion"></div>
+          <h2 id="testbackend">Backend failure exit codes</h3><div id="testbackend_div" class="test-accordion"></div>
+          <h2 id="testapplication">Application failure exit codes</h3><div id="testapplication_div" class="test-accordion"></div>
+          <h2 id="testreasons">Backend reasons</h3><div id="testreasons_div" class="test-accordion"></div>
+          <h2 id="testcompleted">Example completed jobs</h3><div id="testcompleted_div" class="test-accordion"></div>
+          <h2 id="teststdouterr">Stdouterr</h3><div id="teststdouterr_div" class="test-accordion"></div>
+          <h3 id="testsummary">Summary</h3><div id="testsummary_div" class="test-accordion"></div>
+          {% endblock %}
+        </div>        
+
+    </div>
+  </div>
+
+{% endblock %}

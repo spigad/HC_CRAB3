@@ -1,0 +1,56 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <p>Welcome to HammerCloud-{{app|upper}}. Click "HC Stats" above to see the currently running jobs.</p>
+
+  {% for key,list in tests.items %}
+     <div id="runningjobs">
+        <h3>Running and Scheduled {{key|capfirst}} Tests</h3>
+        {% if list %}
+          <table class="testslist">
+            <thead>
+              <tr>
+                <th>state</th><th>id</th><th>host</th><th>template</th>
+                <th>start time (CET)</th><th>end time (CET)</th>
+                <th>clouds</th><th>sites</th><th>subm<br />jobs</th>
+                <th>run<br />jobs</th><th>comp<br />jobs</th>
+                <th>fail<br />jobs</th><th>tot<br />jobs</th>
+              </tr>
+           </thead>
+           <tbody>
+             {#% load mytags %#}
+             {% for test in list %}
+               <tr onmouseover="ChangeColor(this, true); this.style.cursor='pointer';"
+                   onmouseout="ChangeColor(this, false); this.style.cursor='default';"
+                   onclick="DoNav('{% url test-view app test.id %}');">
+                 <td class="box-{{ test.state }}">{{ test.state }}</td>
+                 <td>{{ test.id }}</td>
+                 <td>{#{ test.host|hostEntity }#}</td>
+                 <td>{{ test.test_template.description }}</td>
+                 <td>{{ test.starttime }}</td>
+                 <td>{{ test.endtime }}</td>
+                 <td>{#{ test.clouds|headandmore:3|safe }#}</td>
+                 <td style="font-size: 0.8em; padding: 1px; margin: 0;">{#{ test.sites|headandmore:3|safe }#}</td>
+                 <td>{{ test.sum_submitted }}</td><td>{{ test.sum_running }}</td>
+                 <td>{{ test.sum_completed }}</td><td>{{ test.sum_failed }}</td>
+                 <td>{{ test.totaljobs }}</td>
+               </tr>
+             {% endfor %}
+          </tbody>
+        </table>          
+      {% else %}
+        <p style="margin: 5px;">No entries</p>
+      {% endif %}
+    </div>
+    <br/>
+  {% endfor %}
+
+
+
+  {{stress}}
+  
+  {{functional}}
+
+
+{% endblock %}

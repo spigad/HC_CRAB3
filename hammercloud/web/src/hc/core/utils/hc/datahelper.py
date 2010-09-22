@@ -1,0 +1,63 @@
+from hc.core.base.models.managers.functions import test_fm,site_fm
+
+class Datahelper:
+
+  def annotateTest(self,test):
+    test.sites     = test_fm.getTestSiteNames(test)
+    test.clouds    = test_fm.getTestCloudCodes(test)
+    test.numsites  = test_fm.getTestNumSites(test)
+    test.total     = test_fm.getTestTotalJobs(test)
+    test.submitted = test_fm.getTestSubmittedJobs(test)
+    test.failed    = test_fm.getTestFailedJobs(test)
+    test.completed = test_fm.getTestCompletedJobs(test)
+    test.running   = test_fm.getTestRunningJobs(test)
+    return test
+
+  def annotateTests(self,tests):
+
+    for test in tests:
+      test = self.annotateTest(test)
+  
+    return tests
+
+  def annotateTestPerMetric(self,test):
+
+    test.metricTypes = test.metrics.index.all()     
+    test.perMetric = []
+
+    for metric_type in test.metricTypes:
+      metric_type.sites = test_fm.getTestSitesMetrics(test,metric_type)
+      test.perMetric.append(metric_type)
+    return test
+
+  def annotateTestPerSite(self,test):
+
+    test_sites = test.getTestSites_for_test.all()
+    test.metricTypes = test.metrics.index.all()
+
+    test.perSite = []
+  
+    for test_site in test_sites:
+
+      site = test_site.site
+           
+      site.metrics = site_fm.getSiteTestMetrics(site,test)
+           
+#      site.backend_exitcodes = site.getBackendExitCodes(test)
+#      site.app_exitcodes = site.getAppExitCodes(test)
+#      site.backend_reasons = site.getBackendReasons(test)
+#      site.numevents = site.getNumEvents(test)
+#      (site.numfiles,site.numfiles_details) = site.getTestNumfiles(test)
+#      site.out = site.getTestOutput(test)
+           
+      test.perSite.append(site)
+    return test
+
+  def annotateSitesEfficiency(self,sites):
+
+    for site in sites:
+ 
+      if site.getSummaryRobots_for_site.count():
+        site.eff = site.getSummaryRobots_for_site.all()[0]
+
+    return sites

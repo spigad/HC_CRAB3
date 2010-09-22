@@ -1,0 +1,154 @@
+{% extends 'core/app/base.html' %}
+
+{% block javascript %}
+  {{block.super}}
+  <script type="text/javascript">
+    function toggleDisplay(me){
+      if (me.childNodes[1].style.display=='block'){
+        me.childNodes[1].style.display='none';
+      }else{
+        var robot = document.getElementById('robot');
+        var robotbody = robot.getElementsByTagName("tbody")[0];
+        var tds = robotbody.getElementsByTagName('td');
+        for (i=0;i<tds.length;i++){
+          tds[i].childNodes[1].style.display = 'none';
+        } 
+        me.childNodes[1].style.display='block';
+      }
+    }
+    function hideShow(klass){  
+      var robot = document.getElementById('robot');
+      var robotbody = robot.getElementsByTagName("tbody")[0];
+      var tds = robotbody.getElementsByTagName('td');
+
+      lock = false;
+
+      for (i=0;i<tds.length;i++){
+        if (tds[i].className.indexOf(klass) > -1 || klass == 'ALL'){
+          if (tds[i].style.display == 'none'){
+            lock = true;
+            break;
+          }
+        }
+      }
+      for (i=0;i<tds.length;i++){
+        if (tds[i].className.indexOf(klass) > -1 || klass == 'ALL'){
+          if (lock){
+            tds[i].style.display = '';
+          }else{
+            tds[i].style.display = 'none';
+          } 
+        }
+      }
+
+    }
+  </script>
+{% endblock %}
+
+{% block content %}
+
+  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+
+
+  <h2>Robot</h2>
+  {% block robot_links %}{% endblock %}
+  <p>( Click to hide/show details.)</p>
+
+  <div id='grid'>
+
+  <div id='leftbar'>
+    {% if clouds %}
+    <p>CLOUDS:</p>
+    <ul>
+      <li onclick="hideShow('ALL');">ALL</li>
+      {% for cloud in clouds%}
+        <li onclick="hideShow('{{cloud.name}}');">{{cloud.name|upper}}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+  
+  <div id='centerbar'>
+  <table id='robot' class='robot'>
+
+    {% for site in sites %}
+
+      {% if forloop.first %}
+        <tr>
+      {% endif %}
+
+      {% if forloop.counter0|divisibleby:"14" and not forloop.first and not forloop.last %}
+        </tr><tr>
+      {% endif %}
+
+      <td class='grey {{site.cloud.name}} PANDA' onclick="toggleDisplay(this)";>
+        <span>
+          <h2>{{site.name}}</h2>
+          <p>efficiency: xyz%</p>
+          <p>See in detail.</p>
+        </span>
+      </td>
+
+      {% if forloop.last %}
+        </tr>
+      {% endif %}
+
+    {% endfor %}
+
+  </table>
+  </div>
+
+  <div id='rightbar'>
+    {% if backends %}
+    <p>BACKENDS:</p>
+    <ul>
+      <li onclick="hideShow('ALL');">ALL</li>
+      {% for backend in backends%}
+        <li onclick="hideShow('{{backend.name}}');">{{backend.name|capfirst}}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+  </div>
+
+  <div id='footerbar'>
+    <p>LEGEND:</p>
+    <table class='robot'>
+      <tr>
+        <td onclick="hideShow('ALL');">
+          <span class='legend'>
+            <h3>ALL</h3>
+            <p>Click to hide/show <br/> all sites.</p>
+          </span>
+        </td>
+        <td class='grey' onclick="hideShow('grey');">
+          <span class='legend'>
+            <h3>No test.</h3>
+            <p>Click to hide/show <br/>sites with no test.</p>
+          </span>
+        </td>
+        <td class='red' onclick="hideShow('red');">
+          <span class='legend'>
+            <h3>... &lt; 80%</h3>
+            <p>Click to hide/show <br/>sites with less than<br/>80% efficiency.</p>
+          </span>
+        </td>
+        <td class='yellow' onclick="hideShow('yellow');">
+          <span class='legend'>
+            <h3>80% &lt; ... &lt; 95%</h3>
+            <p>Click to hide/show <br/>sites with efficiency<br/>between 80% and 95%.</p>
+          </span>
+        </td>
+        <td class='green' onclick="hideShow('green');">
+          <span class='legend'>
+            <h3>95% &lt; ...</h3>
+            <p>Click to hide/show <br/>sites with more than<br/>95% efficiency.</p>
+          </span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  </div>
+
+{% endblock %}

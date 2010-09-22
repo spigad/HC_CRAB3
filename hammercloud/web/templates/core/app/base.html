@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+
+    {% block meta %}
+      <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    {% endblock %}
+
+    {% block css %}
+      <link type="text/css" href="{{ MEDIA_URL }}css/ui-lightness/jquery-ui-1.8.2.custom.css" rel="stylesheet" />
+      <link type="text/css" href="{{ MEDIA_URL }}css/style.css" rel="stylesheet" />
+      {% if app %}
+        <link type="text/css" href="{{ MEDIA_URL }}css/{{app}}/style.css" rel="stylesheet" />
+      {% endif %}
+    {% endblock %}
+
+    {% block javascript %}
+      <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
+      <script type="text/javascript" src="{{ MEDIA_URL }}js/hm.js"></script>
+    {% endblock %}
+
+    <script type="text/javascript">
+      $(document).ready(function()
+        {  
+          {% block docready%}
+            $('#jsddm > li').bind('mouseover', jsddm_open);
+            $('#jsddm > li').bind('mouseout',  jsddm_timer);
+	  {% endblock %} 
+        }
+        );	
+        document.onclick = jsddm_close;
+    </script>
+
+    <title>{% block title %}Hammercloud{% endblock %}</title>
+
+  </head>
+
+  <body {% block tag_body %}{% endblock %} >
+    <div id="content">
+
+      {% block top %}
+        {% if user.is_authenticated %}
+    	  <div style="float: right;">
+            You are connected as {{ user.username }}, 
+            <a style="text-decoration: underline;" href="{% url logout-view %}?next=/hc/app/{{ app }}">click here to Logout!</a>
+          </div>
+    	{% endif %}
+
+    	<h1 style="margin-bottom: 20px;	text-align: left;">
+          <a href="{% url portal-view %}">HammerCloud</a> | <a href="{% url index-view app %}">{{app|upper}}</a>
+          <a href="{% url portal-view %}feed/app/{{app}}/"><img src="{{ MEDIA_URL }}images/rss_{{app}}.ico" border="0"></a>
+        </h1>
+
+    	<div style="float: right; color: #ffffff; margin: 7px 10px auto auto;">
+          <a style="color: #ffffff;" href="{% url index-view app %}admin">Administration</a>
+        </div>
+
+    	<div id="menu-top">
+          <ul id="jsddm">
+
+            {% block menu %}
+              <li><a href="{% url index-view app %}">Home</a></li>
+              <li><a href="{% url testlist-view app,'all' %}">Tests</a>
+                <ul>
+                  <li><a href="{% url testlist-view app,'scheduled' %}">Scheduled</a></li>
+                  <li><a href="{% url testlist-view app,'submitting' %}">Submitting</a></li>
+                  <li><a href="{% url testlist-view app,'error' %}">Submit Error</a></li>
+                  <li><a href="{% url testlist-view app,'running' %}">Running</a></li>
+                  <li><a href="{% url testlist-view app,'completed' %}">Completed</a></li>
+                  <li><a href="{% url testlist-view app,'all' %}">All</a></li>
+                </ul>
+              </li>
+              <li><a href="{% url stats-view app %}">HC Stats</a>
+                <ul>
+                  <li><a href="{% url statistics-view app %}?type=plot">Plots</a></li>
+                  <li><a href='{% url statistics-view app %}?type=rank'>Ranks</a></li>
+                  <li><a href='{% url statistics-view app %}?type=timeline'>Timelines</a></li>
+                </ul>
+              </li>
+              <li><a href="{% url robot-view app %}">Robot</a></li>
+              <li><a href=''>More HC...</a>
+                <ul>
+                  <li><a href="{% url clouds-view app %}">Clouds</a></li> 
+                  <li><a href="{% url dspatterns-view app %}">Dspatterns</a></li>
+                  <li><a href="{% url hosts-view app %}">Hosts</a></li>
+                  <li><a href="{% url jobtemplates-view app %}">JobTemplates</a></li>
+                  <li><a href="{% url metric_types-view app %}">MetricTypes</a></li>
+                  <li><a href="{% url optionfiles-view app %}">OptionFiles</a></li>
+                  <li><a href="{% url sites-view app %}">Sites</a></li>                
+                  <li><a href="{% url templates-view app %}">Templates</a></li>
+                  <li><a href="{% url usercodes-view app %}">UserCodes</a></li>
+                </ul>
+              </li>
+            {% endblock %}
+
+          </ul>
+        </div>
+      {% endblock %}
+
+      {% block content %}
+    	{{app}} content 
+      {% endblock %}
+    
+      {% block bottom %}
+        <div id="bottom-bar">
+          <div style="text-align: right; color: white; font-size: 0.7em;">
+            <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud" style="color: white;">Help</a> |
+            <a href="https://savannah.cern.ch/projects/hammercloud/" style="color: white;">Savannah</a>
+          </div>
+        </div>
+        <p style="text-align: center;">
+          {% block account %}Want to modify running tests? Contact dan or johannes to create an account.{% endblock %}
+        </p>
+    	<p style="text-align: right;">
+          <a href="http://validator.w3.org/check?uri=referer"><img
+	        src="http://www.w3.org/Icons/valid-xhtml10-blue"
+	        alt="Valid XHTML 1.0 Transitional" height="31" width="88" border ="0"/></a>
+        </p>
+      {% endblock %}
+
+    </div>
+  </body>
+
+</html>

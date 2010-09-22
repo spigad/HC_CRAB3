@@ -1,0 +1,21 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  {% if optionfiles %}
+    <h2>OptionFiles ({{ optionfiles|length }})</h2>
+    <table class="list">
+    {% for optionfile in optionfiles %}
+      <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
+          onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';">
+        <td>{{ optionfile.id }}.-</td><td>{{ optionfile.path }}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <h2>OptionFiles</h2>
+    No entries.
+  {% endif %}
+
+{% endblock %}

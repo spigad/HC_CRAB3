@@ -1,0 +1,27 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+
+  <div id="standard">{% load hc_tags%}
+    <h2>{{ host|hostEntity }}
+      <a href="http://lemonweb.cern.ch/lemon-web/info.php?entity={{ host|hostEntity }}">
+      <img src="{{ MEDIA_URL }}images/lemon.ico" border="0"></a>
+    </h2>
+    <table>
+      <tr><th>Id:</th><td>{{ host.id }}</td></tr>
+      <tr><th>Load:</th><td>{{ host.loadavg1m }}</td></tr>
+      <tr><th>Enabled:</th>
+          <td>
+            {% if host.enabled %}
+                <img src="{{ MEDIA_URL }}admin/img/admin/icon-yes.gif" alt='True'>
+              {% else %}
+                <img src="{{ MEDIA_URL }}admin/img/admin/icon-no.gif" alt='False'>
+              {% endif %}
+          </td>
+      </tr>
+    </table>
+  </div>
+
+{% endblock %}

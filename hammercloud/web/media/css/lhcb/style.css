@@ -1,0 +1,35 @@
+body {
+  color: #33871e;
+}
+
+h1,h2,h3 {
+  color: #33871e;
+}
+
+a {
+  color: #33871e;
+}
+
+#menu-top {
+  background-color: #33871e;
+}
+
+#jsddm li a {
+  background-color: #33871e;
+}
+
+#jsddm li a:hover {
+  background-color: #2b731a;
+}
+
+#jsddm li ul li a {
+  background-color: #33871e;
+}
+
+#jsddm li ul li a:hover {
+  background-color: #2b731a;
+}
+
+#bottom-bar {
+  background-color: #33871e;
+}

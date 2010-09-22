@@ -1,0 +1,60 @@
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('#{{type}}_table').dataTable({
+      "sPaginationType": 'full_numbers',
+      "bServerSide": true,
+      "sAjaxSource": "{% url get_list-view app,type,test_id %}",          
+      "aaSorting" : [[ 0, "desc" ]],
+
+      "aoColumns":[
+        null,null,null,null,null,null,null,null,null,null,
+        { "sType": "html" }
+      ],
+      "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+        if (aData[8] == 'no'){
+          $(nRow).addClass('error');
+        }else if ((aData[1] == 0) && (aData[2] == 0) && (aData[3] == 0) && (aData[4] == 0)){
+          $(nRow).addClass('gradeU');
+        }else if ((aData[1] < aData[6]) && (aData[2]<aData[7]) ){
+          $(nRow).addClass('completed');
+        }else{
+          $(nRow).addClass('running');
+        }
+        return nRow;
+      }
+    });
+  });
+</script>
+
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="testsites_table">
+  <thead>
+    <tr>
+      <th>Site&nbsp;<span>test Site name<br/>>site:value</span></th>
+      <th>S&nbsp;&nbsp;<span>test Submitted jobs<br/>>submitted:value</span></th>
+      <th>R&nbsp;&nbsp;<span>Running jobs<br/>>running:value</span></th>
+      <th>C&nbsp;&nbsp;<span>Completed jobs<br/>>completed:value</span></th>
+      <th>F&nbsp;&nbsp;<span>Failed jobs<br/>>failed:value</span></th>
+      <th>Datasets<span>Number of datasets<br/>per bulk<br/>>datasets:value</span></th>
+      <th>Queue&nbsp;<span>Max submitted jobs<br/>>queue:value</span></th>
+      <th>Max R&nbsp;<span>Max running jobs<br/>>max_running:value</span></th>
+      <th>Resubmit&nbsp;<span>Resubmit enabled<br/>>resubmit:value</span></th>
+      <th>R. Force&nbsp;<span>Resubmit force<br/>>force:value</span></th>
+      <th>Link&nbsp;<span>See in detail</span></th></tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot>
+      <tr><th>Site</th>
+      <th>S</th>
+      <th>R</th>
+      <th>C</th>
+      <th>F</th>
+      <th>Datasets bulk</th>
+      <th>Min queue</th>
+      <th>Max running</th>
+      <th>Resubmit</th>
+      <th>R. Force</th>
+      <th>Link</th>
+    </tr>
+  </tfoot>
+</table>
+ 

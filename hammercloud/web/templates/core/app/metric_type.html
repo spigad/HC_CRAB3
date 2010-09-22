@@ -1,0 +1,23 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+
+  <div id="standard">
+    <h2>
+      {{ metric_type.title }}
+    </h2>
+    <div id="standard_menu">    
+       <a href="{% url statistics-view app %}?type=plot&metric_type={{metric_type.id}}&sort_by=metric">&nbsp;PLOTS&nbsp;</a>
+       <a href="{% url statistics-view app %}?type=plot&metric_type={{metric_type.id}}&sort_by=metric">&nbsp;TIMELINES&nbsp;</a>
+       <a href="{% url statistics-view app %}?type=plot&metric_type={{metric_type.id}}&sort_by=metric">&nbsp;RANK&nbsp;</a>
+    </div>
+    <table>
+      <tr><th>Id:</th><td>{{ metric_type.id }}</td></tr>
+      <tr><th>Type:</th><td>{{ metric_type.type }}</td></tr>
+      <tr><th>Description:</th><td>{{ metric_type.description }}</td></tr>
+    </table>
+  </div>
+
+{% endblock %}

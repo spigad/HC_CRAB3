@@ -1,0 +1,83 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  <div id="standard">
+    <h2>
+      {{ template.description }}
+      <a href="{% url portal-view %}feed/app/{{app}}/template/{{template.id}}/"><img src="{{ MEDIA_URL }}images/rss_{{app}}.ico" border="0"></a>
+    </h2>
+    <div id="standard_menu">
+       <a href="{% url statistics-view app %}?type=plot&template={{template.id}}&sort_by=template">&nbsp;PLOTS&nbsp;</a>
+       <a href="{% url statistics-view app %}?type=timeline&template={{template.id}}&sort_by=template">&nbsp;TIMELINES&nbsp;</a>
+       <a href="{% url statistics-view app %}?type=rank&template={{template.id}}&sort_by=template">&nbsp;RANKS&nbsp;</a>
+    </div>
+    <table>
+      <tr><th>Id:</th><td colspan="5">{{ template.id }}</td></tr>
+      <tr><th>Category:</th><td colspan="5">{{ template.category }}</td></tr>
+      <tr><th>Lifetime:</th><td colspan="5">{{ template.lifetime }}</td></tr>
+      <tr><th>Active:</th><td colspan="5">
+        {% if template.active %}
+          <img src="{{ MEDIA_URL }}admin/img/admin/icon-yes.gif" alt='True'>
+        {% else %}
+          <img src="{{ MEDIA_URL }}admin/img/admin/icon-no.gif" alt='False'>
+        {% endif %}
+      </td></tr>
+      <tr><th>Jobtemplate:</th><td colspan="5">{{ template.jobtemplate }}</td></tr>
+      <tr><th>Usercode:</th><td colspan="5">{{ template.usercode }}</td></tr>
+      <tr><th>Option file:</th><td colspan="5">{{ template.option_file }}</td></tr>
+      <tr><th>Input type:</th><td colspan="5">{{ template.inputtype }}</td></tr>
+      <tr><th>Test script:</th><td colspan="5">{{ template.test_script }}</td></tr>
+      <tr><th>Gangabin:</th><td colspan="5">{{ template.gangabin }}</td></tr>
+      <tr><th>Extraargs:</th><td colspan="5">{{ template.extraargs }}</td></tr>
+
+      <tr><th>Hosts ({{ template.hosts|length }}):</th><td colspan="5">{% load hc_tags %}
+        {% for template_host in template.hosts %}
+          <a href={% url host-view app template_host.host.id %}>{{ template_host.host|hostEntity }}</a>,
+        {% endfor %}
+      </td></tr>
+
+      <tr><th>Dspatterns ({{ template.dspatterns|length }}):</th><td colspan="5">
+        {% for template_dspattern in template.dspatterns%}
+          {{ template_dspattern.dspattern.pattern }},
+        {% endfor %}
+      </td></tr>
+
+      <tr><td colspan="6">&nbsp;</td></tr>
+      <tr><th>Sites ({{ template.sites|length }}):</th><th>Num. datasets</th><th>Min. Queue</th><th>Max. running</th><th>R. enabled</th><th>R. force</th></tr>
+      {% if template.sites %}
+        {% for template_site in template.sites %}
+          <tr>
+            <td><a href="{% url site-view app template_site.site.id %}">{{ template_site.site.name }}</a></td>
+            <td>{{ template_site.num_datasets_per_bulk }}</td>
+            <td>{{ template_site.min_queue_depth }}</td>
+            <td>{{ template_site.max_running_jobs }}</td>
+            <td>
+              {% if template_site.resubmit_enabled %}
+                <img src="{{MEDIA_URL}}admin/img/admin/icon-yes.gif" alt='True'>
+              {% else %}
+                <img src="{{MEDIA_URL}}admin/img/admin/icon-no.gif" alt='False'>
+              {% endif %}
+            </td>
+            <td>
+              {% if template_site.resubmit_force %}
+                <img src="{{MEDIA_URL}}admin/img/admin/icon-yes.gif" alt='True'>
+              {% else %}
+                <img src="{{MEDIA_URL}}admin/img/admin/icon-no.gif" alt='False'>
+              {% endif %}
+            </td>
+          <tr>
+       {% endfor %}
+     {% else %}
+       <tr>
+         <td>---</td><td colspan="5"> No sites for this template.</td>
+       <tr>
+     {% endif %}
+    </table>
+</div>
+
+{% endblock %}
+
+
+
