@@ -1,5 +1,5 @@
 from scripts.server import create_functional_tests
-from scripts.submit import register_host,create_at_job
+from scripts.submit import register_host,create_at_job,test_generate
 
 class CronActions:
 
@@ -14,3 +14,7 @@ class CronActions:
   def create_at_job(self,dic):
     caj = create_at_job.CreateAtJob()
     caj.run(dic)
+
+  def test_generate(self,dic):
+    tg = test_generate.TestGenerate()
+    tg.run(dic)

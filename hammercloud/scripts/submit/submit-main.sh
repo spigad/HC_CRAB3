@@ -7,7 +7,6 @@ echo '_._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
 echo '_'
 echo '_'
 
-
 if [ -z $1 ]
 then
     echo '_  ERROR! Please, set application tag.'
@@ -16,20 +15,14 @@ then
     echo '_._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
     echo '_'
     exit
-fi
-
-if [ -z $2 ]
-then
-    echo '_  No HCDIR provided. Using HCDIR=/data/hammercloud'
-    HCDIR=/data/hammercloud
 else
-    HCDIR=$2
+    APP=$1
+    shift
 fi
 
-
-if [ -f /tmp/submit-main_$2.running ]
+if [ -f /tmp/submit-main_$APP.running ]
 then
-    echo '_  ERROR! Script 'submit-main_$2.running already running.
+    echo '_  ERROR! Script 'submit-main_$1 already running.
     echo '_'
     echo '_                         End Server Main                         _'
     echo '_._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
@@ -37,27 +30,30 @@ then
     exit
 fi
 
-touch /tmp/submit-main_$1.running
-echo '_  Lock written: '/tmp/submit-main_$1.running
+#Get HCDIR from current installation.
+HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
+
+touch /tmp/submit-main_$APP.running
+echo '_  Lock written: '/tmp/submit-main_$APP.running
 
 echo '_'
-source $HCDIR/scripts/config/config-main.sh $1 $HCDIR
+source $HCDIR/scripts/config/config-main.sh $APP
 echo '_'
 
 cd $HCDIR
 
-echo '_ CODE: 'python/scripts/cron_dispatcher.py -a $1 -f register_host
+echo '_ CODE: 'python/scripts/cron_dispatcher.py -a $APP -f register_host
 echo '_'
-python python/scripts/cron_dispatcher.py -a $1 -f register_host
+./python/scripts/cron_dispatcher.py -a $APP -f register_host
 echo '_'
-echo '_ CODE: 'python/scripts/cron_dispatcher.py -a $1 -f create_at_job
+echo '_ CODE: 'python/scripts/cron_dispatcher.py -a $APP -f create_at_job
 echo '_'
-python python/scripts/cron_dispatcher.py -a $1 -f create_at_job
+./python/scripts/cron_dispatcher.py -a $APP -f create_at_job
 echo '_'
 echo '_ END CODE'
-rm -f /tmp/submit-main_$1.running
+rm -f /tmp/submit-main_$APP.running
 
-echo '_  Lock released: '/tmp/submit-main_$1.running
+echo '_  Lock released: '/tmp/submit-main_$APP.running
 echo '_'
 echo '_                         End Server Main                         _'
 echo '_._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'

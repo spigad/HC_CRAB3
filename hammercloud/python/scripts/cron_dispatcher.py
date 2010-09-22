@@ -1,10 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/python2.5
 import getopt,sys
 
 from scripts.actions import CronActions
 from django.conf import settings
 
-SHORT_OPS = 'a:f:h'
+SHORT_OPS = 'a:f:o:t:h'
 
 try:
   dict = {}

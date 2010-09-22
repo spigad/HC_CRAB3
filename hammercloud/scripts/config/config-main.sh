@@ -1,5 +1,7 @@
 #!/bin/sh
 
+#ARGUMENTS: <app>
+
 echo '    _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
 echo '    _                                                                 _'
 echo '    _                       Main  Configuration                       _'
@@ -16,13 +18,8 @@ then
     exit
 fi
 
-if [ -z $2 ]
-then
-    echo ' _  No HCDIR provided. Using HCDIR=/data/hammercloud'
-    HCDIR=/data/hammercloud
-else
-    HCDIR=$2
-fi
+#Get HCDIR from current installation.
+HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
 
 #Set HCDIR and HCAPP. Used in the other scripts.
 export HCDIR=$HCDIR
@@ -31,8 +28,8 @@ echo '    _  HCDIR='$HCDIR
 echo '    _  HCAPP='$HCAPP
 
 #Set PROXY
-export X509_USER_PROXY=$HCAPP/config/x509up
-echo '    _  X509_USER_PROXY='$X509_USER_PROXY
+#export X509_USER_PROXY=$HCAPP/config/x509up
+#echo '    _  X509_USER_PROXY='$X509_USER_PROXY
 
 echo '    _  Looking for newest Django intalled version in '$HCDIR/external
 
@@ -58,16 +55,21 @@ export PYTHONPATH=$HCDIR/python
 #Export Django & HammerCloud.
 export PYTHONPATH=$PYTHONPATH:$HCDIR/external/$version:$HCDIR/web/src/
 
+#export PYTHONPATH=$PYTHONPATH:/usr/lib64/python2.5/site-packages/
+
 #Export HammerCloud settings.
 export DJANGO_SETTINGS_MODULE=hc.settings
 
-echo '    _  Looking for app specific config script in '$HCDIR/apps/$1/scripts/config
+echo '    _  Looking for app specific config script in '$HCAPP/scripts/config/config-main.sh
 
-if [ -e $HCDIR/apps/$1/scripts/config/config-main.sh ]
+if [ -e $HCAPP/scripts/config/config-main.sh ]
 then
     echo '    _    found: config-main.sh'
-    echo '    _  Sourced '$HCDIR/apps/$1/scripts/config/config-main.sh    
-    source $HCDIR/apps/$1/scripts/config/config-main.sh
+    echo '    _  Sourced '$HCAPP/scripts/config/config-main.sh    
+    source $HCAPP/scripts/config/config-main.sh
+else
+    echo '    _  Not found. Skipping.'
+
 fi
 
 echo '    _'
