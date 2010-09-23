@@ -1,4 +1,4 @@
-from hc.atlas.forms import MetricPermissionForm, TemplateUserForm, TestUserForm
+from hc.atlas.forms import MetricPermForm, TemplateUserForm, TestUserForm
 from hc.atlas.models import *
 
 from django.contrib import admin
@@ -190,7 +190,7 @@ class TestUserAdmin(TestUserAdminBase):
 ##
 ## *MetricTypeAdmin
 ## *MetricAdmin
-## *MetricPermission
+## *MetricPerm
 ## *[GlobalMetricAdmin]
 ## *SiteMetricAdmin
 ## *TestMetricAdmin
@@ -202,8 +202,8 @@ class MetricAdmin(MetricAdminBase):
 class MetricTypeAdmin(MetricTypeAdminBase):
   pass
 
-class MetricPermissionAdmin(MetricPermissionAdminBase):
-  form = MetricPermissionForm
+class MetricPermAdmin(MetricPermAdminBase):
+  form = MetricPermForm
 
 class SiteMetricAdmin(SiteMetricAdminBase):
   pass
@@ -279,7 +279,7 @@ admin.site.register(TestUser,TestUserAdmin)
 
 admin.site.register(MetricType,MetricTypeAdmin)
 admin.site.register(Metric,MetricAdmin)
-admin.site.register(MetricPermission,MetricPermissionAdmin)
+admin.site.register(MetricPerm,MetricPermAdmin)
 #[admin.site.register(GlobalMetric,GlobalMetric)]
 admin.site.register(SiteMetric,SiteMetricAdmin)
 admin.site.register(TestMetric,TestMetricAdmin)

@@ -401,16 +401,16 @@ class GenericView():
     dh         = Datahelper()
     test = dh.annotateTest(test)
 
-    metricpermissions = test.metricpermission.index.all()
+    metricperms = test.metricperm.index.all()
 
     summary = ''
     if test.getSummaryTests_for_test.count():
       summary = test.getSummaryTests_for_test.all()[0]  
 
-    #Independently of the number of metrics selected on the MetricPermissions.index,
+    #Independently of the number of metrics selected on the MetricPerm.index,
     #for the test main page only the 3 first ones are selected.
 
-    test_metrics = test.getTestMetrics_for_test.filter(metric__metric_type__in=metricpermissions)[:3]
+    test_metrics = test.getTestMetrics_for_test.filter(metric__metric_type__in=metricperms)[:3]
 
     t = loader.select_template(['%s/test.html'%(app),'core/app/test.html'])
     c = RequestContext(request,
@@ -454,7 +454,7 @@ class GenericView():
 
     elif type == 'testsummary':
       querySet = summary_test_site.objects.filter(test__id=test_id)
-      metr = querySet[0].test.metricpermission.summary.all() 
+      metr = querySet[0].test.metricperm.summary.all() 
       columnIndexNameMap = {0:'test_site__site__name'} 
       for i in xrange(0,len(metr)):
 #        table_redirect = ''
@@ -464,7 +464,7 @@ class GenericView():
         columnIndexNameMap[i+1] = metr[i].name
 
       searchableColumns = {'site':'testsite__site__name'}
-      jsonTemplatePath = str(app)+'/json/'+str(querySet[0].test.metricpermission.name)+'.txt'
+      jsonTemplatePath = str(app)+'/json/'+str(querySet[0].test.metricperm.name)+'.txt'
 
     elif type.startswith('testlist'):
 
@@ -501,7 +501,7 @@ class GenericView():
 
     items = []
     if type == 'testsummary':
-      table = test.metricpermission.name
+      table = test.metricperm.name
 
 #    elif type == 'testbackend':
 #        dh = HCDataHelper()

@@ -3,6 +3,9 @@ from hc.core.base.models.abstract import *
 
 from hc.core.base.rss.abstract import *
 
+#class MetricPerm(MetricPermBase):
+#  pass
+
 ##
 ## SIMPLE CLASSES
 ##
@@ -32,6 +35,8 @@ class InputType(InputTypeBase):
   pass
 class JobTemplate(JobTemplateBase):
   pass
+class MetricPerm(MetricPermBase):
+  pass
 class OptionFile(OptionFileBase):
   pass
 class TestScript(TestScriptBase):
@@ -47,6 +52,7 @@ class UserCode(UserCodeBase):
 
 class Site(SiteBase):
   pass
+
 
 ##
 ## TEMPLATE CLASSES
@@ -138,6 +144,8 @@ class Result(ResultBase):
 ##
 ## *MetricType
 ## *Metric
+## *SiteMetric
+## *TestMetric
 ##
 
 class MetricType(MetricTypeBase):
@@ -147,8 +155,6 @@ class Metric(MetricBase):
 class SiteMetric(SiteMetricBase):
   pass
 class TestMetric(TestMetricBase):
-  pass
-class MetricPermission(MetricPermissionBase):
   pass
 
 ##

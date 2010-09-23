@@ -13,7 +13,7 @@ from django.forms.util import ErrorList
 
 class FormGenerator():
 
-  def getMetricPermissionForm(self,module):
+  def getMetricPermForm(self,module):
 
     mt = custom_import('hc.'+module+'.models.MetricType')
 

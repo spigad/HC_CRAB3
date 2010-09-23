@@ -17,6 +17,7 @@ from datetime import datetime
 ## *GangaBinBase
 ## *HostBase
 ## *InputTypeBase
+## *MetricPermBase
 ## *TestScriptBase
 ##
 
@@ -163,6 +164,31 @@ class JobTemplateBase(models.Model):
     abstract = True
     db_table = u'jobtemplate'
 
+class MetricPermBase(models.Model):
+  __metaclass__ = MetaCreator
+
+  id          = models.AutoField(primary_key=True)
+  name        = models.CharField(unique=True, max_length=255)
+  description = models.CharField(max_length=2047, blank=True)
+  mtime       = models.DateTimeField()
+
+  #index        -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPerm','index',{})
+  #summary      -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPerm','persite',{})
+  #pertab       -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPerm','permetric',{})
+  #cron_allowed -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPerm','cron_allowed',{})
+
+
+  def __unicode__(self):
+    return '%s'%self.description
+
+  def save(self):
+    self.mtime = datetime.now()
+    super(MetricPermBase, self).save()
+
+  class Meta:
+    abstract = True
+    db_table = u'metricperm'
+
 class OptionFileBase(models.Model):
   __metaclass__ = MetaCreator
 
@@ -219,7 +245,6 @@ class UserCodeBase(models.Model):
   class Meta:
     abstract = True
     db_table = u'usercode'
-
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 ##
@@ -290,7 +315,7 @@ class TemplateBase(models.Model):
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Template','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Template','usercode',{})
   #optionfile       -> hc.core.base.models.keys.fk.generator.generateFK('OptionFile','Template','option_file',{})
-  #metricpermission -> hc.core.base.models.keys.fk.generator.generateFK('MetricPermission','Template','metricpermission',{})
+  #metricperm       -> hc.core.base.models.keys.fk.generator.generateFK('MetricPermission','Template','metricperm',{})
   #gangabin         -> hc.core.base.models.keys.fk.generator.generateFK('GangaBin','Template','gangabin',{})
   #inputtype        -> hc.core.base.models.keys.fk.generator.generateFK('Inputtype','Template','inputtype',{})
   #testscript       -> hc.core.base.models.keys.fk.generator.generateFK('TestScript','Template','test_script',{})
@@ -497,7 +522,7 @@ class TestBase(models.Model):
   #optionfile       -> hc.core.base.models.keys.fk.generator.generateFK('OptionFile','Test','option_file',{})
   #template         -> hc.core.base.models.keys.fk.generator.generateFK('Template','Test','template',{})
   #host             -> hc.core.base.models.keys.fk.generator.generateFK('Host','Test','host',{'null':True})
-  #metricpermission -> hc.core.base.models.keys.fk.generator.generateFK('MetricPermission','Test','metricpermission',{})
+  #metricperm       -> hc.core.base.models.keys.fk.generator.generateFK('MetricPermission','Test','metricperm',{})
   #gangabin         -> hc.core.base.models.keys.fk.generator.generateFK('GangaBin','Test','gangabin',{})
   #inputtype        -> hc.core.base.models.keys.fk.generator.generateFK('Inputtype','Test','inputtype',{})
   #testscript       -> hc.core.base.models.keys.fk.generator.generateFK('TestScript','Test','test_script',{})
@@ -518,19 +543,23 @@ class TestBase(models.Model):
     test = custom_import('hc.'+self._meta.app_label+'.models.Test')
     t    = test.objects.filter(id = self.id)
 
+    dontsave = ['error','completed']
+    if t:
+      if t[0].state in dontsave:
+        t[0].state = self.state
+        super(TestBase, t[0]).save()
+      else:
+        super(TestBase, self).save()
+
     if not t:
       #It's a new test, copy from template.
       obj = self.template
-#    else:
-#      #Overwritte own values.
-#      #Is this really needed ?
-#      obj = t[0]
 
       self.jobtemplate      = obj.jobtemplate
       self.usercode         = obj.usercode
       self.optionfile       = obj.optionfile
       self.inputtype        = obj.inputtype
-      self.metricpermission = obj.metricpermission
+      self.metricperm       = obj.metricperm
       self.output_dataset   = obj.output_dataset
       self.testscript       = obj.testscript
       self.gangabin         = obj.gangabin
@@ -543,10 +572,16 @@ class TestBase(models.Model):
 #    #Extraargs is editable, so the user decission is over the test_template.
 #    if extraargs != self.extraargs:
 #      self.extraargs = extraargs
+      
+      if self.state not in dontsave:
+        super(TestBase, self).save()
+      else:
+        pass
+        #We cannot create tests in error or completed states.
 
-    dontsave = ['error','completed']
-    if self.state not in dontsave:
-      super(TestBase, self).save()
+    #dontsave = ['error','completed']
+    #if self.state not in dontsave:
+    #  super(TestBase, self).save()   
 
     #HOSTS (ONLY UPDATED ON CREATION)
     if not t:
@@ -624,7 +659,9 @@ class TestBackendBase(models.Model):
 
       ts.save()
 
-    super(TestBackendBase, self).save()
+    dontsave = ['error','completed']
+    if self.test.state not in dontsave:
+      super(TestBackendBase, self).save()
 
   class Meta:
     abstract = True
@@ -669,7 +706,9 @@ class TestCloudBase(models.Model):
 
       ts.save()
 
-    super(TestCloudBase, self).save()
+    dontsave = ['error','completed']
+    if self.test.state not in dontsave:
+      super(TestCloudBase, self).save()
 
   class Meta:
     abstract = True
@@ -690,7 +729,10 @@ class TestDspatternBase(models.Model):
 
   def save(self):
     self.mtime = datetime.now()
-    super(TestDspatternBase, self).save()
+
+    dontsave = ['error','completed']
+    if self.test.state not in dontsave:
+      super(TestDspatternBase, self).save()
 
   class Meta:
     abstract = True
@@ -711,7 +753,10 @@ class TestHostBase(models.Model):
 
   def save(self):
     self.mtime = datetime.now()
-    super(TestHostBase, self).save()
+
+    dontsave = ['error','completed']
+    if self.test.state not in dontsave:
+      super(TestHostBase, self).save()
 
   class Meta:
     abstract = True
@@ -737,7 +782,10 @@ class TestSiteBase(models.Model):
 
   def save(self):
     self.mtime = datetime.now()
-    super(TestSiteBase, self).save()
+
+    dontsave = ['error','completed']
+    if self.test.state not in dontsave:
+      super(TestSiteBase, self).save()
 
   class Meta:
     abstract = True
@@ -756,7 +804,10 @@ class TestUserBase(models.Model):
 
   def save(self):
     self.mtime = datetime.now()
-    super(TestUserBase, self).save()
+
+    dontsave = ['error','completed']
+    if self.test.state not in dontsave:
+      super(TestUserBase, self).save()
 
   class Meta:
     abstract = True
@@ -829,7 +880,7 @@ class ResultBase(models.Model):
 ##
 ## *MetricTypeBase
 ## *MetricBase
-## *MetricPermission
+## *MetricPerm
 ## [*GlobalMetricBase]
 ## *SiteMetricBase
 ## *TestMetricBase
@@ -881,29 +932,31 @@ class MetricBase(models.Model):
     abstract = True
     db_table = u'metric'
 
-class MetricPermissionBase(models.Model):
-  __metaclass__ = MetaCreator
 
-  id             = models.AutoField(primary_key=True)
-  name           = models.CharField(unique=True, max_length=255)
-  description    = models.CharField(max_length=4095)
-  mtime          = models.DateTimeField()
 
-  #index        -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPermission','index',{})
-  #summary      -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPermission','persite',{})
-  #pertab       -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPermission','permetric',{})
-  #cron_allowed -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPermission','cron_allowed',{})
+#class MetricPermissionBase(models.Model):
+#  __metaclass__ = MetaCreator
 
-  def __unicode__(self):
-    return '%s'%(self.description)
+#  id             = models.AutoField(primary_key=True)
+#  name           = models.CharField(unique=True, max_length=255)
+#  description    = models.CharField(max_length=4095)
+#  mtime          = models.DateTimeField()
 
-  def save(self):
-    self.mtime = datetime.now()
-    super(MetricPermissionBase, self).save()
+#  #index        -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPermission','index',{})
+#  #summary      -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPermission','persite',{})
+#  #pertab       -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPermission','permetric',{})
+#  #cron_allowed -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPermission','cron_allowed',{})
 
-  class Meta:
-    abstract = True
-    db_table = u'metric_permission'
+#  def __unicode__(self):
+#    return '%s'%(self.description)
+
+#  def save(self):
+#    self.mtime = datetime.now()
+#    super(MetricPermissionBase, self).save()
+
+#  class Meta:
+#    abstract = True
+#    db_table = u'metricpermission'
 
 #class GlobalMetricBase(models.Model):
 #  __metaclass__ = MetaCreator

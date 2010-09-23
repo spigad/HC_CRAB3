@@ -30,7 +30,7 @@ class MetaCreator(ModelBase):
   #Having this here is ugly. The walkarround is worse.
   Backend, Cloud, Dspattern, Host, Site = None, None, None, None, None
   GangaBin, InputType, JobTemplate, OptionFile, TestScript, UserCode = None, None, None, None, None, None
-  Metric, MetricType, MetricPermission = None, None, None
+  Metric, MetricType, MetricPerm = None, None, None
   Result = None
   SiteMetric, TestMetric = None, None
   SummaryTest, SummaryTestSite, SummaryRobot = None, None, None
@@ -55,7 +55,6 @@ class MetaCreator(ModelBase):
       if b.__name__ in relation.BASE_CLASS_NAMES_M2M_RELATED:
 #        setattr(cls,b.__name__[:-4],model)
         cls = checkM2M(cls)
-
 
       if relation.UNIQUE_TOGETHER_DIC.has_key(b.__name__):
  

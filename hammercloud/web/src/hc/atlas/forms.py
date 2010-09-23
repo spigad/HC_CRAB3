@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 #
 #from django.forms.util import ErrorList
 
-class MetricPermissionForm(forms.ModelForm):
+class MetricPermForm(forms.ModelForm):
   __metaclass__ = FormMetaCreator
 
 class TemplateUserForm(forms.ModelForm):

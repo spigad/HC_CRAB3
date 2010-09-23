@@ -17,7 +17,7 @@ BASE_CLASS_NAMES_FK_RELATED = [
                                "JotTemplateBase",
                                "MetricBase",
                                "MetricTypeBase",
-                               "MetricPermissionBase",
+                               "MetricPermBase",
                                "OptionFileBase",
                                "SiteBase",
                                "SiteFeedBase",
@@ -79,8 +79,10 @@ FK_LIST = [
            ('JobTemplate','Test','jobtemplate',{}),
            ('Metric','SiteMetric','metric',{}),
            ('Metric','TestMetric','metric',{}),
-           ('MetricPermission','Template','metricpermission',{}),
-           ('MetricPermission','Test','metricpermission',{}),
+           ('MetricPerm','Template','metricperm',{}),
+           ('MetricPerm','Test','metricperm',{}),
+#           ('MetricPermission','Template','metricpermission',{}),
+#           ('MetricPermission','Test','metricpermission',{}),
            ('MetricType','Metric','metric_type',{}),
            ('OptionFile','Template','optionfile',{}),
            ('OptionFile','Test','optionfile',{}),
@@ -142,10 +144,10 @@ BASE_CLASS_NAMES_M2M_RELATED = [
 #(Obj1,Obj2,name_of_m2m_in_Obj2_pointing_to_Obj1,args)
 
 M2M_LIST = [
-           ('MetricType','MetricPermission','index',{}),
-           ('MetricType','MetricPermission','summary',{}),
-           ('MetricType','MetricPermission','pertab',{}),
-           ('MetricType','MetricPermission','cron_allowed',{}),
+           ('MetricType','MetricPerm','index',{}),
+           ('MetricType','MetricPerm','summary',{}),
+           ('MetricType','MetricPerm','pertab',{}),
+           ('MetricType','MetricPerm','cron_allowed',{}),
            ]
 
 #/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\

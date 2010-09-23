@@ -77,12 +77,13 @@ cd $HCDIR
 
 echo '_ CODE: 'python/scripts/cron_dispatcher.py -a $APP -f test_generate -t $TESTID -o [$*]
 echo '_'
+
 ./python/scripts/cron_dispatcher.py -a $APP -f test_generate -t $TESTID -o [$*]
 
 # Handle test job submission (generated==1 and submitted==0)
 #   creates testdirs/test_N/gangadir
 #   runs separate gangarobot on each test_N directory
-#./scripts/submit/test-submit $APP $TESTID $*
+./python/scripts/cron_dispatcher.py -a $APP -f test_submit -t $TESTID -o [$*]
 
 # Handle test cleanup (submitted==1 and endtime<=now)
 #   creates www/sitetests/test_N

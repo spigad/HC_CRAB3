@@ -234,7 +234,7 @@ class TemplateAdminBase(ActionsAdminBase):
   fieldsets = [
     ('Type information', {'fields': ['category','description']                                }),
     (None,               {'fields': ['lifetime','active']                                     }),
-    ('Files',            {'fields': ['jobtemplate','usercode','optionfile','metricpermission']}),
+    ('Files',            {'fields': ['jobtemplate','usercode','optionfile','metricperm']}),
     (None,               {'fields': ['inputtype','testscript','gangabin','extraargs']         }),
   ]
 
@@ -377,12 +377,12 @@ class TestAdminBase(ReadOnlyAdminFields,ModelLinkAdminFields,ActionsAdminBase):
 
   def change_view(self,request, *args, **kwargs):
     self.modellink = ('template',)  
-    self.readonly  = ('metricpermission','inputtype','testscript','jobtemplate','usercode','optionfile')
+    self.readonly  = ('metricperm','inputtype','testscript','jobtemplate','usercode','optionfile')
 
     self.fieldsets = [
       ('Date information', {'fields': ['starttime','endtime']                                   }),
       (None              , {'fields': ['description']                                           }),
-      ('Files'           , {'fields': ['jobtemplate','usercode','optionfile','metricpermission']}),
+      ('Files'           , {'fields': ['jobtemplate','usercode','optionfile','metricperm']}),
       (None              , {'fields': ['inputtype','testscript','gangabin','extraargs']         }),
       ('Template'        , {'fields': ['template']                                              }),
     ]
@@ -526,7 +526,7 @@ class SummaryRobotAdminBase(admin.ModelAdmin):
 ##
 ## *MetricTypeAdminBase
 ## *MetricAdminBase
-## *MetricPermissionAdminBase
+## *MetricPermAdminBase
 ## *[GlobalMetricAdminBase]
 ## *SiteMetricAdminBase 
 ## *TestMetricAdminBase 
@@ -552,7 +552,7 @@ class MetricAdminBase(admin.ModelAdmin):
   class Meta:
     abstract = True
 
-class MetricPermissionAdminBase(admin.ModelAdmin):
+class MetricPermAdminBase(admin.ModelAdmin):
 
   list_display = ('name','description',)
   fieldsets = [
