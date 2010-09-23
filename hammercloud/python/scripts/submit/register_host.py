@@ -22,5 +22,6 @@ class RegisterHost():
       print '[INFO][%s][register_host] Inserted new load:%s at %s.'%(app,load,hostname)
     else:
       print '[ERROR][%s][register_host] Unknown host %s'%(app,hostname)
+      return 0
 
     return 1

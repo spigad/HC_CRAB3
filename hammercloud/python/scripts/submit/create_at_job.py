@@ -48,12 +48,13 @@ class CreateAtJob():
 
     print '[INFO][%s][create_at_job] Starting test %s: %s'%(app,test.id,atjobid)
     return 1
-  
+
   def run(self,dic):
+
     app = dic['-a']
     if app == 'core':
       print '[ERROR][%s][create_at_job] not available at core app.'%(app)
-      return 1
+      return 0
 
     # IMPORTS
     test = custom_import('hc.%s.models.Test'%(app))

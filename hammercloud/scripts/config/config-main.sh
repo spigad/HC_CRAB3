@@ -55,6 +55,9 @@ export PYTHONPATH=$HCDIR/python
 #Export Django & HammerCloud.
 export PYTHONPATH=$PYTHONPATH:$HCDIR/external/$version:$HCDIR/web/src/
 
+#Export apps zones
+export PYTHONPATH=$PYTHONPATH:$HCDIR/apps
+
 #export PYTHONPATH=$PYTHONPATH:/usr/lib64/python2.5/site-packages/
 
 #Export HammerCloud settings.
