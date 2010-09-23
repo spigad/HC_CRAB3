@@ -4,7 +4,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('Mario', 'mario.ubeda.garcia@cern.ch'),
+    ('', ''),
 )
 
 MANAGERS = ADMINS
@@ -12,27 +12,27 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'mysql', 
-        'NAME': 'hc_core',                      
-        'USER': 'gangarbt',                     
-        'PASSWORD': 'chinFanill0',              
-        'HOST': 'localhost', 
-        'PORT': '3306',      
+        'NAME': '',                      
+        'USER': '',                     
+        'PASSWORD': '',              
+        'HOST': '', 
+        'PORT': '',      
     },
     'atlas': {
         'ENGINE': 'mysql',
-        'NAME': 'hc_atlas',
-        'USER': 'gangarbt',
-        'PASSWORD': 'chinFanill0',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     },
     'cms': {
         'ENGINE': 'mysql',
-        'NAME': 'hc_cms',
-        'USER': 'gangarbt',
-        'PASSWORD': 'chinFanill0',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     },
     'lhcb': {
         'ENGINE': 'mysql',
