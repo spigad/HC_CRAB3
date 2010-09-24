@@ -90,6 +90,7 @@ class TemplateUser(TemplateUserBase):
 ## *TestDspattern
 ## *TestHost
 ## *TestSite
+## *TestState
 ## *TestUser
 ##
 
@@ -104,6 +105,8 @@ class TestDspattern(TestDspatternBase):
 class TestHost(TestHostBase):
   pass
 class TestSite(TestSiteBase):
+  pass
+class TestState(TestStateBase):
   pass
 class TestUser(TestUserBase):
   pass

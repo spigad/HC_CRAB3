@@ -140,6 +140,7 @@ class TemplateUserAdmin(TemplateUserAdminBase):
 ## *TestHostAdmin
 ## *TestJournalAdmin
 ## *TestSiteAdmin
+## *TestStateAdmin
 ## *TestUserAdmin
 ##
 
@@ -178,6 +179,9 @@ class TestHostAdmin(TestHostAdminBase):
 #  form = TestJournalForm
 
 class TestSiteAdmin(TestSiteAdminBase):
+  pass
+
+class TestStateAdmin(TestStateAdminBase):
   pass
 
 class TestUserAdmin(TestUserAdminBase):
@@ -275,6 +279,7 @@ admin.site.register(TestDspattern,TestDspatternAdmin)
 admin.site.register(TestHost,TestHostAdmin)
 #admin.site.register(TestJournal,TestJournalAdmin)
 admin.site.register(TestSite,TestSiteAdmin)
+admin.site.register(TestState,TestStateAdmin)
 admin.site.register(TestUser,TestUserAdmin)
 
 admin.site.register(MetricType,MetricTypeAdmin)

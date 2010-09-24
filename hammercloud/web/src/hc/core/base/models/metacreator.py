@@ -35,7 +35,7 @@ class MetaCreator(ModelBase):
   SiteMetric, TestMetric = None, None
   SummaryTest, SummaryTestSite, SummaryRobot = None, None, None
   Template, TemplateBackend, TemplateCloud, TemplateDspattern, TemplateHost, TemplateSite, TemplateUser = None, None, None, None, None, None, None
-  Test, TestBackend, TestCloud, TestDspattern, TestHost, TestJournal, TestSite, TestUser = None, None, None, None, None, None, None, None
+  Test, TestBackend, TestCloud, TestDspattern, TestHost, TestJournal, TestSite, TestState, TestUser = None, None, None, None, None, None, None, None, None
   UsgSite = None
 
   #RSS

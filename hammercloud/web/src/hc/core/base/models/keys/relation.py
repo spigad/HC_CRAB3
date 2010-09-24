@@ -42,6 +42,7 @@ BASE_CLASS_NAMES_FK_RELATED = [
                                "TestMetricBase",
                                "TestOptionBase",
                                "TestSiteBase", 
+                               "TestStateBase",
                                "TestUserBase",
                                "ResultBase",
                                "UserCodeBase",
@@ -110,6 +111,7 @@ FK_LIST = [
            ('Test','TestDspattern','test',{}),
            ('Test','TestHost','test',{}),
            ('Test','TestSite','test',{}),
+           ('Test','TestState','test',{}),
            ('Test','TestUser','test',{}),
            ('TestOption','Template','testoption',{}),
            ('TestOption','Test','testoption',{}),
@@ -173,6 +175,7 @@ UNIQUE_TOGETHER_DIC = {
                         'TestDspatternBase'     : ('dspattern','test'),
                         'TestHostBase'          : ('host','test'),
                         'TestSiteBase'          : ('site','test'),
+                        'TestStateBase'         : ('ganga_jobid','test'),
                         'TestUserBase'          : ('test','user'),
                       }
 

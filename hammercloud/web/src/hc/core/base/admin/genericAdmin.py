@@ -461,6 +461,16 @@ class TestSiteAdminBase(ActionsAdminBase):
   class Meta:
     abstract = True
 
+class TestStateAdminBase(ActionsAdminBase):
+
+  list_display = ('test','ganga_jobid','copied')
+  fieldsets = [
+    (None, {'fields':['test','ganga_jobid']})
+  ]
+
+  class Meta:
+    abstract = True
+
 class TestUserAdminBase(admin.ModelAdmin):
 
   list_display = ('test',test_user_am.getTestUserNameStringAdmin)

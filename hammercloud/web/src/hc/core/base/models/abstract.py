@@ -482,6 +482,7 @@ class TemplateUserBase(models.Model):
 ## *TestDspatternBase
 ## *TestHostBase
 ## *TestSiteBase
+## *TestStateBase
 ## *TestUserBase
 ##
 
@@ -793,6 +794,29 @@ class TestSiteBase(models.Model):
     abstract = True
     db_table = u'test_site'
     #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
+
+class TestStateBase(models.Model):
+  __metaclass__ = MetaCreator
+
+  id          = models.AutoField(primary_key=True)
+  ganga_jobid = models.IntegerField()
+  copied      = models.BooleanField()
+  mtime       = models.DateTimeField()
+
+  #test -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestState','test',{})
+
+  def save(self):
+    self.mtime = datetime.now()
+
+    dontsave = ['error','completed']
+    if self.test.state not in dontsave:
+      super(TestStateBase, self).save()
+
+  class Meta:
+    abstract = True
+    db_table = u'test_state'
+    #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
+
 
 class TestUserBase(models.Model):
   __metaclass__ = MetaCreator
