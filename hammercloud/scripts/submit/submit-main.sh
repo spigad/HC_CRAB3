@@ -1,5 +1,5 @@
 #!/bin/sh
-
+	
 echo ''
 echo '_ Submit Main.'
 echo ''
@@ -37,15 +37,15 @@ echo ''
 
 cd $HCDIR
 
-echo ' CODE: 'python/scripts/cron_dispatcher.py -f register_host
+echo ' CODE: ./python/scripts/dispatcher.py -f register_host'
 echo ''
 ./python/scripts/dispatcher.py -f register_host
-echo ' END CODE.'
-echo ' CODE: 'python/scripts/cron_dispatcher.py -f create_at_job
+
+echo ' CODE: ./python/scripts/dispatcher.py -f create_at_job'
 echo ''
 ./python/scripts/dispatcher.py -f create_at_job
 echo ''
-echo ' END CODE.'
+
 rm -f /tmp/submit-main_$APP.running
 
 echo '  Lock released: '/tmp/submit-main_$APP.running

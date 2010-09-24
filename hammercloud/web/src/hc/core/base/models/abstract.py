@@ -18,7 +18,7 @@ from datetime import datetime
 ## *HostBase
 ## *InputTypeBase
 ## *MetricPermBase
-## *TestScriptBase
+## *TestOptionBase
 ##
 
 class BackendBase(models.Model):
@@ -208,24 +208,26 @@ class OptionFileBase(models.Model):
     abstract = True
     db_table = u'optionfile'
 
-class TestScriptBase(models.Model):
+class TestOptionBase(models.Model):
   __metaclass__ = MetaCreator
 
   id          = models.AutoField(primary_key=True)
-  script      = models.CharField(unique=True,max_length=255)
+  config      = models.CharField(max_length=2047)
+  submit      = models.CharField(max_length=2047)
+  report      = models.CharField(max_length=2047)
   description = models.CharField(max_length=2047, blank=True)
   mtime       = models.DateTimeField()
 
   def __unicode__(self):
-    return '%s'%self.script
+    return '%s'%self.description
 
   def save(self):
     self.mtime = datetime.now()
-    super(TestScriptBase,self).save()
+    super(TestOptionBase,self).save()
 
   class	Meta:
     abstract = True
-    db_table = u'testscript'
+    db_table = u'testoption'
 
 class UserCodeBase(models.Model):
   __metaclass__ = MetaCreator
@@ -318,7 +320,7 @@ class TemplateBase(models.Model):
   #metricperm       -> hc.core.base.models.keys.fk.generator.generateFK('MetricPermission','Template','metricperm',{})
   #gangabin         -> hc.core.base.models.keys.fk.generator.generateFK('GangaBin','Template','gangabin',{})
   #inputtype        -> hc.core.base.models.keys.fk.generator.generateFK('Inputtype','Template','inputtype',{})
-  #testscript       -> hc.core.base.models.keys.fk.generator.generateFK('TestScript','Template','test_script',{})
+  #testoption       -> hc.core.base.models.keys.fk.generator.generateFK('TestOption','Template','testoption',{})
 
   # Functions manager: -> hc.core.base.models.managers.functions.template_fm
   # Admin manager    : -> hc.core.base.models.managers.admin.template_am
@@ -525,7 +527,7 @@ class TestBase(models.Model):
   #metricperm       -> hc.core.base.models.keys.fk.generator.generateFK('MetricPermission','Test','metricperm',{})
   #gangabin         -> hc.core.base.models.keys.fk.generator.generateFK('GangaBin','Test','gangabin',{})
   #inputtype        -> hc.core.base.models.keys.fk.generator.generateFK('Inputtype','Test','inputtype',{})
-  #testscript       -> hc.core.base.models.keys.fk.generator.generateFK('TestScript','Test','test_script',{})
+  #testoption       -> hc.core.base.models.keys.fk.generator.generateFK('TestOption','Test','testoption',{})
 
   # Functions manager: -> hc.core.base.models.managers.functions.test_fm
   # Admin manager    : -> hc.core.base.models.managers.admin.test_am
@@ -561,7 +563,7 @@ class TestBase(models.Model):
       self.inputtype        = obj.inputtype
       self.metricperm       = obj.metricperm
       self.output_dataset   = obj.output_dataset
-      self.testscript       = obj.testscript
+      self.testoption       = obj.testoption
       self.gangabin         = obj.gangabin
       self.extraargs        = obj.extraargs
       self.description      = obj.description

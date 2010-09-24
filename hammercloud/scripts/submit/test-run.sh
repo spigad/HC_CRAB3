@@ -41,7 +41,6 @@ else
     shift
 fi
 
-
 if [ -f /tmp/test-run_$APP_$TESTID.running ]
 then
     echo '  ERROR! Script 'test-run_$APP_$TESTID already running.
@@ -67,16 +66,19 @@ echo ''
 
 cd $HCDIR
 
-echo '  CODE: 'python/scripts/dispatcher.py -f test_generate -t $TESTID -o [$*]
-echo ''
-
 ##GENERATE
+echo '  CODE: './python/scripts/dispatcher.py -f test_generate -t $TESTID -o [$*]
+echo ''
 ./python/scripts/dispatcher.py -f test_generate -t $TESTID -o [$*]
 
 ##SUBMIT
+echo '  CODE: './python/scripts/dispatcher.py -f test_submit -t $TESTID -o [$*]
+echo ''
 ./python/scripts/dispatcher.py -f test_submit -t $TESTID -o [$*]
 
 ##REPORT
+echo '  CODE: './python/scripts/dispatcher.py -f test_report -t $TESTID -o [$*]
+echo ''
 ./python/scripts/dispatcher.py -f test_report -t $TESTID -o [$*]
 
 

@@ -29,7 +29,7 @@ class MetaCreator(ModelBase):
 
   #Having this here is ugly. The walkarround is worse.
   Backend, Cloud, Dspattern, Host, Site = None, None, None, None, None
-  GangaBin, InputType, JobTemplate, OptionFile, TestScript, UserCode = None, None, None, None, None, None
+  GangaBin, InputType, JobTemplate, OptionFile, TestOption, UserCode = None, None, None, None, None, None
   Metric, MetricType, MetricPerm = None, None, None
   Result = None
   SiteMetric, TestMetric = None, None

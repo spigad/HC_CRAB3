@@ -26,10 +26,10 @@ echo '  HCAPP='$HCAPP
 export APP=$1
 echo '  APP='$APP
 
-echo '  Looking for newest Django intalled version in '$HCDIR/external
+echo '  Looking for newest Django intalled version in '$HCDIR/external/django/
 
-#Get the newest installed version of Django in $HCDIR/external
-vals=`ls -F $HCDIR/external/ | grep 'Django' | sort -r`
+#Get the newest installed version of Django in $HCDIR/external/django/
+vals=`ls -F $HCDIR/external/django/ | grep 'Django' | sort -r`
 if [ -z "$vals" ]
 then
   echo '   ERROR! No Django instance found.'

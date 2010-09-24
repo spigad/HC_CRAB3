@@ -20,7 +20,7 @@ from hc.core.base.rss.admin import *
 ## *InputTypeAdmin
 ## *JobTemplateAdmin
 ## *OptionFileAdmin
-## *TestScriptAdmin
+## *TestOptionAdmin
 ## *UserCode
 ##
 
@@ -48,7 +48,7 @@ class JobTemplateAdmin(JobTemplateAdminBase):
 class OptionFileAdmin(OptionFileAdminBase):
   pass
 
-class TestScriptAdmin(TestScriptAdminBase):
+class TestOptionAdmin(TestOptionAdminBase):
   pass
 
 class UserCodeAdmin(UserCodeAdminBase):
@@ -255,7 +255,7 @@ admin.site.register(Host,HostAdmin)
 admin.site.register(InputType,InputTypeAdmin)
 admin.site.register(JobTemplate,JobTemplateAdmin)
 admin.site.register(OptionFile,OptionFileAdmin)
-admin.site.register(TestScript,TestScriptAdmin)
+admin.site.register(TestOption,TestOptionAdmin)
 admin.site.register(UserCode,UserCodeAdmin)
 
 admin.site.register(Site,SiteAdmin)

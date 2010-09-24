@@ -17,7 +17,7 @@ from hc.core.base.rss.abstract import *
 ## *InputType
 ## *JobTemplate
 ## *OptionFile
-## *TestScript
+## *TestOption
 ## *UserCode 
 ## 
 
@@ -39,7 +39,7 @@ class MetricPerm(MetricPermBase):
   pass
 class OptionFile(OptionFileBase):
   pass
-class TestScript(TestScriptBase):
+class TestOption(TestOptionBase):
   pass
 class UserCode(UserCodeBase):
   pass

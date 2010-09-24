@@ -97,7 +97,7 @@ class ActionsAdminBase(admin.ModelAdmin):
 ## *InputTypeAdminBase
 ## *JobTemplateAdminBase
 ## *OptionFileAdminBase
-## *TestScriptAdminBase
+## *TestOptionAdminBase
 ## *UserCodeAdminBase
 ##
 
@@ -175,10 +175,10 @@ class OptionFileAdminBase(ActionsAdminBase):
   class Meta:
     abstract = True
 
-class TestScriptAdminBase(ActionsAdminBase):
-  list_display = ('script','description')
+class TestOptionAdminBase(ActionsAdminBase):
+  list_display = ('description',)
   fieldsets = [
-    (None, {'fields': ['script','description']})
+    (None, {'fields': ['description','config','submit','report']})
   ]   
 
   class	Meta:
@@ -235,7 +235,7 @@ class TemplateAdminBase(ActionsAdminBase):
     ('Type information', {'fields': ['category','description']                                }),
     (None,               {'fields': ['lifetime','active']                                     }),
     ('Files',            {'fields': ['jobtemplate','usercode','optionfile','metricperm']}),
-    (None,               {'fields': ['inputtype','testscript','gangabin','extraargs']         }),
+    (None,               {'fields': ['inputtype','testoption','gangabin','extraargs']         }),
   ]
 
   class Meta:
@@ -377,13 +377,13 @@ class TestAdminBase(ReadOnlyAdminFields,ModelLinkAdminFields,ActionsAdminBase):
 
   def change_view(self,request, *args, **kwargs):
     self.modellink = ('template',)  
-    self.readonly  = ('metricperm','inputtype','testscript','jobtemplate','usercode','optionfile')
+    self.readonly  = ('metricperm','inputtype','testoption','jobtemplate','usercode','optionfile')
 
     self.fieldsets = [
       ('Date information', {'fields': ['starttime','endtime']                                   }),
       (None              , {'fields': ['description']                                           }),
       ('Files'           , {'fields': ['jobtemplate','usercode','optionfile','metricperm']}),
-      (None              , {'fields': ['inputtype','testscript','gangabin','extraargs']         }),
+      (None              , {'fields': ['inputtype','testoption','gangabin','extraargs']         }),
       ('Template'        , {'fields': ['template']                                              }),
     ]
 

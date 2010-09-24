@@ -35,9 +35,9 @@ echo ''
 
 cd $HCDIR
 
-echo '  CODE: python' python/scripts/cron_dispatcher.py -a $1 -f create_functional_tests
+echo '  CODE: ./python/scripts/dispatcher.py -f create_functional_tests'
 echo ''
-python2.5 python/scripts/cron_dispatcher.py -a $1 -f create_functional_tests
+./python/scripts/dispatcher.py -f create_functional_tests
 echo ''
 echo '  END CODE'
 rm -f /tmp/server-main_$1.running
