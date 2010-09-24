@@ -1,10 +1,10 @@
 #!/usr/bin/python2.5
-import getopt,sys
+import getopt,os,sys
 
 from scripts.actions import CronActions
 from django.conf import settings
 
-SHORT_OPS = 'a:f:o:t:h'
+SHORT_OPS = 'f:o:t:h'
 
 try:
   dict = {}
@@ -18,12 +18,9 @@ except getopt.GetoptError, err:
 
 def help():
 
-  apps      = [app.split('.')[1] for app in settings.INSTALLED_APPS if not app.startswith('django')]
   functions = [func for func in dir(CronActions) if not func[0]=='_']
   
   USAGE = '''\nList of allowed options
-  -a : Set the appropiate app, where you want to run the command. Below, allowed apps.
-       %s
   -f : Set the function you want to execute. Below, allowed functions.
        %s
   -h : Print help. '''%(apps,functions)
@@ -37,19 +34,20 @@ def run():
   if dict.has_key('-h'):
     help()
   elif dict.has_key('-f'):
-    if not dict.has_key('-a'):
-      print '[ERROR] Please, set an application to run this command: %s'%(dict['-f'])
+    if not os.environ.has_key('APP'):
+      print '[ERROR] Application env variable APP not found.'
       help()
-    elif not dict['-a'] in [app.split('.')[1] for app in settings.INSTALLED_APPS if not app.startswith('django')]:
+    elif not os.environ['APP'] in [app.split('.')[1] for app in settings.INSTALLED_APPS if not app.startswith('django')]:
       print '[ERROR] Please, check your parameters. Wrong application name.'
       help()      
     else:
-      try:
-        func = getattr(ca,dict['-f'])
-        func(dict)
-      except:
-        print '[ERROR][%s] The function %s failed misserabily.'%(app,dict['-f'])
-        help()
+      app = os.environ['APP']
+#      try:
+      func = getattr(ca,dict['-f'])
+      func(app,dict)
+#      except:
+#        print '[ERROR][%s] The function %s failed misserabily.'%(app,dict['-f'])
+#        help()
   else:
     print '[ERROR] Please, check your parameters. Missing function name.'
     help()

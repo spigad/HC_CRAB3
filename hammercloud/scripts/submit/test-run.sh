@@ -2,20 +2,15 @@
 
 #ARGUMETNS: <app><gangabin><testid><...>
 
-echo '_._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
-echo '_                                                                 _'
-echo '_                             Test  Run                           _'
-echo '_._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
-echo '_'
-echo '_'
+echo '_ Test  Run.'
+echo ''
 
 if [ -z $1 ]
 then
-    echo '_  ERROR! Please, set application tag.'
-    echo '_'
-    echo '_                         End Submit Main                         _'
-    echo '_._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
-    echo '_'
+    echo '  ERROR! Please, set application tag.'
+    echo ''
+    echo '_ End Test Run'
+    echo ''
     exit
 else
     APP=$1
@@ -24,11 +19,10 @@ fi
 
 if [ -z $1 ]
 then
-    echo '_  ERROR! Please, set gangabin.'
-    echo '_'
-    echo '_                         End Submit Main                         _'
-    echo '_._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
-    echo '_'
+    echo '  ERROR! Please, set gangabin.'
+    echo ''
+    echo '_ End Test Run.'
+    echo ''
     exit
 else
     GANGABIN=$1
@@ -37,11 +31,10 @@ fi
 
 if [ -z $1 ]
 then
-    echo '_  ERROR! Please, set test ID.'
-    echo '_'
-    echo '_                         End Submit Main                         _'
-    echo '_._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
-    echo '_'
+    echo '  ERROR! Please, set test ID.'
+    echo ''
+    echo '_ End Test Run.'
+    echo ''
     exit
 else
     TESTID=$1
@@ -49,13 +42,12 @@ else
 fi
 
 
-if [ -f /tmp/test-run_$APP.running ]
+if [ -f /tmp/test-run_$APP_$TESTID.running ]
 then
-    echo '_  ERROR! Script 'test-run_$APP already running.
-    echo '_'
-    echo '_                         End Server Main                         _'
-    echo '_._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
-    echo '_'
+    echo '  ERROR! Script 'test-run_$APP_$TESTID already running.
+    echo ''
+    echo '_ End Server Main.'
+    echo ''
     exit
 fi
 
@@ -63,47 +55,34 @@ fi
 HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
 
 touch /tmp/test-run_$APP.running
-echo '_  Lock written: '/tmp/test-run_$APP.running
+echo '  Lock written: '/tmp/test-run_$APP.running
 
-echo '_'
+echo ''
 source $HCDIR/scripts/config/config-main.sh $APP
-echo '_'
+echo ''
 
-echo '_'
-source $HCDIR/scripts/config/config-submit.sh $APP $GANGABIN $*
-echo '_'
+echo ''
+source $HCDIR/scripts/config/config-submit.sh $GANGABIN $*
+echo ''
 
 cd $HCDIR
 
-echo '_ CODE: 'python/scripts/cron_dispatcher.py -a $APP -f test_generate -t $TESTID -o [$*]
-echo '_'
+echo '  CODE: 'python/scripts/dispatcher.py -f test_generate -t $TESTID -o [$*]
+echo ''
 
-./python/scripts/cron_dispatcher.py -a $APP -f test_generate -t $TESTID -o [$*]
+##GENERATE
+./python/scripts/dispatcher.py -f test_generate -t $TESTID -o [$*]
 
-# Handle test job submission (generated==1 and submitted==0)
-#   creates testdirs/test_N/gangadir
-#   runs separate gangarobot on each test_N directory
-./python/scripts/cron_dispatcher.py -a $APP -f test_submit -t $TESTID -o [$*]
+##SUBMIT
+./python/scripts/dispatcher.py -f test_submit -t $TESTID -o [$*]
 
-# Handle test cleanup (submitted==1 and endtime<=now)
-#   creates www/sitetests/test_N
-#./scripts/test-report $APP $TESTID $*
+##REPORT
+./python/scripts/dispatcher.py -f test_report -t $TESTID -o [$*]
 
 
-#echo '_ CODE: 'python/scripts/cron_dispatcher.py -a $APP -f register_host
-#echo '_'
-#python python/scripts/cron_dispatcher.py -a $APP -f register_host
-#echo '_'
-#echo '_ CODE: 'python/scripts/cron_dispatcher.py -a $APP -f create_at_job
-#echo '_'
-#python python/scripts/cron_dispatcher.py -a $APP -f create_at_job
-#echo '_'
-#echo '_ END CODE'
+rm -f /tmp/test-run_$APP_$TESTID.running
 
-rm -f /tmp/test-run_$APP.running
-
-echo '_  Lock released: '/tmp/test-run_$APP.running
-echo '_'
-echo '_                         End Server Main                         _'
-echo '_._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
-echo '_'
+echo '  Lock released: '/tmp/test-run_$APP_$TESTID.running
+echo ''
+echo '_ End Test Run.'
+echo ''

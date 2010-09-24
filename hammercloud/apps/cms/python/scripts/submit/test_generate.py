@@ -4,7 +4,7 @@ from datetime import datetime
 
 class TestGenerate():
 
-  def run(self,test,dic):
+  def run(self,test):
 
     sites={}
     sitenumjobs={}

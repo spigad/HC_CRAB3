@@ -4,8 +4,8 @@ from datetime import datetime,timedelta
 
 class CreateFunctionalTests():
 
-  def run(self,dic):
-    app = dic['-a']
+  def run(self,app,dic):
+
     if app == 'core':
       print '[ERROR][%s][create_functional_tests] not available at core app.'%(app)
       return 1

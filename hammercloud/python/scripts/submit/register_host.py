@@ -4,8 +4,7 @@ import commands
 
 class RegisterHost():
 
-  def run(self,dic):
-    app = dic['-a']
+  def run(self,app,dic):
 
     #IMPORTS
     host = custom_import('hc.%s.models.Host'%(app))

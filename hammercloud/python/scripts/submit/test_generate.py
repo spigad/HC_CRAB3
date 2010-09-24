@@ -3,8 +3,7 @@ from datetime import datetime
 
 class TestGenerate():
 
-  def check(self,dic):
-    app = dic['-a']
+  def check(self,app,dic):
     if app == 'core':
       print '[ERROR][%s][test_generate] not available at core app.'%(app)
       return 0
@@ -29,13 +28,11 @@ class TestGenerate():
       return 0
 
     if not test.starttime <= datetime.now():
-      print test.starttime
-      print datetime.now()
       print '[ERROR][%s][test_generate] Test %s starttime value is on the future.'%(app,testid)
       return 0
 
     if not test.state == 'scheduled':
-      print '[ERROR][%s][test_generate] Test %s is on state: %s instead of scheduled.'%(app,test.id,test.state)
+      print '[ERROR][%s][test_generate] Test %s is on state %s, instead of scheduled.'%(app,test.id,test.state)
       return 0
 
     print '[INFO][%s][test_generate] Generating jobs for Test %s.'%(app,testid)
@@ -43,23 +40,23 @@ class TestGenerate():
     return test
    
 
-  def run(self,dic):
+  def run(self,app,dic):
     
-    test = self.check(dic)
+    test = self.check(app,dic)
     if test:
 
-      tg = custom_import('%s.python.scripts.submit.test_generate.TestGenerate'%(dic['-a']))
+      tg = custom_import('%s.python.scripts.submit.test_generate.TestGenerate'%(app))
       if tg:
-        if tg().run(test,dic):
+        if tg().run(test):
 
           test.state = 'submitting'
           test.save()
-          print '[INFO][%s][test_generate] Test %s is in submitting state.'%(dic['-a'],test.id)
+          print '[INFO][%s][test_generate] Test %s is in submitting state.'%(app,test.id)
 
           return 1
       else:
         #Game over !                                      
-        print '[ERROR][%s][test_generate] Could not import %s.python.scripts.submit.test_generate.TestGenerate'%(dic['-a'],dic['-a'])
+        print '[ERROR][%s][test_generate] Could not import %s.python.scripts.submit.test_generate.TestGenerate'%(app,app)
         return 0
     else:
       #Game over !
