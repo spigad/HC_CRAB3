@@ -4,7 +4,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    ('', ''),
+    ('Mario', 'mario.ubeda.garcia@cern.ch'),
 )
 
 MANAGERS = ADMINS
@@ -36,11 +36,11 @@ DATABASES = {
     },
     'lhcb': {
         'ENGINE': 'mysql',
-        'NAME': 'hc_lhcb',
-        'USER': 'gangarbt',
-        'PASSWORD': 'chinFanill0',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': '',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
     }
 }
 
@@ -75,12 +75,12 @@ USE_L10N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = '/data/hammercloud/web/media/'
+MEDIA_ROOT = '/data/dev/hammercloud/web/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = 'http://lxvm0351.cern.ch/media/'
+MEDIA_URL = 'http://hammercloud.cern.ch/dev/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -103,6 +103,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'hc.ssl.SSLRedirect',
 )
 
 ROOT_URLCONF = 'hc.urls'
@@ -111,7 +112,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    '/data/hammercloud/web/templates',
+    '/data/dev/hammercloud/web/templates',
     
     
 )
@@ -124,7 +125,6 @@ INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
-#    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.admin',
 )

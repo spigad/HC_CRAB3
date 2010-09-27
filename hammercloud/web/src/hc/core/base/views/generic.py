@@ -18,7 +18,7 @@ def defaultContext(request):
 
   request_path = request.path
 
-  app = request_path.split('/')[3]
+  app = request_path.split('app/')[1].split('/')[0]
   if request_path.find('admin')>-1:
     request_path = reverse('index-view')
 

@@ -6,13 +6,14 @@
 {% endblock  %}
 
 {% block css %}
-  {{block.super}}
   <link type="text/css" href="{{MEDIA_URL}}css/datatables.css" rel="stylesheet"/>
+  {{block.super}}
 {% endblock %}
 
 {% block javascript %}
   {{block.super}}
   <script type="text/javascript" src="{{MEDIA_URL}}js/jquery.dataTables.js"></script>
+
   <script type="text/javascript">
     $(document).ready(function() {
       $('#testlist').dataTable({
@@ -49,39 +50,37 @@
   <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/> 
   <h2>Test list</h2>
 
-  <div>
-    <table cellpadding="0" cellspacing="0" border="0" class="testlist" id="testlist">
-      <thead>
-        <tr>
-          <th>ID&nbsp; <span>test ID<br/>>id:value</span></th>
-          <th>Status&nbsp;&nbsp;<span>test status<br/>>status:value</span></th>
-          <th>Host&nbsp;&nbsp;<span>host running test<br/>>host:value</span></th>
-          <th>Cloud(s)<span>clouds with at<br/>least one site in the test<br/>>cloud:value</span></th>
-          <th>Templ.&nbsp;<span>Test template id<br/>>template:value</span></th>
-          <th>Input<br/>type<span>input type selected<br/>>inputtype:value</span></th>
-          <th>Start time<br/>(CET)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>test start time<br/>>starttime:value</span></th>
-          <th>End time<br/>(CET)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>test end time<br/>>endtime:value</span></th>
-          <th>Sites&nbsp;&nbsp;<span>number of test sites<br/>>sites:value</span></th>
-          <th>Jobs&nbsp;&nbsp;<span>total number of jobs<br/>>jobs:value</span></th>
-          <th>Link&nbsp;&nbsp;<span>See in detail</span></th>
-        </tr>
-      </thead>
-      <tbody>
-      </tbody>
-      <tfoot>
-        <th>ID</th>
-        <th>Status</th>
-        <th>Host</th>
-        <th>Cloud(s)</th>
-        <th>Templ.</th>
-        <th>Input type</th>
-        <th>Start time (CET)&nbsp;</th>
-        <th>End time (CET)&nbsp;</th>
-        <th>Sites&nbsp;</th>
-        <th>Jobs&nbsp;</th>
-        <th>Link</th>
-      </tfoot>
-    </table>
-  </div>
+  <table cellpadding="0" cellspacing="0" border="0" class="testlist" id="testlist">
+    <thead>
+      <tr>
+        <th>ID&nbsp; <span>test ID<br/>>id:value</span></th>
+        <th>Status&nbsp;&nbsp;<span>test status<br/>>status:value</span></th>
+        <th>Host&nbsp;&nbsp;<span>host running test<br/>>host:value</span></th>
+        <th>Cloud(s)<span>clouds with at<br/>least one site in the test<br/>>cloud:value</span></th>
+        <th>Templ.&nbsp;<span>Test template id<br/>>template:value</span></th>
+        <th>Input<br/>type<span>input type selected<br/>>inputtype:value</span></th>
+        <th>Start time<br/>(CET)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>test start time<br/>>starttime:value</span></th>
+        <th>End time<br/>(CET)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>test end time<br/>>endtime:value</span></th>
+        <th>Sites&nbsp;&nbsp;<span>number of test sites<br/>>sites:value</span></th>
+        <th>Jobs&nbsp;&nbsp;<span>total number of jobs<br/>>jobs:value</span></th>
+        <th>Link&nbsp;&nbsp;<span>See in detail</span></th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+    <tfoot>
+      <th>ID</th>
+      <th>Status</th>
+      <th>Host</th>
+      <th>Cloud(s)</th>
+      <th>Templ.</th>
+      <th>Input type</th>
+      <th>Start time (CET)&nbsp;</th>
+      <th>End time (CET)&nbsp;</th>
+      <th>Sites&nbsp;</th>
+      <th>Jobs&nbsp;</th>
+      <th>Link</th>
+    </tfoot>
+  </table>
 
 {% endblock %}

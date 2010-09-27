@@ -33,3 +33,16 @@ a {
 #bottom-bar {
   background-color: #660000;##af4724;
 }
+
+table.testlist thead th{
+  color: #660000;
+  border-bottom-color: #660000;
+}
+
+th:hover span{
+  border-color: #660000;
+}
+
+td span.legend{
+  border-color: #660000;
+}
