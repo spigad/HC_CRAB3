@@ -1,0 +1,21 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  {% if testoptions %}
+    <h2>TestOptions ({{ testoptions|length }})</h2>
+    <table class="list">
+    {% for testoption in testoptions %}
+      <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
+          onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';">
+        <td>{{ testoption.id }}.-</td><td>{{ testoption.name }}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <h2>TestOptions</h2>
+    No entries.
+  {% endif %}
+
+{% endblock %}

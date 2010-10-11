@@ -21,14 +21,14 @@ def method(self,request,queryset):
 
 def clone(object):
   new_obj = []
-  try:
-    new_obj = clone_object(object)
-    new_obj.save()
+#  try:
+  new_obj = clone_object(object)
+  new_obj.saveClone()
 
-    if clone_rules.INLINES.has_key(new_obj._meta.object_name):
-      inlines = clone_inlines(new_obj,object)
-  except:
-    new_obj = []
+  if clone_rules.INLINES.has_key(new_obj._meta.object_name):
+    inlines = clone_inlines(new_obj,object)
+#  except:
+#    new_obj = []
 
   return new_obj
 
@@ -64,9 +64,10 @@ def clone_inlines(new_obj,object):
 
 ## METHOD TO CLONE objects with unique_together=True
 def clone_unique(object,key,new_object):
-  
+
   obj = clone_object(object)
   setattr(obj,key,new_object)
-  obj.save()
+  obj.saveClone()
+    
   return obj
 

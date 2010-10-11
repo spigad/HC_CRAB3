@@ -45,14 +45,14 @@ class TestReport():
   def report(self,test,app,dic):
 
     # Path of the working directory
-    if os.environ.has_key('HCDIR'):
-      HCDIR = os.environ['HCDIR']
+    if os.environ.has_key('HCAPP'):
+      HCAPP = os.environ['HCAPP']
     else:
-      print '[ERROR][%s][test_report] No HCDIR found'%(app)
+      print '[ERROR][%s][test_report] No HCAPP found'%(app)
       return 0
 
-    print '[INFO][%s][test_report] /bin/sh %s/scripts/submit/test_report.sh %d "%s %s"'%(app,HCDIR,test.id,test.extraargs,test.testoption.report)
-    result =  os.system('/bin/sh %s/scripts/submit/test_report.sh %d "%s %s"'%(HCDIR,test.id,test.extraargs,test.testoption.report))
+    print '[INFO][%s][test_report] /bin/sh %s/scripts/submit/test_report.sh %d "%s %s"'%(app,HCAPP,test.id,test.extraargs,test.testoption.report)
+    result =  os.system('/bin/sh %s/scripts/submit/test_report.sh %d "%s %s"'%(HCAPP,test.id,test.extraargs,test.testoption.submit))
 
     #0 means good in shell scripting.
     if result == 0:
@@ -64,16 +64,6 @@ class TestReport():
     test = self.check(app,dic)
     if test:
       self.report(test,app,dic)
-#      if self.report(test,dic):
-#        test.state = 'running'
-#        test.save()
-#        print "[INFO][%s][test_submit] Test %d. Successfully submitted."%(dic['-a'],test.id)
-#        return 1      
-#      else:
-#        test.state = 'error'
-#        test.save()
-#        print "[ERROR][%s][test_submit] Test %d. Marking as submitted anyway to prevent infinite submission loop."%(dic['-a'],test.id)
-#        return 0
     else:
       print 'Game over !'
       return 0

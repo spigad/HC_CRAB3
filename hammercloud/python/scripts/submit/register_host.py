@@ -2,7 +2,7 @@ from hc.core.utils.generic.class_func import custom_import
 
 import commands
 
-class RegisterHost():
+class RegisterHost:
 
   def run(self,app,dic):
 

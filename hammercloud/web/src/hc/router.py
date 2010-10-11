@@ -6,7 +6,7 @@ class PrimaryRouter(object):
     If the label belongs to a plugin, it reads from the pluign specific DB
     Otherwise, it reads from the defautl DB
     '''
-    
+
     PLUGINS = ['atlas','cms','lhcb']
 
     if model._meta.app_label in PLUGINS:
@@ -33,6 +33,7 @@ class PrimaryRouter(object):
     '''
     Literally: no opinion about objects relations and foreign keys.
     '''
+   
     return None
 
   def allow_syncdb(self, db, model):

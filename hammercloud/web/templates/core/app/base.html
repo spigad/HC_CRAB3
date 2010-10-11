@@ -8,7 +8,7 @@
     {% endblock %}
 
     {% block css %}
-      <link type="text/css" href="{{ MEDIA_URL }}css/ui-lightness/jquery-ui-1.8.2.custom.css" rel="stylesheet" />
+      <link type="text/css" href="{{ MEDIA_URL }}css/{{app}}/jquery-ui-1.8.5.custom.css" rel="stylesheet" />
       <link type="text/css" href="{{ MEDIA_URL }}css/style.css" rel="stylesheet" />
       {% if app %}
         <link type="text/css" href="{{ MEDIA_URL }}css/{{app}}/style.css" rel="stylesheet" />
@@ -23,7 +23,7 @@
     <script type="text/javascript">
       $(document).ready(function()
         {  
-          {% block docready%}
+          {% block docready %}
             $('#jsddm > li').bind('mouseover', jsddm_open);
             $('#jsddm > li').bind('mouseout',  jsddm_timer);
 	  {% endblock %} 
@@ -43,7 +43,7 @@
         {% if user.is_authenticated %}
     	  <div style="float: right;">
             You are connected as {{ user.username }}, 
-            <a style="text-decoration: underline;" href="{% url logout-view %}?next=/hc/app/{{ app }}">click here to Logout!</a>
+            <a style="text-decoration: underline;" href="{% url logout-view %}?next=/dev/hc/app/{{ app }}">click here to Logout!</a>
           </div>
     	{% endif %}
 
@@ -65,7 +65,7 @@
                 <ul>
                   <li><a href="{% url testlist-view app,'scheduled' %}">Scheduled</a></li>
                   <li><a href="{% url testlist-view app,'submitting' %}">Submitting</a></li>
-                  <li><a href="{% url testlist-view app,'error' %}">Submit Error</a></li>
+                  <li><a href="{% url testlist-view app,'error' %}">Error</a></li>
                   <li><a href="{% url testlist-view app,'running' %}">Running</a></li>
                   <li><a href="{% url testlist-view app,'completed' %}">Completed</a></li>
                   <li><a href="{% url testlist-view app,'all' %}">All</a></li>
@@ -79,19 +79,7 @@
                 </ul>
               </li>
               <li><a href="{% url robot-view app %}">Robot</a></li>
-              <li><a href=''>More HC...</a>
-                <ul>
-                  <li><a href="{% url clouds-view app %}">Clouds</a></li> 
-                  <li><a href="{% url dspatterns-view app %}">Dspatterns</a></li>
-                  <li><a href="{% url hosts-view app %}">Hosts</a></li>
-                  <li><a href="{% url jobtemplates-view app %}">JobTemplates</a></li>
-                  <li><a href="{% url metric_types-view app %}">MetricTypes</a></li>
-                  <li><a href="{% url optionfiles-view app %}">OptionFiles</a></li>
-                  <li><a href="{% url sites-view app %}">Sites</a></li>                
-                  <li><a href="{% url templates-view app %}">Templates</a></li>
-                  <li><a href="{% url usercodes-view app %}">UserCodes</a></li>
-                </ul>
-              </li>
+              <li><a href="{% url more-view app %}">More HC...</a></li>
             {% endblock %}
 
           </ul>

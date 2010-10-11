@@ -2,7 +2,7 @@ body {
   color: #660000;#af4724;
 }
 
-h1,h2,h3 {
+h1,h2 {
   color: #660000;#af4724;
 }
 
@@ -39,6 +39,11 @@ table.testlist thead th{
   border-bottom-color: #660000;
 }
 
+table.testlist tfoot th{
+  color: #660000;
+  border-color:#660000;
+}
+
 th:hover span{
   border-color: #660000;
 }
@@ -46,3 +51,39 @@ th:hover span{
 td span.legend{
   border-color: #660000;
 }
+
+#content .testslist th{
+  background-color: #660000;
+}
+
+.testlog a{
+  color: #660000;
+}
+
+.more_plots a{
+  color: #660000;
+}
+
+th:hover span {
+  border-color: #660000;
+  color: #660000;
+}
+
+table.display thead th{
+  color:#660000;
+  border-color:#660000;
+}
+
+table.display tfoot th{
+  color:#660000;
+  border-color:#660000;
+}
+
+#tabs a{
+  color:#660000;
+}
+
+#.map td span{
+#  border-color: #660000;
+#}
+

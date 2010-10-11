@@ -1,0 +1,15 @@
+<div id="testlogs">
+
+  {% if logs %}
+    <table>
+    {% for log in logs %}
+      <tr class={{log.severity}}><td style="width:150px;">{{log.mtime}}</td><td style="width:150px;">[{{log.severity|upper}}]</td><td style="width:auto">{{log.comment}}</td><td style="width:150px;">by {{log.user}}</td></tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <h3>No logs reported.</h3>
+  {% endif %}
+
+</div>
+
+<a "href="{% url ajaxtestlogreport-view app, test.id %}">Add log &raquo;</span></a>

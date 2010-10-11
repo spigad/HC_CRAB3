@@ -1,5 +1,5 @@
-from scripts.server import create_functional_tests
-from scripts.submit import register_host,create_at_job,test_generate,test_submit#,test_report
+from scripts.server import create_functional_tests,robot
+from scripts.submit import register_host,create_at_job,test_generate,test_submit,test_report
 
 class CronActions:
 
@@ -24,6 +24,9 @@ class CronActions:
     ts.run(app,dic)
 
   def test_report(self,app,dic):
-    pass
-#    tr = test_report.TestReport()
-#    tr.run(dic)
+    tr = test_report.TestReport()
+    tr.run(app,dic)
+
+  def robot(self,app,dic):
+    r = robot.Robot()
+    r.run(app,dic)

@@ -1,0 +1,22 @@
+{% extends 'core/app/base.html' %}
+
+{% block content %}
+
+  <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  {% if backends %}
+    <h2>Backends ({{ backends|length }})</h2>
+    <table class="list">
+    {% for backend in backends %}
+      <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
+          onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
+          onclick="DoNav('');">
+        <td>{{ backend.id }}.-</td><td>{{ backend.name }}</td><td>&raquo;</td>
+      </tr>
+    {% endfor %}
+    </table>
+  {% else %}
+    <h2>Backends</h2>
+    No entries.
+  {% endif %}
+
+{% endblock %}

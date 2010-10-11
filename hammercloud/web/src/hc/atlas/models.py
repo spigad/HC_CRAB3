@@ -131,7 +131,6 @@ class Result(ResultBase):
   ganga_number_of_files = models.IntegerField(null=True)
   backend_id            = models.CharField(max_length=1023)
   backend_reason        = models.CharField(max_length=1023)
-  fixed                 = models.IntegerField(null=True)
   net_eth_rx_preathena  = models.IntegerField(null=True)
   net_eth_rx_postathena = models.IntegerField(null=True)
   pandatime1            = models.IntegerField(null=True)

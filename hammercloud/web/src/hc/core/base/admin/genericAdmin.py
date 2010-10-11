@@ -1,7 +1,7 @@
 from django.contrib import admin
-from django.core.mail import mail_admins
+#from django.core.mail import mail_admins
 
-from hc.core.base.models.managers.admin import backend_am,cloud_am,template_am,test_am,test_journal_am,test_user_am,template_user_am
+from hc.core.base.models.managers.admin import backend_am,cloud_am,template_am,test_am,test_log_am,test_user_am,template_user_am
 from hc.core.base.forms.forms import ReadOnlyAdminFields,ModelLinkAdminFields
 from hc.core.base.forms.forms import TestAdminForm,TestSuperUserAdminForm
 
@@ -25,19 +25,20 @@ class ActionsAdminBase(admin.ModelAdmin):
   def get_actions(self, request):
     actions = super(ActionsAdminBase, self).get_actions(request)
 
-    del actions['delete_selected']
+    app = request.path.split('admin/')[1].split('/')[0]
+    app_admin = request.user.groups.filter(name__endswith='admin').filter(name__startswith=app)
 
-#    if not request.user.is_superuser:
-#      del actions['delete_selected']
-#    else:
-#      del actions['delete_marked']
+    if not request.user.is_superuser and not app_admin:
+      del actions['delete_selected']
+    else:
+      del actions['delete_marked']
 
     if self.model._meta.unique_together:
       del actions['clone']
 
     if self.model._meta.object_name == "Test":
 
-      if not request.user.is_superuser:
+      if not request.user.is_superuser and not app_admin:
         del actions['cancel']
         del actions['make_approved']
 
@@ -176,9 +177,9 @@ class OptionFileAdminBase(ActionsAdminBase):
     abstract = True
 
 class TestOptionAdminBase(ActionsAdminBase):
-  list_display = ('description',)
+  list_display = ('name','description',)
   fieldsets = [
-    (None, {'fields': ['description','config','submit','report']})
+    (None, {'fields': ['name','description','config','submit','report']})
   ]   
 
   class	Meta:
@@ -202,9 +203,9 @@ class UserCodeAdminBase(ActionsAdminBase):
 ##
 
 class SiteAdminBase(ActionsAdminBase):
-  list_display = ('name', 'description','cloud', 'backend', 'enabled')
+  list_display = ('name', 'description', 'cloud', 'backend', 'enabled')
   fieldsets = [
-    (None, {'fields': ['name','description','cloud','backend','ddm','enabled','queue']}),
+    (None, {'fields': ['name','alternate_name','description','cloud','backend','ddm','enabled','queue']}),
   ]
 
   class Meta:
@@ -234,7 +235,7 @@ class TemplateAdminBase(ActionsAdminBase):
   fieldsets = [
     ('Type information', {'fields': ['category','description']                                }),
     (None,               {'fields': ['lifetime','active']                                     }),
-    ('Files',            {'fields': ['jobtemplate','usercode','optionfile','metricperm']}),
+    ('Files',            {'fields': ['jobtemplate','usercode','optionfile','metricperm']      }),
     (None,               {'fields': ['inputtype','testoption','gangabin','extraargs']         }),
   ]
 
@@ -293,7 +294,7 @@ class TemplateSiteAdminBase(ActionsAdminBase):
 
 class TemplateUserAdminBase(admin.ModelAdmin):
 
-  list_display = ('template',template_user_am.getTemplateUserNameStringAdmin)
+  list_display = ('template','user')#template_user_am.getTemplateUserNameStringAdmin)
   fieldsets = [ 
     (None,{'fields':['template','user']})
   ]
@@ -344,7 +345,7 @@ class TemplateInlineBase(admin.TabularInline):
 ## *TestCloudAdminBase
 ## *TestDspatternAdminBase
 ## *TestHostAdminBase
-## *TestJournalAdminBase
+## *TestLogAdminBase
 ## *TestSiteAdminBase
 ## *TestUserAdminBase
 ##
@@ -368,26 +369,36 @@ class TestAdminBase(ReadOnlyAdminFields,ModelLinkAdminFields,ActionsAdminBase):
       (None              , {'fields': ['description']        }),
       ('Template'        , {'fields': ['template']           }),
     ]
+    
+    app = request.path.split('admin/')[1].split('/')[0]
+    app_admin = request.user.groups.filter(name__endswith='admin').filter(name__startswith=app)
+#    app_admin = request.user.groups.filter(name__endswith='admin')
 
-    if request.user.is_superuser:
+    if request.user.is_superuser or app_admin:
       self.form = TestSuperUserAdminForm
     else:
       self.form = TestAdminForm
     return super(TestAdminBase, self).add_view(request,*args, **kwargs)
 
   def change_view(self,request, *args, **kwargs):
-    self.modellink = ('template',)  
-    self.readonly  = ('metricperm','inputtype','testoption','jobtemplate','usercode','optionfile')
+    self.modellink = ('template','metricperm','testoption','jobtemplate','usercode','optionfile')  
+    self.readonly  = ('inputtype',)
 
     self.fieldsets = [
       ('Date information', {'fields': ['starttime','endtime']                                   }),
       (None              , {'fields': ['description']                                           }),
-      ('Files'           , {'fields': ['jobtemplate','usercode','optionfile','metricperm']}),
+      ('Files'           , {'fields': ['jobtemplate','usercode','optionfile','metricperm'],
+                            'description':'<span style="color:#417690; font-style:italic; font-size:10px;">Lost? Please, visit https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud for details.</span>'
+      }),
       (None              , {'fields': ['inputtype','testoption','gangabin','extraargs']         }),
       ('Template'        , {'fields': ['template']                                              }),
     ]
 
-    if request.user.is_superuser:
+    app = request.path.split('admin/')[1].split('/')[0]
+    app_admin = request.user.groups.filter(name__endswith='admin').filter(name__startswith=app)
+    #app_admin = request.user.groups.filter(name__endswith='admin')
+
+    if request.user.is_superuser or app_admin:
       self.form = TestSuperUserAdminForm
     else:
       self.form = TestAdminForm
@@ -440,9 +451,9 @@ class TestHostAdminBase(ActionsAdminBase):
   class Meta:
     abstract = True
 
-class TestJournalAdminBase(admin.ModelAdmin):
+class TestLogAdminBase(admin.ModelAdmin):
 
-  list_display = ('test','severity','user',test_journal_am.getTestJournalCommentStringAdmin)
+  list_display = ('test','severity','user',test_log_am.getTestLogCommentStringAdmin)
   fieldsets = [
     (None,     {'fields':['test','severity','user']}),
     ('Comment',{'fields':['comment']})
@@ -473,33 +484,38 @@ class TestStateAdminBase(ActionsAdminBase):
 
 class TestUserAdminBase(admin.ModelAdmin):
 
-  list_display = ('test',test_user_am.getTestUserNameStringAdmin)
+  list_display = ('test','user')#test_user_am.getTestUserNameStringAdmin)
   fieldsets = [
     (None,{'fields':['test','user']})
   ]
 
-  def delete_view(self, request, object_id, extra_context=None):
-
-    allowed_states = ['draft','unapproved','tobescheduled','scheduled']
-
-    request_path = request.path
-    app = request_path.split('/')[3]
-
-    tu = custom_import('hc.'+app+'.models.TestUser')
-    test = tu.objects.get(pk=object_id).test
-    if not test.state in allowed_states:
-      raise Http404
-
-    users = [str(tu.user) for tu in test.getTestUsers_for_test.all()]
-    user = str(request.user)
-
-    if (user in users) or (request.user.is_superuser):
-      return super(TestUserAdminBase, self).delete_view(request, object_id, extra_context=None)
-    else:
-      raise Http404
-
   class Meta:
     abstract = True
+
+#  def delete_view(self, request, object_id, extra_context=None):
+#
+#    allowed_states = ['draft','unapproved','tobescheduled','scheduled']
+#
+#    request_path = request.path
+#    app = request_path.split('/')[3]
+#
+#    tu = custom_import('hc.'+app+'.models.TestUser')
+#    test = tu.objects.get(pk=object_id).test
+#    if not test.state in allowed_states:
+#      raise Http404
+#
+#    users = [str(tu.user) for tu in test.getTestUsers_for_test.all()]
+#    user = str(request.user)
+#
+#    app_admin = request.user.groups.filter(name__endswith='admin').filter(name__startswith=app)
+#
+#    if (user in users) or (request.user.is_superuser) or (app_admin):
+#      return super(TestUserAdminBase, self).delete_view(request, object_id, extra_context=None)
+#    else:
+#      raise Http404
+
+#  class Meta:
+#    abstract = True
 
 class TestInlineBase(admin.TabularInline):
 

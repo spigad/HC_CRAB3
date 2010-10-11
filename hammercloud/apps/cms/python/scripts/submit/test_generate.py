@@ -57,11 +57,19 @@ class TestGenerate():
   
     if os.environ.has_key('CMSSW_VERSION'):
       CMSSW_VERSION = os.environ['CMSSW_VERSION']
+      if CMSSW_VERSION != inputtype:
+        print 'CMSSW_VERSION in environment:%s, CMSSW_VERSION in inputtype: %s.'
+        return 0
     else:
       print 'No CMSSW_VERSION found'
-      CMSSW_VERSION = inputtype 
+      return 0
+#      CMSSW_VERSION = inputtype 
     
-    PSET = HCDIR+'external/cms/crab/'+str(CMSSW_VERSION)+'/src'+str(usercode)
+#    if not CMSSW_VERSION in usercode:
+#      print 'Usercode selected (%s) does not match CMSSW_VERSION (%s)'%(usercode,CMSSW_VERSION)    
+#      return 0
+
+    PSET = HCDIR+'/external/cms/crab/configurations/'+str(usercode)
 
     print "**** Start DBS discovery"
     

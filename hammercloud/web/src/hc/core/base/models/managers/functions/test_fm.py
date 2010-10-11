@@ -41,7 +41,11 @@ def getTestBackendNames(test):
 #########################################################################
 
 def getTestCloudCodes(test):
-  return [tc.cloud.code for tc in test.getTestClouds_for_test.all()]
+#  return [tc.cloud.code for tc in test.getTestClouds_for_test.all()]
+  return [dic['site__cloud__code'] for dic in test.getTestSites_for_test.all().values('site__cloud__code').distinct()]
+
+def getTestNumClouds(test):
+  return len(test.getTestSites_for_test.all().values('site__cloud__code').distinct())
 
 #def getClouds(test):
 #  '''
@@ -69,7 +73,7 @@ def getTestCloudCodes(test):
 #########################################################################
 
 def getTestHostNames(test):
-  return [th.host.name for th in test.getTestHost_for_test.all()]
+  return [th.host.name for th in test.getTestHosts_for_test.all()]
 
 
 #########################################################################

@@ -56,8 +56,10 @@ class Datahelper:
   def annotateSitesEfficiency(self,sites):
 
     for site in sites:
- 
-      if site.getSummaryRobots_for_site.count():
-        site.eff = site.getSummaryRobots_for_site.all()[0]
+
+      sr = site.getSummaryRobots_for_site.all()   
+      if sr: 
+        sr = sr[0]
+        site.eff = sr.efficiency
 
     return sites

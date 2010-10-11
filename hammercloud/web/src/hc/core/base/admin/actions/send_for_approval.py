@@ -1,4 +1,6 @@
 from django.core.mail import mail_admins
+from hc.core.utils.generic.class_func import custom_import
+
 
 def method(self, request, queryset):
 
@@ -17,8 +19,8 @@ def method(self, request, queryset):
         objs['wrong'] += ['%s/admin/%s/test/%d/ \n  reason: No hosts assigned.\n'%(url,app,t.id)]
       elif not t.getTestSites_for_test.all():
         objs['wrong'] += ['%s/admin/%s/test/%d/ \n  reason: No sites assigned.\n'%(url,app,t.id)]
-      elif not t.getTestUsers_for_test.all():
-        objs['wrong'] += ['%s/admin/%s/test/%d/ \n  reason: No users assigned.\n'%(url,app,t.id)]
+#      elif not t.getTestUsers_for_test.all():
+#        objs['wrong'] += ['%s/admin/%s/test/%d/ \n  reason: No users assigned.\n'%(url,app,t.id)]
       elif not t.getTestDspatterns_for_test.all():
         objs['wrong'] += ['%s/admin/%s/test/%d/ \n  reason: No dspatterns assigned.\n'%(url,app,t.id)]
 
@@ -28,6 +30,14 @@ def method(self, request, queryset):
         t.state = 'tobescheduled'
         objs['auto'] += ['%s/admin/%s/test/%d/ \n Starttime: %s'%(url,app,t.id,t.starttime.ctime())]
       else:
+ 
+        own_user = t.getTestUsers_for_test.filter(user=request.user.username)
+        #If the person who submits the test is not in the TestUsers list, we add him/her/it.
+        if not own_user:
+          TestUser = custom_import('hc.'+app+'.models.TestUser')  
+          tu = TestUser(test=t,user=request.user.username)
+          tu.save()
+
         t.state='unapproved'
         objs['send'] += ['%s/admin/%s/test/%d/ \n Starttime: %s'%(url,app,t.id,t.starttime.ctime())]
 

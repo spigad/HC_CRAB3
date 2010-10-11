@@ -5,54 +5,86 @@ from django.contrib.auth.decorators import login_required
 def index(request):
   pass
 
+@login_required
+@GenView_dec()
+def backends(request):
+  pass
+
+@login_required
 @GenView_dec()
 def clouds(request):
   pass
 
+@login_required
 @GenView_dec()
 def cloud(request,cloud_id):
   pass
 
+@login_required
 @GenView_dec()
 def dspatterns(request):
   pass
 
+@login_required
 @GenView_dec()
 def hosts(request):
   pass
 
+@login_required
 @GenView_dec()
 def host(request,host_id):
   pass
 
+@login_required
 @GenView_dec()
 def jobtemplates(request,jobtemplate_id):
   pass
 
+@login_required
 @GenView_dec()
 def metric_types(request):
   pass
 
+@login_required
 @GenView_dec()
-def metric_type(request,host_id):
+def metric_permissions(request,metric_permission_id):
   pass
 
+@login_required
+@GenView_dec()
+def metric_type(request,metric_type_id):
+  pass
+
+@GenView_dec()
+def more(request):
+  pass
+
+@login_required
 @GenView_dec()
 def optionfiles(request,optionfile_id):
   pass
 
+@login_required
+@GenView_dec()
+def testoptions(request,testoption_id):
+  pass
+
+@login_required
 @GenView_dec()
 def sites(request):
   pass
 
+@login_required
 @GenView_dec()
 def site(request,site_id):
   pass
 
+@login_required
 @GenView_dec()
 def templates(request):
   pass
 
+@login_required
 @GenView_dec()
 def template(request,template_id):
   pass
@@ -65,6 +97,17 @@ def test(request,test_id):
 def testlist(request,list_type):
   pass
 
+@login_required
+@GenView_dec()
+def testclone(request,test_id):
+  pass
+
+@login_required
+@GenView_dec()
+def testmodify(request,test_id):
+  pass
+
+@login_required
 @GenView_dec()
 def usercodes(request, usercode_id):
   pass
@@ -77,6 +120,10 @@ def get_list(request,type,test_id):
 def testaccordion(request,test_id,type):
   pass
 
+#######################################################
+## AJAX BLOCK
+#######################################################
+
 @GenView_dec()
 def ajaxtestmetrics(request,test_id):
   pass
@@ -86,7 +133,12 @@ def ajaxsitemetrics(request,test_id):
   pass
 
 @GenView_dec()
-def ajaxjournal(request,test_id):
+def ajaxtestlogs(request,test_id):
+  pass
+
+@login_required
+@GenView_dec()
+def ajaxtestlogreport(request, test_id):
   pass
 
 #######################################################
@@ -106,7 +158,6 @@ def robot(request):
 def stats(request):
   pass
 
-@login_required
 @GenView_dec()
 def statistics(request):
   pass

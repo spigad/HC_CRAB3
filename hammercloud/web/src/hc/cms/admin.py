@@ -1,4 +1,4 @@
-from hc.cms.forms import MetricPermForm, TemplateUserForm, TestUserForm
+from hc.cms.forms import MetricPermForm, TemplateUserForm, TestUserForm, TestLogForm
 from hc.cms.models import *
 
 from django.contrib import admin
@@ -138,7 +138,7 @@ class TemplateUserAdmin(TemplateUserAdminBase):
 ## *TestCloudAdmin
 ## *TestDspatternAdmin
 ## *TestHostAdmin
-## *TestJournalAdmin
+## *TestLogAdmin
 ## *TestSiteAdmin
 ## *TestStateAdmin
 ## *TestUserAdmin
@@ -175,8 +175,8 @@ class TestDspatternAdmin(TestDspatternAdminBase):
 class TestHostAdmin(TestHostAdminBase):
   pass
 
-#class TestJournalAdmin(TestJournalAdminBase):
-#  form = TestJournalForm
+class TestLogAdmin(TestLogAdminBase):
+  form = TestLogForm
 
 class TestSiteAdmin(TestSiteAdminBase):
   pass
@@ -277,7 +277,7 @@ admin.site.register(TestBackend,TestBackendAdmin)
 admin.site.register(TestCloud,TestCloudAdmin)
 admin.site.register(TestDspattern,TestDspatternAdmin)
 admin.site.register(TestHost,TestHostAdmin)
-#admin.site.register(TestJournal,TestJournalAdmin)
+admin.site.register(TestLog,TestLogAdmin)
 admin.site.register(TestSite,TestSiteAdmin)
 admin.site.register(TestState,TestStateAdmin)
 admin.site.register(TestUser,TestUserAdmin)

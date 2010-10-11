@@ -23,7 +23,7 @@ def help():
   USAGE = '''\nList of allowed options
   -f : Set the function you want to execute. Below, allowed functions.
        %s
-  -h : Print help. '''%(apps,functions)
+  -h : Print help. '''%(functions)
 
   print USAGE
 
@@ -42,6 +42,7 @@ def run():
       help()      
     else:
       app = os.environ['APP']
+      
 #      try:
       func = getattr(ca,dict['-f'])
       func(app,dict)

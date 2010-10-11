@@ -3,9 +3,6 @@ from hc.core.base.models.abstract import *
 
 from hc.core.base.rss.abstract import *
 
-#class MetricPerm(MetricPermBase):
-#  pass
-
 ##
 ## SIMPLE CLASSES
 ##
@@ -89,6 +86,7 @@ class TemplateUser(TemplateUserBase):
 ## *TestCloud
 ## *TestDspattern
 ## *TestHost
+## *TestLog
 ## *TestSite
 ## *TestState
 ## *TestUser
@@ -104,6 +102,8 @@ class TestDspattern(TestDspatternBase):
   pass
 class TestHost(TestHostBase):
   pass
+class TestLog(TestLogBase):
+  pass
 class TestSite(TestSiteBase):
   pass
 class TestState(TestStateBase):
@@ -118,29 +118,98 @@ class TestUser(TestUserBase):
 ##
 
 class Result(ResultBase):
-  exit_status_1         = models.IntegerField(null=True)
-  exit_status_2         = models.IntegerField(null=True)
-  inds                  = models.CharField(max_length=1023)
-  outds                 = models.CharField(max_length=1023)
-  output_location       = models.CharField(max_length=255)
-  wallclock             = models.IntegerField(null=True)
-  numevents             = models.IntegerField(null=True)
-  numfiles              = models.IntegerField(null=True)
-  percent_cpu           = models.IntegerField(null=True)
-  jdl_time              = models.DateTimeField(null=True)
-  ganga_number_of_files = models.IntegerField(null=True)
-  backend_id            = models.CharField(max_length=1023)
-  backend_reason        = models.CharField(max_length=1023)
-  fixed                 = models.IntegerField(null=True)
-  net_eth_rx_preathena  = models.IntegerField(null=True)
-  net_eth_rx_postathena = models.IntegerField(null=True)
-  pandatime1            = models.IntegerField(null=True)
-  pandatime2            = models.IntegerField(null=True)
-  pandatime3            = models.IntegerField(null=True)
-  pandatime4            = models.IntegerField(null=True)
-  arch                  = models.CharField(max_length=511)
-  actual_ce             = models.CharField(max_length=127, null=True)
-  logfile_guid          = models.CharField(max_length=63, null=True)
+  #[report]
+  closed            = models.CharField(max_length=3, blank=True, null=True)
+  destination       = models.CharField(max_length=511, blank=True, null=True)
+  jobId             = models.IntegerField(blank=True,null=True)
+  lbTimestamp       = models.DateTimeField(blank=True,null=True)
+  processStatus     = models.CharField(max_length=511, blank=True, null=True)
+  scheduledAtSite   = models.DateTimeField(blank=True,null=True)
+  scheduler         = models.CharField(max_length=511, blank=True,null=True)
+  schedulerId       = models.CharField(max_length=511, blank=True,null=True)
+  schedulerParentId = models.CharField(max_length=511, blank=True,null=True)
+  service           = models.CharField(max_length=511, blank=True,null=True)
+  state             = models.CharField(max_length=511, blank=True,null=True)
+  status            = models.CharField(max_length=511, blank=True,null=True)
+  statusReason      = models.CharField(max_length=511, blank=True,null=True)
+  statusScheduler   = models.CharField(max_length=511, blank=True,null=True)
+  submission        = models.IntegerField(blank=True,null=True)
+  submissionTime    = models.DateTimeField(blank=True,null=True)
+  taskId            = models.IntegerField(blank=True,null=True)
+
+  #[StorageParams]
+  stats      = models.CharField(max_length=511, blank=True,null=True)
+  cache_hint = models.CharField(max_length=511, blank=True,null=True)
+  enabled    = models.CharField(max_length=511, blank=True,null=True)
+  read_hint  = models.CharField(max_length=511, blank=True,null=True)
+
+  #[CrabTiming]
+  ExeTime       = models.FloatField(blank=True,null=True)
+  WrapperTime   = models.FloatField(blank=True,null=True)
+  UserCPUTime   = models.FloatField(blank=True,null=True)
+  SysCPUTime    = models.FloatField(blank=True,null=True)
+  CPUPercentage = models.FloatField(blank=True,null=True)
+  StageoutTime  = models.FloatField(blank=True,null=True)
+
+  #[Timing]
+  TotalJobCPU   = models.FloatField(blank=True,null=True)
+  AvgEventCPU   = models.FloatField(blank=True,null=True)
+  MaxEventTime  = models.FloatField(blank=True,null=True)
+  AvgEventTime  = models.FloatField(blank=True,null=True)
+  MinEventCPU   = models.FloatField(blank=True,null=True)
+  TotalEventCPU = models.FloatField(blank=True,null=True)
+  TotalJobTime  = models.FloatField(blank=True,null=True)
+  MinEventTime  = models.FloatField(blank=True,null=True)
+  MaxEventCPU   = models.FloatField(blank=True,null=True)
+
+  #[StorageTiming]
+  file_readv_total_msecs                                = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_total_msecs                  = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_max_msecs                           = models.FloatField(blank=True,null=True)
+  file_prefetch_total_msecs                             = models.FloatField(blank=True,null=True)
+  file_readv_num_operations                             = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_max_msecs                    = models.FloatField(blank=True,null=True)
+  tstoragefile_read_num_operations                      = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_num_successful_operations     = models.FloatField(blank=True,null=True)
+  tstoragefile_read_num_successful_operations           = models.FloatField(blank=True,null=True)
+  tstoragefile_read_total_msecs                         = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_total_msecs                         = models.FloatField(blank=True,null=True)
+  file_readv_total_megabytes                            = models.FloatField(blank=True,null=True)
+  tstoragefile_read_max_msecs                           = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_total_msecs                   = models.FloatField(blank=True,null=True)
+  tstoragefile_read_total_megabytes                     = models.FloatField(blank=True,null=True)
+  file_readv_max_msecs                                  = models.FloatField(blank=True,null=True)
+  file_readv_num_successful_operations                  = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_total_msecs               = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_min_msecs                     = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_num_operations                      = models.FloatField(blank=True,null=True)
+  file_read_max_msecs                                   = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_num_operations            = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_min_msecs                 = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_total_megabytes                     = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_ma_msecs                  = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_num_successful_operations           = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_num_successful_operations = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_num_operations               = models.FloatField(blank=True,null=True)
+  tstoragefile_read_min_msecs                           = models.FloatField(blank=True,null=True)
+  file_read_total_msecs                                 = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_min_msecs                    = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_num_operations                = models.FloatField(blank=True,null=True)
+  file_read_num_successful_operations                   = models.FloatField(blank=True,null=True)
+  file_prefetch_total_megabytes                         = models.FloatField(blank=True,null=True)
+  file_prefetch_num_successful_operations               = models.FloatField(blank=True,null=True)
+  file_read_num_operations                              = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_min_msecs                           = models.FloatField(blank=True,null=True)
+  file_read_total_megabytes                             = models.FloatField(blank=True,null=True)
+  file_read_min_msecs                                   = models.FloatField(blank=True,null=True)
+  file_prefetch_num_operations                          = models.FloatField(blank=True,null=True)
+  file_readv_min_msecs                                  = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_max_msecs                     = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_total_megabytes           = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_total_megabytes               = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_num_successful_operations    = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_total_megabytes              = models.FloatField(blank=True,null=True)
+  file_prefetch_min_msecs                               = models.FloatField(blank=True,null=True)
 
 ##
 ## METRIC CLASSES
@@ -183,9 +252,155 @@ class UsgSite(UsgSiteBase):
 class SummaryRobot(SummaryRobotBase):
   pass
 class SummaryTest(SummaryTestBase):
-  pass
+  #[StorageParams]
+  stats      = models.CharField(max_length=511, blank=True,null=True)
+  cache_hint = models.CharField(max_length=511, blank=True,null=True)
+  enabled    = models.CharField(max_length=511, blank=True,null=True)
+  read_hint  = models.CharField(max_length=511, blank=True,null=True)
+
+  #[CrabTiming]
+  ExeTime       = models.FloatField(blank=True,null=True)
+  WrapperTime   = models.FloatField(blank=True,null=True)
+  UserCPUTime   = models.FloatField(blank=True,null=True)
+  SysCPUTime    = models.FloatField(blank=True,null=True)
+  CPUPercentage = models.FloatField(blank=True,null=True)
+  StageoutTime  = models.FloatField(blank=True,null=True)
+
+  #[Timing]
+  TotalJobCPU   = models.FloatField(blank=True,null=True)
+  AvgEventCPU   = models.FloatField(blank=True,null=True)
+  MaxEventTime  = models.FloatField(blank=True,null=True)
+  AvgEventTime  = models.FloatField(blank=True,null=True)
+  MinEventCPU   = models.FloatField(blank=True,null=True)
+  TotalEventCPU = models.FloatField(blank=True,null=True)
+  TotalJobTime  = models.FloatField(blank=True,null=True)
+  MinEventTime  = models.FloatField(blank=True,null=True)
+  MaxEventCPU   = models.FloatField(blank=True,null=True)
+
+  #[StorageTiming]
+  file_readv_total_msecs                                = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_total_msecs                  = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_max_msecs                           = models.FloatField(blank=True,null=True)
+  file_prefetch_total_msecs                             = models.FloatField(blank=True,null=True)
+  file_readv_num_operations                             = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_max_msecs                    = models.FloatField(blank=True,null=True)
+  tstoragefile_read_num_operations                      = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_num_successful_operations     = models.FloatField(blank=True,null=True)
+  tstoragefile_read_num_successful_operations           = models.FloatField(blank=True,null=True)
+  tstoragefile_read_total_msecs                         = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_total_msecs                         = models.FloatField(blank=True,null=True)
+  file_readv_total_megabytes                            = models.FloatField(blank=True,null=True)
+  tstoragefile_read_max_msecs                           = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_total_msecs                   = models.FloatField(blank=True,null=True)
+  tstoragefile_read_total_megabytes                     = models.FloatField(blank=True,null=True)
+  file_readv_max_msecs                                  = models.FloatField(blank=True,null=True)
+  file_readv_num_successful_operations                  = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_total_msecs               = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_min_msecs                     = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_num_operations                      = models.FloatField(blank=True,null=True)
+  file_read_max_msecs                                   = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_num_operations            = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_min_msecs                 = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_total_megabytes                     = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_ma_msecs                  = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_num_successful_operations           = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_num_successful_operations = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_num_operations               = models.FloatField(blank=True,null=True)
+  tstoragefile_read_min_msecs                           = models.FloatField(blank=True,null=True)
+  file_read_total_msecs                                 = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_min_msecs                    = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_num_operations                = models.FloatField(blank=True,null=True)
+  file_read_num_successful_operations                   = models.FloatField(blank=True,null=True)
+  file_prefetch_total_megabytes                         = models.FloatField(blank=True,null=True)
+  file_prefetch_num_successful_operations               = models.FloatField(blank=True,null=True)
+  file_read_num_operations                              = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_min_msecs                           = models.FloatField(blank=True,null=True)
+  file_read_total_megabytes                             = models.FloatField(blank=True,null=True)
+  file_read_min_msecs                                   = models.FloatField(blank=True,null=True)
+  file_prefetch_num_operations                          = models.FloatField(blank=True,null=True)
+  file_readv_min_msecs                                  = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_max_msecs                     = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_total_megabytes           = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_total_megabytes               = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_num_successful_operations    = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_total_megabytes              = models.FloatField(blank=True,null=True)
+  file_prefetch_min_msecs                               = models.FloatField(blank=True,null=True)
+
 class SummaryTestSite(SummaryTestSiteBase):
-  pass
+  #[StorageParams]
+  stats      = models.CharField(max_length=511, blank=True,null=True)
+  cache_hint = models.CharField(max_length=511, blank=True,null=True)
+  enabled    = models.CharField(max_length=511, blank=True,null=True)
+  read_hint  = models.CharField(max_length=511, blank=True,null=True)
+
+  #[CrabTiming]
+  ExeTime       = models.FloatField(blank=True,null=True)
+  WrapperTime   = models.FloatField(blank=True,null=True)
+  UserCPUTime   = models.FloatField(blank=True,null=True)
+  SysCPUTime    = models.FloatField(blank=True,null=True)
+  CPUPercentage = models.FloatField(blank=True,null=True)
+  StageoutTime  = models.FloatField(blank=True,null=True)
+
+  #[Timing]
+  TotalJobCPU   = models.FloatField(blank=True,null=True)
+  AvgEventCPU   = models.FloatField(blank=True,null=True)
+  MaxEventTime  = models.FloatField(blank=True,null=True)
+  AvgEventTime  = models.FloatField(blank=True,null=True)
+  MinEventCPU   = models.FloatField(blank=True,null=True)
+  TotalEventCPU = models.FloatField(blank=True,null=True)
+  TotalJobTime  = models.FloatField(blank=True,null=True)
+  MinEventTime  = models.FloatField(blank=True,null=True)
+  MaxEventCPU   = models.FloatField(blank=True,null=True)
+
+  #[StorageTiming]
+  file_readv_total_msecs                                = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_total_msecs                  = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_max_msecs                           = models.FloatField(blank=True,null=True)
+  file_prefetch_total_msecs                             = models.FloatField(blank=True,null=True)
+  file_readv_num_operations                             = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_max_msecs                    = models.FloatField(blank=True,null=True)
+  tstoragefile_read_num_operations                      = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_num_successful_operations     = models.FloatField(blank=True,null=True)
+  tstoragefile_read_num_successful_operations           = models.FloatField(blank=True,null=True)
+  tstoragefile_read_total_msecs                         = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_total_msecs                         = models.FloatField(blank=True,null=True)
+  file_readv_total_megabytes                            = models.FloatField(blank=True,null=True)
+  tstoragefile_read_max_msecs                           = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_total_msecs                   = models.FloatField(blank=True,null=True)
+  tstoragefile_read_total_megabytes                     = models.FloatField(blank=True,null=True)
+  file_readv_max_msecs                                  = models.FloatField(blank=True,null=True)
+  file_readv_num_successful_operations                  = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_total_msecs               = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_min_msecs                     = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_num_operations                      = models.FloatField(blank=True,null=True)
+  file_read_max_msecs                                   = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_num_operations            = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_min_msecs                 = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_total_megabytes                     = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_ma_msecs                  = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_num_successful_operations           = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_num_successful_operations = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_num_operations               = models.FloatField(blank=True,null=True)
+  tstoragefile_read_min_msecs                           = models.FloatField(blank=True,null=True)
+  file_read_total_msecs                                 = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_min_msecs                    = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_num_operations                = models.FloatField(blank=True,null=True)
+  file_read_num_successful_operations                   = models.FloatField(blank=True,null=True)
+  file_prefetch_total_megabytes                         = models.FloatField(blank=True,null=True)
+  file_prefetch_num_successful_operations               = models.FloatField(blank=True,null=True)
+  file_read_num_operations                              = models.FloatField(blank=True,null=True)
+  tstoragefile_seek_min_msecs                           = models.FloatField(blank=True,null=True)
+  file_read_total_megabytes                             = models.FloatField(blank=True,null=True)
+  file_read_min_msecs                                   = models.FloatField(blank=True,null=True)
+  file_prefetch_num_operations                          = models.FloatField(blank=True,null=True)
+  file_readv_min_msecs                                  = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_max_msecs                     = models.FloatField(blank=True,null=True)
+  tstoragefile_read_via_cache_total_megabytes           = models.FloatField(blank=True,null=True)
+  tstoragefile_read_async_total_megabytes               = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_num_successful_operations    = models.FloatField(blank=True,null=True)
+  tstoragefile_read_actual_total_megabytes              = models.FloatField(blank=True,null=True)
+  file_prefetch_min_msecs                               = models.FloatField(blank=True,null=True)
+
 
 ##
 ## FEED CLASSES

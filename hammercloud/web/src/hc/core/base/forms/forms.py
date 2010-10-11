@@ -3,6 +3,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 from django.contrib.auth.models import User
 
 from hc.core.utils.generic.class_func import custom_import
+from hc.core.base.forms.metacreator import FormMetaCreator
 
 from datetime import datetime
 from datetime import timedelta
@@ -11,61 +12,44 @@ from django.utils.html import escape
 
 from django.forms.util import ErrorList
 
-class FormGenerator():
+from django.forms import ModelForm
 
-  def getMetricPermForm(self,module):
+class TestLogReportForm(forms.ModelForm):
+  __metaclass__ = FormMetaCreator
 
-    mt = custom_import('hc.'+module+'.models.MetricType')
+  SEVERITY_CHOICES = [u'common',u'maintenance',u'error',u'other']
 
-    dic = {}
-    dic['name']         = forms.CharField(max_length=255)
-    dic['description']  = forms.CharField(max_length=255)
-    dic['index']        = forms.ModelMultipleChoiceField(mt.objects.all(),widget=FilteredSelectMultiple("MetricTypes",False))
-    dic['summary']      = forms.ModelMultipleChoiceField(mt.objects.all(),widget=FilteredSelectMultiple("MetricTypes",False))
-    dic['pertab']       = forms.ModelMultipleChoiceField(mt.objects.all(),widget=FilteredSelectMultiple("MetricTypes",False))
-    dic['cron_allowed'] = forms.ModelMultipleChoiceField(mt.objects.all(),widget=FilteredSelectMultiple("MetricTypes",False))
+  def clean(self):
 
-    return dic
+    try:
+      sev = self.cleaned_data['severity']
+      if sev not in self.SEVERITY_CHOICES:
+        self._errors["severity"] = ErrorList(["Wrong severity parameter."])
+    except:
+      self._errors["severity"] = ErrorList(["Missing severity parameter."])
 
-  def getTestJournalForm(self,module):
+    try:
+      c = self.cleaned_data['comment']
+    except:
+      self._errors["comment"] = ErrorList(["Missing comment parameter."])
 
-    SEVERITY_CHOICES = (
-      (u'common', u'common'),
-      (u'maintenance', u'maintenance'),
-      (u'error',u'error'),
-      (u'other',u'other')
-    )
+    return self.cleaned_data
+ 
+class TestRunningModifyForm(forms.ModelForm):
+  __metaclass__ = FormMetaCreator
 
-    Test = custom_import('hc.'+module+'.models.Test')
+  def clean(self):
+    '''
+    Method that clean the data inserted in the form.
+    '''
+    cleaned_data = self.cleaned_data
+    if self.cleaned_data.get("endtime"):
+      endtime = self.cleaned_data["endtime"]
+      endtime.replace(second=0)
+      if endtime<datetime.now():
+        self._errors["endtime"] = ErrorList(["End time must be in the future"])
 
-    dic = {}
-    dic['severity'] = forms.CharField(max_length=255,widget=forms.Select(choices=SEVERITY_CHOICES))
-    dic['test']     = forms.ModelChoiceField(queryset=Test.objects.all())
-    dic['user']     = forms.ModelChoiceField(queryset=User.objects.filter(groups__name__startswith=module))
-    dic['comment']  = forms.CharField(max_length=4095,widget=forms.Textarea)
-
-    return dic
-
-  def getTemplateUserForm(self,module):
-
-    Template = custom_import('hc.'+module+'.models.Template')
-
-    dic = {}
-    dic['template'] = forms.ModelChoiceField(queryset=Template.objects.all())
-    dic['user']     = forms.ModelChoiceField(queryset=User.objects.filter(groups__name__startswith=module))
-
-    return dic
-    
-  def getTestUserForm(self,module):
-
-    Test = custom_import('hc.'+module+'.models.Test')
-
-    dic = {}
-    dic['test']     = forms.ModelChoiceField(queryset=Test.objects.all())
-    dic['user']     = forms.ModelChoiceField(queryset=User.objects.filter(groups__name__startswith=module))
-
-    return dic
-
+    return cleaned_data
 
 ## FORMS WITH METHODS
 
@@ -133,7 +117,6 @@ class TestSuperUserAdminForm(forms.ModelForm):
 
     return cleaned_data
 
-
 ############## OTHERS ############################
 
 
@@ -151,6 +134,7 @@ class ReadOnlyWidget(forms.Widget):
 
   def value_from_datadict(self, data, files, name):
     return self.original_value
+
 
 class ReadOnlyAdminFields(object):
   def get_form(self, request, obj=None):
@@ -187,7 +171,7 @@ class ModelLinkWidget(forms.HiddenInput):
     self.original_object = original_object
     self.superuser = superuser
     super(ModelLinkWidget,self).__init__()
-   
+
   def render(self, name, value, attrs=None):
 
     if self.original_object is not None:
@@ -203,10 +187,10 @@ class ModelLinkWidget(forms.HiddenInput):
                                              self.original_object.id)
         return super(ModelLinkWidget, self).render(name, value, attrs) + mark_safe('<a href="%s">%s</a>' % (link, escape(unicode(self.original_object))))
       except:
-        return "None"    
+        return "None"
     else:
       return "None"
-                                                               
+
 class ModelLinkAdminFields(object):
   def get_form(self, request, obj=None):
 
@@ -218,3 +202,4 @@ class ModelLinkAdminFields(object):
           form.base_fields[field_name].widget = ModelLinkWidget(self.admin_site, getattr(obj, field_name, ''),request.user.is_superuser)
           form.base_fields[field_name].required = False
     return form
+

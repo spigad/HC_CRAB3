@@ -195,17 +195,17 @@
                 {% if key == 'site' %}
                   <optgroup label="{{ item.name }}">
                   {% for site in item.sites %}
-                    <option value='{{ site.id }}' {% if site.selected %}selected='selected'{% endif %}>{{ site.name }}</option>
+                    <option value='{{ site.id }}' {% if site.selected %}selected='selected'{% endif %}>{{ site.name|chop:20 }}</option>
                   {% endfor %}
                   </optgroup>
                 {% endif %}
                 {% if key != 'site' %}
                   <option value='{{item.id}}' {% if item.selected %}selected='selected'{% endif %}>
                     {% if key == 'metric_type' %}
-                      {{ item.title }}
+                      {{ item.title|chop:20 }}
                     {% endif %}
                     {% if key == 'cloud' %}
-                      {{ item.name }}
+                      {{ item.name|chop:20 }}
                     {% endif %}
                     {% if key == 'test' %}
                       Test {{ item.id }}
@@ -265,12 +265,13 @@ onblur="if(this.value=='')this.value=this.defaultValue;" /><img id='starttime_im
 
       {% ifequal type 'plot' %}
       <div id="sec_plots">
+
         {% for key,plot_list in statistics %}
           <div id="subsec_plots">
             <p>{{key}}</p>
             {% for subkey,urls in plot_list %}
               <p class="sub">{{subkey}}</p>
-              {% for url in urls %}
+              {% for plot_title,url in urls %}
                 <img src="{{url}}"/>
               {% endfor %}
             {% endfor %}

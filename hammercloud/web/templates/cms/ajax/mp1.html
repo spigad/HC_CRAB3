@@ -1,14 +1,15 @@
 <script type="text/javascript">
+  TableToolsInit.sSwfPath="http://hammercloud.cern.ch/dev/media/swf/ZeroClipboard.swf";
   $(document).ready(function() {
     $('#{{type}}_table').dataTable({
       "sPaginationType": 'full_numbers',
       "bServerSide": true,
       "sAjaxSource": "{% url get_list-view app,type,test_id %}",
       "aaSorting" : [[ 0, "desc" ]],
+      "sDom": 'T<"clear">lfrtip', 
     });
   });
 </script>
-
 
 <table cellpadding="0" cellspacing="0" border="0" class="display" id="testsummary_table">
   <thead>

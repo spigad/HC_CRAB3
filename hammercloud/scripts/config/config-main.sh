@@ -41,22 +41,24 @@ fi
 
 echo '   found: '$vals
 
-version=`echo $vals|cut -d' ' -f1`
+version=`echo $vals|cut -d'/' -f1`
 echo '  Using '$version
 
 #Export hammercloud python zone.
 export PYTHONPATH=$HCDIR/python
 
 #Export Django & HammerCloud.
-export PYTHONPATH=$PYTHONPATH:$HCDIR/external/$version:$HCDIR/web/src/
+export PYTHONPATH=$PYTHONPATH:$HCDIR/external/django/$version:$HCDIR/web/src
 
 #Export apps zones
 export PYTHONPATH=$PYTHONPATH:$HCDIR/apps
 
-#export PYTHONPATH=$PYTHONPATH:/usr/lib64/python2.5/site-packages/
+#export PYTHONPATH=$PYTHONPATH:/usr/lib64/python2.5/site-packages
+echo '  PYTHONPATH='$PYTHONPATH
 
 #Export HammerCloud settings.
 export DJANGO_SETTINGS_MODULE=hc.settings
+echo '  DJANGO_SETTINGS_MODULE=hc.settings'
 
 echo '  Looking for app specific config script in '$HCAPP/scripts/config/config-main.sh
 

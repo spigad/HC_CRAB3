@@ -6,9 +6,13 @@ from django.shortcuts import get_object_or_404,render_to_response
 from hc.core.utils.hc.datahelper import Datahelper
 from hc.core.utils.hc.stats import Stats
 
+from hc.core.base.forms import forms
+
 from hc.core.base.views.json.records import get_records
 from django.db.models import Min,Max,Count
+from django.forms.models import modelformset_factory
 
+from hc.core.utils.generic.class_func import custom_import
 
 #######################################################
 ## DEFAULT CONTEXT
@@ -27,14 +31,14 @@ def defaultContext(request):
 #######################################################
 ## LOGIN VIEWS
 #######################################################
-#
-#def logout(request):
-#  logout_user(request)
-#  next = request.GET.get('next', None)
-#  if next:
-#    return HttpResponseRedirect(next)
-#  else:
-#    raise Http404
+
+def logout(request):
+  logout_user(request)
+  next = request.GET.get('next', None)
+  if next:
+    return HttpResponseRedirect(next)
+  else:
+    raise Http404
 
 class GenericView():
 
@@ -74,6 +78,29 @@ class GenericView():
                        [defaultContext]
                        )
     return HttpResponse(t.render(c))
+
+
+#######################################################
+## BACKENDS BLOCK
+#######################################################
+
+  def backends(self,request,dic={'Backend':None},*args,**kwargs):
+
+    backend = dic['Backend']
+    app     = backend.__module__.split('.')[1]
+
+    try:
+      backends = backend.objects.all()
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/backends.html'%(app),'core/app/backends.html'])
+    c = RequestContext(request,
+                       {'backends': backends},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
 
 #######################################################
 ## CLOUDS BLOCK
@@ -244,6 +271,41 @@ class GenericView():
                       )
     return HttpResponse(t.render(c))
 
+  def metric_permissions(self,request,dic={'MetricPerm':None},*args,**kwargs):
+
+    metric_permission = dic['MetricPerm']
+    app               = metric_permission.__module__.split('.')[1]
+
+    try:
+      metric_permissions = metric_permission.objects.all()
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/metric_permissions.html'%(app),'core/app/metric_permissions.html'])
+    c = RequestContext(request,
+                       {'metric_permissions': metric_permissions},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+
+#######################################################
+## MORE BLOCK
+#######################################################
+
+  def more(self,request,dic={'Test':None},*args,**kwargs):
+
+    test = dic['Test']
+    app  = test.__module__.split('.')[1]
+
+    t = loader.select_template(['%s/more.html'%(app),'core/app/more.html'])
+    c = RequestContext(request,
+                       {},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+
 
 #######################################################
 ## OPTIONFILES BLOCK
@@ -366,6 +428,28 @@ class GenericView():
 
 
 #######################################################
+## TESTOPTIONS BLOCK
+#######################################################
+
+  def testoptions(self,request,dic={'TestOption':None},*args,**kwargs):
+
+    testoption = dic['TestOption']
+    app        = testoption.__module__.split('.')[1]
+
+    try:
+      testoptions = testoption.objects.all()
+    except:
+      raise Http404
+
+    t = loader.select_template(['%s/testoptions.html'%(app),'core/app/testoptions.html'])
+    c = RequestContext(request,
+                       {'testoptions': testoptions},
+                       [defaultContext]
+                      )
+    return HttpResponse(t.render(c))
+
+
+#######################################################
 ## USERCODES BLOCK
 #######################################################
 
@@ -418,6 +502,93 @@ class GenericView():
                       [defaultContext] 
                     )
     return HttpResponse(t.render(c))
+
+  def testclone(self,request,test_id,dic={'Test':None},*args,**kwargs):
+
+    test = dic['Test']
+    app  = test.__module__.split('.')[1]
+
+    test = get_object_or_404(test,pk=test_id)
+    usernames = [tu.user for tu in test.getTestUsers_for_test.all()]
+
+    error = None
+
+    if not(request.user.is_superuser or request.user.is_staff):
+      error = "You are not allowed to clone this test!"
+
+    t = loader.select_template(['%s/testclone.html'%(app),'core/app/testclone.html'])
+    c = RequestContext(request,
+                       {'test': test, 'error': error },
+                       [defaultContext])
+    return HttpResponse(t.render(c))
+
+  def testmodify(self,request,test_id,dic={'Test':None,'TestLog':None},*args,**kwargs):
+
+    test = dic['Test']
+    app  = test.__module__.split('.')[1]
+
+    testlog = dic['TestLog']
+
+    test = get_object_or_404(test,pk=test_id)
+    usernames = [tu.user for tu in test.getTestUsers_for_test.all()]
+
+    error,done,message,form,formset = None,0,'',None,None
+
+    if not(request.user.is_superuser or request.user.username in usernames):
+      error = "You are not allowed to modify this test!"
+
+    else:
+
+      form = custom_import('hc.core.base.forms.forms.TestRunningModifyForm')(app)
+
+      TestSite = custom_import('hc.'+app+'.models.TestSite')
+
+      if request.method == 'POST':  
+
+        TestSiteFormSet = modelformset_factory(TestSite,
+                             fields=('num_datasets_per_bulk', 'min_queue_depth', 'max_running_jobs', 'resubmit_enabled', 'resubmit_force'),
+                             extra=0)
+        form = form(request.POST, instance=test)
+        formset = TestSiteFormSet(request.POST,
+                                  queryset=TestSite.objects.filter(test=test.id))
+        if form.is_valid() and formset.is_valid():
+
+          values  = form.cleaned_data  
+          comment = 'Test modifications: '           
+
+          for change in form.changed_data:
+            comment += '%s: %s, '%(change,values[change])
+
+          testlog = testlog(test=test,comment=comment,user=request.user.username)
+
+          form.save()
+          formset.save()
+          message = 'Test modified!'
+
+          testlog.save()
+          done = 1
+        else:
+          message = 'Correct data!'
+          TestSiteFormSet = modelformset_factory(TestSite,
+                               fields=('site','num_datasets_per_bulk', 'min_queue_depth', 'max_running_jobs', 'resubmit_enabled', 'resubmit_force'),
+                               extra=0)
+          formset = TestSiteFormSet(queryset=TestSite.objects.filter(test=test_id))
+
+      else:
+      
+        form = form(instance=test)
+
+        TestSiteFormSet = modelformset_factory(TestSite,
+                             fields=('site','num_datasets_per_bulk', 'min_queue_depth', 'max_running_jobs', 'resubmit_enabled', 'resubmit_force'),
+                             extra=0)
+        formset = TestSiteFormSet(queryset=TestSite.objects.filter(test=test.id))
+
+    t = loader.select_template(['%s/testmodify.html'%(app),'core/app/testmodify.html'])
+    c = RequestContext(request,
+                       {'test': test, 'user': request.user, 'form':form, 'formset':formset, 'error':error, 'done':done, 'message':message },
+                       [defaultContext])
+    return HttpResponse(t.render(c))
+
 
   def testlist(self,request,list_type,dic={'Test':None},*args,**kwargs):
 
@@ -523,6 +694,74 @@ class GenericView():
     c = Context({'test_id': test_id,'list':list,'type':type,'items':items,'app':app})
     return HttpResponse(t.render(c))
 
+  def ajaxtestmetricsbysite(self,request,test_id,dic={'Test':None},*args,**kwargs):
+
+    test = dic['Test']
+    app  = test.__module__.split('.')[1]
+
+    test = get_object_or_404(test,pk=test_id)
+    logs = test.getTestLogs_for_test.all()
+
+    plots = test.getSiteMetrics_for_test.all()
+  
+    t = loader.select_template(['%s/testmetricsbysite.html'%(app),'core/app/testmetricsbysite.html'])
+    c = Context({'plots':plots,'app':app,'test':test})
+    return HttpResponse(t.render(c))
+
+
+  def ajaxtestlogs(self,request,test_id,dic={'Test':None},*args,**kwargs):
+
+    test = dic['Test']
+    app  = test.__module__.split('.')[1]
+
+    test = get_object_or_404(test,pk=test_id)
+    logs = test.getTestLogs_for_test.all()
+    
+    t = loader.select_template(['%s/testlogs.html'%(app),'core/app/testlogs.html'])
+    c = Context({'logs':logs,'app':app,'test':test})
+    return HttpResponse(t.render(c))
+
+  def ajaxtestlogreport(self,request,test_id,dic={'Test':None,'TestLog':None},*args,**kwargs):
+
+    test    = dic['Test']
+    testlog = dic['TestLog']
+    app     = test.__module__.split('.')[1]
+
+    test = get_object_or_404(test,pk=test_id)
+
+    usernames = [tu.user for tu in test.getTestUsers_for_test.all()]
+
+    form = ''
+    done = 0
+    error = ''
+ 
+    if not(request.user.is_superuser or request.user in usernames):
+        error = "You are not allowed to report incidences in this test."
+    
+    else:
+
+      done = 0      
+
+      testlog = testlog(test=test)
+
+      form = custom_import('hc.core.base.forms.forms.TestLogReportForm')(app)
+      if request.method == 'POST':
+        form = form(request.POST,instance=testlog)
+ 
+        if form.is_valid():
+          log      = form.save(commit=False)
+#          log.test = test
+          log.user = request.user.username
+          log.save()
+          done = 1
+      else:
+        form = form(instance=testlog)     
+ 
+    t = loader.select_template(['%s/testlogreport.html'%(app),'core/app/testlogreport.html'])
+    c = RequestContext(request,
+                       {'test': test, 'form':form,'done':done,'error':error},
+                       [defaultContext])
+    return HttpResponse(t.render(c))
 
 #  def ajaxtestmetrics(self,request,test_id,dic={'Test':None},*args,**kwargs):
 #    app = dic['Test'].__module__.split('.')[1]

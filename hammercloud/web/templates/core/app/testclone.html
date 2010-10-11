@@ -1,0 +1,17 @@
+{% extends 'core/app/base.html' %}
+{% block title %}Test Clone - {% endblock %}
+
+{% block content %}
+  <h2>Test  Clone - Test {{ test.id }}</h2>
+    {% if error %}
+      <h3>{{ error }}</h3>
+    {% else %}
+      <h3>Are you sure to clone this test?</h3>
+      <form name="form_clone" action="{% url portal-view %}admin/{{app}}/test/" method="post">{% csrf_token %}
+        <input type="hidden" name="action" value="clone_multiple_objects" />
+        <input type="hidden" class="action-select" value="{{ test.id }}" name="_selected_action" />
+        <input type="button" value="Cancel" onclick="window.location='{% url test-view app,test.id %}'" />
+        <input type="submit" value="Clone" />  
+      </form>
+    {% endif %}
+{% endblock %}

@@ -30,19 +30,19 @@ class HCEntriesFeed(Feed):
 class AppEntriesFeed(Feed):
 
   def get_object(self, request, app):
-    return get_object_or_404(Plugin, name=app)
+    return app
 
   def title(self,obj):
-    return "HammerCloud-%s"%(obj.name.upper())
+    return "HammerCloud-%s"%(obj.upper())
 
   def description(self,obj):
-    return "Updates, changes and additions to HammerCloud-%s."%(obj.name.upper())
+    return "Updates, changes and additions to HammerCloud-%s."%(obj.upper())
 
   def link(self,obj):
-    return "/hc/feed/app/%s/"%(obj.name)
+    return "/hc/feed/app/%s/"%(obj)
 
   def items(self,obj):
-    app_hc_feed = custom_import('hc.%s.models.AppFeed'%(obj.name))
+    app_hc_feed = custom_import('hc.%s.models.AppFeed'%(obj))
     return app_hc_feed.objects.all().order_by('-id')[:30]
 
   def item_title(self, obj):
@@ -58,27 +58,29 @@ class AppEntriesFeed(Feed):
 class CloudEntriesFeed(Feed):
 
   def get_object(self, request, app, cloud_id):
-    plugin          = get_object_or_404(Plugin,name=app)
-    plugin.cloud_id = cloud_id
-    return plugin
+    return (app,cloud_id)
 
   def title(self,obj):
-    class_cloud_feed = custom_import('hc.%s.models.Cloud'%(obj.name))
-    cloud_feed       = get_object_or_404(class_cloud_feed,pk=obj.cloud_id)
+    plugin,cloud_id = obj
+    class_cloud_feed = custom_import('hc.%s.models.Cloud'%(plugin))
+    cloud_feed       = get_object_or_404(class_cloud_feed,pk=cloud_id)
 
-    return "Hammercloud-%s for cloud %s"%(obj.name.upper(),cloud_feed.name)
+    return "Hammercloud-%s for cloud %s"%(plugin.upper(),cloud_feed.name)
 
   def description(self,obj):
-    class_cloud_feed = custom_import('hc.%s.models.Cloud'%(obj.name))
-    cloud_feed       = get_object_or_404(class_cloud_feed,pk=obj.cloud_id)
+    plugin,cloud_id = obj
+    class_cloud_feed = custom_import('hc.%s.models.Cloud'%(plugin))
+    cloud_feed       = get_object_or_404(class_cloud_feed,pk=cloud_id)
 
-    return "Updates, changes and additions to cloud %s at HammerCloud-%s "%(cloud_feed.name,obj.name.upper())
+    return "Updates, changes and additions to cloud %s at HammerCloud-%s "%(cloud_feed.name,plugin.upper())
 
   def link(self,obj):
-    return "/hc/feed/app/%s/cloud/%s/"%(obj.name,obj.cloud_id)
+    plugin,cloud_id = obj
+    return "/hc/feed/app/%s/cloud/%s/"%(plugin,cloud_id)
 
   def items(self,obj):
-    class_cloud_feed = custom_import('hc.%s.models.CloudFeed'%(obj.name))
+    plugin,cloud_id = obj
+    class_cloud_feed = custom_import('hc.%s.models.CloudFeed'%(plugin))
     return class_cloud_feed.objects.all().order_by('-id')[:30]
 
   def item_title(self, obj):
@@ -94,27 +96,29 @@ class CloudEntriesFeed(Feed):
 class SiteEntriesFeed(Feed):
 
   def get_object(self, request, app, site_id):
-    plugin         = get_object_or_404(Plugin,name=app)
-    plugin.site_id = site_id
-    return plugin
+    return (app,site_id)
 
   def title(self,obj):
-    class_site_feed = custom_import('hc.%s.models.Site'%(obj.name))
-    site_feed       = get_object_or_404(class_site_feed,pk=obj.site_id)
+    plugin,site_id = obj
+    class_site_feed = custom_import('hc.%s.models.Site'%(plugin))
+    site_feed       = get_object_or_404(class_site_feed,pk=site_id)
 
-    return "Hammercloud-%s for site %s"%(obj.name.upper(),site_feed.name)
+    return "Hammercloud-%s for site %s"%(plugin.upper(),site_feed.name)
 
   def description(self,obj):
-    class_site_feed = custom_import('hc.%s.models.Site'%(obj.name))
-    site_feed       = get_object_or_404(class_site_feed,pk=obj.site_id)
+    plugin,site_id = obj
+    class_site_feed = custom_import('hc.%s.models.Site'%(plugin))
+    site_feed       = get_object_or_404(class_site_feed,pk=site_id)
 
-    return "Updates, changes and additions to site %s at HammerCloud-%s "%(site_feed.name,obj.name.upper())
+    return "Updates, changes and additions to site %s at HammerCloud-%s "%(site_feed.name,plugin.upper())
 
   def link(self,obj):
-    return "/hc/feed/app/%s/site/%s/"%(obj.name,obj.site_id)
+    plugin,site_id = obj
+    return "/hc/feed/app/%s/site/%s/"%(plugin,site_id)
 
   def items(self,obj):
-    class_site_feed = custom_import('hc.%s.models.SiteFeed'%(obj.name))
+    plugin,site_id = obj
+    class_site_feed = custom_import('hc.%s.models.SiteFeed'%(plugin))
     return class_site_feed.objects.all().order_by('-id')[:30]
 
   def item_title(self, obj):
@@ -130,27 +134,29 @@ class SiteEntriesFeed(Feed):
 class TemplateEntriesFeed(Feed):
 
   def get_object(self, request, app, template_id):
-    plugin             = get_object_or_404(Plugin,name=app)
-    plugin.template_id = template_id
-    return plugin
+    return (app,template_id)
 
   def title(self,obj):
-    class_template_feed = custom_import('hc.%s.models.Template'%(obj.name))
-    template_feed       = get_object_or_404(class_template_feed,pk=obj.template_id)
+    plugin,template_id = obj
+    class_template_feed = custom_import('hc.%s.models.Template'%(plugin))
+    template_feed       = get_object_or_404(class_template_feed,pk=template_id)
 
-    return "Hammercloud-%s for template %s"%(obj.name.upper(),template_feed.name)
+    return "Hammercloud-%s for template %s"%(plugin.upper(),template_feed.name)
 
   def description(self,obj):
-    class_template_feed = custom_import('hc.%s.models.Template'%(obj.name))
-    template_feed       = get_object_or_404(class_template_feed,pk=obj.template_id)
+    plugin,template_id = obj
+    class_template_feed = custom_import('hc.%s.models.Template'%(plugin))
+    template_feed       = get_object_or_404(class_template_feed,pk=template_id)
 
-    return "Updates, changes and additions to template %s at HammerCloud-%s "%(template_feed.name,obj.name.upper())
+    return "Updates, changes and additions to template %s at HammerCloud-%s "%(template_feed.name,plugin.upper())
 
   def link(self,obj):
-    return "/hc/feed/app/%s/template/%s/"%(obj.name,obj.template_id)
+    plugin,template_id - obj
+    return "/hc/feed/app/%s/template/%s/"%(plugin,template_id)
 
   def items(self,obj):
-    class_template_feed = custom_import('hc.%s.models.TemplateFeed'%(obj.name))
+    plugin,template_id = obj
+    class_template_feed = custom_import('hc.%s.models.TemplateFeed'%(plugin))
     return class_template_feed.objects.all().order_by('-id')[:30]
 
   def item_title(self, obj):
@@ -166,27 +172,29 @@ class TemplateEntriesFeed(Feed):
 class TestEntriesFeed(Feed):
 
   def get_object(self, request, app, test_id):
-    plugin         = get_object_or_404(Plugin,name=app)
-    plugin.test_id = test_id
-    return plugin
+    return (app,test_id)
 
   def title(self,obj):
-    class_test_feed = custom_import('hc.%s.models.Test'%(obj.name))
-    test_feed       = get_object_or_404(class_test_feed,pk=obj.test_id)
+    plugin,test_id = obj
+    class_test_feed = custom_import('hc.%s.models.Test'%(plugin))
+    test_feed       = get_object_or_404(class_test_feed,pk=test_id)
 
-    return "Hammercloud-%s for test %s"%(obj.name.upper(),test_feed.id)
+    return "Hammercloud-%s for test %s"%(plugin.upper(),test_feed.id)
 
   def description(self,obj):
-    class_test_feed = custom_import('hc.%s.models.Test'%(obj.name))
-    test_feed       = get_object_or_404(class_test_feed,pk=obj.test_id)
+    plugin,test_id = obj
+    class_test_feed = custom_import('hc.%s.models.Test'%(plugin))
+    test_feed       = get_object_or_404(class_test_feed,pk=test_id)
 
-    return "Updates, changes and additions to test %s at HammerCloud-%s "%(test_feed.id,obj.name.upper())
+    return "Updates, changes and additions to test %s at HammerCloud-%s "%(test_feed.id,plugin.upper())
 
   def link(self,obj):
-    return "/hc/feed/app/%s/test/%s/"%(obj.name,obj.test_id)
+    plugin,test_id - obj
+    return "/hc/feed/app/%s/test/%s/"%(plugin,test_id)
 
   def items(self,obj):
-    class_test_feed = custom_import('hc.%s.models.TestFeed'%(obj.name))
+    plugin,test_id = obj
+    class_test_feed = custom_import('hc.%s.models.TestFeed'%(plugin))
     return class_test_feed.objects.all().order_by('-id')[:30]
 
   def item_title(self, obj):

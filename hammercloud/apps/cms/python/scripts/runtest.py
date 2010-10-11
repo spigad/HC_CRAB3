@@ -2,9 +2,13 @@ from datetime import datetime,timedelta
 from urllib2 import URLError,HTTPError,Request,urlopen
 
 from django.db.models import Count
-from hc.cms.models import Test,TestState,Site,Result
+from hc.cms.models import Test,TestState,Site,Result,SummaryTest,SummaryTestSite,Metric,TestMetric,SiteMetric,MetricType
+
+from hc.core.utils.hc.stats import Stats
+from numpy import *
 
 import sys,time,random
+import numpy
 
 from Ganga.Core.GangaThread import GangaThread
 from Ganga.Utility.logging import getLogger
@@ -29,6 +33,11 @@ try:
 except:
   print ' ERROR! Could not extract Test %s from DB'%(testid)
 
+types = {'DateTimeField':[]}
+
+for rfield in Result._meta.fields:
+  if rfield.__class__.__name__ == 'DateTimeField':
+    types['DateTimeField'] += [rfield.name]
 
 
 ##
@@ -36,19 +45,20 @@ except:
 ##
 
 def test_active():
-    if test.starttime < datetime.now() and test.endtime > datetime.now():
-        logger.debug('Test %d is active'%(test.id))
-        return True
-    elif not test.starttime < datetime.now():
-        logger.info('Test %d has not yet started'%(test.id))
-    elif not test.endtime > datetime.now():
-        logger.info('Test %d has completed'%(test.id))
-    return False
+  if test.starttime < datetime.now() and test.endtime > datetime.now():
+    logger.debug('Test %d is active'%(test.id))
+    return True
+  elif not test.starttime < datetime.now():
+    logger.info('Test %d has not yet started'%(test.id))
+  elif not test.endtime > datetime.now():
+    logger.info('Test %d has completed'%(test.id))
+  return False
 
 def test_paused():
-    if test.pause:
-        logger.info('Test %d is paused'%(test.id))
-        return True
+  if test.pause:
+    logger.info('Test %d is paused'%(test.id))
+    return True
+  else:
     return False
 
 def test_sleep(t):
@@ -71,7 +81,10 @@ def updateDatasets(site):
     dataset = ''
     try:
 
-      str = 'https://cmsweb.cern.ch/dbs_discovery/aSearchShowAll?case=on&cff=0&caseSensitive=on&userInput=find%20dataset%20where%20dataset%20like%20%25'+pattern[0]+'%25%20and%20site%3D'+site+'%20and%20dataset.status%20like%20VALID*&grid=0&fromRow=0&xml=0&sortName=&dbsInst=cms_dbs_prod_global&html=1&limit=-1&sortOrder=desc&userMode=user&method=dbsapi'
+      str = 'https://cmsweb.cern.ch/dbs_discovery/aSearchShowAll?case=on&cff=0&caseSensitive=on&userInput=find%20dataset%20where%20dataset%20like%20%25'+pattern+'%25%20and%20site%3D'+site+'%20and%20dataset.status%20like%20VALID*&grid=0&fromRow=0&xml=0&sortName=&dbsInst=cms_dbs_prod_global&html=1&limit=-1&sortOrder=desc&userMode=user&method=dbsapi'
+
+      #logger.info(str)
+  
       request = Request(str)
       f = urlopen(request)
       dataset = f.read()
@@ -81,6 +94,8 @@ def updateDatasets(site):
       logger.warning("Error: "+str(e))
     except URLError, e:
       logger.warning("Error: "+str(e))
+
+    #logger.info(dataset)
 
     dataset = dataset.replace(' ','')
     ds = dataset.split('\n')
@@ -94,14 +109,12 @@ def updateDatasets(site):
 
   random.shuffle(datasets)
   return datasets[0]
- 
-
   
 ##
 ## COPY JOB
 ##
 
-def _copyjob(job):
+def _copyJob(job):
 
   site = job.inputdata.CE_white_list
 
@@ -205,7 +218,7 @@ def copyJob(job):
   running = len(test.getResults_for_test.filter(ganga_status='r').filter(site__name=site))
 
   if submitted > test_site.min_queue_depth:
-    logger.debug('Not copying job %d: %d submitted > q.d %d'%(job.id,submitted,test_site,min_queue_depth))
+    logger.debug('Not copying job %d: %d submitted > q.d %d'%(job.id,submitted,test_site.min_queue_depth))
     return
 
   if running > test_site.max_running_jobs:
@@ -262,7 +275,7 @@ def print_summary():
     active = active + s + r
 
     copied = 0    
-    test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
+    test_state = test.getTestStates_for_test.filter(ganga_jobid=j.id)
     if test_state and test_state[0].copied:
       copied = 1
 
@@ -273,7 +286,7 @@ def print_summary():
   logger.info('PROGRESS ON UNCOPIED JOBS:')
   for j in jobs:
 
-    test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
+    test_state = test.getTestStates_for_test.filter(ganga_jobid=j.id)
     if test_state and test_state[0].copied:
       continue
 
@@ -293,8 +306,10 @@ def print_summary():
 ## PROCESS SUBJOBS
 ##
 
-def process_subjob(cursor,job,subjob):
+def process_subjob(job,subjob):
 
+  site = job.inputdata.CE_white_list
+  
   logger.debug('Processing jobs(%d).subjobs(%d) with status %s'%(job.id,subjob.id,subjob.status))
 
   # return if result is already fixed
@@ -306,7 +321,7 @@ def process_subjob(cursor,job,subjob):
   #Iterate over all them
   #SECTIONS = config.sections()
 
-  results = {}
+  results = {'ganga_status':subjob.status[0]}
   metrics = []
 
   for key,value in subjob.backend.report.items():
@@ -320,12 +335,13 @@ def process_subjob(cursor,job,subjob):
     value = results['CpuTime']
     del results['CpuTime']
 
-    value = value.replace('&quot;','')
-    #cputime.replace('"','')
+    value   = value.replace('&quot;','')
+    value   = value.replace('"','')
     cpudata = value.split(' ')
-    results['UserCPUTime'] = cpudata[0]
-    results['SysCPUTime'] = cpudata[1]
-    results['CPUPercentage'] = cpudata[2].replace('%"','')
+
+    results['UserCPUTime']   = cpudata[0]
+    results['SysCPUTime']    = cpudata[1]
+    results['CPUPercentage'] = cpudata[2].replace('%','')
 
   logger.debug('Writing to DB')
 
@@ -333,16 +349,176 @@ def process_subjob(cursor,job,subjob):
   if result:
     result = result[0]
   else:
-    result = Result(test=test,site=site,ganga_jobid=ganga_jobid,ganga_subjobid=ganga_subjobid)
+    site = Site.objects.filter(name=site)[0]
+    result = Result(test=test,site=site,ganga_jobid=job.id,ganga_subjobid=subjob.id,ganga_status=subjob.status[0])
 
   for k,v in results.items():
-    setattr(result,k,v)   
+    if k in types['DateTimeField'] and not v.__class__.__name__ == 'DateTimeField':
+      if v:
+        v = datetime.strptime(v,'%Y-%m-%d %H:%M:%S')
+      else:
+        continue
+    setattr(result,k,v)
   result.save()
+
+  #logger.info(results)
 
   if subjob.status in ('completed','failed'):
     logger.debug('Subjob is in final state, marking row as fixed')
     result.fixed = 1
     result.save()    
+
+
+##
+## SUMMARIZE
+##
+
+def summarize():
+
+  s_t   = test.getSummaryTests_for_test.all()[0]
+  s_t_s = test.getSummaryTestSites_for_test.all()
+
+  stats = Stats()  
+
+  Qobjects                = {}
+  Qobjects['test']        = [test]
+  #small hack to remove duplicated in the list
+  Qobjects['metric_type'] = list(set(list(test.metricperm.index.all()) + list(test.metricperm.pertab.all()) + list(test.metricperm.summary.all())))
+  Qobjects['site']        = [ ts.site for ts in test.getTestSites_for_test.all() ]
+  
+  commands = {'sort_by':'test','type':'raw_value'}
+  
+  title,values = stats.process(Qobjects,commands)[0]
+  values = dict(values)
+
+  s_t.submitted = float(test.getResults_for_test.filter(ganga_status='s').count())
+  s_t.running   = float(test.getResults_for_test.filter(ganga_status='r').count())
+  s_t.completed = float(test.getResults_for_test.filter(ganga_status='c').count())
+  s_t.failed    = float(test.getResults_for_test.filter(ganga_status='f').count())
+  s_t.total     = float(test.getResults_for_test.count())
+     
+  if s_t.total:
+    s_t.c_t = s_t.completed / s_t.total
+    s_t.f_t = s_t.failed / s_t.total
+
+  if s_t.completed or s_t.failed:
+    s_t.c_cf = s_t.completed / (s_t.completed + s_t.failed)
+
+  if values.has_key('Overall.'):
+    for metric in test.metricperm.summary.all():
+#      logger.info(metric.name)
+      rate = [float(dic[metric.name]) for dic in values['Overall.'] if dic[metric.name] != None]
+#      logger.info(rate)
+      if rate:
+        mean = round(numpy.mean(rate),3)
+#        logger.info([metric.name,mean])
+        setattr(s_t,metric.name,mean)     
+  
+  s_t.save()
+
+  for sts in s_t_s:
+    sts.submitted = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='s').count())
+    sts.running   = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='r').count())
+    sts.completed = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='c').count())
+    sts.failed    = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='f').count())
+    sts.total     = float(test.getResults_for_test.filter(site=sts.test_site.site).count())
+
+    if sts.total:
+      sts.c_t = sts.completed / sts.total
+      sts.f_t = sts.failed / sts.total
+
+    if sts.completed or sts.failed:
+      sts.c_cf = sts.completed / (sts.completed + sts.failed)
+
+    if values.has_key(sts.test_site.site.name):
+      for metric in test.metricperm.summary.all():
+#        logger.info(metric.name)
+        rate = [float(dic[metric.name]) for dic in values[sts.test_site.site.name] if dic[metric.name] != None]
+#        logger.info(rate)
+        if rate:
+          mean = round(numpy.mean(rate),3)
+#          logger.info('Site:'+str([metric.name,mean]))
+          setattr(sts,metric.name,mean)
+  
+    sts.save()  
+
+#  logger.info('End summarize')
+
+##
+## PLOT
+##
+
+def plot():
+
+  s_t   = test.getSummaryTests_for_test.all()[0]
+  s_t_s = test.getSummaryTestSites_for_test.all()
+
+  stats = Stats()
+
+  Qobjects                = {}
+  Qobjects['test']        = [test]
+  #small hack to remove duplicated in the list
+  Qobjects['metric_type'] = list(set(list( test.metricperm.index.all()) + list(test.metricperm.pertab.all()) ))
+  Qobjects['site']        = [ ts.site for ts in test.getTestSites_for_test.all() ]
+
+  commands = {'sort_by':'test','type':'plot'}
+
+  test_title,values = stats.process(Qobjects,commands)[0][0]
+#  logger.info(values)
+  for metric_title,urls in values:
+
+    mt = MetricType.objects.filter(name=metric_title)
+    if mt:
+
+      for plot_title,url in urls: 
+
+        if plot_title == 'Overall.':
+          # then, it goes to TestMetric
+
+          test_metric = test.getTestMetrics_for_test.filter(metric__metric_type__name=metric_title)
+
+          if test_metric:
+            test_metric = test_metric[0]
+            metric = test_metric.metric
+            metric.url = url
+            metric.save()
+#            test_metric.metric.url = url
+#            test_metric.save()
+#            logger.info('Refreshed metric.')
+          else:
+            m = Metric(url=url,metric_type=mt[0])
+            m.save()
+            tm = TestMetric(metric=m,test=test)
+            tm.save()
+#            logger.info('Created metric.')
+
+        else:
+          # then, it goes to SiteMetric
+
+          site = Site.objects.filter(name=plot_title)
+          if site:
+
+            site_metric = test.getSiteMetrics_for_test.filter(site=site[0]).filter(metric__metric_type__name=metric_title)
+            
+            if site_metric:
+              site_metric = site_metric[0]
+              metric = site_metric.metric
+              metric.url = url
+              metric.save()
+#              logger.info('Site metric refreshed.')
+            else:
+              m = Metric(url=url,metric_type=mt[0])
+              m.save()
+              sm = SiteMetric(metric=m,test=test,site=site[0])
+              sm.save()
+#              logger.info('Created site metric')
+          else:
+            logger.info("Wow, I don't know this site: %s"%(plot_title))
+
+    else:
+      logger.info('No metric type recognised with this name: %s'%(metric_title))
+
+    #logger.info(value[0])    
 
 ##
 ## MAIN LOOP
@@ -360,6 +536,17 @@ def hc_copy_thread():
         break
       copyJob(job)
     test_sleep(10)
+#    try:
+#    logger.info(datetime.now())
+    summarize()
+    plot()
+#    logger.info(datetime.now())
+#    except:
+#      logger.warning('Something went wrong while summarizing/plotting.')
+#      logger.warning(sys.exc_info()[0])
+#      logger.warning(sys.exc_info()[1])
+
+
   logger.info('HC Copy Thread: Disconnected from DB')
 
 ct = GangaThread(name="HCCopyThread", target=hc_copy_thread)
@@ -385,6 +572,14 @@ if len(jobs):
           logger.warning(sys.exc_info()[1])
       if test_paused():
         break
+#    try:
+#    logger.info(datetime.now())
+#    summarize()
+#    logger.info(datetime.now())
+#    except:
+#      logger.warning('Something went wrong while summarizing/plotting.')
+#      logger.warning(sys.exc_info()[0])
+#      logger.warning(sys.exc_info()[1])
     test_sleep(10)
 else:
   logger.warning('No jobs to monitor. Exiting now.')

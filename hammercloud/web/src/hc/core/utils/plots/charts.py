@@ -7,9 +7,8 @@ def pie(values, labels, title, colors=['0000FF']):
         return None
     sumvalues = sum(values)
     values = [x*100/sumvalues for x in values]
-#    chart = Pie3D(values)
-#    chart.size(300,150)
     chart = Pie(values)
+#    chart.size(300,225)   
     chart.size(300,225)
     chart.title(title)
     chart.label(*labels)

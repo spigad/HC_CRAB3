@@ -69,5 +69,4 @@ class TestSubmit():
         print "[ERROR][%s][test_submit] Test %d. Marking as submitted anyway to prevent infinite submission loop."%(app,test.id)
         return 0
     else:
-      print 'Game over !'
       return 0

@@ -1,25 +1,27 @@
 {% extends 'core/app/base.html' %}
 
 {% block css %}
-  {{block.super}}
   <link type="text/css" href="{{ MEDIA_URL }}css/datatables.css" rel="stylesheet"/>
+  <link type="text/css" href="{{ MEDIA_URL }}css/TableTools.css" rel="stylesheet"/>
+  {{block.super}}
 {% endblock %}
 
 {% block javascript %}
   {{block.super}}
   <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script> 
   <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/TableTools.min.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/ZeroClipboard.js"></script>
 {% endblock %}
 
 {% block docready %}
   {{block.super}}
-  $("#tabs").tabs({ cache: true, spinner: 'Retrieving data...', remote: true })
+  $("#tabs").tabs();
   $("#accordionoverall").accordion({ autoHeight:false,active:false,collapsible:true});
-  $('#accordionoverall').tabs('option', 'spinner', 'Retrieving data...')
+  $('#accordionoverall').tabs('option', 'spinner', 'Retrieving data...');
   $('#accordionoverall> h3').click(function() {
     $('#'+String(this.id)+'_div').load("{% url index-view app %}ajax/test/{{test.id}}/"+String(this.id));
   });
-  $('#tabs').tabs('option', 'spinner', 'Retrieving data...')
 {% endblock %}
 
 {% block content %}
@@ -29,15 +31,16 @@
     <a href="{% url portal-view %}feed/app/{{app}}/test/{{test.id}}/"><img src="{{ MEDIA_URL }}images/rss_{{app}}.ico" border="0"></a>
   </h2>
   <div style="float:right;">
-        &nbsp;<a href="{#% url testadminclone-view sum_test.test %#}">Clone</a>
-        &nbsp;-&nbsp;<a href="{#% url testadmin-view sum_test.test %#}">Modify</a>
+        &nbsp;<a href="{% url testclone-view app,test.id %}">Clone</a>
+        &nbsp;-&nbsp;<a href="{% url testmodify-view app,test.id %}">Modify</a>
   </div><br/>
 
   <div id="tabs">{% load hc_tags %}
     <ul>
       <li><a href="#tabs-overall">Overall</a></li>
-      <li><a href="#tabs-overall">Sites</a></li>
-      <li><a href="#tabs-overall">Metrics</a></li>
+      <li><a href="{% url ajaxtestlogs-view app, test.id %}">Sites</a></li>
+      <li><a href="{% url ajaxtestlogs-view app, test.id %}">Metrics</a></li>
+      <li><a href="{% url ajaxtestlogs-view app, test.id %}">Logs</a></li>
     </ul>
     <div id="tabs-overall">
       <h3>Summary</h3>

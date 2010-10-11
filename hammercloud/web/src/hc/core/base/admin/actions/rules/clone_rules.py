@@ -20,6 +20,7 @@ RULES = {
             },
           'Test':   
             {
+              'state':'setState',
               'version':'setVersion',
               'cloned':'setCloned',    
             },
@@ -27,6 +28,9 @@ RULES = {
 
 def setZero(self):
   return 0
+
+def setState(self):
+  return 'draft'
 
 def setVersion(self):
   return 4

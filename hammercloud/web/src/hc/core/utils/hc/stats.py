@@ -152,11 +152,30 @@ class Stats:
 
     return query  
 
+  def filterStatus(self,query,dic):
+
+    status = ['c','f','r','s','n']
+
+    if not query.count():
+      return dic
+
+    for s in status:
+      if dic.has_key(s):
+        dic[s] += query.filter(ganga_status=s).count()
+      else:
+        dic[s] = query.filter(ganga_status=s).count()
+
+    return dic
+
+
   ## PLOTS, RANKS, TIMELINES ...
 
-  def cloud_proc(self,Qobjects,commands):
+############################################################### HISTS
+
+  def cloud_proc(self,Qobjects,commands,extra=[]):
 
     values_list = []
+    metric_list = [m.name for m in Qobjects['metric_type'] if m.name != 'ganga_status'] + extra
 
     for cloud in Qobjects['cloud']:
       values = []
@@ -168,7 +187,7 @@ class Stats:
       for site in sites:
         query = site.getResults_for_site.filter(ganga_status='c')
         query = self.filterQuery(query,commands)
-        val_list += query.values().all()
+        val_list += query.values(*metric_list).all()
       values = [('Overall.',val_list)]
 
       if Qobjects['test']:
@@ -177,7 +196,7 @@ class Stats:
           for site in sites:
             query = site.getResults_for_site.filter(ganga_status='c').filter(test=test)
             query = self.filterQuery(query,commands)
-            val_list += query.values().all()
+            val_list += query.values(*metric_list).all()
           values += [('Test %s.'%(test.id),val_list)]
 
       elif Qobjects['template']:
@@ -186,69 +205,86 @@ class Stats:
           tests = template.getTests_for_template.all()
           for test in tests:
             for site in sites:
-              val_list += site.getResults_for_site.filter(ganga_status='c').filter(test=test).values().all()
+              query = site.getResults_for_site.filter(ganga_status='c').filter(test=test)
+              query = self.filterQuery(query,commands)
+              val_list += query.values(*metric_list).all()
           values += [('Template %s.'%(template.id),val_list)]
 
       values_list += [(title,values)]
 
     return values_list
 
-  def site_proc(self,Qobjects):
+  def site_proc(self,Qobjects,commands,extra=[]):
 
     values_list = []
+    metric_list = [ m.name for m in Qobjects['metric_type'] if m.name != 'ganga_status'] + extra
 
     for site in Qobjects['site']:
       values = []
       title  = 'Site %s.'%(site.name)
 
       #Overall
-      values = [('Overall.',site.getResults_for_site.filter(ganga_status='c').values().all())]
+      query = site.getResults_for_site.filter(ganga_status='c')
+      query = self.filterQuery(query,commands)
+      values = [('Overall.',query.values(*metric_list).all())]
 
       if Qobjects['test']:
         for test in Qobjects['test']:
-          values += [('Test %s'%(test.id),site.getResults_for_site.filter(ganga_status='c').filter(test=test).values().all())]
+          query = site.getResults_for_site.filter(ganga_status='c').filter(test=test.id)
+          query = self.filterQuery(query,commands)
+          values += [('Test %s'%(test.id),query.values(*metric_list).all())]
 
       elif Qobjects['template']:
         for template in Qobjects['template']:
           tests = template.getTests_for_template.all()
           val_list = []
           for test in tests:
-            val_list += site.getResults_for_site.filter(ganga_status='c').filter(test=test).values().all()
+            query = site.getResults_for_site.filter(ganga_status='c').filter(test=test.id)
+            query = self.filterQuery(query,commands)
+            val_list += query.values(*metric_list).all()
           values += [('Template %s'%(template.id),val_list)]
 
       values_list += [(title,values)]
 
     return values_list
 
-  def test_proc(self,Qobjects):
+  def test_proc(self,Qobjects,commands,extra=[]):
 
     values_list = []
+    metric_list = [ m.name for m in Qobjects['metric_type'] if m.name != 'ganga_status'] + extra
 
     for test in Qobjects['test']:
       values = []
       title = 'Test %s'%(test.id)
 
       #Overall
-      values = [('Overall.',test.getResults_for_test.filter(ganga_status='c').values().all())]
+      query = test.getResults_for_test.filter(ganga_status='c')
+      query = self.filterQuery(query,commands)
+      values = [('Overall.',query.values(*metric_list).all())]
 
       if Qobjects['site']:
         for site in Qobjects['site']:
-          values += [(site.name,test.getResults_for_test.filter(ganga_status='c').filter(site=site).values().all())]
+          query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+          query = self.filterQuery(query,commands)
+          values += [(site.name,query.values(*metric_list).all())]
 
       elif Qobjects['cloud']:
         for cloud in Qobjects['cloud']:
           val_list = []
           for site in cloud.getSites_for_cloud.all():
-            val_list += test.getResults_for_test.filter(ganga_status='c').filter(site=site).values().all()
+            query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+            query = self.filterQuery(query,commands)
+            val_list += query.values(*metric_list).all()
           values += [(cloud.name,val_list)]
 
       values_list += [(title,values)]
 
     return values_list
 
-  def template_proc(self,Qobjects):
+  def template_proc(self,Qobjects,commands,extra=[]):
 
     values_list = []
+    metric_list = [ m.name for m in Qobjects['metric_type'] if m.name != 'ganga_status'] + extra
 
     for template in Qobjects['template']:
       values = []
@@ -257,7 +293,9 @@ class Stats:
       #Overall
       val_list = []
       for test in template.getTests_for_template.all():
-        val_list += test.getResults_for_test.filter(ganga_status='c').values().all()
+        query = test.getResults_for_test.filter(ganga_status='c')
+        query = self.filterQuery(query,commands)
+        val_list += query.values(*metric_list).all()
       values = [('Overall.',val_list)]
 
       if Qobjects['test']:
@@ -274,13 +312,17 @@ class Stats:
             if test.template == template:
               val_list = []
               for site in sites:
-                val_list += test.getResults_for_test.filter(ganga_status='c').filter(site=site).values().all()
+                query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+                query = self.filterQuery(query,commands)
+                val_list += query.values(*metric_list).all()
               values += [('Test %s'%(test.id),val_list)]
 
         else: #get by_test with all possible sites
           for test in tests:
             if test.template == template:
-              values += [('Test %s'%(test.id),test.getResults_for_test.filter(ganga_status='c').values().all())]
+              query = test.getResults_for_test.filter(ganga_status='c')
+              query = self.filterQuery(query,commands)
+              values += [('Test %s'%(test.id),query.values(*metric_list).all())]
 
       else:
         tests = template.getTests_for_template.all()
@@ -289,7 +331,9 @@ class Stats:
           for site in Qobjects['site']:
             val_list = []
             for test in tests:
-              val_list += test.getResults_for_test.filter(ganga_status='c').filter(site=site).values().all()
+              query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+              query = self.filterQuery(query,commands)
+              val_list += query.values(*metric_list).all()
             values += [(site.name,val_list)]
 
         elif Qobjects['cloud']:
@@ -297,7 +341,9 @@ class Stats:
             val_list = []
             for site in cloud.getSites_for_cloud.all():
               for test in tests:
-                val_list += test.getResults_for_test.filter(ganga_status='c').filter(site=site).values().all()
+                query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+                query = self.filterQuery(query,commands)
+                val_list += query.values(*metric_list).all()
             values += [(cloud.name,val_list)]
 
       values_list += [(title,values)]
@@ -305,15 +351,228 @@ class Stats:
     return values_list
 
 
+############################################################### PIES
+
+  def cloud_proc_pie(self,Qobjects,commands,extra=[]):
+
+    values_list = []
+
+    for cloud in Qobjects['cloud']:
+
+      values = []
+      title  = 'Cloud %s.'%(cloud.name)
+      sites  = cloud.getSites_for_cloud.all()
+
+      #Overall
+      dic = {}
+      for site in sites:
+        query = site.getResults_for_site.filter(ganga_status='c')
+        query = self.filterQuery(query,commands)
+        dic = self.filterStatus(query,dic)
+      values = [('Overall.',dic)]
+
+      if Qobjects['test']:
+        for test in Qobjects['test']:
+          dic = {}
+          for site in sites:
+            query = site.getResults_for_site.filter(ganga_status='c').filter(test=test)
+            query = self.filterQuery(query,commands)
+            dic = self.filterStatus(query,dic)
+          values += [('Test %s.'%(test.id),dic)]
+
+      elif Qobjects['template']:
+        for template in Qobjects['template']:
+          dic = {}
+          tests = template.getTests_for_template.all()
+          for test in tests:
+            for site in sites:
+              query = site.getResults_for_site.filter(ganga_status='c').filter(test=test)
+              query = self.filterQuery(query,commands)
+              dic = self.filterStatus(query,dic)
+          values += [('Template %s.'%(template.id),dic)]
+
+      values_list += [(title,values)]
+
+    return values_list
+
+  def site_proc_pie(self,Qobjects,commands,extra=[]):
+
+    values_list = []
+
+    for site in Qobjects['site']:
+      values = []
+      title  = 'Site %s.'%(site.name)
+
+      #Overall
+      query = site.getResults_for_site.filter(ganga_status='c')
+      query = self.filterQuery(query,commands)
+      dic = self.filterStatus(query,{})
+      if dic:
+        values = [('Overall.',dic)]
+
+      if Qobjects['test']:
+        for test in Qobjects['test']:
+          query = site.getResults_for_site.filter(ganga_status='c').filter(test=test.id)
+          query = self.filterQuery(query,commands)
+          dic = self.filterStatus(query,{})
+          if dic:
+            values += [('Test %s'%(test.id),dic)]
+
+      elif Qobjects['template']:
+        for template in Qobjects['template']:
+          tests = template.getTests_for_template.all()
+          dic = {}
+          for test in tests:
+            query = site.getResults_for_site.filter(ganga_status='c').filter(test=test.id)
+            query = self.filterQuery(query,commands)
+            dic = self.filterStatus(query,dic)
+          values += [('Template %s'%(template.id),dic)]
+
+      values_list += [(title,values)]
+
+    return values_list
+
+
+  def test_proc_pie(self,Qobjects,commands,extra=[]):
+    values_list = []
+
+    for test in Qobjects['test']:
+      values = []
+      title = 'Test %s'%(test.id)
+
+      #Overall
+      query = test.getResults_for_test
+      query = self.filterQuery(query,commands)
+      dic = self.filterStatus(query,{})
+      if dic:
+        values = [('Overall.',dic)]
+
+      if Qobjects['site']:
+        for site in Qobjects['site']:
+          query = test.getResults_for_test.filter(site=site)
+          query = self.filterQuery(query,commands)
+          dic = self.filterStatus(query,{})
+          if dic:
+            values += [(site.name,dic)]
+
+      elif Qobjects['cloud']:
+        for cloud in Qobjects['cloud']:
+          dic = {}
+          for site in cloud.getSites_for_cloud.all():
+            query = test.getResults_for_test.filter(site=site)
+            query = self.filterQuery(query,commands)
+            dic = self.filterStatus(query,dic)
+          values += [(cloud.name,dic)]
+
+      values_list += [(title,values)]
+
+    return values_list
+
+
+  def template_proc_pie(self,Qobjects,commands,extra=[]):
+
+    values_list = []
+
+    for template in Qobjects['template']:
+      values = []
+      title  = 'Template %s.'%(template.id)
+
+      #Overall
+      dic = {}
+      for test in template.getTests_for_template.all():
+        query = test.getResults_for_test.filter(ganga_status='c')
+        query = self.filterQuery(query,commands)
+        dic = self.filterStatus(query,dic)
+      values = [('Overall.',dic)]
+
+      if Qobjects['test']:
+
+        sites = []
+        for site in Qobjects['site']:
+          sites += [site]
+        for cloud in Qobjects['cloud']:
+          for site in cloud.getSites_for_cloud.all():
+            sites += [site]
+
+        if sites: #get by_test with given sites
+          for test in Qobjects['test']:
+            if test.template == template:
+              dic = {}
+              for site in sites:
+                query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+                query = self.filterQuery(query,commands)
+                dic = self.filterStatus(query,dic)
+              values += [('Test %s'%(test.id),dic)]
+
+        else: #get by_test with all possible sites
+          for test in Qobjects['test']:
+            if test.template == template:
+              query = test.getResults_for_test.filter(ganga_status='c')
+              query = self.filterQuery(query,commands)
+              dic = self.filterStatus(query,{})
+              if dic:
+                values += [('Test %s'%(test.id),dic)]
+
+      else:
+        tests = template.getTests_for_template.all()
+
+        if Qobjects['site']:
+          for site in Qobjects['site']:
+            dic = {}
+            for test in tests:
+              query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+              query = self.filterQuery(query,commands)
+              dic = self.filterStatus(query,dic)
+            values += [(site.name,dic)]
+
+        elif Qobjects['cloud']:
+          for cloud in Qobjects['cloud']:
+            dic = {}
+            for site in cloud.getSites_for_cloud.all():
+              for test in tests:
+                query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+                query = self.filterQuery(query,commands)
+                dic = self.filterStatus(query,dic)
+            values += [(cloud.name,dic)]
+
+      values_list += [(title,values)]
+
+    return values_list
+
+
+
+########################################################################## PROCESS
 
   def process(self,Qobjects,commands):
     
     container = {}
     error = ''    
-    values_list = []
+    hist_list = []
+    pie_list = []
 
     sort_by = commands['sort_by']
     type    = commands['type']
+
+    #Dummy protection.
+    for key in ['metric_type','site','cloud','test','template']:
+      if not Qobjects.has_key(key):
+        Qobjects[key] = []
+
+    if not type in ['plot','rank','timeline','raw_value']:
+      error = 'Please, select a statistics type.'
+      return ({},error)
+    elif type == 'timeline':
+      extra = ['mtime']
+    else:
+      extra = []
+
+    pie_flag = False
+    if 'ganga_status' in [m.name for m in Qobjects['metric_type']]:
+      pie_flag = True
+
+    hist_flag = False
+    if (not pie_flag and len(Qobjects['metric_type'])) or (pie_flag and len(Qobjects['metric_type'])>1 ):
+      hist_flag = True
 
     if not sort_by:
       error = 'Please, select a sorting parameter.'
@@ -333,44 +592,68 @@ class Stats:
     elif not Qobjects[sort_by]:
       error = 'You must select at least one %s.'%(sort_by)
 
-    elif sort_by == 'cloud' and not error:
+    elif sort_by == 'cloud':
       if Qobjects['test'] and Qobjects['template']:
         error = 'Please, decide if you want to filter either by test or by template.'
       else:
-        values_list = self.cloud_proc(Qobjects,commands)
+        if hist_flag:
+          hist_list = self.cloud_proc(Qobjects,commands,extra)
+        if pie_flag:
+          pie_list = self.cloud_proc_pie(Qobjects,commands,extra)
 
-    elif sort_by == 'site' and not error:
+    elif sort_by == 'site':
       if Qobjects['test'] and Qobjects['template']:
         error = 'Please, decide if you want to filter either by test or by template.'
       else:
-        values_list = self.site_proc(Qobjects)
+        if hist_flag:
+          hist_list = self.site_proc(Qobjects,commands,extra)
+        if pie_flag:
+          pie_list = self.site_proc_pie(Qobjects,commands,extra)
 
-    elif sort_by == 'test' and not error:
+    elif sort_by == 'test':
       if Qobjects['test'] and Qobjects['template']:
         error = 'Please, decide if you want to filter either by test or by template.'
       else:
-        values_list = self.test_proc(Qobjects)
+        if hist_flag:
+          hist_list = self.test_proc(Qobjects,commands,extra)
+        if pie_flag:
+          pie_list = self.test_proc_pie(Qobjects,commands,extra)
 
-    elif sort_by == 'template' and not error:
-      values_list = self.template_proc(Qobjects)
+    elif sort_by == 'template':
+      if hist_flag:
+        hist_list = self.template_proc(Qobjects,commands,extra)
+      if pie_flag:
+        pie_list = self.template_proc_pie(Qobjects,commands,extra)
+
+    if type in ['rank','timeline'] and pie_flag:
+      error = 'Efficiency metric not supported yet.'
 
     if type == 'rank' and not error:
-      container = self.rank(values_list,Qobjects['metric_type'])
+      container = self.rank(hist_list,pie_list,Qobjects['metric_type'])
     elif type == 'plot' and not error:
-      container = self.plot(values_list,Qobjects['metric_type'])
+      container = self.plot(hist_list,pie_list,Qobjects['metric_type'])
     elif type == 'timeline' and not error:
-      titles,container = self.timeline(values_list,Qobjects['metric_type'])
-      return (titles,container,error) 
+      if len(Qobjects['metric_type']) > 1:
+        error = 'Multi metric timeline is not implemented yet.'    
+        titles = ''
+      else:
+        titles,container = self.timeline(hist_list,pie_list,Qobjects['metric_type'])
+    elif type == 'raw_value':
+      return hist_list
     else:
+      titles = ''
       container = {}
+
+    if type=='timeline':
+      return (titles,container,error)
              
     return (container,error)
 
-  def rank(self,values_list,metrics):
+  def rank(self,hist_list,pie_list,metrics):
 
     container = {}
 
-    for title,values in values_list:
+    for title,values in hist_list:
  
       if not container.has_key(title):
         container[title] = {}
@@ -409,26 +692,61 @@ class Stats:
 
     return container
 
-  def plot(self,values_list,metrics):
+  def plot(self,hist_list,pie_list,metrics):
 
     container = {}
 
-    for title,values in values_list:
+    for title,values in hist_list:
 
       if not container.has_key(title):
         container[title] = []
 
       for metric in metrics:
 
-        plot_list = []
+        if metric.name != 'ganga_status':
 
-        for plot_title,value in values:
-          rate = [ dic[metric.name] for dic in value ]
-          url = hist(rate, 20, metric.name, plot_title)
-          if url:
-            plot_list += [url]
+          plot_list = []
+  
+          for plot_title,value in values:
+            rate = [ dic[metric.name] for dic in value ]
+            url = ''
+            url = hist(rate, 20, metric.name, plot_title)
+         
+            if url:
+              plot_list += [(plot_title,url)]
 
-        container[title] += [(metric.title,plot_list)]
+          container[title] += [(metric.title,plot_list)]
+
+    color = dict({'c':'5EFB6E', 'f':'FF0000', 'r':'79BAEC', 's':'FFF380', 'n':'F75D59', 'o':'38ACEC'})
+    status = ['c','f','r','s','n']
+
+    for title,values in pie_list:
+      if not container.has_key(title):
+        container[title] = []
+
+      plot_list = []
+
+      for plot_title,plot_dic in values:
+
+        rate   = []
+        labels = []
+        colors = []
+
+        for k,v in plot_dic.items():
+
+          if v:
+            rate.append(v)
+            labels.append('%s (%s)'%(k,v))
+
+            if k in status:
+              colors.append(color[k])
+            else:
+              colors.append(color['o'])      
+
+        url = pie(rate,labels,plot_title,colors)
+        plot_list += [(plot_title,url)]      
+
+      container[title] += [('Efficiency',plot_list)]
 
     #Sort dictionary
     keys = container.keys()
@@ -437,7 +755,7 @@ class Stats:
 
     return container
 
-  def timeline(self,values_list,metrics):
+  def timeline(self,hist_list,pie_list,metrics):
 
     container = {}
     titles = []
@@ -448,8 +766,8 @@ class Stats:
 
     if len(metrics) == 1:
       overall_title = metrics[0].name
-      if len(values_list) == 1:
-        title,values = values_list[0]
+      if len(hist_list) == 1:
+        title,values = hist_list[0]
         overall_title += '@ %s.'%(title)
         for sub_title,value in values:
           if not '%s-%s'%(title,sub_title) in titles:
@@ -461,7 +779,7 @@ class Stats:
             lista['%s-%s'%(title,sub_title)] += [(date,dic[metrics[0].name])]
 
       else:
-        for title,values in values_list:
+        for title,values in hist_list:
           for sub_title,value in values:
             if not '%s-%s'%(title,sub_title) in titles:
               titles.append('%s-%s'%(title,sub_title))
@@ -487,8 +805,8 @@ class Stats:
       return (titles,container)
 
 #    NOT IMPLEMENTED YET.
-#    elif len(values_list) == 1:
-#      overall_title,values = values_list[0] 
+#    elif len(hist_list) == 1:
+#      overall_title,values = hist_list[0] 
 #    
      
 #    return overall_title
@@ -522,9 +840,12 @@ class Stats:
     overall_labl = []
 
     #If they have different lenghts, it will crash
+
     for i in xrange(0,len(completed_plot)):
       overall_plot.append(completed_plot[i]['count'])
       overall_labl.append('C v.'+str(completed_plot[i]['test__version']))
+
+    for i in xrange(0,len(failed_plot)):
       overall_plot.append(failed_plot[i]['count'])
       overall_labl.append('F v.'+str(failed_plot[i]['test__version']))
 
