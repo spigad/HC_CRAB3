@@ -14,7 +14,7 @@ from django.forms.util import ErrorList
 
 from django.forms import ModelForm
 
-class FormGenerator():
+class FormGenerator:
 
   def getMetricPermForm(self,module):
 

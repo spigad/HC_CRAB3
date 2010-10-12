@@ -2,7 +2,7 @@ from hc.core.utils.generic.class_func import custom_import
 
 import os
 
-class TestSubmit():
+class TestSubmit:
 
   def check(self,app,dic):
     if app == 'core':

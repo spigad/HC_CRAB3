@@ -3,7 +3,7 @@ from datetime import datetime
 
 import os
 
-class TestReport():
+class TestReport:
 
   def check(self,app,dic):
     if app == 'core':

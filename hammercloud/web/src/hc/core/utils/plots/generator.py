@@ -1,7 +1,7 @@
 from hc.core.utils.generic.class_func import custom_import
 from hc.core.utils.plots.charts import pie,hist
 
-class Generator():
+class Generator:
 
   COLORS = dict({'c':'5EFB6E', 'f':'FF0000', 'r':'79BAEC', 's':'FFF380', 'n':'F75D59', 'o':'38ACEC'})
   app = ''

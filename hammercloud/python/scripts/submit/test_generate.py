@@ -1,7 +1,7 @@
 from hc.core.utils.generic.class_func import custom_import
 from datetime import datetime
 
-class TestGenerate():
+class TestGenerate:
 
   def check(self,app,dic):
     if app == 'core':

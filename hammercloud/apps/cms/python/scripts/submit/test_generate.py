@@ -2,7 +2,7 @@ import os,time, random
 from urllib2 import URLError,HTTPError,Request,urlopen
 from datetime import datetime
 
-class TestGenerate():
+class TestGenerate:
 
   def run(self,test):
 
