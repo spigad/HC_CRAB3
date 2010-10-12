@@ -38,10 +38,12 @@ class BackendBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(BackendBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -64,10 +66,12 @@ class CloudBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now() 
     super(CloudBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -87,10 +91,12 @@ class DspatternBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(DspatternBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -109,10 +115,12 @@ class GangaBinBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(GangaBinBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -133,10 +141,12 @@ class HostBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(HostBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -155,10 +165,12 @@ class InputTypeBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(InputTypeBase,self).save()
+    return 1
 
   class	Meta:
     abstract = True
@@ -177,10 +189,12 @@ class JobTemplateBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(JobTemplateBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -199,16 +213,17 @@ class MetricPermBase(models.Model):
   #pertab       -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPerm','permetric',{})
   #cron_allowed -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPerm','cron_allowed',{})
 
-
   def __unicode__(self):
     return '%s'%self.name
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(MetricPermBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -227,10 +242,12 @@ class OptionFileBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(OptionFileBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -252,11 +269,13 @@ class TestOptionBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(TestOptionBase,self).save()
-
+    return 1
+ 
   class	Meta:
     abstract = True
     db_table = u'testoption'
@@ -274,10 +293,12 @@ class UserCodeBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(UserCodeBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -312,10 +333,12 @@ class SiteBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
-
+    return 1
+ 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(SiteBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -369,10 +392,12 @@ class TemplateBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(TemplateBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -393,10 +418,12 @@ class TemplateBackendBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(TemplateBackendBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -422,10 +449,12 @@ class TemplateCloudBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(TemplateCloudBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -446,10 +475,12 @@ class TemplateDspatternBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(TemplateDspatternBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -470,10 +501,12 @@ class TemplateHostBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(TemplateHostBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -499,10 +532,12 @@ class TemplateSiteBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(TemplateSiteBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -521,10 +556,12 @@ class TemplateUserBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(TemplateUserBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -599,6 +636,7 @@ class TestBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
@@ -611,6 +649,7 @@ class TestBase(models.Model):
       return 0
 
     test = custom_import('hc.'+self._meta.app_label+'.models.Test')
+
     t    = test.objects.filter(id = self.id)
 
     dontsave = ['error','completed']
@@ -618,32 +657,24 @@ class TestBase(models.Model):
       if t[0].state in dontsave:
         t[0].state = self.state
         super(TestBase, t[0]).save()
-      else:
+        return 1
+      else:           
         super(TestBase, self).save()
+        return 1
 
     if not t:
       #It's a new test, copy from template.
       obj = self.template
 
-#      if not self.jobtemplate:
       self.jobtemplate      = obj.jobtemplate
-#      if not self.usercode:
       self.usercode         = obj.usercode
-#      if not self.optionfile:
       self.optionfile       = obj.optionfile
-#      if not self.inputtype:
       self.inputtype        = obj.inputtype
-#      if not self.metricperm:
       self.metricperm       = obj.metricperm
-#      if not self.output_dataset:
       self.output_dataset   = obj.output_dataset
-#      if not self.testoption:
       self.testoption       = obj.testoption
-#      if not self.gangabin:
       self.gangabin         = obj.gangabin
-#      if not self.extraargs:
       self.extraargs        = obj.extraargs
-#      if not self.description:
       self.description      = obj.description
 
       if self.state not in dontsave:
@@ -656,78 +687,74 @@ class TestBase(models.Model):
         summary_test.save()
 
       else:
-        pass
         #We cannot create tests in error or completed states.
+        return 0
 
-    #HOSTS (ONLY UPDATED ON CREATION)
-    if not t and not clone:
-      test_host      = custom_import('hc.'+self._meta.app_label+'.models.TestHost')
-      template_hosts = self.template.getTemplateHosts_for_template.all()
-      for th in template_hosts:
-        th = test_host(host = th.host, test=self)
-        th.save()
+      if not clone:
+        #HOSTS (ONLY UPDATED ON CREATION)
+        test_host      = custom_import('hc.'+self._meta.app_label+'.models.TestHost')
+        template_hosts = self.template.getTemplateHosts_for_template.all()
+        for th in template_hosts:
+          th = test_host(host = th.host, test=self)
+          th.save()
 
-    #SITES (ONLY UPDATED ON CREATION)
-    if not t and not clone:
-      test_site      = custom_import('hc.'+self._meta.app_label+'.models.TestSite')
-      template_sites = self.template.getTemplateSites_for_template.all()
+        #SITES (ONLY UPDATED ON CREATION)
+        test_site      = custom_import('hc.'+self._meta.app_label+'.models.TestSite')
+        template_sites = self.template.getTemplateSites_for_template.all()
 
-      summary_test_site = custom_import('hc.'+self._meta.app_label+'.models.SummaryTestSite')
+        summary_test_site = custom_import('hc.'+self._meta.app_label+'.models.SummaryTestSite')
 
-      for ts in template_sites:
-        ts = test_site(site = ts.site, 
+        for ts in template_sites:
+          ts = test_site(site = ts.site, 
                       test=self,
                       resubmit_enabled=ts.resubmit_enabled,
                       resubmit_force=ts.resubmit_force,
                       num_datasets_per_bulk=ts.num_datasets_per_bulk,
                       min_queue_depth=ts.min_queue_depth,
                       max_running_jobs=ts.max_running_jobs)
-        ts.save()
-        sts = summary_test_site(test=self,test_site=ts)
-        sts.save()
+          ts.save()
+          sts = summary_test_site(test=self,test_site=ts)
+          sts.save()
 
-      sites = test_fm.getTestSiteNames(self)
-      summary_test.sites = ','.join(sites)
-      summary_test.nr_sites = len(sites)
+        sites = test_fm.getTestSiteNames(self)
+        summary_test.sites = ','.join(sites)
+        summary_test.nr_sites = len(sites)
 
-      clouds = test_fm.getTestCloudCodes(self)
-      summary_test.clouds = ','.join(clouds)
-      summary_test.nr_clouds = len(clouds)
+        clouds = test_fm.getTestCloudCodes(self)
+        summary_test.clouds = ','.join(clouds)
+        summary_test.nr_clouds = len(clouds)
 
-      summary_test.save()
+        summary_test.save()
 
-    #DSPATTERNS (ONLY UPDATED ON CREATION)
-    if not t and not clone:
-      test_dspattern      = custom_import('hc.'+self._meta.app_label+'.models.TestDspattern')
-      template_dspatterns = self.template.getTemplateDspatterns_for_template.all()
-      for td in template_dspatterns:
-        td = test_dspattern(dspattern = td.dspattern, test=self)
-        td.save()
+        #DSPATTERNS (ONLY UPDATED ON CREATION)
+        test_dspattern      = custom_import('hc.'+self._meta.app_label+'.models.TestDspattern')
+        template_dspatterns = self.template.getTemplateDspatterns_for_template.all()
+        for td in template_dspatterns:
+          td = test_dspattern(dspattern = td.dspattern, test=self)
+          td.save()
 
-    #USERS (ONLY UPDATED ON CREATION)
-    if not t and not clone:
-      test_user      = custom_import('hc.'+self._meta.app_label+'.models.TestUser')
-      template_users = self.template.getTemplateUsers_for_template.all()
-      for tu in template_users:
-        tu = test_user(user = tu.user, test=self)
-        tu.save()
+        #USERS (ONLY UPDATED ON CREATION)
+        test_user      = custom_import('hc.'+self._meta.app_label+'.models.TestUser')
+        template_users = self.template.getTemplateUsers_for_template.all()
+        for tu in template_users:
+          tu = test_user(user = tu.user, test=self)
+          tu.save()
 
-    #CLOUDS (ONLY UPDATED ON CREATION)
-    if not t and not clone:
-      test_cloud = custom_import('hc.'+self._meta.app_label+'.models.TestCloud')
-      template_clouds = self.template.getTemplateClouds_for_template.all()
-      for tc in template_clouds:
-        tc = test_cloud(cloud = tc.cloud, test=self)
-        tc.save()
+        #CLOUDS (ONLY UPDATED ON CREATION)
+        test_cloud = custom_import('hc.'+self._meta.app_label+'.models.TestCloud')
+        template_clouds = self.template.getTemplateClouds_for_template.all()
+        for tc in template_clouds:
+          tc = test_cloud(cloud = tc.cloud, test=self)
+          tc.save()
 
-    #BACKENDS (ONLY UPDATED ON CREATION)
-    if not t and not clone:
-      test_backend = custom_import('hc.'+self._meta.app_label+'.models.TestBackend')
-      template_backends = self.template.getTemplateBackends_for_template.all()
-      for tb in template_backends:
-        tb = test_backend(backend = tb.backend, test=self)
-        tb.save()
+        #BACKENDS (ONLY UPDATED ON CREATION)
+        test_backend = custom_import('hc.'+self._meta.app_label+'.models.TestBackend')
+        template_backends = self.template.getTemplateBackends_for_template.all()
+        for tb in template_backends:
+          tb = test_backend(backend = tb.backend, test=self)
+          tb.save()
 
+      return 1
 
   class Meta:
     abstract = True
@@ -748,6 +775,7 @@ class TestBackendBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
 
@@ -773,6 +801,8 @@ class TestBackendBase(models.Model):
     if self.test.state not in dontsave:
       super(TestBackendBase, self).save()
 
+    return 1
+
   class Meta:
     abstract = True
     db_table = u'test_backend'
@@ -797,6 +827,7 @@ class TestCloudBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
@@ -823,6 +854,8 @@ class TestCloudBase(models.Model):
     if self.test.state not in dontsave:
       super(TestCloudBase, self).save()
 
+    return 1
+
   class Meta:
     abstract = True
     db_table = u'test_cloud'
@@ -842,6 +875,7 @@ class TestDspatternBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
@@ -849,6 +883,8 @@ class TestDspatternBase(models.Model):
     dontsave = ['error','completed']
     if self.test.state not in dontsave:
       super(TestDspatternBase, self).save()
+
+    return 1
 
   class Meta:
     abstract = True
@@ -869,6 +905,7 @@ class TestHostBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
@@ -876,6 +913,8 @@ class TestHostBase(models.Model):
     dontsave = ['error','completed']
     if self.test.state not in dontsave:
       super(TestHostBase, self).save()
+
+    return 1
 
   class Meta:
     abstract = True
@@ -902,10 +941,12 @@ class TestLogBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(TestLogBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -930,6 +971,7 @@ class TestSiteBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
@@ -937,6 +979,8 @@ class TestSiteBase(models.Model):
     dontsave = ['error','completed']
     if (self.test.state not in dontsave) and self.site.enabled:
       super(TestSiteBase, self).save()
+
+    return 1
 
   class Meta:
     abstract = True
@@ -955,6 +999,7 @@ class TestStateBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
@@ -962,6 +1007,8 @@ class TestStateBase(models.Model):
     dontsave = ['error','completed']
     if self.test.state not in dontsave:
       super(TestStateBase, self).save()
+
+    return 1
 
   class Meta:
     abstract = True
@@ -980,6 +1027,7 @@ class TestUserBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
@@ -987,6 +1035,8 @@ class TestUserBase(models.Model):
     dontsave = ['error','completed']
     if self.test.state not in dontsave:
       super(TestUserBase, self).save()
+
+    return 1
 
   class Meta:
     abstract = True
@@ -1032,10 +1082,12 @@ class ResultBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(ResultBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -1090,10 +1142,12 @@ class MetricTypeBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(MetricTypeBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -1113,10 +1167,12 @@ class MetricBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(MetricBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -1165,13 +1221,14 @@ class SiteMetricBase(models.Model):
   #site   -> hc.core.base.models.keys.fk.generator.generateFK('Site','SiteMetric','site',{})  
   #test   -> hc.core.base.models.keys.fk.generator.generateFK('Test','SiteMetric','test',{})
 
-
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(SiteMetricBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -1188,10 +1245,12 @@ class TestMetricBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(TestMetricBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -1224,10 +1283,12 @@ class UsgSliceBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(UsgSliceBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -1256,10 +1317,12 @@ class UsgSiteBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(UsgSiteBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -1321,10 +1384,12 @@ class SummaryTestBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(SummaryTestBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -1357,10 +1422,12 @@ class SummaryTestSiteBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(SummaryTestSiteBase, self).save()
+    return 1
 
   class Meta:
     abstract = True
@@ -1380,10 +1447,12 @@ class SummaryRobotBase(models.Model):
 
   def saveClone(self):
     self.save(clone=True)
+    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
     super(SummaryRobotBase, self).save()
+    return 1
 
   class Meta:
     abstract = True

@@ -1,0 +1,16 @@
+<div id="accordionmetrics">
+  {% for m in test.perMetric %}
+    <h3><a href="#">{{ m.title }}</a></h3>
+      <div class="test-accordion">
+        {% for site in m.sites %}
+          {% if site.metric.url %}<img src="{{ site.metric.url }}" alt="{{ m.type }} at {{ site.site }}" width="270px" />{% endif %}
+        {% endfor %}
+      </div>
+    {% empty %}
+      <h3>Metrics not available</h3>
+  {% endfor %}
+</div>
+
+<script type="text/javascript">
+        $("#accordionmetrics").accordion({autoHeight: false });
+</script>

@@ -129,7 +129,7 @@ def ajaxtestmetrics(request,test_id):
   pass
 
 @GenView_dec()
-def ajaxsitemetrics(request,test_id):
+def ajaxtestsites(request,test_id):
   pass
 
 @GenView_dec()

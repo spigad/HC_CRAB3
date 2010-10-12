@@ -11,7 +11,7 @@
         "{{sum.test.state}}",
         "{% if sum.test.host %}<a href='{% url host-view app sum.test.host.id %}'>{{sum.test.host|hostEntity}}</a>{% else %}--{% endif %}",
         "{{sum.clouds|cutcsv:2|safe}}",
-        "<a href='{% url template-view app sum.test.template.id %}'>{{sum.test.template.description}}</a>",
+        "<a href='{% url template-view app sum.test.template.id %}'>{{sum.test.template.description|chop:10}}</a>",
         "{{sum.test.inputtype}}",
         "{{sum.test.starttime|date:"d/M"}}, {{sum.test.starttime|time:"P"}}",
         "{{sum.test.endtime|date:"d/M"}}, {{sum.test.starttime|time:"P"}}",

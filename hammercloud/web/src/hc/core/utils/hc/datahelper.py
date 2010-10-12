@@ -22,26 +22,28 @@ class Datahelper:
 
   def annotateTestPerMetric(self,test):
 
-    test.metricTypes = test.metrics.index.all()     
+    test.metricTypes = test.metricperm.pertab.all()     
     test.perMetric = []
 
     for metric_type in test.metricTypes:
-      metric_type.sites = test_fm.getTestSitesMetrics(test,metric_type)
+      metric_type.sites = list(test.getTestMetrics_for_test.filter(metric__metric_type=metric_type)) + list(test_fm.getTestSitesMetrics(test,metric_type))
       test.perMetric.append(metric_type)
     return test
 
   def annotateTestPerSite(self,test):
 
     test_sites = test.getTestSites_for_test.all()
-    test.metricTypes = test.metrics.index.all()
+    test.metricTypes = test.metricperm.pertab.all()
 
     test.perSite = []
   
+    test.overall = list(test.getTestMetrics_for_test.all())
+
     for test_site in test_sites:
 
       site = test_site.site
            
-      site.metrics = site_fm.getSiteTestMetrics(site,test)
+      site.metrics = list(site_fm.getSiteTestMetrics(site,test))
            
 #      site.backend_exitcodes = site.getBackendExitCodes(test)
 #      site.app_exitcodes = site.getAppExitCodes(test)

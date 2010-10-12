@@ -52,6 +52,8 @@ urlpatterns += patterns('hc.core.base.views.dispatcher',
   url(r'^app/(?P<app>[a-z]+)/ajax/test/(?P<test_id>\d+)/(?P<type>[a-z]+)/$'    , 'dispatcher', name = 'testaccordion'     ,kwargs={'func':'testaccordion'}),
   url(r'^app/(?P<app>[a-z]+)/ajax/testlogs/(?P<test_id>\d+)/$'                 , 'dispatcher', name = 'ajaxtestlogs-view' ,kwargs={'func':'ajaxtestlogs'}),
   url(r'^app/(?P<app>[a-z]+)/ajax/testlogs/(?P<test_id>\d+)/report$', 'dispatcher', name='ajaxtestlogreport-view',kwargs={'func':'ajaxtestlogreport'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/testmetrics/(?P<test_id>\d+)/$'   , 'dispatcher', name = 'ajaxtestmetrics-view', kwargs={'func':'ajaxtestmetrics'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/testsites/(?P<test_id>\d+)/$'     , 'dispatcher', name = 'ajaxtestsites-view'  , kwargs={'func':'ajaxtestsites'}),
 
   #ROBOT
   url(r'^app/(?P<app>[a-z]+)/robot/$'                         , 'dispatcher', name='robot-view'     , kwargs={'func':'robot'}),
@@ -60,9 +62,6 @@ urlpatterns += patterns('hc.core.base.views.dispatcher',
   url(r'^app/(?P<app>[a-z]+)/stats/$'                         , 'dispatcher', name ='stats-view'      , kwargs={'func':'stats'}),
   url(r'^app/(?P<app>[a-z]+)/statistics/$'                    , 'dispatcher', name ='statistics-view' , kwargs={'func':'statistics'}),
 
-
-#  url(r'^app/(?P<app>[a-z]+)/testmetrics/(?P<test_id>\d+)/$', 'ajaxtestmetrics', name='ajaxtestmetrics-view'),
-#  url(r'^app/(?P<app>[a-z]+)/sitemetrics/(?P<test_id>\d+)/$', 'ajaxsitemetrics', name='ajaxsitemetrics-view'),
 
   )
 

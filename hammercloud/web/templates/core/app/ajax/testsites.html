@@ -7,15 +7,14 @@
       "aaSorting" : [[ 0, "desc" ]],
 
       "aoColumns":[
-        null,null,null,null,null,null,null,null,null,null,
-        { "sType": "html" }
+        null,null,null,null,null,null,null,null,null,null,null,null,{ "sType": "html" }
       ],
       "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
-        if (aData[8] == 'no'){
+        if (aData[10] == 'no'){
           $(nRow).addClass('error');
         }else if ((aData[1] == 0) && (aData[2] == 0) && (aData[3] == 0) && (aData[4] == 0)){
           $(nRow).addClass('gradeU');
-        }else if ((aData[1] < aData[6]) && (aData[2]<aData[7]) ){
+        }else if ((aData[1] < aData[8]) && (aData[2]<aData[9]) ){
           $(nRow).addClass('completed');
         }else{
           $(nRow).addClass('running');
@@ -34,6 +33,8 @@
       <th>R&nbsp;&nbsp;<span>Running jobs<br/>>running:value</span></th>
       <th>C&nbsp;&nbsp;<span>Completed jobs<br/>>completed:value</span></th>
       <th>F&nbsp;&nbsp;<span>Failed jobs<br/>>failed:value</span></th>
+      <th>Eff&nbsp;&nbsp;<span>Efficiency jobs<br/>>c_cf:value</span></th>
+      <th>T&nbsp;&nbsp;<span>Total jobs<br/>>total:value</span></th>
       <th>Datasets<span>Number of datasets<br/>per bulk<br/>>datasets:value</span></th>
       <th>Queue&nbsp;<span>Max submitted jobs<br/>>queue:value</span></th>
       <th>Max R&nbsp;<span>Max running jobs<br/>>max_running:value</span></th>
@@ -48,6 +49,8 @@
       <th>R</th>
       <th>C</th>
       <th>F</th>
+      <th>Eff</th>
+      <th>T</th>
       <th>Datasets bulk</th>
       <th>Min queue</th>
       <th>Max running</th>

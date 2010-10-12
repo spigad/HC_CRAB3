@@ -496,9 +496,11 @@ class GenericView():
 
     test_metrics = test.getTestMetrics_for_test.filter(metric__metric_type__in=metricperms)[:3]
 
+    patterns = test.getTestDspatterns_for_test.all()
+
     t = loader.select_template(['%s/test.html'%(app),'core/app/test.html'])
     c = RequestContext(request,
-                      {'test': test,'test_metrics':test_metrics,'summary':summary},
+                      {'test': test,'test_metrics':test_metrics,'summary':summary,'patterns':patterns},
                       [defaultContext] 
                     )
     return HttpResponse(t.render(c))
@@ -620,7 +622,7 @@ class GenericView():
 
     if type == 'testsites':
       querySet = summary_test_site.objects.filter(test__id=test_id)
-      columnIndexNameMap = {0:'test_site__site__name',1:'submitted',2:'running',3:'completed',4:'failed',5:'test_site__num_datasets_per_bulk',6:'test_site__min_queue_depth',7:'test_site__max_running_jobs',8:'test_site__resubmit_enabled',9:'test_site__resubmit_force',10:'test_site__site__name'}
+      columnIndexNameMap = {0:'test_site__site__name',1:'submitted',2:'running',3:'completed',4:'failed',5:'c_cf',6:'total',7:'test_site__num_datasets_per_bulk',8:'test_site__min_queue_depth',9:'test_site__max_running_jobs',10:'test_site__resubmit_enabled',11:'test_site__resubmit_force',12:'test_site__site__name'}
       jsonTemplatePath += 'testsites.txt'
 
     elif type == 'testsummary':
@@ -763,30 +765,33 @@ class GenericView():
                        [defaultContext])
     return HttpResponse(t.render(c))
 
-#  def ajaxtestmetrics(self,request,test_id,dic={'Test':None},*args,**kwargs):
-#    app = dic['Test'].__module__.split('.')[1]
-#    try:
-#      test = dic['Test'].objects.get(pk=test_id)
-#    except:
-#      raise Http404
-#    dh   = Datahelper()
-#    test = dh.annotateTestPerMetric(test)
-#    t = loader.select_template(['%s/testmetrics.html'%(app),'core/app/testmetrics.html'])
-#    c = Context({'test': test})
-#    return HttpResponse(t.render(c))
+  def ajaxtestsites(self,request,test_id,dic={'Test':None},*args,**kwargs):
 
+    test = dic['Test']
+    app  = test.__module__.split('.')[1]
 
-#  def ajaxsitemetrics(self,request,test_id,dic={'Test':None},*args,**kwargs):
-#    app = dic['Test'].__module__.split('.')[1]
-#    try:
-#      test = dic['Test'].objects.get(pk=test_id)
-#    except:
-#      raise Http404
-#    dh   = Datahelper()
-#    test = dh.annotateTestPerSite(test)
-#    t = loader.select_template(['%s/sitemetrics.html'%(app),'core/app/sitemetrics.html'])
-#    c = Context({'test': test})
-#    return HttpResponse(t.render(c))
+    test = get_object_or_404(test,pk=test_id)
+
+    dh   = Datahelper()
+    test = dh.annotateTestPerSite(test)
+
+    t = loader.select_template(['%s/testsites.html'%(app),'core/app/testsites.html'])
+    c = Context({'test': test})
+    return HttpResponse(t.render(c))
+
+  def ajaxtestmetrics(self,request,test_id,dic={'Test':None},*args,**kwargs):
+
+    test = dic['Test']
+    app  = test.__module__.split('.')[1]
+    
+    test = get_object_or_404(test,pk=test_id)
+
+    dh   = Datahelper()
+    test = dh.annotateTestPerMetric(test)
+
+    t = loader.select_template(['%s/testmetrics.html'%(app),'core/app/testmetrics.html'])
+    c = Context({'test': test})
+    return HttpResponse(t.render(c))
 
 
 #######################################################

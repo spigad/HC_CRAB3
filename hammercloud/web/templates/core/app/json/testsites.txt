@@ -10,6 +10,8 @@
         "{{sum.running}}",
         "{{sum.completed}}",
         "{{sum.failed}}",
+        "{{sum.c_cf|floatformat:3}}",
+        "{{sum.total}}",
         "{{sum.test_site.num_datasets_per_bulk}}",
         "{{sum.test_site.min_queue_depth}}",
         "{{sum.test_site.max_running_jobs}}",

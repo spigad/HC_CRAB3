@@ -45,8 +45,8 @@ function toggleDisplay(me){
 // items = [['name','percentage','rightcol','leftcol']]
 function generateTable(enlarge,items,metric){
 
-  toWrite = new Array(30);
-  toCount = new Array(30);
+  toWrite = new Array(50);
+  toCount = new Array(50);
 
   var TABLE_WIDTH = 15;
 
@@ -70,7 +70,7 @@ function generateTable(enlarge,items,metric){
   };
 
   for (s=0;s<items.length;s++){
-    if (items[s][1] < 0){
+    if (items[s][1] < 0.0){
       lhc = 0;
     }else if(items[s][1] < 0.5){
       lhc = 5;
@@ -141,7 +141,7 @@ function generateTable(enlarge,items,metric){
           var message = toWrite[y][x][3][0];
         }
 
-        cell.innerHTML = message+"<span class='map_legend'><h3>"+toWrite[y][x][3][0]+"</h3><p>"+metric+" "+toWrite[y][x][3][1]+"%</p><p>link somewhere</p></span>";
+        cell.innerHTML = message+"<span class='map_legend'><h3>"+toWrite[y][x][3][0]+"</h3><p>"+metric+" "+toWrite[y][x][3][1]+"%</p></span>";
         cell.setAttribute("rowspan",toWrite[y][x][1]);
         cell.setAttribute("colspan",toWrite[y][x][0]);
         cell.setAttribute("class",toWrite[y][x][3][2]+' '+ toWrite[y][x][3][3]+' '+toWrite[y][x][2]);

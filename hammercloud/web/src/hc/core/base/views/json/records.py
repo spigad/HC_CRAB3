@@ -8,7 +8,7 @@ def get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTe
   if type == "testlist":
     dic = {'id':'test__id','status':'test__state','host':'test__host__name','cloud':'clouds','template':'test__template__id','inputtype':'test__inputtype','starttime':'test__startime','endtime':'test__endtime','sites':'nr_sites','jobs':'total'}
   elif type == "testsites":
-    dic = {'site':'test_site__site__name','submitted':'submitted','running':'running','completed':'completed','failed':'failed','datasets':'test_site__site__num_datasets_per_bulk','queue':'test_site__min_queue_depth','max_running':'test_site__max_running_jobs','resubmit':'test_site__resubmit_enabled','force':'test_site__resubmit_force'}
+    dic = {'site':'test_site__site__name','submitted':'submitted','running':'running','completed':'completed','failed':'failed','eff':'c_cf','total':'total','datasets':'test_site__site__num_datasets_per_bulk','queue':'test_site__min_queue_depth','max_running':'test_site__max_running_jobs','resubmit':'test_site__resubmit_enabled','force':'test_site__resubmit_force'}
   elif type == "testsummary":
     dic = searchableColumns
   

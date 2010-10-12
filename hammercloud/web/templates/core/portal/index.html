@@ -21,7 +21,7 @@
       {% for app in apps %}
         <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
             onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
-            onclick="DoNav('{% url index-view app %}');">
+            {% if 'cms' in app %}onclick="DoNav('{% url index-view app %}');{% endif %}">
          <td id={{app}}>{{app}}</td>
         </tr>
       {% endfor %}

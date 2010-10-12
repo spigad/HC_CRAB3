@@ -746,7 +746,7 @@ class Stats:
         url = pie(rate,labels,plot_title,colors)
         plot_list += [(plot_title,url)]      
 
-      container[title] += [('Efficiency',plot_list)]
+      container[title] += [(u'ganga_status',plot_list)]
 
     #Sort dictionary
     keys = container.keys()
