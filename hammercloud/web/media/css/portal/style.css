@@ -28,11 +28,11 @@ table .highlight{
 }
 
 table .highlightEven{
-  background: #f2f2eb url(/media/images/background0.png);
+  background: #f2f2eb url(/media2/images/background0.png);
 }
 
 table .highlightOdd{
-  background: #f2f2eb url(/media/images/background1.png);
+  background: #f2f2eb url(/media2/images/background1.png);
 }
 
 table .normal{

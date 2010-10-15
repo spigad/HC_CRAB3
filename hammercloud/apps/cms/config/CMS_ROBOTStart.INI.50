@@ -18,7 +18,7 @@
 #=======================================================================
 [Configuration]
 RUNTIME_PATH = GangaCMS:GangaRobot
-gangadir = /data/dev/hammercloud/apps/cms/gangadir/robot/
+gangadir = /data/hc/apps/cms/gangadir/robot/
 #repositorytype = LocalXML
 
 [defaults_GridProxy]
@@ -36,7 +36,7 @@ GangaCMS = INFO
 # Enable INFO logging for GangaRobot
 GangaRobot = INFO
 Ganga.GPI = INFO
-_logfile = /data/dev/hammercloud/apps/cms/logs/ganga.log
+_logfile = /data/hc/apps/cms/logs/ganga.log
 _logfile_size = 10000000
 _format = VERBOSE
 
@@ -63,10 +63,10 @@ VirtualOrganisation = cms
 
 #CMSSW_VERSION = CMSSW_3_7_0
 #CMSSW_SETUP = scripts/CMSSW_3_7_0.sh
-location = /data/dev/hammercloud/external/cms/crab
+location = /data/hc/external/cms/crab
 
 [Metrics]
-location = /data/dev/hammercloud/apps/cms/config/metrics.ini_hc
+location = /data/hc/apps/cms/config/metrics.ini_hc
 
 #=======================================================================
 [Robot]

@@ -30,8 +30,8 @@ fi
 
 if [ -z $3 ]
 then
-    echo '_  No HCDIR provided. Using HCDIR=/data/hammercloud'
-    HCDIR=/data/hammercloud
+    echo '_  No HCDIR provided. Using HCDIR=/data/hc'
+    HCDIR=/data/hc
 else
     HCDIR=$3
 fi

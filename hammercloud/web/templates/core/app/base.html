@@ -43,7 +43,7 @@
         {% if user.is_authenticated %}
     	  <div style="float: right;">
             You are connected as {{ user.username }}, 
-            <a style="text-decoration: underline;" href="{% url logout-view %}?next=/dev/hc/app/{{ app }}">click here to Logout!</a>
+            <a style="text-decoration: underline;" href="{% url logout-view %}?next=/hc/app/{{ app }}">click here to Logout!</a>
           </div>
     	{% endif %}
 

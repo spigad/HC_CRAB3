@@ -17,7 +17,7 @@
   <script type="text/javascript" src="{{ MEDIA_URL }}js/TableTools.min.js"></script>
   <script type="text/javascript" src="{{ MEDIA_URL }}js/ZeroClipboard.js"></script>
   <script type="text/javascript">
-    TableToolsInit.sSwfPath="http://hammercloud.cern.ch/dev/media/swf/ZeroClipboard.swf";
+    TableToolsInit.sSwfPath="{{ MEDIA_URL }}swf/ZeroClipboard.swf";
     $(document).ready(function() {
       $('#robotlist_table').dataTable({
         "sPaginationType": 'full_numbers',

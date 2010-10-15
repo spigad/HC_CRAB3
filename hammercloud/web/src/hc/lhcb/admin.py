@@ -1,21 +1,31 @@
-from hc.lhcb.forms import MetricPermissionForm, TemplateUserForm ,TestJournalForm, TestUserForm
+from hc.lhcb.forms import MetricPermForm, TemplateUserForm, TestUserForm, TestLogForm
 from hc.lhcb.models import *
 
 from django.contrib import admin
 
 from hc.core.base.admin.genericAdmin import *
+from hc.core.base.forms.forms import TestAdminForm
 
-from hc.core.base.rss.admin import HCFeedAdminBase
+from hc.core.base.rss.admin import *
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 ##
 ## SIMPLE ADMIN CLASSES
 ##
+## *BackendAdmin
 ## *CloudAdmin
 ## *DspatternAdmin
-## *FileAdmin
+## *GangaBinAdmin
 ## *HostAdmin
+## *InputTypeAdmin
+## *JobTemplateAdmin
+## *OptionFileAdmin
+## *TestOptionAdmin
+## *UserCode
 ##
+
+class BackendAdmin(BackendAdminBase):
+  pass
 
 class CloudAdmin(CloudAdminBase):
   pass
@@ -23,12 +33,26 @@ class CloudAdmin(CloudAdminBase):
 class DspatternAdmin(DspatternAdminBase):
   pass
 
-class FileAdmin(FileAdminBase):
+class GangaBinAdmin(GangaBinAdminBase):
   pass
 
 class HostAdmin(HostAdminBase):
   pass
  
+class InputTypeAdmin(InputTypeAdminBase):
+  pass
+
+class JobTemplateAdmin(JobTemplateAdminBase):
+  pass
+
+class OptionFileAdmin(OptionFileAdminBase):
+  pass
+
+class TestOptionAdmin(TestOptionAdminBase):
+  pass
+
+class UserCodeAdmin(UserCodeAdminBase):
+  pass
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 ##
@@ -45,6 +69,7 @@ class SiteAdmin(SiteAdminBase):
 ##
 ## TEMPLATE ADMIN CLASSES
 ##
+## *TemplateBackendInline
 ## *TemplateCloudInline
 ## *TemplateDspatternInline
 ## *TemplateHostInline
@@ -52,6 +77,7 @@ class SiteAdmin(SiteAdminBase):
 ## [*TemplateUserInline]
 ##
 ## *TemplateAdmin
+## *TemplateBackendAdmin
 ## *TemplateCloudAdmin
 ## *TemplateDspatternAdmin
 ## *TemplateHostAdmin
@@ -59,12 +85,15 @@ class SiteAdmin(SiteAdminBase):
 ## *TemplateUserAdmin
 ##
 
-class TemplateDspatternInline(TemplateInlineBase):
-  model = TemplateDspattern
- 
+class TemplateBackendInline(TemplateInlineBase):
+  model = TemplateBackend
+
 class TemplateCloudInline(TemplateInlineBase):
   model = TemplateCloud
 
+class TemplateDspatternInline(TemplateInlineBase):
+  model = TemplateDspattern
+ 
 class TemplateHostInline(TemplateInlineBase):
   model = TemplateHost
 
@@ -72,7 +101,10 @@ class TemplateSiteInline(TemplateInlineBase):
   model = TemplateSite
 
 class TemplateAdmin(TemplateAdminBase):
-  inlines = [TemplateHostInline, TemplateCloudInline, TemplateSiteInline, TemplateDspatternInline]
+  inlines = [TemplateHostInline, TemplateBackendInline, TemplateCloudInline, TemplateSiteInline, TemplateDspatternInline]
+
+class TemplateBackendAdmin(TemplateBackendAdminBase):
+  pass
 
 class TemplateCloudAdmin(TemplateCloudAdminBase):
   pass
@@ -94,6 +126,7 @@ class TemplateUserAdmin(TemplateUserAdminBase):
 ##
 ## TEST ADMIN CLASSES
 ##
+## *TestBackendInline
 ## *TestCloudInline
 ## *TestDspatternInline
 ## *TestHostInline
@@ -101,13 +134,18 @@ class TemplateUserAdmin(TemplateUserAdminBase):
 ## [*TestUserInline]
 ##
 ## *TestAdmin
+## *TestBackendAdmin
 ## *TestCloudAdmin
 ## *TestDspatternAdmin
 ## *TestHostAdmin
-## *TestJournalAdmin
+## *TestLogAdmin
 ## *TestSiteAdmin
+## *TestStateAdmin
 ## *TestUserAdmin
 ##
+
+class TestBackendInline(TestInlineBase):
+  model = TestBackend
 
 class TestCloudInline(TestInlineBase):
   model = TestCloud
@@ -122,7 +160,11 @@ class TestSiteInline(TestInlineBase):
   model = TestSite
 
 class TestAdmin(TestAdminBase):
-  inlines = [TestHostInline,TestCloudInline,TestSiteInline, TestDspatternInline]
+  inlines = [TestHostInline,TestBackendInline,TestCloudInline,TestSiteInline,TestDspatternInline]
+#  form = TestAdminForm
+
+class TestBackendAdmin(TestBackendAdminBase):
+  pass
 
 class TestCloudAdmin(TestCloudAdminBase):
   pass
@@ -133,10 +175,13 @@ class TestDspatternAdmin(TestDspatternAdminBase):
 class TestHostAdmin(TestHostAdminBase):
   pass
 
-class TestJournalAdmin(TestJournalAdminBase):
-  form = TestJournalForm
+class TestLogAdmin(TestLogAdminBase):
+  form = TestLogForm
 
 class TestSiteAdmin(TestSiteAdminBase):
+  pass
+
+class TestStateAdmin(TestStateAdminBase):
   pass
 
 class TestUserAdmin(TestUserAdminBase):
@@ -161,8 +206,8 @@ class MetricAdmin(MetricAdminBase):
 class MetricTypeAdmin(MetricTypeAdminBase):
   pass
 
-class MetricPermissionAdmin(MetricPermissionAdminBase):
-  form = MetricPermissionForm
+class MetricPermAdmin(MetricPermAdminBase):
+  form = MetricPermForm
 
 class SiteMetricAdmin(SiteMetricAdminBase):
   pass
@@ -183,24 +228,44 @@ class SummaryRobotAdmin(SummaryRobotAdminBase):
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 ##
-## HCFEED ADMIN CLASSES
+## FEED ADMIN CLASSES
 ##
-## *HCFeedAdmin
+## *AppFeedAdmin
+## *CloudFeedAdmin
+## *SiteFeedAdmin
+## *TemplateFeedAdmin
+## *TestFeedAdmin
 ##
 
-class HCFeedAdmin(HCFeedAdminBase):
+class AppFeedAdmin(AppFeedAdminBase):
+  pass
+class CloudFeedAdmin(CloudFeedAdminBase):
+  pass
+class SiteFeedAdmin(SiteFeedAdminBase):
+  pass
+class TemplateFeedAdmin(TemplateFeedAdminBase):
+  pass
+class TestFeedAdmin(TestFeedAdminBase):
   pass
 
 
 ##########################################################################################################
 
+admin.site.register(Backend,BackendAdmin)
 admin.site.register(Cloud,CloudAdmin)
 admin.site.register(Dspattern,DspatternAdmin)
-admin.site.register(File,FileAdmin)
+admin.site.register(GangaBin,GangaBinAdmin)
 admin.site.register(Host,HostAdmin)
+admin.site.register(InputType,InputTypeAdmin)
+admin.site.register(JobTemplate,JobTemplateAdmin)
+admin.site.register(OptionFile,OptionFileAdmin)
+admin.site.register(TestOption,TestOptionAdmin)
+admin.site.register(UserCode,UserCodeAdmin)
+
 admin.site.register(Site,SiteAdmin)
 
 admin.site.register(Template,TemplateAdmin)
+admin.site.register(TemplateBackend,TemplateBackendAdmin)
 admin.site.register(TemplateCloud,TemplateCloudAdmin)
 admin.site.register(TemplateDspattern,TemplateDspatternAdmin)
 admin.site.register(TemplateHost,TemplateHostAdmin)
@@ -208,20 +273,28 @@ admin.site.register(TemplateSite,TemplateSiteAdmin)
 admin.site.register(TemplateUser,TemplateUserAdmin)
 
 admin.site.register(Test,TestAdmin)
+admin.site.register(TestBackend,TestBackendAdmin)
 admin.site.register(TestCloud,TestCloudAdmin)
 admin.site.register(TestDspattern,TestDspatternAdmin)
 admin.site.register(TestHost,TestHostAdmin)
-admin.site.register(TestJournal,TestJournalAdmin)
+admin.site.register(TestLog,TestLogAdmin)
 admin.site.register(TestSite,TestSiteAdmin)
+admin.site.register(TestState,TestStateAdmin)
 admin.site.register(TestUser,TestUserAdmin)
 
 admin.site.register(MetricType,MetricTypeAdmin)
 admin.site.register(Metric,MetricAdmin)
-admin.site.register(MetricPermission,MetricPermissionAdmin)
+admin.site.register(MetricPerm,MetricPermAdmin)
 #[admin.site.register(GlobalMetric,GlobalMetric)]
 admin.site.register(SiteMetric,SiteMetricAdmin)
 admin.site.register(TestMetric,TestMetricAdmin)
 
 admin.site.register(SummaryRobot,SummaryRobotAdmin)
 
-admin.site.register(HCFeed,HCFeedAdmin)
+admin.site.register(AppFeed,AppFeedAdmin)
+admin.site.register(CloudFeed,CloudFeedAdmin)
+admin.site.register(SiteFeed,SiteFeedAdmin)
+admin.site.register(TemplateFeed,TemplateFeedAdmin)
+admin.site.register(TestFeed,TestFeedAdmin)
+
+

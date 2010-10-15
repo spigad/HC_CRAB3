@@ -5,7 +5,7 @@ urlpatterns = patterns('hc.core.views',
   )
 
 urlpatterns += patterns('django.views.generic.simple',
-  ('^app/(?P<app>[a-z]+)/admin/$', 'redirect_to', {'url': '/dev/hc/admin/'}),
+  ('^app/(?P<app>[a-z]+)/admin/$', 'redirect_to', {'url': '/hc/admin/'}),
   )
 
 urlpatterns += patterns('hc.core.base.views.control',
