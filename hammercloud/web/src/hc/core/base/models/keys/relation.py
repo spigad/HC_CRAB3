@@ -88,7 +88,7 @@ FK_LIST = [
            ('OptionFile','Test','optionfile',{}),
            ('Site','SiteFeed','site',{}),
            ('Site','SiteMetric','site',{}),
-           ('Site','SummaryRobot','site',{'unique':True}),
+           ('Site','SummaryRobot','site',{}),
            ('Site','Result','site',{}),
            ('Site','TemplateSite','site',{}),
            ('Site','TestSite','site',{}),
@@ -166,6 +166,7 @@ M2M_LIST = [
 UNIQUE_TOGETHER_DIC = {
                         'ResultBase'            : ('ganga_jobid','ganga_subjobid','test'),
                         'SummaryTestSiteBase'   : ('test_site','test'),
+                        'SummaryRobotBase'      : ('day','site'),
                         'TemplateBackendBase'   : ('backend','template'),
                         'TemplateCloudBase'     : ('cloud','template'),
                         'TemplateDspatternBase' : ('dspattern','template'),

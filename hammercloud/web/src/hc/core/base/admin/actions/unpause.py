@@ -1,4 +1,6 @@
-from django.core.mail import mail_admins
+from django.core.mail import mail_admins,send_mass_mail
+from django.contrib.auth.models import User
+
 
 def method(self, request, queryset):
 
@@ -29,6 +31,22 @@ def method(self, request, queryset):
     msg += '\n    '.join(objs['wrong'])
     message_bit += str(len(objs['wrong']))+' test(s) could not be unpaused ( check your email for details!).'
 
-  mail_admins('[HammerCloud][UNPAUSE]',msg,fail_silently=True)
+  test_users = [t.getTestUsers_for_test.all() for t in queryset if t.getTestUsers_for_test.all()]
+
+  users = []
+
+  for tus in test_users:
+    for tu in tus:
+      user = User.objects.filter(username=tu.user)
+      if user and not user[0].email in users:
+        users += [user[0].email]
+
+  admins = [u.email for u in User.objects.filter(groups__name='%s_admin'%(app))]
+  message1 = ('[HammerCloud][%s][UNPAUSE]'%(app.upper()),msg,'hammercloud@mail.cern.ch',admins)
+  message2 = ('[HammerCloud][%s][UNPAUSE]'%(app.upper()),msg,'hammercloud@mail.cern.ch',users)
+
+  send_mass_mail((message1,message2), fail_silently=False)
+
+#  mail_admins('[HammerCloud][UNPAUSE]',msg,fail_silently=True)
   self.message_user(request, message_bit)
 

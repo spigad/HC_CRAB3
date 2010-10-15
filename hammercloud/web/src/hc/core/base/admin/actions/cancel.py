@@ -19,7 +19,7 @@ def method(self, request, queryset):
       # If we cancell, we notify users.
       objs['notify'] += [t]
     else:
-      objs['wrong']     += ['%s/admin/%s/test/%d/ \n  reason: Not allowed state to cancel.\n'%(url,app,t.id)]
+      objs['wrong']  += ['%s/admin/%s/test/%d/ \n  reason: Not allowed state to cancel.\n'%(url,app,t.id)]
 
   msg = 'Tests cancelled by %s:\n\n'%(request.user.username)
   message_bit = ''
@@ -32,15 +32,23 @@ def method(self, request, queryset):
     msg += '\n    '.join(objs['wrong'])
     message_bit += str(len(objs['wrong']))+' test(s) could not be cancelled ( check your email for details!).'
 
-#  [User.objects.filter(username=tu.username)[0].email for tu in t.getTestUsers_for_test.all() for t in objs['notify']]
+  test_users = [t.getTestUsers_for_test.all() for t in objs['notify'] if t.getTestUsers_for_test.all()]
 
-  users = [u.email for u in User.objects.filter(groups__name='%s_admin'%(app))]
-  message1 = ('[HammerCloud][CANCEL]',msg,'hammercloud@mail.cern.ch',users)
+  users = []
+
+  for tus in test_users:
+    for tu in tus:
+      user = User.objects.filter(username=tu.user)
+      if user and not user[0].email in users:
+        users += [user[0].email]
+
+  admins = [u.email for u in User.objects.filter(groups__name='%s_admin'%(app))]
+  message1 = ('[HammerCloud][%s][CANCEL]'%(app.upper()),msg,'hammercloud@mail.cern.ch',admins)
   
-  
-  send_mass_mail((message1,), fail_silently=False)  
+  message2 = ('[HammerCloud][%s][CANCEL]'%(app.upper()),msg,'hammercloud@mail.cern.ch',users)
+
+  send_mass_mail((message1,message2), fail_silently=False)  
 
 
-#  mail_admins('[HammerCloud][CANCEL]',msg,fail_silently=True)
   self.message_user(request, message_bit)
 

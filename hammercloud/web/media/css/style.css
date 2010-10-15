@@ -157,6 +157,11 @@ a{
         text-align: right;
 }
 
+#standard .robot_legend{
+        text-align:center;
+        font-style:italic;
+}
+
 #standard span{
         text-align:center;
 }
@@ -493,6 +498,10 @@ a{
   display:block;
 }
 
+.map_options li{
+  display:inline;
+}
+
 #testlogs {
         margin-left: auto;
         margin-right: auto;
@@ -526,6 +535,14 @@ a{
         padding: 0 5px 0 5px;
 }
 
+#standard table.centered td{
+        width:50%;
+}
+
+#standard table.centered th {
+        text-align:right;
+        width:50%;
+}
 
 #bestworst {
 	margin-left: auto;
@@ -758,9 +775,9 @@ th:hover span {
 	/* end formatting */
 }
 
-.blue{
+/*.blue{
     color: #20548e;
-}
+}*/
 
 #info_box_l{
   float:left;
@@ -838,5 +855,9 @@ th:hover span {
 #info_box_r a{
   font-weight:bold;
   font-style:normal;
+}
+
+#usage{
+  text-align:left;
 }
 

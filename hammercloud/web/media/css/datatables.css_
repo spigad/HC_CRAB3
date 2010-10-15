@@ -414,45 +414,45 @@ tr.even.gradeA td.sorting_3 {
 }
 
 /* RUNNING  */
-tr.odd.green td.sorting_1 {
+tr.odd.running td.sorting_1 {
         background-color: #66ff66;
 }
 
-table tr.odd.green {
+table.testlist tr.odd.running {
         background-color: #ddffdd;
 }
 
-table tr.odd.green:hover{
+table.testlist tr.odd.running:hover{
         background-color: #66ff66;
 }
 
-tr.even.green td.sorting_1 {
+tr.even.running td.sorting_1 {
         background-color: #aaffaa;
 }
 
-table tr.even.green {
+table.testlist tr.even.running {
         background-color: #eeffee;
 }
 
-table tr.even.green:hover {
+table.testlist tr.even.running:hover {
         background-color: #aaffaa;
 }
 
 
 /* COMPLETED  */
-tr.odd.blue td.sorting_1 {
+tr.odd.completed td.sorting_1 {
         background-color: #addfff;
 }
 
-table.testlist tr.odd.blue:hover{
+table.testlist tr.odd.completed:hover{
         background-color:#addfff;
 }
 
-tr.even.blue td.sorting_1 {
+tr.even.completed td.sorting_1 {
         background-color: #e2f4ff;
 }
 
-table.testlist tr.even.blue:hover{
+table.testlist tr.even.completed:hover{
         background-color:#e2f4ff;
 }
 
@@ -541,27 +541,27 @@ tr.even.gradeX td.sorting_3 {
 }
 
 /* ERROR  */
-tr.odd.red td.sorting_1 {
+tr.odd.error td.sorting_1 {
         background-color: red;
 }
 
-table tr.odd.red {
+table.testlist tr.odd.error {
         background-color: #ffdddd;
 }
 
-table tr.odd.red:hover{
+table.testlist tr.odd.error:hover{
         background-color:red;
 }
 
-tr.even.red td.sorting_1 {
+tr.even.error td.sorting_1 {
         background-color: #FFB8AA;
 }
 
-table tr.even.red {
+table.testlist tr.even.error {
         background-color: #ffeeee;
 }
 
-table tr.even.red:hover{
+table.testlist tr.even.error:hover{
         background-color:#FFB8AA;
 }
 
@@ -593,53 +593,53 @@ tr.even.gradeU td.sorting_3 {
 }
 
 /* OTHER  */
-tr.odd.grey td.sorting_1 {
+tr.odd.other td.sorting_1 {
         background-color: #ccc;
 }
 
-table tr.odd.grey {
+table.testlist tr.odd.other {
         background-color: #ddd;
 }
 
-table tr.odd.grey:hover{
+table.testlist tr.odd.other:hover{
         background-color: #ccc;
 }
 
-tr.even.grey td.sorting_1 {
+tr.even.other td.sorting_1 {
         background-color: #d6d6d6;
 }
 
-table tr.even.grey {
+table.testlist tr.even.other {
         background-color: #eee;
 }
 
-table tr.even.grey:hover {
+table.testlist tr.even.other:hover {
         background-color: #d6d6d6;
 }
 
 
 /* SUBMITTING  */
-tr.odd.yellow td.sorting_1 {
+tr.odd.submitting td.sorting_1 {
         background-color: #ff9c3a;
 }
 
-table tr.odd.yellow {
+table.testlist tr.odd.submitting {
         background-color: #ffc68e;
 }
 
-table tr.odd.yellow:hover{
+table.testlist tr.odd.submitting:hover{
         background-color: #ff9c3a;
 }
 
-tr.even.yellow td.sorting_1 {
+tr.even.submitting td.sorting_1 {
         background-color: #ffcd3a;
 }
 
-table tr.even.yellow {
+table.testlist tr.even.submitting {
         background-color: #ffdb72;
 }
 
-table tr.even.yellow:hover {
+table.testlist tr.even.submitting:hover {
         background-color: #ffcd3a;
 
 

@@ -1,4 +1,4 @@
-from django.http import HttpResponse,Http404
+from django.http import HttpResponse,HttpResponseRedirect,Http404
 from django.template import Context, loader, RequestContext
 
 from django.shortcuts import get_object_or_404,render_to_response
@@ -11,8 +11,12 @@ from hc.core.base.forms import forms
 from hc.core.base.views.json.records import get_records
 from django.db.models import Min,Max,Count
 from django.forms.models import modelformset_factory
+from django.core.urlresolvers import reverse
 
 from hc.core.utils.generic.class_func import custom_import
+from hc.core.base.models.managers.functions import test_fm
+
+from datetime import date,timedelta
 
 #######################################################
 ## DEFAULT CONTEXT
@@ -31,14 +35,14 @@ def defaultContext(request):
 #######################################################
 ## LOGIN VIEWS
 #######################################################
-
-def logout(request):
-  logout_user(request)
-  next = request.GET.get('next', None)
-  if next:
-    return HttpResponseRedirect(next)
-  else:
-    raise Http404
+#
+#def logout(request):
+#  logout_user(request)
+#  next = request.GET.get('next', None)
+#  if next:
+#    return HttpResponseRedirect(next)
+#  else:
+#    raise Http404
 
 class GenericView():
 
@@ -511,12 +515,32 @@ class GenericView():
     app  = test.__module__.split('.')[1]
 
     test = get_object_or_404(test,pk=test_id)
-    usernames = [tu.user for tu in test.getTestUsers_for_test.all()]
+#    usernames = [tu.user for tu in test.getTestUsers_for_test.all()]
 
     error = None
 
-    if not(request.user.is_superuser or request.user.is_staff):
+    if not(request.user.is_superuser or request.user.is_staff or request.user.groups.filter(name__endswith='admin').filter(name__startswith=app)):
       error = "You are not allowed to clone this test!"
+
+    if request.method == 'POST':
+
+      if request.POST.has_key('Test'):
+
+        queryset = get_object_or_404(dic['Test'],pk=request.POST['Test'])
+        from hc.core.base.admin.actions import clone
+
+        new_obj_id = clone.view_method(self, request, queryset)
+        if new_obj_id:
+          next = reverse('portal-view')
+          return HttpResponseRedirect(next+'admin/%s/test/%s'%(app,new_obj_id))  
+        else:
+          error = 'Internal error.'
+
+
+      else:
+        error = 'Mal formated form.'
+
+      
 
     t = loader.select_template(['%s/testclone.html'%(app),'core/app/testclone.html'])
     c = RequestContext(request,
@@ -536,7 +560,7 @@ class GenericView():
 
     error,done,message,form,formset = None,0,'',None,None
 
-    if not(request.user.is_superuser or request.user.username in usernames):
+    if not(request.user.is_superuser or request.user.username in usernames or request.user.groups.filter(name__endswith='admin').filter(name__startswith=app)):
       error = "You are not allowed to modify this test!"
 
     else:
@@ -610,33 +634,31 @@ class GenericView():
 ## AJAX BLOCK
 #######################################################
 
-  def get_list(self,request,type,test_id,dic={'SummaryTest':None,'SummaryTestSite':None},*args,**kwargs):
+  def get_list(self,request,type,id,dic={'SummaryTest':None,'SummaryTestSite':None,'SummaryRobot':None},*args,**kwargs):
 
     summary_test = dic['SummaryTest']
     app          = summary_test.__module__.split('.')[1]
 
     summary_test_site = dic['SummaryTestSite']
+    summary_robot     = dic['SummaryRobot']
 
-    searchableColumns = []
+    searchableColumns = {}
     jsonTemplatePath = 'core/app/json/'
 
     if type == 'testsites':
-      querySet = summary_test_site.objects.filter(test__id=test_id)
+      querySet = summary_test_site.objects.filter(test__id=id)
       columnIndexNameMap = {0:'test_site__site__name',1:'submitted',2:'running',3:'completed',4:'failed',5:'c_cf',6:'total',7:'test_site__num_datasets_per_bulk',8:'test_site__min_queue_depth',9:'test_site__max_running_jobs',10:'test_site__resubmit_enabled',11:'test_site__resubmit_force',12:'test_site__site__name'}
       jsonTemplatePath += 'testsites.txt'
 
     elif type == 'testsummary':
-      querySet = summary_test_site.objects.filter(test__id=test_id)
+      querySet = summary_test_site.objects.filter(test__id=id)
       metr = querySet[0].test.metricperm.summary.all() 
       columnIndexNameMap = {0:'test_site__site__name'} 
       for i in xrange(0,len(metr)):
-#        table_redirect = ''
         metric = metr[i].name
-#        if not metric in ['submitted','running','completed','failed','total','c_cf','c_t','s_t','r_t','f_t']:        
-#          table_redirect = 's_metric__'
         columnIndexNameMap[i+1] = metr[i].name
+        searchableColumns[metr[i].name] = metr[i].name        
 
-      searchableColumns = {'site':'testsite__site__name'}
       jsonTemplatePath = str(app)+'/json/'+str(querySet[0].test.metricperm.name)+'.txt'
 
     elif type.startswith('testlist'):
@@ -649,8 +671,15 @@ class GenericView():
       else:
         raise Http404
 
-      columnIndexNameMap = {0:'test__id',1:'test__state',2:'test__host__name',3:'clouds',4:'test__template__id',5:'test__inputtype',6:'test__starttime',7:'test__endtime',8:'nr_sites',9:'total',10:'test__id'}
+      columnIndexNameMap = {0:'test__id',1:'test__state',2:'test__host__name',3:'clouds',4:'test__template__id',5:'test__inputtype',6:'test__starttime',7:'test__endtime',8:'nr_sites',9:'total'}
+
       jsonTemplatePath += 'testlist.txt'
+
+    elif type == 'robotlist':
+      yesterday = date.today()-timedelta(1)
+      querySet = summary_robot.objects.filter(day=yesterday)
+      columnIndexNameMap = {0:'site__name',1:'completed',2:'failed',3:'total',4:'efficiency',5:'efficiencyNorm',6:'errorrate',7:'errorrateNorm'}
+      jsonTemplatePath += 'robotlist.txt'
 
     else:
       raise Http404
@@ -737,7 +766,7 @@ class GenericView():
     done = 0
     error = ''
  
-    if not(request.user.is_superuser or request.user in usernames):
+    if not(request.user.is_superuser or request.user in usernames or request.user.groups.filter(name__endswith='admin').filter(name__startswith=app)):
         error = "You are not allowed to report incidences in this test."
     
     else:
@@ -813,12 +842,52 @@ class GenericView():
 
     sites = dh.annotateSitesEfficiency(sites)  
 
+    day = date.today()-timedelta(1)
+
     t = loader.select_template(['%s/robot.html'%(app),'core/app/robot.html'])
     c = RequestContext(request,
-                      {'sites': sites,'clouds':clouds,'backends':backends},
+                      {'sites': sites,'clouds':clouds,'backends':backends,'day':day},
                       [defaultContext]
                     )
     return HttpResponse(t.render(c))
+
+  def robotsite(self,request,site_id,dic={'Site':None},*args,**kwargs):
+
+    site = dic['Site']
+    app  = site.__module__.split('.')[1]
+
+    site = get_object_or_404(site,pk=site_id)
+
+    day = date.today()-timedelta(1)
+
+    summary = site.getSummaryRobots_for_site.filter(day=day)
+    if summary:
+      summary = summary[0]
+
+    t = loader.select_template(['%s/robotsite.html'%(app),'core/app/robotsite.html'])
+    c = RequestContext(request,
+                      {'site': site,'day':day,'summary':summary},
+                      [defaultContext]
+                    )
+    return HttpResponse(t.render(c))
+
+
+  def robotlist(self,request,dic={'SummaryRobot':None},*args,**kwargs):
+
+    sr   = dic['SummaryRobot']
+    app  = sr.__module__.split('.')[1]
+
+    day = date.today()-timedelta(1)
+
+    srs = sr.objects.filter(day=day)
+
+    t = loader.select_template(['%s/robotlist.html'%(app),'core/app/robotlist.html'])
+    c = RequestContext(request,
+                      {'srs': srs,'day':day},
+                      [defaultContext]
+                    )
+    return HttpResponse(t.render(c))
+
 
 #######################################################
 ## STATS BLOCK

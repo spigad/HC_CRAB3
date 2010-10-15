@@ -11,13 +11,13 @@
       ],
       "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
         if (aData[10] == 'no'){
-          $(nRow).addClass('error');
+          $(nRow).addClass('red');
         }else if ((aData[1] == 0) && (aData[2] == 0) && (aData[3] == 0) && (aData[4] == 0)){
-          $(nRow).addClass('gradeU');
+          $(nRow).addClass('grey');
         }else if ((aData[1] < aData[8]) && (aData[2]<aData[9]) ){
-          $(nRow).addClass('completed');
+          $(nRow).addClass('green');
         }else{
-          $(nRow).addClass('running');
+          $(nRow).addClass('blue');
         }
         return nRow;
       }
@@ -25,22 +25,48 @@
   });
 </script>
 
+  <div id='usage'>
+    <h3>USAGE of the SEARCH field.</h3>
+    <p>
+    1.- Put your mouse over the table column title. It a ballon appears with a code, you can search that field.<br>
+    2.- Remember the code.<br>
+    3.- Also the type of value to be introduced.<br>
+    4.- Actions allowed are ':', '>', '<'. Use '&' to join actions.<br>
+    &nbsp;&nbsp;&nbsp;':' &raquo; codeX:value_desiredX<br>
+    &nbsp;&nbsp;&nbsp;'>' &raquo; codeY>value_desiredY<br>
+    &nbsp;&nbsp;&nbsp;'&lt;' &raquo; codeZ&lt;value_desiredZ<br>
+    &nbsp;&nbsp;&nbsp;'&' &raquo; codeX:value_desiredX&codeY&lt;value_desiredY<br>
+    </p>
+
+    <h3>COLOR LEGEND</h3>
+    <p>
+    <i>GREY: not jobs submittted.</i><br>
+    <i>GREEN: submitting jobs.</i><br>
+    <i>BLUE: stopped job submission according to algorithm parameters.</i><br>
+    <i>RED: stopped job submission. Something went badly.</i><br>
+    </p>
+
+  </div>
+
+  
+
+
 <table cellpadding="0" cellspacing="0" border="0" class="display" id="testsites_table">
   <thead>
     <tr>
-      <th>Site&nbsp;<span>test Site name<br/>>site:value</span></th>
-      <th>S&nbsp;&nbsp;<span>test Submitted jobs<br/>>submitted:value</span></th>
-      <th>R&nbsp;&nbsp;<span>Running jobs<br/>>running:value</span></th>
-      <th>C&nbsp;&nbsp;<span>Completed jobs<br/>>completed:value</span></th>
-      <th>F&nbsp;&nbsp;<span>Failed jobs<br/>>failed:value</span></th>
-      <th>Eff&nbsp;&nbsp;<span>Efficiency jobs<br/>>c_cf:value</span></th>
-      <th>T&nbsp;&nbsp;<span>Total jobs<br/>>total:value</span></th>
-      <th>Datasets<span>Number of datasets<br/>per bulk<br/>>datasets:value</span></th>
-      <th>Queue&nbsp;<span>Max submitted jobs<br/>>queue:value</span></th>
-      <th>Max R&nbsp;<span>Max running jobs<br/>>max_running:value</span></th>
-      <th>Resubmit&nbsp;<span>Resubmit enabled<br/>>resubmit:value</span></th>
-      <th>R. Force&nbsp;<span>Resubmit force<br/>>force:value</span></th>
-      <th>Link&nbsp;<span>See in detail</span></th></tr>
+      <th>Site&nbsp;<span>code: site<br>value: &lt;string&gt;</span></th>
+      <th>S&nbsp;&nbsp;<span>code: submitted<br>value: &lt;int&gt;</span></th>
+      <th>R&nbsp;&nbsp;<span>code: running<br>value: &lt;int&gt;</span></th>
+      <th>C&nbsp;&nbsp;<span>code: completed<br>value: &lt;int&gt;</span></th>
+      <th>F&nbsp;&nbsp;<span>code: failed<br>value: &lt;int&gt;</span></th>
+      <th>Eff&nbsp;&nbsp;<span>code: eff<br>value: &lt;float&gt;</span></th>
+      <th>T&nbsp;&nbsp;<span>code: total<br>value: &lt;int&gt;</span></th>
+      <th>Datasets<span>code: datasets<br>value: &lt;int&gt;</span></th>
+      <th>Queue&nbsp;<span>code: queue<br>value: &lt;int&gt;</span></th>
+      <th>Max R&nbsp;<span>code: max_running<br>value: &lt;int&gt;</span></th>
+      <th>Resubmit&nbsp;</th>
+      <th>R. Force&nbsp;</th>
+      <th>Link&nbsp;</th></tr>
     </thead>
     <tbody></tbody>
     <tfoot>

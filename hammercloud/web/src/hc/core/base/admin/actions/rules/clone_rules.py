@@ -36,4 +36,7 @@ def setVersion(self):
   return 4
 
 def setCloned(self):
-  return self+1
+  if self:
+    return self+1
+  else:
+    return 1

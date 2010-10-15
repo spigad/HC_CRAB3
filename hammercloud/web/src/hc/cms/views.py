@@ -113,7 +113,7 @@ def usercodes(request, usercode_id):
   pass
 
 @GenView_dec()
-def get_list(request,type,test_id):
+def get_list(request,type,id):
   pass
 
 @GenView_dec()
@@ -149,6 +149,13 @@ def ajaxtestlogreport(request, test_id):
 def robot(request):
   pass
 
+@GenView_dec()
+def robotsite(request, site_id):
+  pass
+
+@GenView_dec()
+def robotlist(request):
+  pass
 
 #######################################################
 ## STATS BLOCK

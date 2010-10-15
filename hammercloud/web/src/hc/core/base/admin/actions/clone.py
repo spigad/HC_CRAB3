@@ -17,13 +17,20 @@ def method(self,request,queryset):
     message_bit = "1 object was"
   else:
     message_bit = "%s objects were" % rows_updated
+  
   self.message_user(request, "%s successfully cloned." % message_bit)
+
+def view_method(self,request,test):
+
+  obj = clone(test)
+  return obj.id
 
 def clone(object):
   new_obj = []
 #  try:
   new_obj = clone_object(object)
-  new_obj.saveClone()
+#  new_obj.saveClone()
+  new_obj.save({'clone':True})
 
   if clone_rules.INLINES.has_key(new_obj._meta.object_name):
     inlines = clone_inlines(new_obj,object)
@@ -67,7 +74,8 @@ def clone_unique(object,key,new_object):
 
   obj = clone_object(object)
   setattr(obj,key,new_object)
-  obj.saveClone()
-    
+#  obj.saveClone()
+  obj.save({'clone':True}) 
+   
   return obj
 

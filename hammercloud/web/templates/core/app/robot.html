@@ -7,7 +7,7 @@
 
 {% block docready %}
 
-  generateTable(false,[{% for site in sites %}['{{site.name}}','{{site.eff}}','{{site.backend.name}}','{{site.cloud.name}}'],{% endfor %}],'Efficiency');
+  generateTable(false,[{% for site in sites %}['{{site.name}}','{{site.eff|floatformat:3}}','{{site.backend.name}}','{{site.cloud.name}}','{% url robotsite-view app, site.id %}'],{% endfor %}],'Efficiency');
 
 {% endblock %}
 
@@ -15,10 +15,13 @@
 
   <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
 
-
-  <h2>Robot</h2>
+  <h2>Robot for {{day}}</h2>
   {% block robot_links %}{% endblock %}
-  <p class="in" onClick="zoomInOut(this,[{% for site in sites %}['{{site.name}}','{{site.eff}}','{{site.backend.name}}','{{site.cloud.name}}'],{% endfor %}],'Efficiency');">( Click to zoom in/out.)</p>
+  <ul class='map_options'>
+    <li class="in" onClick="zoomInOut(this,[{% for site in sites %}['{{site.name}}','{{site.eff|floatformat:3}}','{{site.backend.name}}','{{site.cloud.name}}','{% url robotsite-view app, site.id %}'],{% endfor %}],'Efficiency');"><span style='font-size:16px;'>Z</span><i>oo</i><span style='font-size:16px;'>M</span> IN&OUT</li>
+    <li> -- </li>
+    <li onClick="DoNav('{% url robotlist-view app %}');">S<i>W</i>IT<i>C</i>H to list</li>
+  </ul>
 
   <div id='grid'>
 

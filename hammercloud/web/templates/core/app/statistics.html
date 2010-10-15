@@ -67,6 +67,9 @@
 
 
   <script type='text/javascript' src="{{ MEDIA_URL }}js/AC_OETags.js" language="javascript"></script>
+
+  {% ifequal type 'timeline' %}
+
   <script type="text/javascript" src="http://www.google.com/jsapi"></script>
   <script type='text/javascript'>
     google.load('visualization', '1', {packages: ['annotatedtimeline']});
@@ -140,6 +143,8 @@
 
     }    
   </script>
+
+  {% endifequal %}
 
 {% endblock %}
 

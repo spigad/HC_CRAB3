@@ -2,7 +2,7 @@ from hc.core.utils.generic.class_func import custom_import
 
 from datetime import datetime,timedelta
 
-class CreateFunctionalTests():
+class CreateFunctionalTests:
 
   def run(self,app,dic):
 

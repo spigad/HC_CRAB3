@@ -141,11 +141,17 @@ function generateTable(enlarge,items,metric){
           var message = toWrite[y][x][3][0];
         }
 
-        cell.innerHTML = message+"<span class='map_legend'><h3>"+toWrite[y][x][3][0]+"</h3><p>"+metric+" "+toWrite[y][x][3][1]+"%</p></span>";
+        customMsg = 'No test yesterday.';
+        if (toWrite[y][x][2] != 'ongrey'){
+          customMsg ="<p>"+metric+" "+toWrite[y][x][3][1]+"%</p>";
+        }
+
+        cell.innerHTML = message+"<span class='map_legend'><h3>"+toWrite[y][x][3][0]+"</h3>"+customMsg+"</span>";
         cell.setAttribute("rowspan",toWrite[y][x][1]);
         cell.setAttribute("colspan",toWrite[y][x][0]);
         cell.setAttribute("class",toWrite[y][x][3][2]+' '+ toWrite[y][x][3][3]+' '+toWrite[y][x][2]);
-//        cell.setAttribute("onclick", "javascript:toggleDisplay(this);");
+        cell.setAttribute("onclick","DoNav('"+toWrite[y][x][3][4]+"');")
+//onclick="DoNav('{% url test-view app test.id %}');"
         if (enlarge){
           cell.style.width = '120px';
         };

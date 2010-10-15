@@ -175,7 +175,7 @@ class Stats:
   def cloud_proc(self,Qobjects,commands,extra=[]):
 
     values_list = []
-    metric_list = [m.name for m in Qobjects['metric_type'] if m.name != 'ganga_status'] + extra
+    metric_list = [m.name for m in Qobjects['metric_type'] if m.name != 'c_cf'] + extra
 
     for cloud in Qobjects['cloud']:
       values = []
@@ -217,7 +217,7 @@ class Stats:
   def site_proc(self,Qobjects,commands,extra=[]):
 
     values_list = []
-    metric_list = [ m.name for m in Qobjects['metric_type'] if m.name != 'ganga_status'] + extra
+    metric_list = [ m.name for m in Qobjects['metric_type'] if m.name != 'c_cf'] + extra
 
     for site in Qobjects['site']:
       values = []
@@ -251,7 +251,7 @@ class Stats:
   def test_proc(self,Qobjects,commands,extra=[]):
 
     values_list = []
-    metric_list = [ m.name for m in Qobjects['metric_type'] if m.name != 'ganga_status'] + extra
+    metric_list = [ m.name for m in Qobjects['metric_type'] if m.name != 'c_cf'] + extra
 
     for test in Qobjects['test']:
       values = []
@@ -284,7 +284,7 @@ class Stats:
   def template_proc(self,Qobjects,commands,extra=[]):
 
     values_list = []
-    metric_list = [ m.name for m in Qobjects['metric_type'] if m.name != 'ganga_status'] + extra
+    metric_list = [ m.name for m in Qobjects['metric_type'] if m.name != 'c_cf'] + extra
 
     for template in Qobjects['template']:
       values = []
@@ -567,7 +567,7 @@ class Stats:
       extra = []
 
     pie_flag = False
-    if 'ganga_status' in [m.name for m in Qobjects['metric_type']]:
+    if 'c_cf' in [m.name for m in Qobjects['metric_type']]:
       pie_flag = True
 
     hist_flag = False
@@ -703,7 +703,7 @@ class Stats:
 
       for metric in metrics:
 
-        if metric.name != 'ganga_status':
+        if metric.name != 'c_cf':
 
           plot_list = []
   
@@ -717,7 +717,8 @@ class Stats:
 
           container[title] += [(metric.title,plot_list)]
 
-    color = dict({'c':'5EFB6E', 'f':'FF0000', 'r':'79BAEC', 's':'FFF380', 'n':'F75D59', 'o':'38ACEC'})
+#    color = dict({'c':'5EFB6E', 'f':'FF0000', 'r':'79BAEC', 's':'FFF380', 'n':'F75D59', 'o':'38ACEC'})
+    color = dict({'c':'15ca00', 'f':'e81c01', 'r':'0094ee', 's':'e7a900', 'n':'03aaf9', 'o':'bdb9b9'})
     status = ['c','f','r','s','n']
 
     for title,values in pie_list:
@@ -746,7 +747,7 @@ class Stats:
         url = pie(rate,labels,plot_title,colors)
         plot_list += [(plot_title,url)]      
 
-      container[title] += [(u'ganga_status',plot_list)]
+      container[title] += [(u'c_cf',plot_list)]
 
     #Sort dictionary
     keys = container.keys()

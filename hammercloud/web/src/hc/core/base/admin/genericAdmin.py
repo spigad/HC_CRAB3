@@ -23,12 +23,13 @@ class ActionsAdminBase(admin.ModelAdmin):
   actions = ['clone','delete_marked','send_for_approval','cancel','pause','make_approved','unpause']
 
   def get_actions(self, request):
+
     actions = super(ActionsAdminBase, self).get_actions(request)
 
     app = request.path.split('admin/')[1].split('/')[0]
     app_admin = request.user.groups.filter(name__endswith='admin').filter(name__startswith=app)
 
-    if not request.user.is_superuser and not app_admin:
+    if not (request.user.is_superuser or app_admin):
       del actions['delete_selected']
     else:
       del actions['delete_marked']
@@ -38,7 +39,7 @@ class ActionsAdminBase(admin.ModelAdmin):
 
     if self.model._meta.object_name == "Test":
 
-      if not request.user.is_superuser and not app_admin:
+      if not (request.user.is_superuser or app_admin):
         del actions['cancel']
         del actions['make_approved']
 
@@ -372,7 +373,6 @@ class TestAdminBase(ReadOnlyAdminFields,ModelLinkAdminFields,ActionsAdminBase):
     
     app = request.path.split('admin/')[1].split('/')[0]
     app_admin = request.user.groups.filter(name__endswith='admin').filter(name__startswith=app)
-#    app_admin = request.user.groups.filter(name__endswith='admin')
 
     if request.user.is_superuser or app_admin:
       self.form = TestSuperUserAdminForm

@@ -7,7 +7,7 @@
 
     {% for sum in querySet %}
     [   
-        "{{sum.test.id}}",
+        "<span class='{{sum.sites}}'>{{sum.test.id}}</span>",
         "{{sum.test.state}}",
         "{% if sum.test.host %}<a href='{% url host-view app sum.test.host.id %}'>{{sum.test.host|hostEntity}}</a>{% else %}--{% endif %}",
         "{{sum.clouds|cutcsv:2|safe}}",

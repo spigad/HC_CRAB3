@@ -1,5 +1,7 @@
 from hc.core.base.models.managers.functions import test_fm,site_fm
 
+from datetime import date,timedelta
+
 class Datahelper:
 
   def annotateTest(self,test):
@@ -57,11 +59,15 @@ class Datahelper:
 
   def annotateSitesEfficiency(self,sites):
 
+    yesterday = date.today()-timedelta(1)
+
     for site in sites:
 
-      sr = site.getSummaryRobots_for_site.all()   
+      sr = site.getSummaryRobots_for_site.filter(day=yesterday)   
       if sr: 
         sr = sr[0]
         site.eff = sr.efficiency
+      else:
+        site.eff = -1
 
     return sites

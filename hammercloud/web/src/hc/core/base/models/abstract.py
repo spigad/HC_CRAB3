@@ -28,7 +28,7 @@ class BackendBase(models.Model):
   id          = models.AutoField(primary_key=True)
   name        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   # Functions manager: -> hc.core.base.models.managers.functions.backend_fm
   # Admin manager    : -> hc.core.base.models.managers.admin.backend_am
@@ -36,14 +36,10 @@ class BackendBase(models.Model):
   def __unicode__(self):
     return '%s'%self.name
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(BackendBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(BackendBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -56,7 +52,7 @@ class CloudBase(models.Model):
   code        = models.CharField(unique=True, max_length=63)
   name        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   # Functions manager: -> hc.core.base.models.managers.functions.cloud_fm
   # Admin manager    : -> hc.core.base.models.managers.admin.cloud_am
@@ -64,14 +60,10 @@ class CloudBase(models.Model):
   def __unicode__(self):
     return '%s'%self.name
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now() 
-    super(CloudBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now() 
+#    super(CloudBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -84,19 +76,15 @@ class DspatternBase(models.Model):
   id          = models.AutoField(primary_key=True)
   pattern     = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   def __unicode__(self):
     return '%s'%self.pattern
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(DspatternBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(DspatternBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -108,19 +96,15 @@ class GangaBinBase(models.Model):
   id          = models.AutoField(primary_key=True)
   path        = models.CharField(unique=True,max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   def __unicode__(self):
     return '%s'%self.path
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(GangaBinBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(GangaBinBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -134,19 +118,15 @@ class HostBase(models.Model):
   description = models.CharField(max_length=2047, blank=True)
   loadavg1m   = models.FloatField(default=0)
   active      = models.BooleanField()
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   def __unicode__(self):
     return '%s'%self.name
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(HostBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(HostBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -158,19 +138,15 @@ class InputTypeBase(models.Model):
   id          = models.AutoField(primary_key=True)
   type        = models.CharField(unique=True,max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   def __unicode__(self):
     return '%s'%self.type
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(InputTypeBase,self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(InputTypeBase,self).save()
+#    return 1
 
   class	Meta:
     abstract = True
@@ -182,19 +158,15 @@ class JobTemplateBase(models.Model):
   id          = models.AutoField(primary_key=True)
   path        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   def __unicode__(self):
     return '%s'%self.path
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(JobTemplateBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(JobTemplateBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -206,7 +178,7 @@ class MetricPermBase(models.Model):
   id          = models.AutoField(primary_key=True)
   name        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   #index        -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPerm','index',{})
   #summary      -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPerm','persite',{})
@@ -216,14 +188,10 @@ class MetricPermBase(models.Model):
   def __unicode__(self):
     return '%s'%self.name
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(MetricPermBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(MetricPermBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -235,19 +203,15 @@ class OptionFileBase(models.Model):
   id          = models.AutoField(primary_key=True)
   path        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   def __unicode__(self):
     return '%s'%self.path
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(OptionFileBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(OptionFileBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -262,19 +226,15 @@ class TestOptionBase(models.Model):
   submit      = models.CharField(max_length=2047,blank=True)
   report      = models.CharField(max_length=2047,blank=True)
   description = models.CharField(max_length=2047,blank=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   def __unicode__(self):
     return '%s'%self.name
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(TestOptionBase,self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(TestOptionBase,self).save()
+#    return 1
  
   class	Meta:
     abstract = True
@@ -286,19 +246,15 @@ class UserCodeBase(models.Model):
   id          = models.AutoField(primary_key=True)
   path        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   def __unicode__(self):
     return '%s'%self.path
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(UserCodeBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(UserCodeBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -321,7 +277,7 @@ class SiteBase(models.Model):
   ddm            = models.CharField(max_length=511, blank=True)
   enabled        = models.BooleanField(blank=True)
   queue          = models.CharField(max_length=511, blank=True)
-  mtime          = models.DateTimeField()
+  mtime          = models.DateTimeField(auto_now=True)
 
   #cloud     -> hc.core.base.models.keys.fk.generator.generateFK('Cloud','Site','cloud',{})
   #backend   -> hc.core.base.models.kays.fk.generator.generateFK('Backend','Site','backend',{})
@@ -331,14 +287,10 @@ class SiteBase(models.Model):
   def __unicode__(self):
     return '%s'%self.name
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
- 
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(SiteBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(SiteBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -374,7 +326,7 @@ class TemplateBase(models.Model):
   lifetime           = models.IntegerField(default=0)
   output_dataset     = models.CharField(max_length = 1023, default='')
   extraargs          = models.CharField(max_length=1023, blank=True)
-  mtime              = models.DateTimeField()
+  mtime              = models.DateTimeField(auto_now=True)
 
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Template','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Template','usercode',{})
@@ -390,14 +342,10 @@ class TemplateBase(models.Model):
   def __unicode__(self):
     return '%s (%s) - %s'%(self.id,self.category,self.description)
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(TemplateBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(TemplateBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -408,7 +356,7 @@ class TemplateBackendBase(models.Model):
   __metaclass__ = MetaCreator
 
   id          = models.AutoField(primary_key=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   #backend   -> hc.core.base.models.keys.fk.generator.generateFK('Backend','TemplateBackend','backend',{})
   #template  -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateBackend','template',{})
@@ -416,14 +364,10 @@ class TemplateBackendBase(models.Model):
   def __unicode__(self):
     return '%s - %s'%(self.template,self.backend)
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(TemplateBackendBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(TemplateBackendBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -439,7 +383,7 @@ class TemplateCloudBase(models.Model):
   num_datasets_per_bulk = models.IntegerField(default=1, db_column='num_datasets_per_bulk')
   min_queue_depth       = models.IntegerField(default=0, db_column='min_queue_depth')
   max_running_jobs      = models.IntegerField(default=1, db_column='max_running_jobs')
-  mtime                 = models.DateTimeField()
+  mtime                 = models.DateTimeField(auto_now=True)
 
   #cloud               -> hc.core.base.models.keys.fk.generator.generateFK('Cloud','TemplateCloud','cloud',{})
   #template            -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateCloud','template',{})
@@ -447,14 +391,10 @@ class TemplateCloudBase(models.Model):
   def __unicode__(self):
     return '%s - %s'%(self.template,self.cloud)
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(TemplateCloudBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(TemplateCloudBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -465,7 +405,7 @@ class TemplateDspatternBase(models.Model):
   __metaclass__ = MetaCreator
 
   id          = models.AutoField(primary_key=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   #dspattern -> hc.core.base.models.keys.fk.generator.generateFK('Dspattern','TemplateDspattern','dspattern',{})
   #template  -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateDspattern','template',{})
@@ -473,14 +413,10 @@ class TemplateDspatternBase(models.Model):
   def __unicode__(self):
     return '%s - %s'%(self.template,self.dspattern)
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(TemplateDspatternBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(TemplateDspatternBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -491,7 +427,7 @@ class TemplateHostBase(models.Model):
   __metaclass__ = MetaCreator
 
   id         = models.AutoField(primary_key=True)
-  mtime      = models.DateTimeField()
+  mtime      = models.DateTimeField(auto_now=True)
 
   #host     -> hc.core.base.models.keys.fk.generator.generateFK('Host','TemplateHost','host',{})
   #template -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateHost','template',{})
@@ -499,14 +435,10 @@ class TemplateHostBase(models.Model):
   def __unicode__(self):
     return '%s - %s'%(self.template,self.host)
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(TemplateHostBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(TemplateHostBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -522,7 +454,7 @@ class TemplateSiteBase(models.Model):
   num_datasets_per_bulk = models.IntegerField(default=1, db_column='num_datasets_per_bulk')
   min_queue_depth       = models.IntegerField(default=0, db_column='min_queue_depth')
   max_running_jobs      = models.IntegerField(default=1, db_column='max_running_jobs')
-  mtime                 = models.DateTimeField()
+  mtime                 = models.DateTimeField(auto_now=True)
 
   #site                -> hc.core.base.models.keys.fk.generator.generateFK('Site','TemplateSite','site',{})
   #template            -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateSite','template',{})
@@ -530,14 +462,10 @@ class TemplateSiteBase(models.Model):
   def __unicode__(self):
     return '%s - %s'%(self.template,self.site)
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(TemplateSiteBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(TemplateSiteBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -550,18 +478,14 @@ class TemplateUserBase(models.Model):
   id    = models.AutoField(primary_key=True)
 #  user = models.IntegerField()
   user  = models.CharField(max_length=127)
-  mtime = models.DateTimeField()
+  mtime = models.DateTimeField(auto_now=True)
 
   #template -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateUser','template',{})
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(TemplateUserBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(TemplateUserBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -615,8 +539,8 @@ class TestBase(models.Model):
   state              = models.CharField(blank=True,default='draft',choices = STATE_CHOICES, max_length = 31)
   atjobid            = models.IntegerField(default = 0, null=True, blank=True)
   extraargs          = models.CharField(max_length=1023, blank=True, help_text="Add extra instructions to the ganga command.")
-  cloned             = models.IntegerField(default = 0, null=True, blank=True)
-  mtime              = models.DateTimeField()
+  cloned             = models.IntegerField(default = 0, blank=True)
+  mtime              = models.DateTimeField(auto_now=True)
 
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Test','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Test','usercode',{})
@@ -634,15 +558,13 @@ class TestBase(models.Model):
   def __unicode__(self):
     return '%s'%self.id
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
 
     #If we are clonning, we do NOT copy TestInlines.
-    clone = kwargs.get('clone',False)
+    clone = False
+    if args and args[0].has_key('clone') and args[0]['clone']:
+      clone = True
 
     # No test can be saved with active functional template
     if self.template.category == 'functional' and self.template.active and self.starttime >= datetime.now():
@@ -702,7 +624,7 @@ class TestBase(models.Model):
         test_site      = custom_import('hc.'+self._meta.app_label+'.models.TestSite')
         template_sites = self.template.getTemplateSites_for_template.all()
 
-        summary_test_site = custom_import('hc.'+self._meta.app_label+'.models.SummaryTestSite')
+#        summary_test_site = custom_import('hc.'+self._meta.app_label+'.models.SummaryTestSite')
 
         for ts in template_sites:
           ts = test_site(site = ts.site, 
@@ -712,19 +634,19 @@ class TestBase(models.Model):
                       num_datasets_per_bulk=ts.num_datasets_per_bulk,
                       min_queue_depth=ts.min_queue_depth,
                       max_running_jobs=ts.max_running_jobs)
-          ts.save()
-          sts = summary_test_site(test=self,test_site=ts)
-          sts.save()
+          ts.save({'new':True})
+#          sts = summary_test_site(test=self,test_site=ts)
+#          sts.save()
 
-        sites = test_fm.getTestSiteNames(self)
-        summary_test.sites = ','.join(sites)
-        summary_test.nr_sites = len(sites)
+#        sites = test_fm.getTestSiteNames(self)
+#        summary_test.sites = ','.join(sites)
+#        summary_test.nr_sites = len(sites)
 
-        clouds = test_fm.getTestCloudCodes(self)
-        summary_test.clouds = ','.join(clouds)
-        summary_test.nr_clouds = len(clouds)
+#        clouds = test_fm.getTestCloudCodes(self)
+#        summary_test.clouds = ','.join(clouds)
+#        summary_test.nr_clouds = len(clouds)
 
-        summary_test.save()
+#        summary_test.save()
 
         #DSPATTERNS (ONLY UPDATED ON CREATION)
         test_dspattern      = custom_import('hc.'+self._meta.app_label+'.models.TestDspattern')
@@ -765,17 +687,13 @@ class TestBackendBase(models.Model):
   __metaclass__ = MetaCreator
 
   id        = models.AutoField(primary_key=True)
-  mtime     = models.DateTimeField()
+  mtime     = models.DateTimeField(auto_now=True)
 
   #backend -> hc.core.base.models.keys.fk.generator.generateFK('Backend','TestBackend','backend',{})
   #test    -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestBackend','test',{})
 
   def __unicode__(self):
     return '%s - %s'%(self.test,self.backend)
-
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
 
   def save(self,*args,**kwargs):
 
@@ -797,9 +715,9 @@ class TestBackendBase(models.Model):
 
       ts.save()
 
-    dontsave = ['error','completed']
-    if self.test.state not in dontsave:
-      super(TestBackendBase, self).save()
+#    dontsave = ['error','completed']
+#    if self.test.state not in dontsave:
+    super(TestBackendBase, self).save()
 
     return 1
 
@@ -817,17 +735,13 @@ class TestCloudBase(models.Model):
   num_datasets_per_bulk = models.IntegerField(default=1, db_column='num_datasets_per_bulk')
   min_queue_depth       = models.IntegerField(default=0, db_column='min_queue_depth')
   max_running_jobs      = models.IntegerField(default=1, db_column='max_running_jobs')
-  mtime                 = models.DateTimeField()
+  mtime                 = models.DateTimeField(auto_now=True)
 
   #cloud               -> hc.core.base.models.keys.fk.generator.generateFK('Cloud','TestCloud','cloud',{})
   #test                -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestCloud','test',{})
 
   def __unicode__(self):
     return '%s - %s'%(self.test,self.cloud)
-
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
 
   def save(self,*args,**kwargs):
     self.mtime = datetime.now()
@@ -850,9 +764,9 @@ class TestCloudBase(models.Model):
 
       ts.save()
 
-    dontsave = ['error','completed']
-    if self.test.state not in dontsave:
-      super(TestCloudBase, self).save()
+#    dontsave = ['error','completed']
+#    if self.test.state not in dontsave:
+    super(TestCloudBase, self).save()
 
     return 1
 
@@ -865,7 +779,7 @@ class TestDspatternBase(models.Model):
   __metaclass__ = MetaCreator
 
   id          = models.AutoField(primary_key=True)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   #dspattern -> hc.core.base.models.keys.fk.generator.generateFK('Dspattern','TestDspattern','dspattern',{})
   #test      -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestDspattern','test',{})
@@ -873,16 +787,12 @@ class TestDspatternBase(models.Model):
   def __unicode__(self):
     return '%s - %s'%(self.test,self.dspattern)
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-
-    dontsave = ['error','completed']
-    if self.test.state not in dontsave:
-      super(TestDspatternBase, self).save()
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#
+#    dontsave = ['error','completed']
+#    if self.test.state not in dontsave:
+#      super(TestDspatternBase, self).save()
 
     return 1
 
@@ -895,7 +805,7 @@ class TestHostBase(models.Model):
   __metaclass__ = MetaCreator
 
   id     = models.AutoField(primary_key=True)
-  mtime  = models.DateTimeField()
+  mtime  = models.DateTimeField(auto_now=True)
 
   #host -> hc.core.base.models.keys.fk.generator.generateFK('Host','Test','host',{})
   #test -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestHost','test',{})
@@ -903,16 +813,12 @@ class TestHostBase(models.Model):
   def __unicode__(self):
     return '%s - %s'%(self.test,self.host)
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-
-    dontsave = ['error','completed']
-    if self.test.state not in dontsave:
-      super(TestHostBase, self).save()
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#
+#    dontsave = ['error','completed']
+#    if self.test.state not in dontsave:
+#      super(TestHostBase, self).save()
 
     return 1
 
@@ -935,18 +841,14 @@ class TestLogBase(models.Model):
   comment     = models.CharField(max_length=4097)
   severity    = models.CharField(choices = SEVERITY_CHOICES, max_length = 15, default='common')
   user        = models.CharField(max_length = 31)
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   #test -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestLog','test',{})
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(TestLogBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(TestLogBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -961,7 +863,7 @@ class TestSiteBase(models.Model):
   num_datasets_per_bulk = models.IntegerField(default=1, db_column='num_datasets_per_bulk')
   min_queue_depth       = models.IntegerField(default=0, db_column='min_queue_depth')
   max_running_jobs      = models.IntegerField(default=1, db_column='max_running_jobs')
-  mtime                 = models.DateTimeField()
+  mtime                 = models.DateTimeField(auto_now=True)
 
   #site                -> hc.core.base.models.keys.fk.generator.generateFK('Site','TestSite','site',{})
   #test                -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestSite','test',{})
@@ -969,18 +871,55 @@ class TestSiteBase(models.Model):
   def __unicode__(self):
     return '%s - %s'%(self.test,self.site)
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
   def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
 
-    dontsave = ['error','completed']
-    if (self.test.state not in dontsave) and self.site.enabled:
-      super(TestSiteBase, self).save()
+    #If we are clonning...
+    clone = False
+    if args and args[0].has_key('clone') and args[0]['clone']:
+      clone = True
 
-    return 1
+    #If we are creating...
+    new = False
+    if args and args[0].has_key('new') and args[0]['new']:
+      new = True
+
+    super(TestSiteBase, self).save()
+
+    if clone or new:
+      summary_test_site = custom_import('hc.'+self._meta.app_label+'.models.SummaryTestSite')
+      sts = summary_test_site(test=self.test,test_site=self)
+      sts.save()
+
+      summary_test = custom_import('hc.'+self._meta.app_label+'.models.SummaryTest')
+
+      summary_test = summary_test.objects.filter(test=self.test)[0]
+  
+      if summary_test.sites:  
+        summary_test.sites += ',%s'%(self.site.name)
+        summary_test.nr_sites += 1
+      else:
+        summary_test.sites = self.site.name
+        summary_test.nr_sites = 1
+
+      if summary_test.clouds:
+        if not self.site.cloud.code in summary_test.clouds:
+          summary_test.clouds += ',%s'%(self.site.cloud.code)
+          summary_test.nr_clouds += 1
+      else:
+        summary_test.clouds = self.site.cloud.code
+        summary_test.nr_clouds = 1
+ 
+      summary_test.save()
+
+
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#
+#    dontsave = ['error','completed']
+#    if (self.test.state not in dontsave) and self.site.enabled:
+#      super(TestSiteBase, self).save()
+#
+#    return 1
 
   class Meta:
     abstract = True
@@ -993,22 +932,17 @@ class TestStateBase(models.Model):
   id          = models.AutoField(primary_key=True)
   ganga_jobid = models.IntegerField()
   copied      = models.BooleanField()
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   #test -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestState','test',{})
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-
-    dontsave = ['error','completed']
-    if self.test.state not in dontsave:
-      super(TestStateBase, self).save()
-
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#
+#    dontsave = ['error','completed']
+#    if self.test.state not in dontsave:
+#      super(TestStateBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -1021,22 +955,18 @@ class TestUserBase(models.Model):
   id     = models.AutoField(primary_key=True)
 #  user  = models.IntegerField()
   user   = models.CharField(max_length=127)
-  mtime  = models.DateTimeField()
+  mtime  = models.DateTimeField(auto_now=True)
 
   #test -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestUser','test',{})
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-
-    dontsave = ['error','completed']
-    if self.test.state not in dontsave:
-      super(TestUserBase, self).save()
-
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#
+#    dontsave = ['error','completed']
+#    if self.test.state not in dontsave:
+#      super(TestUserBase, self).save()
+#
+#    return 1
 
   class Meta:
     abstract = True
@@ -1071,7 +1001,7 @@ class ResultBase(models.Model):
 
   fixed          = models.BooleanField()
 
-  mtime          = models.DateTimeField()
+  mtime          = models.DateTimeField(auto_now=True)
 
   #site         -> hc.core.base.models.keys.fk.generator.generateFK('Site','Result','site',{})
   #test         -> hc.core.base.models.keys.fk.generator.generateFK('Test','Result','test',{})
@@ -1080,13 +1010,9 @@ class ResultBase(models.Model):
 #  Not needed unicode
 #  def __unicode__(self):
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(ResultBase, self).save()
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(ResultBase, self).save()
 #    return 1
 
   class Meta:
@@ -1135,19 +1061,15 @@ class MetricTypeBase(models.Model):
   title       = models.CharField(max_length=255)
   type        = models.CharField(choices = PLOT_TYPE, max_length=15)
   description = models.CharField(max_length=2047,blank=True) 
-  mtime       = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
 
   def __unicode__(self):
     return '%s'%(self.title)
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(MetricTypeBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(MetricTypeBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -1158,21 +1080,17 @@ class MetricBase(models.Model):
 
   id            = models.AutoField(primary_key=True)
   url           = models.CharField(max_length=4095)
-  mtime         = models.DateTimeField()
+  mtime         = models.DateTimeField(auto_now=True)
 
   #metric_type -> hc.core.base.models.keys.fk.generator.generateFK('MetricType','Metric','metric_type',{})
 
   def __unicode__(self):
     return '%s - %s'%(self.id,self.metric_type)   
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(MetricBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(MetricBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -1215,20 +1133,16 @@ class SiteMetricBase(models.Model):
   __metaclass__ = MetaCreator
 
   id       = models.AutoField(primary_key=True)
-  mtime    = models.DateTimeField()
+  mtime    = models.DateTimeField(auto_now=True)
 
   #metric -> hc.core.base.models.keys.fk.generator.generateFK('Metric','SiteMetric','metric',{})
   #site   -> hc.core.base.models.keys.fk.generator.generateFK('Site','SiteMetric','site',{})  
   #test   -> hc.core.base.models.keys.fk.generator.generateFK('Test','SiteMetric','test',{})
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(SiteMetricBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(SiteMetricBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -1238,19 +1152,15 @@ class TestMetricBase(models.Model):
   __metaclass__ = MetaCreator
 
   id       = models.AutoField(primary_key=True)
-  mtime    = models.DateTimeField()
+  mtime    = models.DateTimeField(auto_now=True)
 
   #metric -> hc.core.base.models.keys.fk.generator.generateFK('Metric','TestMetric','metric',{})
   #test   -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestMetric','test',{})
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(TestMetricBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(TestMetricBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -1279,16 +1189,12 @@ class UsgSliceBase(models.Model):
   type  = models.CharField(choices = TYPE_CHOICES, max_length = 31)
   start = models.DateTimeField()
   end   = models.DateTimeField()
-  mtime = models.DateTimeField()
+  mtime = models.DateTimeField(auto_now=True)
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(UsgSliceBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(UsgSliceBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -1311,18 +1217,14 @@ class UsgSiteBase(models.Model):
   completed = models.IntegerField(default=0)
   failed    = models.IntegerField(default=0)
   type      = models.CharField(choices = TYPE_CHOICES, max_length = 31)
-  mtime     = models.DateTimeField()
+  mtime     = models.DateTimeField(auto_now=True)
 
   #site    -> hc.core.base.models.keys.fk.generator.generateFK('Site','UsgSite','site',{})
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(UsgSiteBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(UsgSiteBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -1374,7 +1276,7 @@ class SummaryTestBase(models.Model):
   c_t             = models.FloatField(default=0,null=True)
   f_t             = models.FloatField(default=0,null=True)
 
-  mtime           = models.DateTimeField()
+  mtime           = models.DateTimeField(auto_now=True)
 
   #test          -> hc.core.base.models.keys.fk.generator.generateFK('Test','SummaryTest','test',{})
 #  #s_metric -> hc.core.base.models.keys.fk.generator.generateFK('SummaryMetric','SummaryTest','s_metric',{})
@@ -1382,14 +1284,10 @@ class SummaryTestBase(models.Model):
 #  Not needed unicode
 #  def __unicode__(self):
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(SummaryTestBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(SummaryTestBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -1411,7 +1309,7 @@ class SummaryTestSiteBase(models.Model):
   c_t             = models.FloatField(default=0,null=True)
   f_t             = models.FloatField(default=0,null=True)
 
-  mtime           = models.DateTimeField()
+  mtime           = models.DateTimeField(auto_now=True)
 
   #test          -> hc.core.base.models.keys.fk.generator.generateFK('Test','SummaryTestSite','test',{})
   #site          -> hc.core.base.models.keys.fk.generator.generateFK('Site','SummaryTestSite','site',{})
@@ -1420,14 +1318,10 @@ class SummaryTestSiteBase(models.Model):
 #  Not needed unicode
 #  def __unicode__(self):
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(SummaryTestSiteBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(SummaryTestSiteBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
@@ -1436,25 +1330,29 @@ class SummaryTestSiteBase(models.Model):
 class SummaryRobotBase(models.Model):
   __metaclass__ = MetaCreator
 
-  id         = models.AutoField(primary_key=True)
-  efficiency = models.FloatField()
-  mtime      = models.DateTimeField()
+  id             = models.AutoField(primary_key=True)
+  completed      = models.IntegerField(default=0)
+  failed         = models.IntegerField(default=0)
+  total          = models.IntegerField(default=0)
+  efficiency     = models.FloatField(default=0)
+  efficiencyNorm = models.FloatField(default=0)
+  errorrate      = models.FloatField(default=0)
+  errorrateNorm  = models.FloatField(default=0)
+  day            = models.DateField()
+  mtime          = models.DateTimeField(auto_now=True)
 
-  #site     -> hc.core.base.models.keys.fk.generator.generateFK('Site','SummaryRobot','site',{'unique':True})
+  #site     -> hc.core.base.models.keys.fk.generator.generateFK('Site','SummaryRobot','site',{})
 
 #  Not needed unicode
 #  def __unicode__(self):
 
-  def saveClone(self):
-    self.save(clone=True)
-    return 1
-
-  def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
-    super(SummaryRobotBase, self).save()
-    return 1
+#  def save(self,*args,**kwargs):
+#    self.mtime = datetime.now()
+#    super(SummaryRobotBase, self).save()
+#    return 1
 
   class Meta:
     abstract = True
     db_table = u'summary_robot'
+    #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
 

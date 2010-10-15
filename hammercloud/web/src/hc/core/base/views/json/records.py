@@ -5,19 +5,22 @@ from django.http import HttpResponse
 def get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTemplatePath, type, app, *args):
 
   dic = {}
-  if type == "testlist":
-    dic = {'id':'test__id','status':'test__state','host':'test__host__name','cloud':'clouds','template':'test__template__id','inputtype':'test__inputtype','starttime':'test__startime','endtime':'test__endtime','sites':'nr_sites','jobs':'total'}
+  if "testlist" in type:
+    dic = {'id':'test__id','status':'test__state','host':'test__host__name','cloud':'clouds','template':'test__template__description','inputtype':'test__inputtype__type','starttime':'test__starttime','endtime':'test__endtime','sites':'nr_sites','jobs':'total'}
   elif type == "testsites":
     dic = {'site':'test_site__site__name','submitted':'submitted','running':'running','completed':'completed','failed':'failed','eff':'c_cf','total':'total','datasets':'test_site__site__num_datasets_per_bulk','queue':'test_site__min_queue_depth','max_running':'test_site__max_running_jobs','resubmit':'test_site__resubmit_enabled','force':'test_site__resubmit_force'}
   elif type == "testsummary":
-    dic = searchableColumns
-  
+    dic = {'site':'testsite__site__name'}
+    dic.update(searchableColumns)
+  elif type == "robotlist":
+    dic = {'site':'site__name','completed':'completed','failed':'failed','total':'total','efficiency':'efficiency','efficiencyNorm':'efficiencyNorm','errorrate':'errorrate','errorrateNorm':'errorrateNorm'}
+
   #Safety measure. If someone messes with iDisplayLength manually, we clip it to
   #the max value of 100.
   if not 'iDisplayLength' in request.GET or not request.GET['iDisplayLength']:
     iDisplayLength = 50 # default value
   else:
-    iDisplayLength = min(int(request.GET['iDisplayLength']),100)
+    iDisplayLength = min(int(request.GET['iDisplayLength']),200)
   if not 'iDisplayStart' in request.GET or not request.GET['iDisplayStart']:
     startRecord = 0 #default value
   else:
@@ -45,23 +48,58 @@ def get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTe
     customSearch = request.GET['sSearch'].encode('utf-8');
 
   ## PERSONALIZED FILTER
-  if customSearch !='' and customSearch[0] == '>':
+#  if customSearch !='' and customSearch[0] == '>':
+  if customSearch !='':
+  
 
     outputQ = None
     filter = []
 
-    if ':' in customSearch:
-      filter = customSearch[1:].split(':')
-      try:
-        key = dic[filter[0]]
-      except:
-        filter[1] = ''
+    if '&' in customSearch:
+      customSearchs = customSearch.split('&')
+    else:
+      customSearchs = [customSearch]
 
-      if filter[1] != '':
-        kwargz = {key+"__icontains" : filter[1]}  
-        q = Q(**kwargz)
-        outputQ = q
-        querySet = querySet.filter(outputQ)
+    for customSearch in customSearchs:
+
+      if ':' in customSearch:
+        filter = customSearch.split(':')
+        try:
+          key = dic[filter[0]]
+        except:
+          filter[1] = ''
+
+        if filter[1] != '':
+          kwargz = {key+"__icontains" : filter[1]}  
+          q = Q(**kwargz)
+          outputQ = q
+          querySet = querySet.filter(outputQ)
+
+      if '>' in customSearch:
+        filter = customSearch.split('>')
+        try:
+          key = dic[filter[0]]
+        except:
+          filter[1] = ''
+
+        if filter[1] != '':
+          kwargz = {key+"__gt" : filter[1]}
+          q = Q(**kwargz)
+          outputQ = q
+          querySet = querySet.filter(outputQ)
+
+      if '<' in customSearch:
+        filter = customSearch.split('<')
+        try:
+          key = dic[filter[0]]
+        except:
+          filter[1] = ''
+
+        if filter[1] != '':
+          kwargz = {key+"__lt" : filter[1]}
+          q = Q(**kwargz)
+          outputQ = q
+          querySet = querySet.filter(outputQ)
 
   #count how many records match the final criteria
   iTotalRecords = iTotalDisplayRecords = querySet.count()
