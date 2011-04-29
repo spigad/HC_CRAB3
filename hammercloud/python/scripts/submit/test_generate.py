@@ -33,7 +33,7 @@ class TestGenerate:
       print '[ERROR][%s][test_generate] Could not get test with id %s from DB.'%(app,testid)
       return 0
 
-    if not test.starttime <= datetime.now():
+    if not test.starttime.replace( second = 0 ) < datetime.now():
       print '[ERROR][%s][test_generate] Test %s starttime value is on the future.'%(app,testid)
       return 0
 

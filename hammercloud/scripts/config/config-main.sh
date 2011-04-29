@@ -14,6 +14,9 @@ then
     exit
 fi
 
+export HC_ORIGINAL_PATH=$PATH
+export HC_ORIGINAL_PYTHONPATH=$PYTHONPATH
+
 #Get HCDIR from current installation.
 HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
 

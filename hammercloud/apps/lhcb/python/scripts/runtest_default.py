@@ -54,6 +54,10 @@ for rfield in Result._meta.fields:
 
 def test_active():
 
+  # Replace second = 0 because at command starts submitting at second = 0.
+  # If first submission is VERY quick, we can have problems on HC Monitoring thread
+  # Fixed waiting 60 secs before startng thread
+
   if test.starttime < datetime.now() and test.endtime > datetime.now():
     logger.debug('Test %d is active'%(test.id))
     return True
@@ -84,17 +88,19 @@ def test_sleep(t):
 ## COPY JOB
 ##
 
-def _copyJob(job,site):
+def _copyJob(job):
+
+  site = job.backend.settings['Destination']
 
   logger.info('Copying job %d'%job.id)
   nRetries = 3
 
   try:
     j=job.copy()
-
+#    previous_datasetpath = j.inputdata.datasetpath
     # ONLY ONE DATASET PER JOB !
     num = 1
-    #logger.info(j.inputdata)
+
     j.submit()
 
     test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
@@ -106,7 +112,6 @@ def _copyJob(job,site):
       ts.save()
   
     logger.warning('Finished copying job %d'%job.id)
-
     return
 
   except:
@@ -124,7 +129,6 @@ def _copyJob(job,site):
           ts = TestState(test=test,ganga_jobid=job.id,copied=1)
           ts.save()
         logger.info('Finished copying job %d'%job.id)
-
         return
       except:
         logger.warning('Failed to submit job %d for %s. Retrying %d more times.'%(j.id,site,nRetries-i-1))
@@ -133,51 +137,29 @@ def _copyJob(job,site):
         test_sleep((i+1)*10)
 
   # if here then submission and retries all failed
-  logger.error('Failed copying job %d %d times.'%(job.id,nRetries))
+  logger.error('Failed copying job %d for %s %d times.'%(job.id,site,nRetries))
   logger.error('Disabling test %d site %s with test_site.resubmit_enabled=0.'%(testid,site))
   test_site = test.getTestSites_for_test.filter(site__name=site)[0]
   test_site.resubmit_enabled = 0
-  test_site.save()
+  test_site.save()    
 
+  # If we copy a job, we wait 10 secs, this way we wait for the other thread
+  # to update the values in the DB.
+  test_sleep(10)
 
 def copyJob(job):
 
-  site = ''
+  site = job.backend.settings['Destination']
 
-  if job.subjobs:
-    #Let's take the site of the first job
-    DIRAC_ID = job.subjobs[0].backend.id
-    try:
-      DIRAC_attributes = diracAPI('result=DiracLHCb().attributes(%s)'%(DIRAC_ID))
-    except:
-      logger.warning('COPY_JOB: result=DiracLHCb().attributes(%s)'%(DIRAC_ID))
-      DIRAC_attributes = {}
+  logger.debug('copyJob called for job %d at site %s'%(job.id,site))
 
-    if DIRAC_attributes.has_key('OK') and DIRAC_attributes['OK'] and DIRAC_attributes.has_key('Value')  and DIRAC_attributes['Value'].has_key('Site'):
-      site = DIRAC_attributes['Value']['Site']
-      site = Site.objects.filter(name=site)
-
-#  if not site or not test.getTestSites_for_test.filter(site__name=site):
-  if not site:
-    sites = test.getTestSites_for_test.filter(site__name='UNKNOWN')
-    if sites:
-      site = sites[0].site
-    else:
-      sites = test.getTestSites_for_test.all()
-      site = sites[(job.id)%len(sites)].site
-  else:
-    site = site[0]
-
-  logger.debug('copyJob called for job %d'%(job.id))
-
-  test_site = test.getTestSites_for_test.filter(site__name=site.name)
+  test_site = test.getTestSites_for_test.filter(site__name=site)
   if not test_site:
-    logger.info('Unknown site %s'%(site))
-#    print 'Failed to get TestSite with Test: %s and Site: %s'%(test.id,site)
+    logger.info('Failed to get TestSite with Test: %s and Site: %s'%(test.id,site))
     return
   else:
     test_site = test_site[0]
-
+  
   if test_site.resubmit_force:
     logger.info('Forced copy')
     _copyJob(job)
@@ -196,28 +178,19 @@ def copyJob(job):
       logger.debug('Not copying job %d: test_state(test,jobid).copied is True'%(job.id))
       return
 
-  #If site is Ok, and unknown as well
-  for s in [test_site.site.name,'UNKNOWN']:
+  # submitted
+  submitted = test.getResults_for_test.filter(ganga_status='s').filter(site__name=site).count()
 
-    for_test_site = test_site
-    if s == 'UNKNOWN':
-      for_test_site = test.getTestSites_for_test.filter(site__name='UNKNOWN')
-      if not for_test_site:
-        continue
+  # running
+  running = test.getResults_for_test.filter(ganga_status='r').filter(site__name=site).count()
 
-    # submitted
-    submitted = test.getResults_for_test.filter(ganga_status='s').filter(site__name=s).count()
+  if submitted > test_site.min_queue_depth:
+    logger.debug('Not copying job %d: %d submitted > q.d %d'%(job.id,submitted,test_site.min_queue_depth))
+    return
 
-    # running
-    running = test.getResults_for_test.filter(ganga_status='r').filter(site__name=s).count()
-
-    if submitted > test_site.min_queue_depth:
-      logger.debug('Not copying job %d: %d submitted > q.d %d'%(job.id,submitted,test_site.min_queue_depth))
-      return
-
-    if running > test_site.max_running_jobs:
-      logger.debug('Not copying job %d: %d running > %d max'%(job.id,running,test_site.max_running_jobs))
-      return
+  if running > test_site.max_running_jobs:
+    logger.debug('Not copying job %d: %d running > %d max'%(job.id,running,test_site.max_running_jobs))
+    return
 
   if len(job.subjobs) < 1:
     logger.debug('Job %d has 0 subjobs. Not copying.'%job.id)
@@ -240,11 +213,8 @@ def copyJob(job):
         test_site.save()
         return
 
-  sub = len(test.getResults_for_test.filter(ganga_status='s').filter(site__name='UNKNOWN'))
-  run = len(test.getResults_for_test.filter(ganga_status='r').filter(site__name='UNKNOWN'))
-
-  logger.warning('Job %d at %s ran the gauntlet: %d submitted, %d running, %d failed, %d finished UNKNOWN %d %d'%(job.id,site,submitted,running,failed,total,sub,run))
-  _copyJob(job,site)
+  logger.warning('Job %d at %s ran the gauntlet. %d submitted, %d running, %d failed, %d finished'%(job.id,site,submitted,running,failed,total))
+  _copyJob(job)
   return
 
 ##
@@ -263,6 +233,8 @@ def print_summary():
   active = 0
   for j in jobs:
 
+    site = j.backend.settings['Destination']
+
     t = len(j.subjobs)
     s = len(j.subjobs.select(status='submitted'))
     r = len(j.subjobs.select(status='running'))
@@ -276,7 +248,7 @@ def print_summary():
       copied = 1
 
     if not (c+f==t and copied):
-      logger.info('Job %d; t:%d s:%d r:%d c:%d f:%d copied:%d'%(j.id,t,s,r,c,f,copied))
+      logger.info('Job %d: %s t:%d s:%d r:%d c:%d f:%d copied:%d'%(j.id,site,t,s,r,c,f,copied))
 
   logger.info('NUM JOBS TO BE MONITORED: %d'%active)
 
@@ -287,14 +259,15 @@ def print_summary():
     if test_state and test_state[0].copied:
       continue
 
+    site = j.backend.settings['Destination']
+
     t = len(j.subjobs)
     s = len(j.subjobs.select(status='submitted'))
     r = len(j.subjobs.select(status='running'))
     c = len(j.subjobs.select(status='completed'))
     f = len(j.subjobs.select(status='failed'))
 
-    logger.info('UNCOPIED Job %d; t:%d s:%d r:%d c:%d f:%d'%(j.id,t,s,r,c,f))
-
+    logger.info('UNCOPIED Job %d: %s t:%d s:%d r:%d c:%d f:%d'%(j.id,site,t,s,r,c,f))
 
 ##
 ## PROCESS SUBJOBS
@@ -302,6 +275,8 @@ def print_summary():
 
 def process_subjob(job,subjob,thread_dirac_server):
 
+  site = job.backend.settings['Destination']
+  
   DIRAC_ID = subjob.backend.id
   try:
     DIRAC_attributes = thread_dirac_server.execute('result=DiracLHCb().attributes(%s)'%(DIRAC_ID))
@@ -326,11 +301,6 @@ def process_subjob(job,subjob,thread_dirac_server):
           results[attributes[attribute]] += '%s. '%(attribute_value)
         else:
           results[attributes[attribute]] = attribute_value
-
-  site = ''
-
-  if DIRAC_attributes.has_key('OK') and DIRAC_attributes['OK'] and DIRAC_attributes.has_key('Value') and DIRAC_attributes['Value'].has_key('Site'):
-    site = DIRAC_attributes['Value']['Site']
 
   logger.debug('Processing jobs(%d).subjobs(%d) with status %s'%(job.id,subjob.id,subjob.status))
 
@@ -440,12 +410,12 @@ def hc_monitor_thread():
       logger.warning(sys.exc_info()[1])
     for job in jobs:
       for subjob in job.subjobs:
-#        try:
-        process_subjob(job,subjob,thread_dirac_server)
-#        except:
-#          logger.warning('Exception in process_subjob:')
-#          logger.warning(sys.exc_info()[0])
-#          logger.warning(sys.exc_info()[1])
+        try:
+          process_subjob(job,subjob,thread_dirac_server)
+        except:
+          logger.warning('Exception in process_subjob:')
+          logger.warning(sys.exc_info()[0])
+          logger.warning(sys.exc_info()[1])
       if test_paused() or ct.should_stop():
         break
 
@@ -458,6 +428,9 @@ ct = GangaThread(name="HCMonitorThread", target=hc_monitor_thread)
 logger.info('Connected to DB')
 
 if len(jobs):
+  # Wait one minute, to let the minute counter update, and avoid
+  # problems with the at command submitting on second = 0
+  test_sleep(60)
   ct.start()
   test_sleep(60)
   while (test_active() and not test_paused()):
@@ -465,7 +438,7 @@ if len(jobs):
     test = Test.objects.get(pk=testid)
 #    logger.info('HC Copy Thread: TOP OF MAIN LOOP')
     for job in jobs:
-      if test_paused() or ct.should_stop():
+      if not test_active() or test_paused() or ct.should_stop():
         break
       copyJob(job)
     test_sleep(10)
