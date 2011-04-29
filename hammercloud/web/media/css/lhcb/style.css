@@ -1,21 +1,21 @@
 body {
-  color: #33871e;
+  color: #006600;
 }
 
 h1,h2,h3 {
-  color: #33871e;
+  color: #006600;
 }
 
 a {
-  color: #33871e;
+  color: #006600;
 }
 
 #menu-top {
-  background-color: #33871e;
+  background-color: #006600;
 }
 
 #jsddm li a {
-  background-color: #33871e;
+  background-color: #006600;
 }
 
 #jsddm li a:hover {
@@ -23,7 +23,7 @@ a {
 }
 
 #jsddm li ul li a {
-  background-color: #33871e;
+  background-color: #006600;
 }
 
 #jsddm li ul li a:hover {
@@ -31,5 +31,55 @@ a {
 }
 
 #bottom-bar {
-  background-color: #33871e;
+  background-color: #006600;
 }
+
+table.testlist thead th{
+  color: #006600;
+  border-bottom-color: #006600;
+}
+
+table.testlist tfoot th{
+  color: #006600;
+  border-color:#006600;
+}
+
+td span.legend{
+  border-color: #006600;
+}
+
+#content .testslist th{
+  background-color: #006600;
+}
+
+.testlog a{
+  color: #006600;
+}
+
+.more_plots a{
+  color: #006600;
+}
+
+th:hover span {
+  border-color: #006600;
+  color: #006600;
+}
+
+table.display thead th{
+  color:#006600;
+  border-color:#006600;
+}
+
+table.display tfoot th{
+  color:#006600;
+  border-color:#006600;
+}
+
+#tabs a{
+  color:#006600;
+}
+
+#from, #to, #starttime, #endtime{
+  color:#bf035e;
+}
+

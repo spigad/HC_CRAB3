@@ -20,7 +20,9 @@ from hc.core.base.admin.actions import cancel,clone,delete_marked,delete_view,ma
 
 class ActionsAdminBase(admin.ModelAdmin):
 
-  actions = ['clone','delete_marked','send_for_approval','cancel','pause','make_approved','unpause']
+#  actions = ['clone','delete_marked','send_for_approval','cancel','pause','make_approved','unpause']
+
+  actions = ['clone','delete_marked','send_for_approval','make_approved']
 
   def get_actions(self, request):
 
@@ -40,15 +42,15 @@ class ActionsAdminBase(admin.ModelAdmin):
     if self.model._meta.object_name == "Test":
 
       if not (request.user.is_superuser or app_admin):
-        del actions['cancel']
+#        del actions['cancel']
         del actions['make_approved']
 
     else:
       del actions['send_for_approval']
-      del actions['cancel']
+#      del actions['cancel']
       del actions['make_approved']
-      del actions['pause']
-      del actions['unpause']
+#      del actions['pause']
+#      del actions['unpause']
 
     return actions
 
@@ -91,7 +93,9 @@ class ActionsAdminBase(admin.ModelAdmin):
 ##
 ## SIMPLE ADMIN BASE CLASSES
 ##
+## *AlarmAdminBase
 ## *CloudAdminBase
+## *CloudOptionAdminBase
 ## *BackendAdminBase
 ## *DspatternAdminBase
 ## *GangaBinAdminBase
@@ -102,6 +106,16 @@ class ActionsAdminBase(admin.ModelAdmin):
 ## *TestOptionAdminBase
 ## *UserCodeAdminBase
 ##
+
+class AlarmAdminBase(ActionsAdminBase):
+
+  list_display = ('name', 'description',)
+  fieldsets = [
+    ('Backend', {'fields': ['name','description']})
+  ]
+
+  class Meta:
+    abstract = True
 
 class BackendAdminBase(ActionsAdminBase):
 
@@ -118,6 +132,16 @@ class CloudAdminBase(ActionsAdminBase):
   list_display = ('name', 'code', 'description',cloud_am.getCloudSitesStringAdmin,)
   fieldsets = [
     ('Cloud', {'fields': ['name','code','description']})
+  ]
+
+  class Meta:
+    abstract = True
+
+class CloudOptionAdminBase(ActionsAdminBase):
+
+  list_display = ('option_name', 'option_value', 'cloud',)
+  fieldsets = [
+    ('Cloud Option', {'fields': ['option_name','option_value','cloud']})
   ]
 
   class Meta:
@@ -201,12 +225,23 @@ class UserCodeAdminBase(ActionsAdminBase):
 ## SITE ADMIN BASE CLASSES
 ##
 ## *SiteAdminBase
+## *SiteOptionAdminBase
 ##
 
 class SiteAdminBase(ActionsAdminBase):
   list_display = ('name', 'description', 'cloud', 'backend', 'enabled')
   fieldsets = [
     (None, {'fields': ['name','alternate_name','description','cloud','backend','ddm','enabled','queue']}),
+  ]
+
+  class Meta:
+    abstract = True
+
+class SiteOptionAdminBase(ActionsAdminBase):
+
+  list_display = ('option_name', 'option_value', 'site',)
+  fieldsets = [
+    ('Site Option', {'fields': ['option_name','option_value','site']})
   ]
 
   class Meta:
@@ -348,6 +383,7 @@ class TemplateInlineBase(admin.TabularInline):
 ## *TestHostAdminBase
 ## *TestLogAdminBase
 ## *TestSiteAdminBase
+## *TestSiteAlarmAdminBase
 ## *TestUserAdminBase
 ##
 ## *TemplateInlineBase
@@ -405,7 +441,7 @@ class TestAdminBase(ReadOnlyAdminFields,ModelLinkAdminFields,ActionsAdminBase):
     return super(TestAdminBase, self).change_view(request,*args, **kwargs)
 
   class Media:
-    js = ('js/jquery-1.4.2.min.js','js/hide_divs.js',)
+    js = ('js/jquery-1.4.2.min.js','js/hide_divs.js','js/hide_func_templ.js','js/adminCheck.js',)
 
   class Meta:
     abstract = True
@@ -467,6 +503,16 @@ class TestSiteAdminBase(ActionsAdminBase):
   list_display = ('test', 'site')
   fieldsets = [
     (None, {'fields':['test','site']})
+  ]
+
+  class Meta:
+    abstract = True
+
+class TestSiteAlarmAdminBase(ActionsAdminBase):
+
+  list_display = ('test','site','alarm','active','progress','status','actions')
+  fieldsets = [
+    (None, {'fields':['test','site','alarm','active','actions']})
   ]
 
   class Meta:

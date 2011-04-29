@@ -44,8 +44,19 @@ echo '   found: '$vals
 version=`echo $vals|cut -d'/' -f1`
 echo '  Using '$version
 
+
+#Export python to environment
+export PATH=/afs/cern.ch/sw/lcg/external/Python/2.5.4p2/x86_64-slc5-gcc43-opt/bin/:$PATH
+
+#Export MySQLdb packages for python2.5
+export PYTHONPATH=/afs/cern.ch/sw/lcg/external/mysql_python/1.2.2-mysql5.0.18-python2.5/x86_64-slc5-gcc43-opt/lib/python2.5/site-packages/:$PYTHONPATH
+
+#Export custom site-packages
+export PATH=$PATH:$HCDIR/external/bin/
+export PYTHONPATH=$PYTHONPATH:$HCDIR/external/lib/python2.5/site-packages:$HCDIR/external/lib64/python2.5/site-packages
+
 #Export hammercloud python zone.
-export PYTHONPATH=$HCDIR/python
+export PYTHONPATH=$PYTHONPATH:$HCDIR/python
 
 #Export Django & HammerCloud.
 export PYTHONPATH=$PYTHONPATH:$HCDIR/external/django/$version:$HCDIR/web/src
@@ -53,7 +64,7 @@ export PYTHONPATH=$PYTHONPATH:$HCDIR/external/django/$version:$HCDIR/web/src
 #Export apps zones
 export PYTHONPATH=$PYTHONPATH:$HCDIR/apps
 
-#export PYTHONPATH=$PYTHONPATH:/usr/lib64/python2.5/site-packages
+echo '  PATH='$PATH
 echo '  PYTHONPATH='$PYTHONPATH
 
 #Export HammerCloud settings.
@@ -69,7 +80,6 @@ then
     source $HCAPP/scripts/config/config-main.sh
 else
     echo '   not found. Skipping.'
-
 fi
 
 echo ''

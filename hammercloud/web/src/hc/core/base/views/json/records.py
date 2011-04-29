@@ -14,6 +14,12 @@ def get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTe
     dic.update(searchableColumns)
   elif type == "robotlist":
     dic = {'site':'site__name','completed':'completed','failed':'failed','total':'total','efficiency':'efficiency','efficiencyNorm':'efficiencyNorm','errorrate':'errorrate','errorrateNorm':'errorrateNorm'}
+  elif type == "testjobs":
+    dic = {'status':'ganga_status','site':'site__name','job':'ganga_jobid','subjob':'ganga_subjobid','backendID':'backendID','reason':'reason','submit':'submit_time','start':'start_time','end':'stop_time'}
+  elif type == 'robotjobs':
+    dic = {'status':'ganga_status','site':'site__name','test':'test__id','job':'ganga_jobid','subjob':'ganga_subjobid','backendID':'backendID','reason':'reason','submit':'submit_time','start':'start_time','end':'stop_time'}
+  elif type == 'testreasons':
+    dic = {'site':'site__name','reason':'reason'}
 
   #Safety measure. If someone messes with iDisplayLength manually, we clip it to
   #the max value of 100.
@@ -51,7 +57,6 @@ def get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTe
 #  if customSearch !='' and customSearch[0] == '>':
   if customSearch !='':
   
-
     outputQ = None
     filter = []
 
@@ -100,6 +105,10 @@ def get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTe
           q = Q(**kwargz)
           outputQ = q
           querySet = querySet.filter(outputQ)
+
+  if type == 'testreasons':
+    from django.db.models import Count
+    querySet = querySet.values('reason','site__name').annotate(Count('id'))
 
   #count how many records match the final criteria
   iTotalRecords = iTotalDisplayRecords = querySet.count()

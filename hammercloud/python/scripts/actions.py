@@ -1,11 +1,15 @@
-from scripts.server import create_functional_tests,robot
-from scripts.submit import register_host,create_at_job,test_generate,test_submit,test_report
+from scripts.server import create_functional_tests,robot,compress_summary_table
+from scripts.submit import register_host,create_at_job,test_generate,test_submit,test_report,test_alarm,test_summary
 
 class CronActions:
 
   def create_functional_tests(self,app,dic):
     cft = create_functional_tests.CreateFunctionalTests()
     cft.run(app,dic)
+
+  def compress_summary_table(self,app,dic):
+    cst = compress_summary_table.CompressSummaryTable()
+    cst.run(app,dic)   
 
   def register_host(self,app,dic):
     rh = register_host.RegisterHost()
@@ -30,3 +34,11 @@ class CronActions:
   def robot(self,app,dic):
     r = robot.Robot()
     r.run(app,dic)
+
+  def test_alarm(self,app,dic):
+    ta = test_alarm.TestAlarm()
+    ta.run(app,dic)
+
+  def test_summary(self,app,dic):
+    tp = test_summary.TestSummary()
+    tp.run(app,dic)

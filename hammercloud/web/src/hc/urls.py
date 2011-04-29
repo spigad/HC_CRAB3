@@ -12,8 +12,10 @@ urlpatterns = patterns('',
 
   (r'',                   include('hc.core.urls')                               ),
   (r'',                   include('hc.core.base.rss.urls')                      ),
+  (r'',                   include('hc.core.base.xhr.urls')                      ),
+  (r'',                   include('hc.core.base.xmlrpc.urls')                   ),
 
-  url(r'^admin/', include(admin.site.urls), kwargs={'SSL':True}),
+  url(r'^admin/', include(admin.site.urls) , kwargs={'SSL':True}),
 
 #  (r'^accounts/login/$',  'django.contrib.auth.views.login', {'template_name': 'core/app/login.html'}),
     

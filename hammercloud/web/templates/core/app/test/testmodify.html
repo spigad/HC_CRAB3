@@ -1,0 +1,71 @@
+{% extends 'core/app/base.html' %}
+{% block title %}Test Modify - {% endblock %}
+
+{% block content %}
+
+  <h2>Test  Modify - Test {{ test.id }}</h2>
+  {%if error%}
+    {{ error }}<br />
+    <a href="{% url test-view app,test.id %}"><h3>Click here to Proceed!</h3></a>
+  {% else %}
+    {% if done %}
+      <p>
+        <h2 style="color: green;">{{ message }}</h2>
+        <a href="{% url test-view app,test.id %}"><h3>Click here to Proceed</h3></a>
+      </p>
+    {% else %}
+      <h3 style="text-align: left;">Test Properties</h3>
+      <h2 style="color: red;">{{ message }}</h2>
+      <form action="" method="POST">{% csrf_token %}
+        <div style="text-align:left; width:100%;">
+          {% for field in form %}
+
+            {% comment %}
+            {% if not 'Pause' in field.label %}
+              <p>
+                {{ field.errors }}
+                {{ field.label_tag }}: {{ field }}
+              </p>
+            {% endif %}
+            {% if 'Pause' in field.label and user.is_superuser %}
+              <p>
+                {{ field.errors }}
+                {{ field.label_tag }}: {{ field }}
+              </p>
+            {% endif %}
+            {% endcomment %}
+
+            <p>
+              {{ field.errors }}
+              {{ field.label_tag }}: {{ field }}
+            </p>
+
+          {% endfor %}
+        </div>
+        {% comment %}{{ formset }}{% endcomment %}
+        <h3 style="text-align: left;">Test Site Properties</h3>
+        {{ formset.management_form }}
+        <table>
+          <tr><th>Site</th><th>Num datasets per bulk</th><th>Min Queue Depth</th><th>Max Running Jobs</th><th>Resubmit Enabled</th><th>Resubmit Force</th></tr>
+          {% for form in formset.forms %}
+            {{ form.id }}
+            {{ form.errors }}
+            <tr>
+              {% for field in form %}
+                {% if not field.is_hidden %}
+                  <td>
+                    {{ field.errors }}
+                    {% autoescape off%}{{ field }}{% endautoescape %}
+                  </td>
+                {% endif %}
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </table>
+        <input type="button" value="Cancel" onclick="window.location='{% url test-view app,test.id %}'" />
+        <input type="submit" value="Submit" />
+        <h4 style="text-align: left;">Don't try to modify the site, it won't change!</h4>
+      </form>
+    {% endif %}
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,45 @@
+[defaults_GridProxy]
+voms = atlas
+validityAtCreation = 10:00
+minValidity = 00:15
+
+[LCG]
+EDG_SETUP = /afs/cern.ch/sw/ganga/install/config/grid_env_atlas.sh
+GLITE_ENABLE = True
+GLITE_SETUP = /afs/cern.ch/sw/ganga/install/config/grid_env_atlas.sh
+VirtualOrganisation = atlas
+Config = /data/hc/apps/atlas/config/atlas_glite_wms.conf
+#ExcludedCEs = nikhef\.nl.*atlas
+#ExcludedCEs = sara\.nl nikhef\.nl.*atlas
+
+[defaults_LCG]
+middleware = GLITE
+
+[MonitoringServices]
+Athena/LCG = Ganga.Lib.MonitoringServices.ARDADashboard.LCG.ARDADashboardLCGAthena.ARDADashboardLCGAthena
+*/LCG = Ganga.Lib.MonitoringServices.ARDADashboard.LCG.ARDADashboardLCGAthena.ARDADashboardLCGAthena
+
+[Athena]
+ATLAS_SOFTWARE = /afs/cern.ch/project/gd/apps/atlas/slc3/software
+
+[Logging]
+GangaAtlas = INFO
+Ganga.GPI = INFO
+
+[ROOT]
+pythonhome = /afs/cern.ch/sw/lcg/external/Python/${pythonversion}/${arch}/
+
+[Panda]
+processingType = hammercloud
+
+[PollThread]
+LCG = 300
+LSF = 300
+Panda = 300
+
+[System]
+GANGA_VERSION = Ganga-HC
+
+[defaults_AtlasLCGRequirements]
+dq2client_version = 0.1.32
+

@@ -6,8 +6,10 @@ from hc.core.base.rss.abstract import *
 ##
 ## SIMPLE CLASSES
 ##
+## *Alarm
 ## *Backend
 ## *Cloud
+## *CloudOption
 ## *Dspattern
 ## *GangaBin
 ## *Host
@@ -18,9 +20,13 @@ from hc.core.base.rss.abstract import *
 ## *UserCode 
 ## 
 
+class Alarm(AlarmBase):
+  pass
 class Backend(BackendBase):
   pass
 class Cloud(CloudBase):
+  pass
+class CloudOption(CloudOptionBase):
   pass
 class Dspattern(DspatternBase):
   pass
@@ -45,11 +51,14 @@ class UserCode(UserCodeBase):
 ## SITE CLASSES
 ##
 ## *Site
+## *SiteOption
 ##
 
 class Site(SiteBase):
   pass
 
+class SiteOption(SiteOptionBase):
+  pass
 
 ##
 ## TEMPLATE CLASSES
@@ -88,6 +97,7 @@ class TemplateUser(TemplateUserBase):
 ## *TestHost
 ## *TestLog
 ## *TestSite
+## *TestSiteAlarm
 ## *TestState
 ## *TestUser
 ##
@@ -105,6 +115,8 @@ class TestHost(TestHostBase):
 class TestLog(TestLogBase):
   pass
 class TestSite(TestSiteBase):
+  pass
+class TestSiteAlarm(TestSiteAlarmBase):
   pass
 class TestState(TestStateBase):
   pass
@@ -134,7 +146,7 @@ class Result(ResultBase):
   statusReason      = models.CharField(max_length=511, blank=True,null=True)
   statusScheduler   = models.CharField(max_length=511, blank=True,null=True)
   submission        = models.IntegerField(blank=True,null=True)
-  submissionTime    = models.DateTimeField(blank=True,null=True)
+#  submissionTime    = models.DateTimeField(blank=True,null=True)
   taskId            = models.IntegerField(blank=True,null=True)
 
   #[StorageParams]
@@ -244,11 +256,14 @@ class UsgSite(UsgSiteBase):
 ##
 ## SUMMARY CLASSES
 ##
+## *SummaryEvolution
 ## *SummaryRobot
 ## *SummaryTest
 ## *SummaryTestSite
 ##
 
+class SummaryEvolution(SummaryEvolutionBase):
+  pass
 class SummaryRobot(SummaryRobotBase):
   pass
 class SummaryTest(SummaryTestBase):

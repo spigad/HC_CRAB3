@@ -1,4 +1,4 @@
-from hc.atlas.forms import MetricPermForm, TemplateUserForm, TestUserForm
+from hc.atlas.forms import MetricPermForm, TemplateUserForm, TestUserForm, TestLogForm
 from hc.atlas.models import *
 
 from django.contrib import admin
@@ -12,8 +12,10 @@ from hc.core.base.rss.admin import *
 ##
 ## SIMPLE ADMIN CLASSES
 ##
+## *AlarmAdmin
 ## *BackendAdmin
 ## *CloudAdmin
+## *CloudOptionAdmin
 ## *DspatternAdmin
 ## *GangaBinAdmin
 ## *HostAdmin
@@ -24,10 +26,16 @@ from hc.core.base.rss.admin import *
 ## *UserCode
 ##
 
+class AlarmAdmin(AlarmAdminBase):
+  pass
+
 class BackendAdmin(BackendAdminBase):
   pass
 
 class CloudAdmin(CloudAdminBase):
+  pass
+
+class CloudOptionAdmin(CloudOptionAdminBase):
   pass
 
 class DspatternAdmin(DspatternAdminBase):
@@ -59,9 +67,13 @@ class UserCodeAdmin(UserCodeAdminBase):
 ## SITE ADMIN CLASSES
 ##
 ## *SiteAdmin
+## *SiteOptionAdmin
 ##
 
 class SiteAdmin(SiteAdminBase):
+  pass
+
+class SiteOptionAdmin(SiteOptionAdminBase):
   pass
 
 
@@ -138,8 +150,9 @@ class TemplateUserAdmin(TemplateUserAdminBase):
 ## *TestCloudAdmin
 ## *TestDspatternAdmin
 ## *TestHostAdmin
-## *TestJournalAdmin
+## *TestLogAdmin
 ## *TestSiteAdmin
+## *TestSiteAlarmAdmin
 ## *TestStateAdmin
 ## *TestUserAdmin
 ##
@@ -175,10 +188,13 @@ class TestDspatternAdmin(TestDspatternAdminBase):
 class TestHostAdmin(TestHostAdminBase):
   pass
 
-#class TestJournalAdmin(TestJournalAdminBase):
-#  form = TestJournalForm
+class TestLogAdmin(TestLogAdminBase):
+  form = TestLogForm
 
 class TestSiteAdmin(TestSiteAdminBase):
+  pass
+
+class TestSiteAlarmAdmin(TestSiteAlarmAdminBase):
   pass
 
 class TestStateAdmin(TestStateAdminBase):
@@ -194,7 +210,7 @@ class TestUserAdmin(TestUserAdminBase):
 ##
 ## *MetricTypeAdmin
 ## *MetricAdmin
-## *MetricPerm
+## *MetricPermission
 ## *[GlobalMetricAdmin]
 ## *SiteMetricAdmin
 ## *TestMetricAdmin
@@ -251,8 +267,10 @@ class TestFeedAdmin(TestFeedAdminBase):
 
 ##########################################################################################################
 
+admin.site.register(Alarm,AlarmAdmin)
 admin.site.register(Backend,BackendAdmin)
 admin.site.register(Cloud,CloudAdmin)
+admin.site.register(CloudOption,CloudOptionAdmin)
 admin.site.register(Dspattern,DspatternAdmin)
 admin.site.register(GangaBin,GangaBinAdmin)
 admin.site.register(Host,HostAdmin)
@@ -263,6 +281,7 @@ admin.site.register(TestOption,TestOptionAdmin)
 admin.site.register(UserCode,UserCodeAdmin)
 
 admin.site.register(Site,SiteAdmin)
+admin.site.register(SiteOption,SiteOptionAdmin)
 
 admin.site.register(Template,TemplateAdmin)
 admin.site.register(TemplateBackend,TemplateBackendAdmin)
@@ -277,15 +296,15 @@ admin.site.register(TestBackend,TestBackendAdmin)
 admin.site.register(TestCloud,TestCloudAdmin)
 admin.site.register(TestDspattern,TestDspatternAdmin)
 admin.site.register(TestHost,TestHostAdmin)
-#admin.site.register(TestJournal,TestJournalAdmin)
+admin.site.register(TestLog,TestLogAdmin)
 admin.site.register(TestSite,TestSiteAdmin)
+admin.site.register(TestSiteAlarm,TestSiteAlarmAdmin)
 admin.site.register(TestState,TestStateAdmin)
 admin.site.register(TestUser,TestUserAdmin)
 
 admin.site.register(MetricType,MetricTypeAdmin)
 admin.site.register(Metric,MetricAdmin)
 admin.site.register(MetricPerm,MetricPermAdmin)
-#[admin.site.register(GlobalMetric,GlobalMetric)]
 admin.site.register(SiteMetric,SiteMetricAdmin)
 admin.site.register(TestMetric,TestMetricAdmin)
 

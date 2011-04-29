@@ -2,20 +2,20 @@
 
 {% block content %}
 
-  <p>Welcome to HammerCloud-{{app|upper}}. Click "HC Stats" above to see the currently running jobs.</p>
+  <p>Welcome to HammerCloud-{{app|upper}}. Click <a href="{% url evolution-view app %}"><b><i>HERE</i></b></a> above to see the currently running jobs.</p>
 
   {% for key,list in tests.items %}
-     <div id="runningjobs">
+     <div class="runningjobs">
         <h3>Running and Scheduled {{key|capfirst}} Tests</h3>
         {% if list %}
           <table class="testslist">
             <thead>
               <tr>
-                <th>state</th><th>id</th><th>host</th><th>template</th>
-                <th>start (CET)</th><th>end (CET)</th>
-                <th>clouds</th><th>sites</th><th>subm<br />jobs</th>
-                <th>run<br />jobs</th><th>comp<br />jobs</th>
-                <th>fail<br />jobs</th><th>tot<br />jobs</th>
+                <th>State</th><th>Id</th><th>Host</th><th>Template</th>
+                <th>Start (CET)</th><th>End (CET)</th>
+                <th>{{config.cloud}}</th><th>Sites</th><th>Subm<br />jobs</th>
+                <th>Run<br />jobs</th><th>Comp<br />jobs</th>
+                <th>Fail<br />jobs</th><th>Tot<br />jobs</th>
               </tr>
            </thead>
            <tbody>
@@ -27,11 +27,11 @@
                  <td class="box-{{ test.state }}">{{ test.state }}</td>
                  <td>{{ test.id }}</td>
                  <td>{{ test.host|hostEntity }}</td>
-                 <td>{{ test.template.description }}</td>
+                 <td>{{ test.template.description|chop:15 }}</td>
                  <td>{{ test.starttime|date:"d/M"}}, {{test.starttime|time:"P"}}</td>
-                 <td>{{ test.endtime|date:"d/M"}}, {{test.starttime|time:"P"}}</td>
+                 <td>{{ test.endtime|date:"d/M"}}, {{test.endtime|time:"P"}}</td>
                  <td>{{ test.clouds|trunc:3|safe }}</td>
-                 <td style="font-size: 0.8em; padding: 1px; margin: 0;">{{ test.sites|trunc:3|safe }}</td>
+                 <td style="font-size: 0.8em; padding: 1px; margin: 0;">{{ test.sites|trunc:2|safe }}</td>
                  <td>{{ test.submitted }}</td><td>{{ test.running }}</td>
                  <td>{{ test.completed }}</td><td>{{ test.failed }}</td>
                  <td>{{ test.total }}</td>

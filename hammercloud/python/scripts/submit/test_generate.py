@@ -18,6 +18,12 @@ class TestGenerate:
       print '[ERROR][%s][test_generate] <int>TestID expected, got %s'%(app,dic['-t'])
       return 0
 
+#    try:
+#      mode = dic['-m']
+#    except:
+#      print '[ERROR][%s][test_generate] <string>Mode expected'%(app)
+#      return
+
     #IMPORT
     test = custom_import('hc.%s.models.Test'%(app))
 
@@ -39,15 +45,21 @@ class TestGenerate:
 
     return test
    
-
   def run(self,app,dic):
     
     test = self.check(app,dic)
-    if test:
+    mode = 0
+
+    try:
+      mode = dic['-m']
+    except:
+      print '[ERROR][%s][test_generate] <string>Mode expected'%(app)
+
+    if test and mode:
 
       tg = custom_import('%s.python.scripts.submit.test_generate.TestGenerate'%(app))
       if tg:
-        if tg().run(test):
+        if tg().run(test,mode):
 
           test.state = 'submitting'
           test.save()

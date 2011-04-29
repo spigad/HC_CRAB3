@@ -11,8 +11,10 @@ from datetime import datetime
 ##
 ## SIMPLE BASE CLASSES
 ##
+## *AlarmBase
 ## *BackendBase
 ## *CloudBase
+## *CloudOptionBase
 ## *DspatternBase
 ## *FileBase
 ## *GangaBinBase
@@ -21,6 +23,21 @@ from datetime import datetime
 ## *MetricPermBase
 ## *TestOptionBase
 ##
+
+class AlarmBase(models.Model):
+  __metaclass__ = MetaCreator
+
+  id          = models.AutoField(primary_key=True)
+  name        = models.CharField(unique=True, max_length=255)
+  description = models.CharField(max_length=2047, blank=True)
+  mtime       = models.DateTimeField(auto_now=True)
+
+  def __unicode__(self):
+    return '%s'%self.name
+
+  class Meta:
+    abstract = True
+    db_table = u'alarm'
 
 class BackendBase(models.Model):
   __metaclass__ = MetaCreator
@@ -69,6 +86,21 @@ class CloudBase(models.Model):
     abstract = True
     db_table = u'cloud'
     ordering = ['code']
+
+class CloudOptionBase(models.Model):
+  __metaclass__ = MetaCreator
+
+  id           = models.AutoField(primary_key=True)
+  option_name  = models.CharField(max_length=63, blank=True)
+  option_value = models.TextField(blank=True)
+  mtime       = models.DateTimeField(auto_now=True)
+
+  #cloud     -> hc.core.base.models.keys.fk.generator.generateFK('Cloud','CloudOption','cloud',{})
+
+  class Meta:
+    abstract = True
+    db_table = u'cloud_option'
+    #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
 
 class DspatternBase(models.Model):
   __metaclass__ = MetaCreator
@@ -265,6 +297,7 @@ class UserCodeBase(models.Model):
 ## SITE BASE CLASSES
 ##
 ## *SiteBase
+## *SiteOptionBase
 ##
 
 class SiteBase(models.Model):
@@ -287,15 +320,26 @@ class SiteBase(models.Model):
   def __unicode__(self):
     return '%s'%self.name
 
-#  def save(self,*args,**kwargs):
-#    self.mtime = datetime.now()
-#    super(SiteBase, self).save()
-#    return 1
-
   class Meta:
     abstract = True
     db_table = u'site'
     ordering = ['name']
+
+
+class SiteOptionBase(models.Model):
+  __metaclass__ = MetaCreator
+
+  id           = models.AutoField(primary_key=True)
+  option_name  = models.CharField(max_length=63, blank=True)
+  option_value = models.TextField(blank=True)
+  mtime       = models.DateTimeField(auto_now=True)
+  
+  #site     -> hc.core.base.models.keys.fk.generator.generateFK('Site','SiteOption','site',{})
+
+  class Meta:
+    abstract = True
+    db_table = u'site_option'
+    #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
 
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -356,6 +400,11 @@ class TemplateBackendBase(models.Model):
   __metaclass__ = MetaCreator
 
   id          = models.AutoField(primary_key=True)
+  resubmit_enabled      = models.BooleanField(default=True)
+  resubmit_force        = models.BooleanField()
+  num_datasets_per_bulk = models.IntegerField(default=1, db_column='num_datasets_per_bulk')
+  min_queue_depth       = models.IntegerField(default=0, db_column='min_queue_depth')
+  max_running_jobs      = models.IntegerField(default=1, db_column='max_running_jobs')
   mtime       = models.DateTimeField(auto_now=True)
 
   #backend   -> hc.core.base.models.keys.fk.generator.generateFK('Backend','TemplateBackend','backend',{})
@@ -504,6 +553,7 @@ class TemplateUserBase(models.Model):
 ## *TestHostBase
 ## *TestLogBase
 ## *TestSiteBase
+## *TestSiteAlarmBase
 ## *TestStateBase
 ## *TestUserBase
 ##
@@ -559,7 +609,12 @@ class TestBase(models.Model):
     return '%s'%self.id
 
   def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
+#    self.mtime = datetime.now()
+
+    #If we want default behaviour:
+    if args and args[0].has_key('default') and args[0]['default']:  
+      super(TestBase,self).save()
+      return 1
 
     #If we are clonning, we do NOT copy TestInlines.
     clone = False
@@ -571,20 +626,44 @@ class TestBase(models.Model):
       return 0
 
     test = custom_import('hc.'+self._meta.app_label+'.models.Test')
-
     t    = test.objects.filter(id = self.id)
 
     dontsave = ['error','completed']
-    if t:
-      if t[0].state in dontsave:
-        t[0].state = self.state
-        super(TestBase, t[0]).save()
-        return 1
-      else:           
-        super(TestBase, self).save()
-        return 1
+    if self.state in dontsave:
+      super(TestBase, self).save()
+      return 0
 
-    if not t:
+    # Voodoo time: the t[0].id==id is doing magic, do not delete !!!
+    if t and t[0].id==self.id:
+
+      try:
+        gangabin = self.gangabin
+      except:
+        gangabin = -1
+
+      try:
+        extraargs = self.extraargs
+      except:
+        extraargs = -1
+
+      #extraargs = self.extraargs
+
+      self.jobtemplate    = t[0].template.jobtemplate
+      self.usercode       = t[0].template.usercode
+      self.optionfile     = t[0].template.optionfile
+      self.inputtype      = t[0].template.inputtype
+      self.output_dataset = t[0].template.output_dataset
+      self.testoption     = t[0].template.testoption
+      self.template       = t[0].template
+      if not gangabin:
+        self.gangabin     = t[0].gangabin
+      if not extraargs:
+        self.extraargs      = t[0].extraargs
+      self.metricperm     = t[0].metricperm
+
+      super(TestBase, self).save()
+
+    else:
       #It's a new test, copy from template.
       obj = self.template
 
@@ -597,20 +676,18 @@ class TestBase(models.Model):
       self.testoption       = obj.testoption
       self.gangabin         = obj.gangabin
       self.extraargs        = obj.extraargs
-      self.description      = obj.description
 
-      if self.state not in dontsave:
-        super(TestBase, self).save()
+      super(TestBase, self).save()
 
         # Create summary test registry. 
         # Next updates will be done by a script.
-        summary_test = custom_import('hc.'+self._meta.app_label+'.models.SummaryTest')
-        summary_test = summary_test(test=self)
-        summary_test.save()
+      summary_test = custom_import('hc.'+self._meta.app_label+'.models.SummaryTest')
+      summary_test = summary_test(test=self)
+      summary_test.save()
 
-      else:
-        #We cannot create tests in error or completed states.
-        return 0
+#      else:
+#        #We cannot create tests in error or completed states.
+#        return 0
 
       if not clone:
         #HOSTS (ONLY UPDATED ON CREATION)
@@ -624,8 +701,6 @@ class TestBase(models.Model):
         test_site      = custom_import('hc.'+self._meta.app_label+'.models.TestSite')
         template_sites = self.template.getTemplateSites_for_template.all()
 
-#        summary_test_site = custom_import('hc.'+self._meta.app_label+'.models.SummaryTestSite')
-
         for ts in template_sites:
           ts = test_site(site = ts.site, 
                       test=self,
@@ -635,18 +710,6 @@ class TestBase(models.Model):
                       min_queue_depth=ts.min_queue_depth,
                       max_running_jobs=ts.max_running_jobs)
           ts.save({'new':True})
-#          sts = summary_test_site(test=self,test_site=ts)
-#          sts.save()
-
-#        sites = test_fm.getTestSiteNames(self)
-#        summary_test.sites = ','.join(sites)
-#        summary_test.nr_sites = len(sites)
-
-#        clouds = test_fm.getTestCloudCodes(self)
-#        summary_test.clouds = ','.join(clouds)
-#        summary_test.nr_clouds = len(clouds)
-
-#        summary_test.save()
 
         #DSPATTERNS (ONLY UPDATED ON CREATION)
         test_dspattern      = custom_import('hc.'+self._meta.app_label+'.models.TestDspattern')
@@ -666,14 +729,26 @@ class TestBase(models.Model):
         test_cloud = custom_import('hc.'+self._meta.app_label+'.models.TestCloud')
         template_clouds = self.template.getTemplateClouds_for_template.all()
         for tc in template_clouds:
-          tc = test_cloud(cloud = tc.cloud, test=self)
+          tc = test_cloud(cloud = tc.cloud, 
+                          test=self, 
+                          resubmit_enabled=tc.resubmit_enabled,
+                          resubmit_force=tc.resubmit_force,
+                          num_datasets_per_bulk=tc.num_datasets_per_bulk,
+                          min_queue_depth=tc.min_queue_depth,
+                          max_running_jobs=tc.max_running_jobs)
           tc.save()
 
         #BACKENDS (ONLY UPDATED ON CREATION)
         test_backend = custom_import('hc.'+self._meta.app_label+'.models.TestBackend')
         template_backends = self.template.getTemplateBackends_for_template.all()
         for tb in template_backends:
-          tb = test_backend(backend = tb.backend, test=self)
+          tb = test_backend(backend = tb.backend, 
+                            test=self,
+                            resubmit_enabled=tb.resubmit_enabled,
+                            resubmit_force=tb.resubmit_force,
+                            num_datasets_per_bulk=tb.num_datasets_per_bulk,
+                            min_queue_depth=tb.min_queue_depth,
+                            max_running_jobs=tb.max_running_job)
           tb.save()
 
       return 1
@@ -687,6 +762,11 @@ class TestBackendBase(models.Model):
   __metaclass__ = MetaCreator
 
   id        = models.AutoField(primary_key=True)
+  resubmit_enabled      = models.BooleanField(default=True)
+  resubmit_force        = models.BooleanField()
+  num_datasets_per_bulk = models.IntegerField(default=1, db_column='num_datasets_per_bulk')
+  min_queue_depth       = models.IntegerField(default=0, db_column='min_queue_depth')
+  max_running_jobs      = models.IntegerField(default=1, db_column='max_running_jobs')
   mtime     = models.DateTimeField(auto_now=True)
 
   #backend -> hc.core.base.models.keys.fk.generator.generateFK('Backend','TestBackend','backend',{})
@@ -700,12 +780,20 @@ class TestBackendBase(models.Model):
     sites = self.backend.getSites_for_backend.all()
 
     for site in sites:
+    
+      dic = {'new':False}
+
+      #If test is functional and site not enabled, we skip
+      if self.test.template.category == 'functional' and not site.enabled:
+        continue 
+
       ts = self.test.getTestSites_for_test.filter(site=site)
       if ts:
         ts = ts[0]
       else:
         test_site = custom_import('hc.'+self.test._meta.app_label+'.models.TestSite')
         ts = test_site(test=self.test,site=site)
+        dic['new'] = True  
 
       ts.resubmit_enabled = self.resubmit_enabled
       ts.resubmit_force = self.resubmit_force
@@ -713,11 +801,11 @@ class TestBackendBase(models.Model):
       ts.min_queue_depth = self.min_queue_depth
       ts.max_running_jobs = self.max_running_jobs
 
-      ts.save()
+      ts.save(dic)
 
 #    dontsave = ['error','completed']
 #    if self.test.state not in dontsave:
-    super(TestBackendBase, self).save()
+#    super(TestBackendBase, self).save()
 
     return 1
 
@@ -749,12 +837,20 @@ class TestCloudBase(models.Model):
     sites = self.cloud.getSites_for_cloud.all()
 
     for site in sites:
+
+      dic = {'new':False}
+
+      #If test is functional and site not enabled, we skip
+      if self.test.template.category == 'functional' and not site.enabled:
+        continue
+
       ts = self.test.getTestSites_for_test.filter(site=site)
       if ts:
         ts = ts[0]
       else:
         test_site = custom_import('hc.'+self._meta.app_label+'.models.TestSite')
         ts = test_site(test=self.test,site=site)
+        dic['new'] = True
 
       ts.resubmit_enabled = self.resubmit_enabled
       ts.resubmit_force = self.resubmit_force
@@ -762,11 +858,11 @@ class TestCloudBase(models.Model):
       ts.min_queue_depth = self.min_queue_depth
       ts.max_running_jobs = self.max_running_jobs
 
-      ts.save()
+      ts.save(dic)
 
 #    dontsave = ['error','completed']
 #    if self.test.state not in dontsave:
-    super(TestCloudBase, self).save()
+#    super(TestCloudBase, self).save()
 
     return 1
 
@@ -874,56 +970,123 @@ class TestSiteBase(models.Model):
   def save(self,*args,**kwargs):
 
     #If we are clonning...
-    clone = False
-    if args and args[0].has_key('clone') and args[0]['clone']:
-      clone = True
+    default = False
+    if args and args[0].has_key('default') and args[0]['default']:
+      default = True
 
-    #If we are creating...
-    new = False
-    if args and args[0].has_key('new') and args[0]['new']:
-      new = True
+    #For functional tests, only enabled sites are taken into account.
+    if self.site.enabled or self.test.template.category == 'stress' or default:
 
-    super(TestSiteBase, self).save()
+      #If we are clonning...
+      clone = False
+      if args and args[0].has_key('clone') and args[0]['clone']:
+        clone = True
 
-    if clone or new:
-      summary_test_site = custom_import('hc.'+self._meta.app_label+'.models.SummaryTestSite')
-      sts = summary_test_site(test=self.test,test_site=self)
-      sts.save()
+      #If we are creating...
+      new = False
+      if args and args[0].has_key('new') and args[0]['new']:
+        new = True
 
-      summary_test = custom_import('hc.'+self._meta.app_label+'.models.SummaryTest')
+      if not self.test.getTestSites_for_test.filter(site=self.site):
+        new = True
 
-      summary_test = summary_test.objects.filter(test=self.test)[0]
+      ## IMPORTANT ! 
+      ## Check that this TestSite was not previously added by TestCloud or TestBackend
+      overwrite = False
+      test_site = self.test.getTestSites_for_test.filter(site=self.site)
+      if test_site:
+        test_site = test_site[0]
+        test_site.resubmit_enabled      = self.resubmit_enabled
+        test_site.resubmit_force        = self.resubmit_force
+        test_site.num_datasets_per_bulk = self.num_datasets_per_bulk
+        test_site.min_queue_depth       = self.min_queue_depth
+        test_site.max_running_jobs      = self.max_running_jobs
+#        test_site.save()
+        super(TestSiteBase, test_site).save()
+        overwrite = True    
+
+      if (clone or new) and not overwrite:
+
+        super(TestSiteBase, self).save()
+
+        summary_test_site = custom_import('hc.'+self._meta.app_label+'.models.SummaryTestSite')
+        sts = summary_test_site(test=self.test,test_site=self)
+        sts.save()
+
+        summary_test = custom_import('hc.'+self._meta.app_label+'.models.SummaryTest')
+
+        summary_test = summary_test.objects.filter(test=self.test)[0]
   
-      if summary_test.sites:  
-        summary_test.sites += ',%s'%(self.site.name)
-        summary_test.nr_sites += 1
-      else:
-        summary_test.sites = self.site.name
-        summary_test.nr_sites = 1
+        if summary_test.sites:  
+          summary_test.sites += ',%s'%(self.site.name)
+          summary_test.nr_sites += 1
+        else:
+          summary_test.sites = self.site.name
+          summary_test.nr_sites = 1
 
-      if summary_test.clouds:
-        if not self.site.cloud.code in summary_test.clouds:
-          summary_test.clouds += ',%s'%(self.site.cloud.code)
-          summary_test.nr_clouds += 1
-      else:
-        summary_test.clouds = self.site.cloud.code
-        summary_test.nr_clouds = 1
+        if summary_test.clouds:
+          if not self.site.cloud.code in summary_test.clouds:
+            summary_test.clouds += ',%s'%(self.site.cloud.code)
+            summary_test.nr_clouds += 1
+        else:
+          summary_test.clouds = self.site.cloud.code
+          summary_test.nr_clouds = 1
  
-      summary_test.save()
+        summary_test.save()
 
+  def delete(self):
 
-#  def save(self,*args,**kwargs):
-#    self.mtime = datetime.now()
-#
-#    dontsave = ['error','completed']
-#    if (self.test.state not in dontsave) and self.site.enabled:
-#      super(TestSiteBase, self).save()
-#
-#    return 1
+    #Update SummaryTest
+    sts = self.test.getSummaryTests_for_test.all()
+    if sts:
+      st = sts[0]
+      if st.sites:
+        st.sites.replace('%s,'%(self.site.name),'')
+        st.sites.replace('%s'%(self.site.name),'')
+        st.nr_sites -= 1
+
+        tss = self.test.getTestSites_for_test.filter(site__cloud=self.site.cloud)
+        if len(tss) == 1:
+          st.clouds.replace('%s,'%(self.site.cloud.code),'')
+          st.clouds.replace('%s'%(self.site.cloud.code),'')
+          st.nr_clouds -= 1
+
+        st.save()
+
+    super(TestSiteBase,self).delete()
 
   class Meta:
     abstract = True
     db_table = u'test_site'
+    #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
+
+class TestSiteAlarmBase(models.Model):
+  __metaclass__ = MetaCreator
+
+  STATUS = (
+    (u'empty',u'empty'),
+    (u'failed', u'failed'),
+    (u'passed', u'passed')
+  )
+
+  id                    = models.AutoField(primary_key=True)
+  active                = models.BooleanField(default=True)
+  status                = models.CharField(choices = STATUS, max_length = 15, default = 'empty')
+  progress              = models.FloatField(default=0)
+  log                   = models.CharField(max_length = 20000, blank=True, null=True)
+  actions               = models.CharField(max_length = 1023, blank=True, null=True)
+  mtime                 = models.DateTimeField(auto_now=True)
+
+  #alarm               -> hc.core.base.models.keys.fk.generator.generateFK('Alarm','TestSiteAlarm','alarm',{})
+  #site                -> hc.core.base.models.keys.fk.generator.generateFK('Site','TestSiteAlarm','site',{})
+  #test                -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestSiteAlarm','test',{})
+
+  def __unicode__(self):
+    return '%s - %s'%(self.test,self.site)
+
+  class Meta:
+    abstract = True
+    db_table = u'test_site_alarm'
     #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
 
 class TestStateBase(models.Model):
@@ -999,6 +1162,9 @@ class ResultBase(models.Model):
   submit_time    = models.DateTimeField(null=True)
   stop_time      = models.DateTimeField(null=True)
 
+  backendID      = models.CharField(max_length=511,null=True)
+  reason         = models.CharField(max_length=4095,null=True)
+
   fixed          = models.BooleanField()
 
   mtime          = models.DateTimeField(auto_now=True)
@@ -1011,7 +1177,6 @@ class ResultBase(models.Model):
 #  def __unicode__(self):
 
 #  def save(self,*args,**kwargs):
-#    self.mtime = datetime.now()
 #    super(ResultBase, self).save()
 #    return 1
 
@@ -1053,7 +1218,8 @@ class MetricTypeBase(models.Model):
 
   PLOT_TYPE = (
     (u'Hist', u'Hist'),
-    (u'Pie', u'Pie')
+    (u'Pie',  u'Pie'),
+    (u'Time', u'Time'),
   )
 
   id          = models.AutoField(primary_key=True)
@@ -1239,6 +1405,7 @@ class UsgSiteBase(models.Model):
 ## *SummaryTestBase
 ## [*SummarySiteBase]
 ## *SummaryRobot
+## *SummaryEvolution
 ##
 
 #class SummaryMetricBase(models.Model):
@@ -1354,5 +1521,25 @@ class SummaryRobotBase(models.Model):
   class Meta:
     abstract = True
     db_table = u'summary_robot'
+    #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
+
+class SummaryEvolutionBase(models.Model):
+  __metaclass__ = MetaCreator
+
+  id             = models.AutoField(primary_key=True)
+  submitted      = models.IntegerField(default=0)
+  running        = models.IntegerField(default=0)
+  completed      = models.IntegerField(default=0)
+  failed         = models.IntegerField(default=0)
+  total          = models.IntegerField(default=0)
+  time           = models.DateTimeField()
+  mtime          = models.DateTimeField(auto_now=True)
+
+  #test     -> hc.core.base.models.keys.fk.generator.generateFK('Test','SummaryEvolution','test',{})
+  #site     -> hc.core.base.models.keys.fk.generator.generateFK('Site','SummaryEvolution','site',{})
+
+  class Meta:
+    abstract = True
+    db_table = u'summary_evolution'
     #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
 

@@ -7,7 +7,7 @@ class Robot:
   def run(self,app,dic):
 
     if app == 'core':
-      print '[ERROR][%s][create_functional_tests] not available at core app.'%(app)
+      print '[ERROR][%s][robot] not available at core app.'%(app)
       return 1
 
     # IMPORTS
@@ -16,12 +16,13 @@ class Robot:
     srobot = custom_import('hc.%s.models.SummaryRobot'%(app))
 
     today     = date.today()
+
     yesterday = today-timedelta(1)
 
-    results = result.objects.filter(mtime__gt=yesterday).filter(mtime__lt=today)
+    results = result.objects.filter(mtime__gt=yesterday).filter(mtime__lt=today).filter(test__template__category='functional')
 
     if not results:
-      print '[INFO][%s] No suitable results.'%(app)
+      print '[INFO][%s][robot] No suitable results.'%(app)
 
     print 'ROBOT FOR %s'%(yesterday)
 
@@ -44,6 +45,15 @@ class Robot:
         efficiencyNorm = float(efficiency)*float(completed)
         errorrate      = float(failed)/cf
         errorrateNorm  = float(errorrate)*float(failed)      
+      else:
+        submitted    = results.filter(site=site).filter(ganga_status='s').count()
+        running      = results.filter(site=site).filter(ganga_status='r').count()
+        # If jobs were submitted, but no one completed of failed, we add to blue category.
+        if (submitted+running):
+          efficiency     = -2
+          efficiencyNorm = -2
+          errorrate      = -2
+          errorrateNorm  = -2
 
       print '%s - %s'%(site.name,efficiency)
 

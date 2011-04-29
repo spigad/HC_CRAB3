@@ -1,4 +1,4 @@
-from hc.core.utils.plots.charts import hist,pie
+from hc.core.utils.plots.charts import hist,pie,line
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from django.db.models import Min,Max,Count
@@ -33,6 +33,7 @@ class Stats:
     commands['type']            = request.GET.get('type','')
     commands['go']              = request.GET.get('go','') 
     commands['sort_by']         = request.GET.get('sort_by','')
+    commands['completed']       = request.GET.get('completed','')
 
     advanced = {}
 
@@ -185,7 +186,7 @@ class Stats:
       #Overall
       val_list = []
       for site in sites:
-        query = site.getResults_for_site.filter(ganga_status='c')
+        query = site.getResults_for_site.filter(ganga_status='c').exclude(ganga_subjobid=1000000)
         query = self.filterQuery(query,commands)
         val_list += query.values(*metric_list).all()
       values = [('Overall.',val_list)]
@@ -194,7 +195,7 @@ class Stats:
         for test in Qobjects['test']:
           val_list = []
           for site in sites:
-            query = site.getResults_for_site.filter(ganga_status='c').filter(test=test)
+            query = site.getResults_for_site.filter(ganga_status='c').filter(test=test).exclude(ganga_subjobid=1000000)
             query = self.filterQuery(query,commands)
             val_list += query.values(*metric_list).all()
           values += [('Test %s.'%(test.id),val_list)]
@@ -205,7 +206,7 @@ class Stats:
           tests = template.getTests_for_template.all()
           for test in tests:
             for site in sites:
-              query = site.getResults_for_site.filter(ganga_status='c').filter(test=test)
+              query = site.getResults_for_site.filter(ganga_status='c').filter(test=test).exclude(ganga_subjobid=1000000)
               query = self.filterQuery(query,commands)
               val_list += query.values(*metric_list).all()
           values += [('Template %s.'%(template.id),val_list)]
@@ -224,13 +225,13 @@ class Stats:
       title  = 'Site %s.'%(site.name)
 
       #Overall
-      query = site.getResults_for_site.filter(ganga_status='c')
+      query = site.getResults_for_site.filter(ganga_status='c').exclude(ganga_subjobid=1000000)
       query = self.filterQuery(query,commands)
       values = [('Overall.',query.values(*metric_list).all())]
 
       if Qobjects['test']:
         for test in Qobjects['test']:
-          query = site.getResults_for_site.filter(ganga_status='c').filter(test=test.id)
+          query = site.getResults_for_site.filter(ganga_status='c').filter(test=test.id).exclude(ganga_subjobid=1000000)
           query = self.filterQuery(query,commands)
           values += [('Test %s'%(test.id),query.values(*metric_list).all())]
 
@@ -239,7 +240,7 @@ class Stats:
           tests = template.getTests_for_template.all()
           val_list = []
           for test in tests:
-            query = site.getResults_for_site.filter(ganga_status='c').filter(test=test.id)
+            query = site.getResults_for_site.filter(ganga_status='c').filter(test=test.id).exclude(ganga_subjobid=1000000)
             query = self.filterQuery(query,commands)
             val_list += query.values(*metric_list).all()
           values += [('Template %s'%(template.id),val_list)]
@@ -258,13 +259,13 @@ class Stats:
       title = 'Test %s'%(test.id)
 
       #Overall
-      query = test.getResults_for_test.filter(ganga_status='c')
+      query = test.getResults_for_test.filter(ganga_status='c').exclude(ganga_subjobid=1000000)
       query = self.filterQuery(query,commands)
       values = [('Overall.',query.values(*metric_list).all())]
 
       if Qobjects['site']:
         for site in Qobjects['site']:
-          query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+          query = test.getResults_for_test.filter(ganga_status='c').filter(site=site).exclude(ganga_subjobid=1000000)
           query = self.filterQuery(query,commands)
           values += [(site.name,query.values(*metric_list).all())]
 
@@ -272,7 +273,7 @@ class Stats:
         for cloud in Qobjects['cloud']:
           val_list = []
           for site in cloud.getSites_for_cloud.all():
-            query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+            query = test.getResults_for_test.filter(ganga_status='c').filter(site=site).exclude(ganga_subjobid=1000000)
             query = self.filterQuery(query,commands)
             val_list += query.values(*metric_list).all()
           values += [(cloud.name,val_list)]
@@ -293,7 +294,7 @@ class Stats:
       #Overall
       val_list = []
       for test in template.getTests_for_template.all():
-        query = test.getResults_for_test.filter(ganga_status='c')
+        query = test.getResults_for_test.filter(ganga_status='c').exclude(ganga_subjobid=1000000)
         query = self.filterQuery(query,commands)
         val_list += query.values(*metric_list).all()
       values = [('Overall.',val_list)]
@@ -312,7 +313,7 @@ class Stats:
             if test.template == template:
               val_list = []
               for site in sites:
-                query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+                query = test.getResults_for_test.filter(ganga_status='c').filter(site=site).exclude(ganga_subjobid=1000000)
                 query = self.filterQuery(query,commands)
                 val_list += query.values(*metric_list).all()
               values += [('Test %s'%(test.id),val_list)]
@@ -320,7 +321,7 @@ class Stats:
         else: #get by_test with all possible sites
           for test in tests:
             if test.template == template:
-              query = test.getResults_for_test.filter(ganga_status='c')
+              query = test.getResults_for_test.filter(ganga_status='c').exclude(ganga_subjobid=1000000)
               query = self.filterQuery(query,commands)
               values += [('Test %s'%(test.id),query.values(*metric_list).all())]
 
@@ -331,7 +332,7 @@ class Stats:
           for site in Qobjects['site']:
             val_list = []
             for test in tests:
-              query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+              query = test.getResults_for_test.filter(ganga_status='c').filter(site=site).exclude(ganga_subjobid=1000000)
               query = self.filterQuery(query,commands)
               val_list += query.values(*metric_list).all()
             values += [(site.name,val_list)]
@@ -341,7 +342,7 @@ class Stats:
             val_list = []
             for site in cloud.getSites_for_cloud.all():
               for test in tests:
-                query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+                query = test.getResults_for_test.filter(ganga_status='c').filter(site=site).exclude(ganga_subjobid=1000000)
                 query = self.filterQuery(query,commands)
                 val_list += query.values(*metric_list).all()
             values += [(cloud.name,val_list)]
@@ -366,7 +367,7 @@ class Stats:
       #Overall
       dic = {}
       for site in sites:
-        query = site.getResults_for_site.filter(ganga_status='c')
+        query = site.getResults_for_site.exclude(ganga_subjobid=1000000)
         query = self.filterQuery(query,commands)
         dic = self.filterStatus(query,dic)
       values = [('Overall.',dic)]
@@ -375,7 +376,7 @@ class Stats:
         for test in Qobjects['test']:
           dic = {}
           for site in sites:
-            query = site.getResults_for_site.filter(ganga_status='c').filter(test=test)
+            query = site.getResults_for_site.filter(test=test).exclude(ganga_subjobid=1000000)
             query = self.filterQuery(query,commands)
             dic = self.filterStatus(query,dic)
           values += [('Test %s.'%(test.id),dic)]
@@ -386,7 +387,7 @@ class Stats:
           tests = template.getTests_for_template.all()
           for test in tests:
             for site in sites:
-              query = site.getResults_for_site.filter(ganga_status='c').filter(test=test)
+              query = site.getResults_for_site.filter(test=test).exclude(ganga_subjobid=1000000)
               query = self.filterQuery(query,commands)
               dic = self.filterStatus(query,dic)
           values += [('Template %s.'%(template.id),dic)]
@@ -404,7 +405,7 @@ class Stats:
       title  = 'Site %s.'%(site.name)
 
       #Overall
-      query = site.getResults_for_site.filter(ganga_status='c')
+      query = site.getResults_for_site.exclude(ganga_subjobid=1000000)
       query = self.filterQuery(query,commands)
       dic = self.filterStatus(query,{})
       if dic:
@@ -412,7 +413,7 @@ class Stats:
 
       if Qobjects['test']:
         for test in Qobjects['test']:
-          query = site.getResults_for_site.filter(ganga_status='c').filter(test=test.id)
+          query = site.getResults_for_site.filter(test=test.id).exclude(ganga_subjobid=1000000)
           query = self.filterQuery(query,commands)
           dic = self.filterStatus(query,{})
           if dic:
@@ -423,7 +424,7 @@ class Stats:
           tests = template.getTests_for_template.all()
           dic = {}
           for test in tests:
-            query = site.getResults_for_site.filter(ganga_status='c').filter(test=test.id)
+            query = site.getResults_for_site.filter(test=test.id).exclude(ganga_subjobid=1000000)
             query = self.filterQuery(query,commands)
             dic = self.filterStatus(query,dic)
           values += [('Template %s'%(template.id),dic)]
@@ -441,7 +442,7 @@ class Stats:
       title = 'Test %s'%(test.id)
 
       #Overall
-      query = test.getResults_for_test
+      query = test.getResults_for_test.exclude(ganga_subjobid=1000000)
       query = self.filterQuery(query,commands)
       dic = self.filterStatus(query,{})
       if dic:
@@ -449,7 +450,7 @@ class Stats:
 
       if Qobjects['site']:
         for site in Qobjects['site']:
-          query = test.getResults_for_test.filter(site=site)
+          query = test.getResults_for_test.filter(site=site).exclude(ganga_subjobid=1000000)
           query = self.filterQuery(query,commands)
           dic = self.filterStatus(query,{})
           if dic:
@@ -459,7 +460,7 @@ class Stats:
         for cloud in Qobjects['cloud']:
           dic = {}
           for site in cloud.getSites_for_cloud.all():
-            query = test.getResults_for_test.filter(site=site)
+            query = test.getResults_for_test.filter(site=site).exclude(ganga_subjobid=1000000)
             query = self.filterQuery(query,commands)
             dic = self.filterStatus(query,dic)
           values += [(cloud.name,dic)]
@@ -480,7 +481,7 @@ class Stats:
       #Overall
       dic = {}
       for test in template.getTests_for_template.all():
-        query = test.getResults_for_test.filter(ganga_status='c')
+        query = test.getResults_for_test.exclude(ganga_subjobid=1000000)
         query = self.filterQuery(query,commands)
         dic = self.filterStatus(query,dic)
       values = [('Overall.',dic)]
@@ -499,7 +500,7 @@ class Stats:
             if test.template == template:
               dic = {}
               for site in sites:
-                query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+                query = test.getResults_for_test.filter(site=site).exclude(ganga_subjobid=1000000)
                 query = self.filterQuery(query,commands)
                 dic = self.filterStatus(query,dic)
               values += [('Test %s'%(test.id),dic)]
@@ -507,7 +508,7 @@ class Stats:
         else: #get by_test with all possible sites
           for test in Qobjects['test']:
             if test.template == template:
-              query = test.getResults_for_test.filter(ganga_status='c')
+              query = test.getResults_for_test.exclude(ganga_subjobid=1000000)
               query = self.filterQuery(query,commands)
               dic = self.filterStatus(query,{})
               if dic:
@@ -520,7 +521,7 @@ class Stats:
           for site in Qobjects['site']:
             dic = {}
             for test in tests:
-              query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+              query = test.getResults_for_test.filter(site=site).exclude(ganga_subjobid=1000000)
               query = self.filterQuery(query,commands)
               dic = self.filterStatus(query,dic)
             values += [(site.name,dic)]
@@ -530,7 +531,7 @@ class Stats:
             dic = {}
             for site in cloud.getSites_for_cloud.all():
               for test in tests:
-                query = test.getResults_for_test.filter(ganga_status='c').filter(site=site)
+                query = test.getResults_for_test.filter(site=site).exclude(ganga_subjobid=1000000)
                 query = self.filterQuery(query,commands)
                 dic = self.filterStatus(query,dic)
             values += [(cloud.name,dic)]
@@ -550,8 +551,9 @@ class Stats:
     hist_list = []
     pie_list = []
 
-    sort_by = commands['sort_by']
-    type    = commands['type']
+    sort_by   = commands['sort_by']
+    type      = commands['type']
+    completed = commands['completed']
 
     #Dummy protection.
     for key in ['metric_type','site','cloud','test','template']:
@@ -571,11 +573,14 @@ class Stats:
       pie_flag = True
 
     hist_flag = False
-    if (not pie_flag and len(Qobjects['metric_type'])) or (pie_flag and len(Qobjects['metric_type'])>1 ):
+    if (not pie_flag and len(Qobjects['metric_type'])) or (pie_flag and len(Qobjects['metric_type'])>0 ):
       hist_flag = True
 
     if not sort_by:
       error = 'Please, select a sorting parameter.'
+
+    elif 'evol_cf' in [m.name for m in Qobjects['metric_type']] or 'evol_sr' in [m.name for m in Qobjects['metric_type']]:
+      error = 'Not available yet.'
 
     elif not Qobjects.has_key('metric_type'):
       error = 'Please, select at least one metric.'
@@ -598,7 +603,7 @@ class Stats:
       else:
         if hist_flag:
           hist_list = self.cloud_proc(Qobjects,commands,extra)
-        if pie_flag:
+        if pie_flag and not type == 'raw_value':
           pie_list = self.cloud_proc_pie(Qobjects,commands,extra)
 
     elif sort_by == 'site':
@@ -607,7 +612,7 @@ class Stats:
       else:
         if hist_flag:
           hist_list = self.site_proc(Qobjects,commands,extra)
-        if pie_flag:
+        if pie_flag and not type == 'raw_value':
           pie_list = self.site_proc_pie(Qobjects,commands,extra)
 
     elif sort_by == 'test':
@@ -616,13 +621,13 @@ class Stats:
       else:
         if hist_flag:
           hist_list = self.test_proc(Qobjects,commands,extra)
-        if pie_flag:
+        if pie_flag and not type == 'raw_value':
           pie_list = self.test_proc_pie(Qobjects,commands,extra)
 
     elif sort_by == 'template':
       if hist_flag:
         hist_list = self.template_proc(Qobjects,commands,extra)
-      if pie_flag:
+      if pie_flag and not type == 'raw_value':
         pie_list = self.template_proc_pie(Qobjects,commands,extra)
 
     if type in ['rank','timeline'] and pie_flag:
@@ -631,7 +636,7 @@ class Stats:
     if type == 'rank' and not error:
       container = self.rank(hist_list,pie_list,Qobjects['metric_type'])
     elif type == 'plot' and not error:
-      container = self.plot(hist_list,pie_list,Qobjects['metric_type'])
+      container = self.plot(hist_list,pie_list,Qobjects['metric_type'],completed)
     elif type == 'timeline' and not error:
       if len(Qobjects['metric_type']) > 1:
         error = 'Multi metric timeline is not implemented yet.'    
@@ -692,7 +697,9 @@ class Stats:
 
     return container
 
-  def plot(self,hist_list,pie_list,metrics):
+  def plot(self,hist_list,pie_list,metrics,completed):
+
+    ## IF COMPLETED, PIE CHART ONLY RETURNS C and F
 
     container = {}
 
@@ -710,7 +717,7 @@ class Stats:
           for plot_title,value in values:
             rate = [ dic[metric.name] for dic in value ]
             url = ''
-            url = hist(rate, 20, metric.name, plot_title)
+            url = hist(rate, 20, metric.title, plot_title)
          
             if url:
               plot_list += [(plot_title,url)]
@@ -719,6 +726,7 @@ class Stats:
 
 #    color = dict({'c':'5EFB6E', 'f':'FF0000', 'r':'79BAEC', 's':'FFF380', 'n':'F75D59', 'o':'38ACEC'})
     color = dict({'c':'15ca00', 'f':'e81c01', 'r':'0094ee', 's':'e7a900', 'n':'03aaf9', 'o':'bdb9b9'})
+
     status = ['c','f','r','s','n']
 
     for title,values in pie_list:
@@ -735,19 +743,21 @@ class Stats:
 
         for k,v in plot_dic.items():
 
-          if v:
-            rate.append(v)
-            labels.append('%s (%s)'%(k,v))
+          if (completed and k in ['c','f']) or not completed:
 
-            if k in status:
-              colors.append(color[k])
-            else:
-              colors.append(color['o'])      
+            if v:
+              rate.append(v)
+              labels.append('%s (%s)'%(k,v))
+
+              if k in status:
+                colors.append(color[k])
+              else:
+                colors.append(color['o'])      
 
         url = pie(rate,labels,plot_title,colors)
         plot_list += [(plot_title,url)]      
 
-      container[title] += [(u'c_cf',plot_list)]
+      container[title] += [(u'Efficiency',plot_list)]
 
     #Sort dictionary
     keys = container.keys()
@@ -812,6 +822,8 @@ class Stats:
      
 #    return overall_title
 
+
+###################################################################################################################
   ## OVERVIEW
 
   def overview_basic(self,dic):
@@ -930,4 +942,178 @@ class Stats:
       tests_per_template = float(tests)/float(templates)
 
     return (templates,tests,max_test_per_template,min_test_per_template,tests_per_template,tests_url)
+
+  def parseEvolQuery(self,request,dic):
+
+    obj = {}
+    obj['cloud']       = dic['Cloud']
+    obj['site']        = dic['Site']
+
+    query = {}
+    query['site']            = list(set(request.GET.getlist('site')))
+    query['cloud']           = list(set(request.GET.getlist('cloud')))
+
+    error = 0
+
+    Qobjects = {}
+    Qobjects['type']         = request.GET.get('type','running')
+    TYPES = ['running','submitted','completed','failed','total']
+
+    if not Qobjects['type'] in TYPES:
+      Qobjects['type'] = 'running'
+
+    try:
+      for key,values in query.items():
+        Qobjects[key] = []
+        for item in values:
+          id = int(item)
+          Qobjects[key].append(get_object_or_404(obj[key],pk=id))
+    except:
+      error = 1  
+  
+    return (error,Qobjects)
+
+
+  def overview_evol(self,request,dic):
+
+    sumE  = dic['SummaryEvolution']
+    cloud = dic['Cloud']
+    site  = dic['Site']
+
+    error,Qobjects = self.parseEvolQuery(request,dic)
+
+    if error:
+      return 0
+
+    #Keep titles order !!
+
+    titles  = {'Overall':0}
+
+    if not Qobjects['site'] and not Qobjects['cloud']:  
+      for c in cloud.objects.all():
+        titles[c.name] = sumE.objects.filter(site__cloud__name=c.name).all()
+    else:
+      for c in Qobjects['cloud']:
+        titles[c.name] = sumE.objects.filter(site__cloud__name=c.name).all()
+      for s in Qobjects['site']:
+        titles[s.name] = sumE.objects.filter(site=s).all() 
+
+    values = {}
+
+    for k,sumEs in titles.items():
+
+      if k == 'Overall':
+        continue
+
+      for sE in sumEs:
+
+        time = sE.time.replace(second=0).replace(microsecond=0)
+        min = str(time.minute)
+        if min > '9':
+          min = min[1]
+        if min > '4':
+          time = time.replace(minute=5) 
+        else:
+          time = time.replace(minute=0)
+
+        if not values.has_key(time):
+          values[time] = {}
+          for titl in titles:
+            values[time][titl] = 0 
+
+        val = getattr(sE,Qobjects['type'])
+
+#      values[time][sE.site.cloud.name] += sE.running
+        values[time][k]                  += val
+        values[time]['Overall']          += val
+
+    tkeys = titles.keys()
+    tkeys.sort()
+    titles = [(key,titles[key]) for key in tkeys]
+  
+    vkeys = values.keys()
+    vkeys.sort()
+    for key in vkeys:
+      subkeys = values[key].keys()
+      subkeys.sort()
+      values[key] = [(subkey,values[key][subkey]) for subkey in subkeys]
+    values = [(key,values[key]) for key in vkeys]
+
+    return (titles,values,Qobjects['type'])
+
+
+#################################################################################
+
+##            EVOLUTION
+
+  def evolution(self,test,flash):
+
+    summary_evolution = test.getSummaryEvolutions_for_test
+    sites             = sorted([ ts.site for ts in test.getTestSites_for_test.all()])
+
+    if flash:
+      return []
+
+    evols  = [ summary_evolution.filter(site=site).order_by('time') for site in sites]
+    charts = {}
+    labels = []
+
+    size = len(evols[0])
+
+    total_sub = []
+    total_run = []
+    total_com = []
+    total_fai = []
+
+    for site_evols in evols:
+
+      if site_evols:
+
+        counter  = 0
+        new_evol = []
+
+        step = int(len(site_evols)/50) + 1
+        for site_evol in site_evols:
+          counter += 1
+          if counter == step:
+            counter  = 0
+            new_evol += [site_evol]
+
+        submitted = [ e.submitted for e in new_evol]
+        running   = [ e.running   for e in new_evol]
+        completed = [ e.completed for e in new_evol]
+        failed    = [ e.failed    for e in new_evol]
+
+        #Four labels
+        label_step = int(size/4)
+
+        labels = [site_evols[0].time.isoformat(),site_evols[size-1].time.isoformat()]
+  
+        charts[site_evols[0].site.name] = {}
+        charts[site_evols[0].site.name]['SR'] = line([submitted,running],labels,('submitted','running'),'Submitted / Running %s'%(site_evols[0].site.name),['e7a900','0094ee'])
+        charts[site_evols[0].site.name]['CF'] = line([completed,failed] ,labels,('completed','failed') ,'Completed / Failed %s'%(site_evols[0].site.name),['15ca00','e81c01'])
+
+        if total_sub:
+          total_sub = [sum(pair) for pair in zip(total_sub, submitted)]
+        else:
+          total_sub = submitted
+        if total_run:
+          total_run = [sum(pair) for pair in zip(total_run, running)]
+        else:
+          total_run = running
+        if total_com:
+          total_com = [sum(pair) for pair in zip(total_com, completed)]
+        else:
+          total_com = completed
+        if total_fai:
+          total_fai = [sum(pair) for pair in zip(total_fai, failed)]
+        else:
+          total_fai = failed
+
+    if labels:
+      charts['Overall'] = {}
+      charts['Overall']['SR'] = line([total_sub,total_run],labels,('submitted','running'),'Submitted / Running Overall',['e7a900','0094ee'])
+      charts['Overall']['CF'] = line([total_com,total_fai] ,labels,('completed','failed') ,'Completed / Failed Overall',['15ca00','e81c01'])
+
+    return charts
 

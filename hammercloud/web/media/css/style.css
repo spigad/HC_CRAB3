@@ -7,7 +7,7 @@ body {
 #content {
 	text-align: center;
 	width: 990px;
-	margin: 10px auto 20px auto;
+	margin: 50px auto 20px auto;
 }
 
 #content .list {
@@ -114,7 +114,7 @@ a{
 }
 
 
-#runningjobs {
+.runningjobs {
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 10px;
@@ -123,17 +123,17 @@ a{
 	padding: 0px;
 }
 
-#runningjobs h3{
+.runningjobs h3{
 	margin: 3px auto 3px auto;
 }
 
-#runningjobs p{
+.runningjobs p{
 	margin-top: 3px;
 	margin-bottom: 3px;
 	text-align: left;
 }
 
-#runningjobs table {
+.runningjobs table {
 	padding: 0 5px 0 5px;
 }
 
@@ -285,7 +285,7 @@ a{
         color: #ff0000;
 }
 
-#section #subsec_plots p{
+#section .subsec_plots p{
         margin:0 0 10px 0;
         padding:0px;
         border-width: 0 0 1px 0;
@@ -293,7 +293,7 @@ a{
         font-weight:bold;
 }
 
-#section #subsec_plots p.sub{
+#section .subsec_plots p.sub{
         width:50%;        
 }
 
@@ -373,6 +373,7 @@ a{
 
 .map {
   margin: auto;
+  padding-left: 20px;
   empty-cells:show;
 }
 
@@ -443,6 +444,26 @@ a{
 
 .map .offyellow span{
   color:#cc9900;
+}
+
+.map .onblue{
+  border-color: #214BC0;
+  background-color: #8FCBFF;
+  color: #214BC0;
+}
+
+.map .onblue:hover{
+  border-color: #0085FA;
+}
+
+.map .offblue{
+  border-color: #DBEEFF;
+  background-color: #F0F8FF;
+  color: #F0F8FF;
+}
+
+.map .offblue span{
+  color:#214bc0;
 }
 
 
@@ -528,11 +549,36 @@ a{
         font-weight:bold;
 }
 
+#testalarms{
+  margin:auto;
+}
+
+#testalarms table{
+  width:100%;
+  text-align: left;
+}
+
+#testalarms tr.passed{
+  color:green;
+};
+
+#testalarms tr.failed{
+  color:green;
+};
+
+#testalarms tr.empty{
+  color:grey;
+};
+
 #standard table {
         width: 98%;
         margin: auto;
         text-align: left;
         padding: 0 5px 0 5px;
+}
+
+#standard table.centered{
+        margin: auto;
 }
 
 #standard table.centered td{
@@ -859,5 +905,211 @@ th:hover span {
 
 #usage{
   text-align:left;
+}
+
+#warning{
+  position:absolute;
+  top:0px;
+  right:0px;
+  width:100%;
+  height:22px;
+  padding-top:3px;
+  text-align:center;
+  background:#cccccc;
+}
+
+#evol_form .submit{
+  position:relative;
+  top:-6px;
+  padding-top:4px;
+  height: 26px;
+}
+
+.historical {
+  margin: auto;
+#  padding-left: 20px;
+  empty-cells:show;
+  background-color: #dddddd;
+}
+
+.historical td{
+  width: 10px;
+#  height: 40px;
+  border: solid 1px;
+  border-radius: 3px 3px 3px 3px;
+  -ms-border-radius: 3px 3px 3px 3px;
+  -moz-border-radius: 3px 3px 3px 3px;
+  -webkit-border-radius: 3px 3px 3px 3px;
+  -khtml-border-radius: 3px 3px 3px 3px;
+}
+
+#.historical td span{
+#  position:absolute;
+#  padding: 5px; margin: 0px; z-index: 100;
+#  background: #f0f0f0;
+#  border: 2px solid;
+#  opacity: 0.95;
+#  border-radius: 10px 10px 10px 10px;
+#  -ms-border-radius: 10px 10px 10px 10px;
+#  -moz-border-radius: 10px 10px 10px 10px;
+#  -webkit-border-radius: 10px 10px 10px 10px;
+#  -khtml-border-radius: 10px 10px 10px 10px;
+#  display: none;
+#}
+
+.historical .ongreen{
+  border-color: #006600;
+  background-color: #BCED91;
+  color: #006600;
+}
+
+.historical .highgreen{
+  border-color: black;
+  background-color: #BCED91;
+  color: #006600;
+}
+
+#.historical .ongreen span{
+#  border-color: #006600;
+#}
+
+.historical .ongreen:hover{
+  border-color: #003300;
+}
+
+.historical .offgreen{
+  border-color: #DBFDD3;
+  background-color:#E7FDE2;
+  color:#E7FDE2;
+}
+
+#.historical .offgreen span{
+#  color: #006600;
+#}
+
+.historical .onyellow{
+  border-color: #CC9900;
+  background-color: #FFFF99;
+  color: #cc9900;
+}
+
+.historical .highyellow{
+  border-color: black;
+  background-color: #FFFF99;
+  color: #cc9900;
+}
+
+.historical .onyellow:hover{
+  border-color: #996633;
+}
+
+.historical .offyellow{
+  border-color: #FFEF9C;
+  background-color: #FFFFE5;
+  color: #ffffe5;
+}
+
+#.historical .offyellow span{
+#  color:#cc9900;
+#}
+
+.historical .onblue{
+  border-color: #214BC0;
+  background-color: #8FCBFF;
+  color: #214BC0;
+}
+
+.historical .highblue{
+  border-color: black;
+  background-color: #8FCBFF;
+  color: #214BC0;
+}
+
+
+.historical .onblue:hover{
+  border-color: #0085FA;
+}
+
+.historical .offblue{
+  border-color: #DBEEFF;
+  background-color: #F0F8FF;
+  color: #F0F8FF;
+}
+
+#.historical .offblue span{
+#  color:#214bc0;
+#}
+
+.historical .onred{
+  border-color: #990000;
+  background-color: #FF9999;
+  color: #990000;
+}
+
+.historical .highred{
+  border-color: black;
+  background-color: #FF9999;
+  color: #990000;
+}
+
+.historical .onred:hover{
+  border-color:#cc0000;
+}
+
+.historical .offred{
+  border-color: #FCC5C5;
+  background-color: #FFE5E5;
+  color: #ffe5e5;
+}
+
+#.historical .offred span{
+#  color:#990000;
+#}
+
+.historical .ongrey{
+  border-color: #666666;
+  background-color: #CCCCCC;
+  color: #666666;
+}
+
+.historical .highgrey{
+  border-color: black;
+  background-color: #CCCCCC;
+  color: #666666;
+}
+
+.historical .ongrey:hover{
+  border-color:#333333;
+}
+
+.historical .offgrey{
+  border-color: #cccccc;
+  background-color: #dddddd;
+  color: #dddddd;
+}
+
+#.historical .offgrey span{
+#  color:#666666;
+#}
+
+.historical .onday{
+  font-size:8px;
+}
+
+.historical .highday{
+  font-size:8px;
+  color:white;
+  border-color: black;
+  background-color: #444444;
+}
+
+.historical .highsite{
+  border-color: black;
+}
+
+.historical .highsitename{
+  color:white;
+  border-color: black;
+  background-color: #444444;
 }
 

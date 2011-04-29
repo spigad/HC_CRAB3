@@ -1,0 +1,49 @@
+{% extends 'core/app/base.html' %}
+
+{% block title %}{{block.super}} | AutoExclusion{% endblock %}
+
+{% block content %}
+
+  <div style="float: left;"><a href="javascript:history.go(-1)">&lt;&lt; Back</a></div>
+
+  <h2>HC AutoExclusion Service Status</h2>
+
+  {% if message %}
+
+    <p>{{message}}</p>
+
+  {% else %}
+
+    {% if app == 'atlas'%}
+
+    <p>
+      HammerCloud will automatically set a site to brokeroff status if it fails FUNCTIONAL tests. See the policy 
+      <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud#10_HammerCloud_Automatic_Site_Ex">here</a>.
+    </p>
+
+    <p>
+      It is possible to disable this service on a site-by-site basis (see link above). 
+      The sites listed below have an explicit setting. Sites labelled "disable" will not be set to "brokeroff", 
+      even if they are failing test jobs. Site not listed are "enabled"; they will be auto-excluded in PanDA when necessary.
+    <p>
+
+    {% endif %}
+
+    <table cellspacing="10">
+
+    {% if site_options %}
+      {% for so in site_options %}
+        <tr>
+          <td>{{ so.site.name }}</td><td>{{ so.option_value }}</td>
+        </tr>
+      {% endfor %}
+    {% else %}
+      No entries.
+    {% endif %}
+
+    </table>
+
+  {% endif %}
+
+{% endblock %}
+

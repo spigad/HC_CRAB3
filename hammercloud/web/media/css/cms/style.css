@@ -87,3 +87,7 @@ table.display tfoot th{
 #  border-color: #660000;
 #}
 
+#from, #to, #starttime, #endtime{
+  color:#660000;
+}
+

@@ -4,7 +4,9 @@ from datetime import datetime
 
 class TestGenerate:
 
-  def run(self,test):
+  def run(self,test,mode):
+
+    print '==%s=='%(mode)
 
     sites={}
     sitenumjobs={}
@@ -57,7 +59,7 @@ class TestGenerate:
   
     if os.environ.has_key('CMSSW_VERSION'):
       CMSSW_VERSION = os.environ['CMSSW_VERSION']
-      if CMSSW_VERSION != inputtype:
+      if not str(CMSSW_VERSION) == str(inputtype):
         print 'CMSSW_VERSION in environment:%s, CMSSW_VERSION in inputtype: %s.'
         return 0
     else:

@@ -37,13 +37,13 @@ echo ''
 
 cd $HCDIR
 
-echo ' CODE: ./python/scripts/dispatcher.py -f register_host'
+echo ' CODE: python python/scripts/dispatcher.py -f register_host'
 echo ''
-./python/scripts/dispatcher.py -f register_host
+python python/scripts/dispatcher.py -f register_host
 
-echo ' CODE: ./python/scripts/dispatcher.py -f create_at_job'
+echo ' CODE: python python/scripts/dispatcher.py -f create_at_job'
 echo ''
-./python/scripts/dispatcher.py -f create_at_job
+python python/scripts/dispatcher.py -f create_at_job
 echo ''
 
 rm -f /tmp/submit-main_$APP.running

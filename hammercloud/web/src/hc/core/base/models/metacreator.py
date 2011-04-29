@@ -28,14 +28,15 @@ def checkM2M(cls):
 class MetaCreator(ModelBase):
 
   #Having this here is ugly. The walkarround is worse.
-  Backend, Cloud, Dspattern, Host, Site = None, None, None, None, None
+  Alarm, Backend, Cloud, CloudOption, Dspattern, Host, Site, SiteOption = None, None, None, None, None, None, None, None
   GangaBin, InputType, JobTemplate, OptionFile, TestOption, UserCode = None, None, None, None, None, None
   Metric, MetricType, MetricPerm = None, None, None
   Result = None
   SiteMetric, TestMetric = None, None
-  SummaryTest, SummaryTestSite, SummaryRobot = None, None, None
+  SummaryTest, SummaryTestSite, SummaryRobot, SummaryEvolution = None, None, None, None
   Template, TemplateBackend, TemplateCloud, TemplateDspattern, TemplateHost, TemplateSite, TemplateUser = None, None, None, None, None, None, None
   Test, TestBackend, TestCloud, TestDspattern, TestHost, TestLog, TestSite, TestState, TestUser = None, None, None, None, None, None, None, None, None
+  TestSiteAlarm = None
   UsgSite = None
 
   #RSS

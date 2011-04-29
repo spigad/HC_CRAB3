@@ -542,7 +542,8 @@ tr.even.gradeX td.sorting_3 {
 
 /* ERROR  */
 tr.odd.red td.sorting_1 {
-        background-color: red;
+#        background-color: red;
+        background-color: #ff6161;
 }
 
 table tr.odd.red {
@@ -550,7 +551,8 @@ table tr.odd.red {
 }
 
 table tr.odd.red:hover{
-        background-color:red;
+#        background-color:red;
+        background-color:#ff6161;
 }
 
 tr.even.red td.sorting_1 {

@@ -16,7 +16,7 @@
     {% endblock %}
 
     {% block javascript %}
-      <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
+      <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.4.js"></script>
       <script type="text/javascript" src="{{ MEDIA_URL }}js/hm.js"></script>
     {% endblock %}
 
@@ -32,11 +32,16 @@
         document.onclick = jsddm_close;
     </script>
 
-    <title>{% block title %}Hammercloud{% endblock %}</title>
+    <title>{% block title %}HammerCloud-{{app|upper}}{% endblock %}</title>
 
   </head>
 
   <body {% block tag_body %}{% endblock %} >
+
+    <div id='warning'>
+      WARNING: Some functionalities are not supported in a browser different than <a href="http://www.mozilla.org/">Mozilla Firefox</a>.
+    </div>
+
     <div id="content">
 
       {% block top %}
@@ -49,7 +54,7 @@
 
     	<h1 style="margin-bottom: 20px;	text-align: left;">
           <a href="{% url portal-view %}">HammerCloud</a> | <a href="{% url index-view app %}">{{app|upper}}</a>
-          <a href="{% url portal-view %}feed/app/{{app}}/"><img src="{{ MEDIA_URL }}images/rss_{{app}}.ico" border="0"></a>
+          <a href="{% url portal-view %}feed/app/{{app}}/"><img src="{{ MEDIA_URL }}images/rss_{{app}}.ico" border="0" alt="rss"/></a>
         </h1>
 
     	<div style="float: right; color: #ffffff; margin: 7px 10px auto auto;">
@@ -71,15 +76,25 @@
                   <li><a href="{% url testlist-view app,'all' %}">All</a></li>
                 </ul>
               </li>
-              <li><a href="{% url stats-view app %}">HC Stats</a>
+              <li><a href="{% url statistics-view app %}">Statistics</a>
                 <ul>
                   <li><a href="{% url statistics-view app %}?type=plot">Plots</a></li>
                   <li><a href='{% url statistics-view app %}?type=rank'>Ranks</a></li>
                   <li><a href='{% url statistics-view app %}?type=timeline'>Timelines</a></li>
                 </ul>
               </li>
-              <li><a href="{% url robot-view app %}">Robot</a></li>
-              <li><a href="{% url more-view app %}">More HC...</a></li>
+              <li><a href="{% url robot-view app %}">Robot</a>
+                <ul>
+                  <li><a href='{% url historical-view app %}'>Historical</a></li>
+                  <li><a href='{% url autoexclusion-view app %}'>AutoExclusion</a></li>
+                </ul> 
+              </li>
+              <li><a href="{% url more-view app %}">More HC...</a>
+                <ul>
+                  <li><a href="{% url evolution-view app %}">Evolution</a></li>
+                  <li><a href="{% url stats-view app %}">Stats</a></li>
+                </ul>
+              </li>
             {% endblock %}
 
           </ul>
@@ -98,7 +113,7 @@
           </div>
         </div>
         <p style="text-align: center;">
-          {% block account %}Want to modify running tests? Contact dan or johannes to create an account.<br>
+          {% block account %}Want to modify running tests? Contact dan or johannes to create an account.<br/>
                              <i>(You might want to use Mozilla to view this website)</i>{% endblock %}
         </p>
     	<p style="text-align: right;">

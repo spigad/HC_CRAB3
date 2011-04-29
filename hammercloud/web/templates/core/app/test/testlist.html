@@ -1,0 +1,110 @@
+{% extends 'core/app/base.html' %}
+
+{% block meta  %}
+  {{block.super}}
+  <meta http-equiv="Content-type" content="application/xhtml+xml; charset=UTF-8" />
+{% endblock  %}
+
+{% block css %}
+  <link type="text/css" href="{{ MEDIA_URL }}css/datatables.css" rel="stylesheet"/>
+  <link type="text/css" href="{{ MEDIA_URL }}css/TableTools.css" rel="stylesheet"/>
+  {{block.super}}
+{% endblock %}
+
+{% block javascript %}
+  {{block.super}}
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/TableTools.min.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/ZeroClipboard.js"></script>
+
+  <script type="text/javascript" charset="utf-8">
+    TableToolsInit.sSwfPath="{{MEDIA_URL}}swf/ZeroClipboard.swf"
+    $(document).ready(function() {
+      $('#testlist').dataTable({
+        "sPaginationType": 'full_numbers',
+        "bServerSide": true,
+        "sAjaxSource": "{% url get_list-view app,list_type,0 %}",
+        "aaSorting" : [[ 0, "desc" ]],
+
+        "sDom":"T<'clear'>lfrtip",
+
+        "aoColumns":[
+          null,null,null,null,{ "sType": "html" },null,null,null,null,null,{ "sType": "html" }
+        ],
+        "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+
+          if (aData[1] == "completed"){
+            $(nRow).addClass('blue');
+           }else if (aData[1] == "error" ){
+            $(nRow).addClass('red');
+          }else if ( aData[1] == "running" || aData[1] == "submitted" ){
+            $(nRow).addClass('green');
+          }else if ( aData[1] == "scheduled"){
+            $(nRow).addClass('yellow');
+          }else if ( aData[1] == "submitting"){
+            $(nRow).addClass('green');
+         }else{
+            $(nRow).addClass('grey');
+         }
+          return nRow;
+        } 
+      });
+
+    });
+
+  </script>
+{% endblock %}
+
+{% block content %}
+  <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/> 
+  <h2>Test list</h2>
+
+  <div id='usage'>
+    <h3>USAGE of the SEARCH field.</h3>
+    <p>
+    1.- Put your mouse over the table column title. It a ballon appears with a code, you can search that field.<br/>
+    2.- Remember the code.<br/>
+    3.- Also the type of value to be introduced.<br/>
+    4.- Actions allowed are ':', '&gt;', '&lt;'. Use '&amp;' to join actions.<br/>
+    &nbsp;&nbsp;&nbsp;':' &raquo; codeX:value_desiredX<br/>
+    &nbsp;&nbsp;&nbsp;'&gt;' &raquo; codeY&gt;value_desiredY<br/>
+    &nbsp;&nbsp;&nbsp;'&lt;' &raquo; codeZ&lt;value_desiredZ<br/>
+    &nbsp;&nbsp;&nbsp;'&amp;' &raquo; codeX:value_desiredX&amp;codeY&lt;value_desiredY<br/> 
+    </p>
+
+  </div>
+
+  <table cellpadding="0" cellspacing="0" border="0" class="testlist" id="testlist">
+    <thead>
+      <tr>
+        <th>ID&nbsp; <span>code: id<br/>value: &lt;int&gt;</span></th>
+        <th>Status&nbsp;&nbsp;<span>code: status<br/>value: &lt;string&gt;</span></th>
+        <th>Host&nbsp;&nbsp;<span>code: host<br/>value: &lt;string&gt;</span></th>
+        <th>Cloud(s)<span>code: cloud<br/>value: &lt;string&gt;</span></th>
+        <th>Template&nbsp;<span>code: template<br/>value: &lt;string&gt;</span></th>
+        <th>Input<br/>type<span>code: inputtype<br/>value: &lt;string&gt;</span></th>
+        <th>Start (CET)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>code: starttime<br/>value: &lt;YY:MM:DD hh:mm:ss&gt;</span></th>
+        <th>End (CET)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>code: endtime<br/>value: &lt;YY:MM:DD hh:mm:ss&gt;</span></th>
+        <th>Sites&nbsp;&nbsp;<span>code: sites<br/>value: &lt;int&gt;</span></th>
+        <th>Jobs&nbsp;&nbsp;<span>code: jobs<br/>value: &lt;int&gt;</span></th>
+        <th>&raquo;</th>
+      </tr>
+    </thead>
+    <tfoot>
+      <tr>
+        <th>ID</th>
+        <th>Status</th>
+        <th>Host</th>
+        <th>Cloud(s)</th>
+        <th>Template</th>
+        <th>Input type</th>
+        <th>Start (CET)&nbsp;</th>
+        <th>End (CET)&nbsp;</th>
+        <th>Sites&nbsp;</th>
+        <th>Jobs&nbsp;</th>
+        <th>&raquo;</th>
+      </tr>
+    </tfoot>
+  </table>
+
+{% endblock %}

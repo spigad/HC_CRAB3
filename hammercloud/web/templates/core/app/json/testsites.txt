@@ -10,22 +10,14 @@
         "{{sum.running}}",
         "{{sum.completed}}",
         "{{sum.failed}}",
-        "{{sum.c_cf|floatformat:3}}",
+        "{{sum.c_cf|floatformat:2}}",
         "{{sum.total}}",
         "{{sum.test_site.num_datasets_per_bulk}}",
         "{{sum.test_site.min_queue_depth}}",
         "{{sum.test_site.max_running_jobs}}",
-        {% if sum.test_site.resubmit_enabled  %}
-        "yes",
-        {% else %}
-        "no",
-        {% endif  %}
-        {% if sum.test_site.resubmit_force %} 
-        "yes",
-        {% else %}
-        "no",
-        {% endif  %}
-        "<a href='{#% url backendsite-view summary.testsite.test.id,summary.testsite.site.id,"all" %#}'>&raquo;</a>"
+        {% if sum.test_site.resubmit_enabled  %}"yes"{% else %}"no"{% endif %},
+        {% if sum.test_site.resubmit_force %}"yes"{% else %}"no"{% endif %},
+        "<span onClick='siteJobs(this);'>&raquo;</span>"
     ]
 
     {% if not forloop.last %}

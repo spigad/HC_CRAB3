@@ -1,6 +1,8 @@
 from django.core.mail import mail_admins,send_mass_mail
 from django.contrib.auth.models import User
 
+from hc.core.utils.generic.class_func import custom_import
+
 def method(self, request, queryset):
 
   app  = self.__module__.split('.')[1]
@@ -8,6 +10,14 @@ def method(self, request, queryset):
   url = 'http://'+request.META['HTTP_HOST']+request.META['SCRIPT_NAME']
 
   for t in queryset:
+
+    own_user = t.getTestUsers_for_test.filter(user=request.user.username)
+    #If the person who approves the test is not in the TestUsers list, we add him/her/it.
+    if not own_user:
+      TestUser = custom_import('hc.'+app+'.models.TestUser')
+      tu = TestUser(test=t,user=request.user.username)
+      tu.save()
+
     if t.state in ['unapproved','draft','cancelled']:
 
       if not t.getTestHosts_for_test.all():

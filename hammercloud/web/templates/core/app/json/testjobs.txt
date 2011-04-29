@@ -1,0 +1,27 @@
+{
+    "sEcho": {{sEcho}},
+    "iTotalRecords": {{iTotalRecords}},
+    "iTotalDisplayRecords": {{iTotalDisplayRecords}},
+    "aaData":[
+    {% load hc_tags %}
+
+    {% for job in querySet %}
+    [   
+        "{{job.ganga_status}}",
+        "{{job.site.name}}",
+        "{{job.ganga_jobid}}",
+        "{{job.ganga_subjobid}}",
+        {% if job.backendID %}"{{job.backendID}}"{% else %}""{% endif %},
+        {% if job.submit_time %}"{{job.submit_time|date:'d/M'}},{{job.submit_time|time:'P'}}"{% else %}""{% endif %},
+        {% if job.start_time %}"{{job.start_time|date:'d/M'}},{{job.start_time|time:'P'}}"{% else %}""{% endif %},
+        {% if job.stop_time %}"{{job.stop_time|date:'d/M'}},{{job.stop_time|time:'P'}}"{% else %}""{% endif %},
+        {% if job.reason %}"{{job.reason}}"{% else %}""{% endif %}
+    ]
+
+    {% if not forloop.last %}
+    ,
+    {% endif %}
+    {% endfor %}
+    ]
+}
+

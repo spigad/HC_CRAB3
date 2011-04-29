@@ -1,0 +1,29 @@
+{
+    "sEcho": {{sEcho}},
+    "iTotalRecords": {{iTotalRecords}},
+    "iTotalDisplayRecords": {{iTotalDisplayRecords}},
+    "aaData":[
+    {% for summary in querySet %}
+    [   
+        "{{summary.test_site.site.name}}",
+        "{{summary.total}}",
+        "{{summary.c_cf|floatformat:3}}",
+        "{{summary.percent_cpu}}",
+        "{{summary.numevents}}",
+        "{{summary.numfiles}}",
+        "{{summary.ganga_number_of_files}}",
+        "{{summary.events_athena}}",
+        "{{summary.eventrate}}",
+        "{{summary.nonpandatime1}}",
+        "{{summary.nonpandatime2}}",
+        "{{summary.nonpandatime3}}",
+        "{{summary.nonpandatime4}}"
+    ]
+
+    {% if not forloop.last %}
+    ,
+    {% endif %}
+    {% endfor %}
+    ]
+}
+

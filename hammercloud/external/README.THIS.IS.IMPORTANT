@@ -1,0 +1,22 @@
+## GChartWrapper
+
+1.- GCartWrapper needs to be compiled with the version of python it's going to be used.
+2.- The version used is /afs/cern.ch/sw/lcg/external/Python/2.5.4p2/x86_64-slc5-gcc43-opt/bin/python
+3.- The compilation does not follow the standard at all, it's using the prefix /data/hc/external
+
+    $export PATH=/afs/cern.ch/sw/lcg/external/Python/2.5.4p2/x86_64-slc5-gcc43-opt/bin/python:$PATH
+    $python setup.py --prefix=/data/hc/external
+
+4.- Add to PYTHONPATH -> $HCDIR/external/lib/python2.5/site-packages/
+
+## NUMPY
+
+1.- Numpy needs to be compiled with the version of python it's going to be used.
+2.- The version used is /afs/cern.ch/sw/lcg/external/Python/2.5.4p2/x86_64-slc5-gcc43-opt/bin/python
+3.- The compilation does not follow the standard at all, it's using the prefix /data/hc/external
+
+    $export PATH=/afs/cern.ch/sw/lcg/external/Python/2.5.4p2/x86_64-slc5-gcc43-opt/bin/python:$PATH
+    $python setup.py --prefix=/data/hc/external
+
+4.- Add to PYTHONPATH -> $HCDIR/external/lib/python2.5/site-packages/
+4.- Add to PATH       -> $HCDIR/external/bin/

@@ -74,7 +74,7 @@ class FormGenerator:
     dic = {}
 
     dic['endtime'] = forms.DateTimeField()
-    dic['pause']   = forms.BooleanField()
+    dic['pause']   = forms.BooleanField(required=False)
 
     class Meta:
       model = custom_import('hc.'+module+'.models.Test')

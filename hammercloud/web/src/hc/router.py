@@ -1,3 +1,5 @@
+from django.conf import settings
+
 class PrimaryRouter(object):
 
   def db_for_read(self, model, **hints):
@@ -7,7 +9,8 @@ class PrimaryRouter(object):
     Otherwise, it reads from the defautl DB
     '''
 
-    PLUGINS = ['atlas','cms','lhcb']
+#    PLUGINS = ['atlas','cms','lhcb']
+    PLUGINS = [ app.split('.')[1] for app in settings.INSTALLED_APPS if app.startswith('hc') and not 'core' in app]
 
     if model._meta.app_label in PLUGINS:
       return model._meta.app_label
@@ -21,7 +24,8 @@ class PrimaryRouter(object):
     Otherwise, it reads from the defautl DB
     '''
 
-    PLUGINS = ['atlas','cms','lhcb']
+#    PLUGINS = ['atlas','cms','lhcb']
+    PLUGINS = [ app.split('.')[1] for app in settings.INSTALLED_APPS if app.startswith('hc') and not 'core' in app]
 
     if model._meta.app_label in PLUGINS:
       return model._meta.app_label
@@ -42,7 +46,8 @@ class PrimaryRouter(object):
     Sync every app with the right database
     '''
 
-    PLUGINS = ['atlas','cms','lhcb']
+#    PLUGINS = ['atlas','cms','lhcb']
+    PLUGINS = [ app.split('.')[1] for app in settings.INSTALLED_APPS if app.startswith('hc') and not 'core' in app]
 
     if db in PLUGINS:
       return model._meta.app_label == db

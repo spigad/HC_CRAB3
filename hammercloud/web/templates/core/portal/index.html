@@ -1,28 +1,25 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<html>
 
 <head>
-<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-<link type="text/css" href="{{MEDIA_URL}}css/portal/style.css" rel="stylesheet" />
-
-<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="{{ MEDIA_URL }}js/hm.js"></script>
-
-<Title>HammerCloud</Title>
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+  <link type="text/css" href="{{MEDIA_URL}}css/portal/style.css" rel="stylesheet" />
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/hm.js"></script>
+  <title>HammerCloud</title>
 </head>
 
 <body>
-<div id="content">
+  <div id="content">
 
   {% if apps %}
     <table>
       {% for app in apps %}
         <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
             onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
-            onclick="DoNav({% if 'cms' in app %}'{% url index-view app %}'{% else %}'http://hammercloud.cern.ch/{{app}}'{% endif %});">
-         <td id={{app}}>{{app}}</td>
+            onclick="DoNav({% if not 'atlas' in app %}'{% url index-view app %}'{% else %}'http://hammercloud.cern.ch/{{app}}'{% endif %});">
+         <td id="{{app}}">{{app}}</td>
         </tr>
       {% endfor %}
     </table>
@@ -30,7 +27,7 @@
     <p>No apps.</p>
   {% endif %}
 
-  <h1>HammerCloud v.4<a href="{% url portal-view %}feed/"><img src="{{ MEDIA_URL }}images/rss_grey.ico" border="0"></a></h1>
+  <h1>HammerCloud v.4<a href="{% url portal-view %}feed/"><img src="{{ MEDIA_URL }}images/rss_grey.ico" border="0" alt="rss"/></a></h1>
 </div>
 </body>
 

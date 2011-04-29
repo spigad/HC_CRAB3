@@ -1,0 +1,94 @@
+<script type="text/javascript">
+  $(document).ready(function() {
+    TableToolsInit.sSwfPath="{{ MEDIA_URL }}swf/ZeroClipboard.swf";
+    $('#testjobs').dataTable({
+      "sPaginationType": 'full_numbers',
+      "bServerSide": true,
+      "sAjaxSource": "{% url get_list-view app,type,test.id %}",
+      "aaSorting" : [[ 2, "desc" ]],
+
+      "aoColumns":[
+        null,null,null,null,null,null,null,null,null,
+      ],
+      "sDom": 'T<"clear">lfrtip',
+      "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
+        if (aData[0] == 'f'){
+          $(nRow).addClass('red');
+        }else if (aData[0] == 'c'){
+          $(nRow).addClass('blue');
+        }else if (aData[0] == 'r'){
+          $(nRow).addClass('green');
+        }else if (aData[0] == 's'){
+          $(nRow).addClass('yellow');
+        }else{
+          $(nRow).addClass('grey');
+        }
+        return nRow;
+      }
+    });
+  });
+</script>
+
+  <div id='usage'>
+    <h3>USAGE of the SEARCH field.</h3>
+    <p>
+    1.- Put your mouse over the table column title. It a ballon appears with a code, you can search that field.<br>
+    2.- Remember the code.<br>
+    3.- Also the type of value to be introduced.<br>
+    4.- Actions allowed are ':', '>', '<'. Use '&' to join actions.<br>
+    &nbsp;&nbsp;&nbsp;':' &raquo; codeX:value_desiredX<br>
+    &nbsp;&nbsp;&nbsp;'>' &raquo; codeY>value_desiredY<br>
+    &nbsp;&nbsp;&nbsp;'&lt;' &raquo; codeZ&lt;value_desiredZ<br>
+    &nbsp;&nbsp;&nbsp;'&' &raquo; codeX:value_desiredX&codeY&lt;value_desiredY<br>
+    </p>
+
+    <h3>TABLE HINTS</h3>
+    <p>
+    1.- S(atus): s(ubmitted),n(ew),f(ailed),c(ompleted),k(illed),o(ther).<br>
+    2.- J: Ganga Job ID.<br>
+    3.- Sj: Ganga SubJob ID.<br>
+    4.- ID: Backend ID.<br>
+    5.- Times in GMT format !!.<br>
+    6.- Submit: Job submission time (retrieved from backend).<br>
+    7.- Start: Job running time (retrieved from backend).<br>
+    8.- End: Job finishing time (retrieved from backend).<br>
+    </p>
+
+    
+
+  </div>
+
+<div id="testjobs_div">
+
+  <table cellpadding="0" cellspacing="0" border="0" class="display" id='testjobs'>
+    <thead>
+      <tr>
+        <th>S<span>code: status<br>value: &lt;string&gt;</span></th>
+        <th>Site<span>code: site<br>value: &lt;string&gt;</span></th>
+        <th>J<span>code: job<br>value: &lt;int&gt;</span></th>
+        <th>Sj<span>code: subjob<br>value: &lt;int&gt;</span></th>
+        <th>ID<span>code: backendID<br>value: &lt;int&gt;&lt;string&gt;</span></th>
+        <th>Submit<span>code: submit<br>value: &lt;YY:MM:DD hh:mm:ss&gt;</span></th>
+        <th>Start&nbsp;&nbsp;<span>code: start<br>value: &lt;YY:MM:DD hh:mm:ss&gt;</span></th>
+        <th>End&nbsp;&nbsp;&nbsp;<span>code: end<br>value: &lt;YY:MM:DD hh:mm:ss&gt;</span></th>
+        <th>Reason<span>code: reason<br>value: &lt;string&gt;</span></th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+    <tfoot>
+      <tr>
+        <th>S</th>
+        <th>Site</th>
+        <th>J</th>
+        <th>Sj</th>
+        <th>ID</th>
+        <th>Submit</th>
+        <th>Start</th>
+        <th>End</th>
+        <th>Reason</th>
+      </tr>
+    </tfoot>
+  </table>
+
+</div>
+

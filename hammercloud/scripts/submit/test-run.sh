@@ -45,7 +45,7 @@ if [ -f /tmp/test-run_$APP_$TESTID.running ]
 then
     echo '  ERROR! Script 'test-run_$APP_$TESTID already running.
     echo ''
-    echo '_ End Server Main.'
+    echo '_ End Test Run Main.'
     echo ''
     exit
 fi
@@ -53,8 +53,8 @@ fi
 #Get HCDIR from current installation.
 HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
 
-touch /tmp/test-run_$APP.running
-echo '  Lock written: '/tmp/test-run_$APP.running
+touch /tmp/test-run-$APP_$TESTID.running
+echo '  Lock written: /tmp/test-run-'$APP_$TESTID.running
 
 echo ''
 source $HCDIR/scripts/config/config-main.sh $APP
@@ -67,24 +67,28 @@ echo ''
 cd $HCDIR
 
 ##GENERATE
-echo '  CODE: './python/scripts/dispatcher.py -f test_generate -t $TESTID -o [$*]
+echo '  CODE: 'python python/scripts/dispatcher.py -f test_generate -t $TESTID -m $HC_MODE
 echo ''
-./python/scripts/dispatcher.py -f test_generate -t $TESTID -o [$*]
+python python/scripts/dispatcher.py -f test_generate -t $TESTID -m $HC_MODE
 
 ##SUBMIT
-echo '  CODE: './python/scripts/dispatcher.py -f test_submit -t $TESTID -o [$*]
+echo '  CODE: 'python python/scripts/dispatcher.py -f test_submit -t $TESTID -m $HC_MODE
 echo ''
-./python/scripts/dispatcher.py -f test_submit -t $TESTID -o [$*]
+python python/scripts/dispatcher.py -f test_submit -t $TESTID -m $HC_MODE
 
 ##REPORT
-echo '  CODE: './python/scripts/dispatcher.py -f test_report -t $TESTID -o [$*]
+echo '  CODE: 'python python/scripts/dispatcher.py -f test_report -t $TESTID -m $HC_MODE
 echo ''
-./python/scripts/dispatcher.py -f test_report -t $TESTID -o [$*]
+python python/scripts/dispatcher.py -f test_report -t $TESTID -m $HC_MODE
 
+##POST_MORTEM STATISTICS
+#echo '  CODE: 'python python/scripts/dispatcher.py -f test_summary -o 'psef' -t $TESTID
+#echo ''
+#python python/scripts/dispatcher.py -f test_summary -o 'psef' -t $TESTID
 
-rm -f /tmp/test-run_$APP_$TESTID.running
+rm -f /tmp/test-run-$APP_$TESTID.running
 
-echo '  Lock released: '/tmp/test-run_$APP_$TESTID.running
+echo '  Lock released: /tmp/test-run-'$APP_$TESTID.running
 echo ''
-echo '_ End Test Run.'
+echo '_ End Test Run Main.'
 echo ''

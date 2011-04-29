@@ -1,0 +1,130 @@
+# Ganga configuration file ($Name: Ganga-5-0-1 $). DO NOT remove this line.
+#
+# The [Robot] section:
+# - All settings are commented out, indicating defaults that will be used.
+# - Examples are given for settings which are blank by default.
+# 
+# The other sections:
+# - All settings are specified, with common options for using the robot.
+# - See .gangarc for further details on these options.
+#
+# To start the robot (default configuration):
+#   ganga --config-path=GangaRobot/ROBOT.INI robot run
+#
+# For further details:
+#   ganga --config-path=GangaRobot/ROBOT.INI robot help
+#
+
+#=======================================================================
+[Configuration]
+RUNTIME_PATH = GangaAtlas:GangaNG:GangaPanda:GangaRobot
+gangadir = /data/hc/apps/atlas/gangadir/robot/
+#repositorytype = LocalXML
+
+[defaults_GridProxy]
+voms = atlas
+validityAtCreation = 48:00
+minValidity = 00:15
+
+[LCG]
+EDG_SETUP = /afs/cern.ch/sw/ganga/install/config/grid_env_31.sh
+#EDG_SETUP = /afs/cern.ch/project/gd/LCG-share/current_3.1/etc/profile.d/grid_env.sh
+GLITE_ENABLE = True
+GLITE_SETUP = /afs/cern.ch/sw/ganga/install/config/grid_env_31.sh
+#GLITE_SETUP = /afs/cern.ch/project/gd/LCG-share/current_3.1/etc/profile.d/grid_env.sh
+VirtualOrganisation = atlas
+
+[defaults_LCG]
+middleware = GLITE
+#middleware = EDG
+
+#=======================================================================
+[Configuration]
+# Enable GangaRobot to be started using robot script
+SCRIPTS_PATH = GangaRobot/scripts
+
+[Logging]
+# Enable INFO logging for GangaRobot
+GangaRobot = INFO
+_logfile = /data/hc/apps/atlas/logs/ganga.log
+_logfile_size = 10000000
+_format = VERBOSE
+
+[DefaultJobRepository]
+# Use robot specific repository
+#local_root = /data/gangarobot/gangadir/robot/repository
+
+[PollThread]
+# Enable monitoring for robot script
+#autostart = True
+
+[FileWorkspace]
+# Use robot specific workspace
+#topdir = /data/gangarobot/gangadir/robot/workspace
+
+#=======================================================================
+[Robot]
+# list of action names and sleep periods (seconds)
+#Driver_Run = ['submit', 10, 'finish', 'extract', 'report']
+Driver_Run = ['submit', 1, 'finish']
+#Driver_Run = ['submit']
+
+# boolean indicating if the run should repeat indefinitely
+#Driver_Repeat = False
+
+# GangaRobot.Framework.Action.IAction class names
+# keys should be Driver_Action_xxx where xxx is an action name in Driver_Run
+Driver_Action_submit = GangaRobot.Lib.Core.ThreadedSubmitter.ThreadedSubmitter
+Driver_Action_finish = GangaRobot.Lib.Core.CoreFinisher.CoreFinisher
+#Driver_Action_extract = GangaRobot.Lib.Core.CoreExtractor.CoreExtractor
+#Driver_Action_report = GangaRobot.Lib.Core.CoreReporter.CoreReporter
+#Driver_Action_extract = GangaRobot.Lib.Example.Demo.DemoExtractor
+#Driver_Action_report = GangaRobot.Lib.Example.Demo.DemoReporter
+#Driver_Action_extract = Demo.DemoExtractor
+#Driver_Action_report = Demo.DemoReporter
+
+# timeout (seconds) for waiting for jobs to finish
+BaseFinisher_Timeout = 0
+
+# filename for XML extract data, ${runid} is replaced by current run id.
+#BaseExtractor_XmlFile = /data/gangarobot/gangadir/robot/extract/${runid}.xml
+
+# filename for TEXT report data, ${runid} is replaced by current run id.
+#BaseReporter_TextFile = /data/gangarobot/gangadir/robot/report/${runid}.txt
+
+# filename for HTML report data, ${runid} is replaced by current run id.
+#BaseReporter_HtmlFile = /data/gangarobot/gangadir/robot/report/${runid}.html
+
+# exported job file patterns, can contain Unix-style glob pathname patterns
+# (relative patterns are evaluated against the current working directory and the
+# Ganga python root, i.e. ganga/python/)
+#CoreSubmitter_Patterns = ['GangaRobot/exports/local-echo-jobs.txt']
+
+# URL for links to extract data (if empty no link is created)
+# e.g. http://localhost/robot/extract/${runid}.xml
+#CoreReporter_ExtractUrl = 
+
+# smtp host and port
+#FileEmailer_Host = localhost:25
+
+# email type 'html' (i.e. html + plain) or 'text' (i.e. plain)
+#FileEmailer_Type = html
+
+# from address
+# e.g. sender@domain.org
+#FileEmailer_From =
+
+# recipients addresses (if empty no email is sent)
+# e.g. recipient1@domain.org, recipient2@domain.org
+#FileEmailer_Recipients =
+
+# subject for email, ${runid} is replaced by current run id.
+#FileEmailer_Subject = Ganga Robot: ${runid}.
+
+# filename for TEXT email body, ${runid} is replaced by current run id.
+# e.g. /data/gangarobot/gangadir/robot/report/${runid}.txt
+#FileEmailer_TextFile =
+
+# filename for HTML email body, ${runid} is replaced by current run id.
+# e.g. /data/gangarobot/gangadir/robot/report/${runid}.html
+#FileEmailer_HtmlFile =

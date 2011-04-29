@@ -1,0 +1,19 @@
+{
+    "sEcho": {{sEcho}},
+    "iTotalRecords": {{iTotalRecords}},
+    "iTotalDisplayRecords": {{iTotalDisplayRecords}},
+    "aaData":[
+    {% for summary in querySet %}
+    [   
+        "{{summary.test_site.site.name}}",
+        "{{summary.total}}",
+        {% if summary.load_average %}"{{summary.load_average|floatformat:3}}"{% else %}""{% endif %}
+    ]
+
+    {% if not forloop.last %}
+    ,
+    {% endif %}
+    {% endfor %}
+    ]
+}
+

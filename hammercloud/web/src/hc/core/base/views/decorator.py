@@ -3,6 +3,7 @@ from hc.core.utils.generic.class_func import custom_import
 
 from functools import wraps
 
+from django.http import HttpResponse
 
 import inspect
 
@@ -72,6 +73,9 @@ def GenView_dec(*args,**kwargs):
 
       kwargs['dic']    = dic
       kwargs['params'] = params
+
+      if not params.has_key('on') or params['on']!=True:
+        return HttpResponse('This page is not enabled. Please, contact via Savannah if you have doubts.')
 
       return f(GenericView(),*args,**kwargs)
 

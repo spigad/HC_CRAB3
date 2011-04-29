@@ -39,7 +39,7 @@ class Datahelper:
 
     test.perSite = []
   
-    test.overall = list(test.getTestMetrics_for_test.all())
+    test.overall = list(test.getTestMetrics_for_test.exclude(metric__metric_type__name__startswith='evol_'))
 
     for test_site in test_sites:
 
@@ -57,13 +57,14 @@ class Datahelper:
       test.perSite.append(site)
     return test
 
-  def annotateSitesEfficiency(self,sites):
+  def annotateSitesEfficiency(self,sites,day):
 
-    yesterday = date.today()-timedelta(1)
+#    yesterday = date.today()-timedelta(1)
 
     for site in sites:
 
-      sr = site.getSummaryRobots_for_site.filter(day=yesterday)   
+#      sr = site.getSummaryRobots_for_site.filter(day=yesterday)   
+      sr = site.getSummaryRobots_for_site.filter(day=day)
       if sr: 
         sr = sr[0]
         site.eff = sr.efficiency

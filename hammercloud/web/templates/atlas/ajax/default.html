@@ -1,0 +1,50 @@
+<script type="text/javascript">
+  TableToolsInit.sSwfPath="{{MEDIA_URL}}swf/ZeroClipboard.swf";
+  $(document).ready(function() {
+    $('#{{type}}_table').dataTable({
+      "sPaginationType": 'full_numbers',
+      "bServerSide": true,
+      "sAjaxSource": "{% url get_list-view app,type,test_id %}",
+      "aaSorting" : [[ 0, "desc" ]],
+      "sDom": 'T<"clear">lfrtip',
+    });
+  });
+</script>
+
+
+<table cellpadding="0" cellspacing="0" border="0" class="display" id="testsummary_table">
+  <thead>
+  <tr>
+    <th>Site<span>test Site name<br/>>site:value</span></th>
+    <th>Total</th> 
+    <th>Eff</th>
+    <th>CPU</th>
+    <th>Ev</th>
+    <th>PF</th>
+    <th>EF</th>
+    <th>Athena</th>
+    <th>Eventrate</th>
+    <th>Time 1</th>
+    <th>Time 2</th>
+    <th>Time 3</th>
+    <th>Time 4</th>
+  </thead>
+  <tbody></tbody>
+  <tfoot>
+    <tr>
+      <th>Site</th>
+      <th>Total</th>
+      <th>Eff</th>
+      <th>CPU</th>
+      <th>Ev</th>
+      <th>PF</th>
+      <th>EF</th>
+      <th>Athena</th>
+      <th>Eventrate</th>
+      <th>Time 1</th>
+      <th>Time 2</th>
+      <th>Time 3</th>
+      <th>Time 4</th>
+    </tr>
+  </tfoot>
+</table>

@@ -2,7 +2,26 @@ from GChartWrapper import *
 from math import ceil
 import numpy
 
-def pie(values, labels, title, colors=['0000FF']):
+def line(values, labels, legend, title, colors=['0000FF']):
+
+    if not values:
+      return None
+
+    chart = Line(values)
+    chart.title(title)
+    chart.label(*labels)
+    chart.legend(*legend)
+    chart.color(*colors)
+    chart.size(400,250)
+    chart.margin(0,0,30,0)
+    chart.axes.type('y')
+    max_y = max(max(values[0]),max(values[1]))*1.1
+    chart.axes.range(0,0,max_y,int(max_y/10))
+    chart.scale(0,max_y,0,max_y)
+    return str(chart)
+
+
+def pie(values, labels, title, colors=['333333']):
     if not values:
         return None
     sumvalues = sum(values)

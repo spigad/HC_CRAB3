@@ -1,0 +1,5 @@
+mc09_7TeV.105830.JF17_herwig_jet_filter.merge.AOD.e507_s765_s767_r1215_r1210_tid125847_00
+mc09_7TeV.108087.PythiaPhotonJet_Unbinned17.merge.AOD.e505_s765_s767_r1215_r1210_tid125845_00
+mc09_7TeV.108087.PythiaPhotonJet_Unbinned17.merge.AOD.e505_s765_s767_r1207_r1210_tid124453_00
+mc09_7TeV.105001.pythia_minbias.merge.AOD.e517_s764_s767_r1204_r1210_tid123082_00
+mc09_7TeV.105001.pythia_minbias.merge.AOD.e517_s764_s767_r1204_r1210_tid123186_00

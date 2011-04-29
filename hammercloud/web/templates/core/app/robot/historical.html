@@ -1,0 +1,171 @@
+{% extends 'core/app/base.html' %}
+
+{% block css %}
+  {{block.super}}
+  <link type="text/css" href="{{ MEDIA_URL }}css/jquery.multiselect.css" rel="stylesheet" />
+{% endblock %}
+
+{% block javascript %}
+  {{block.super}}
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/maps.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.multiselect.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      $(".daypicker").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        showOn: 'button',
+        buttonImage: '{{ MEDIA_URL }}images/icon_calendar.gif',
+        buttonImageOnly: true,
+        dateFormat : 'yy-mm-dd',
+      });
+    });
+  </script>
+  <script type="text/javascript">
+    function highlight(klass){
+      var historical = $('#historical')[0];
+      var tds = historical.getElementsByTagName('td');
+
+      for (i=0;i<tds.length;i++){
+        if (tds[i].className.indexOf(klass) > -1){ 
+          if (tds[i].className.indexOf('on') > -1){
+            tds[i].setAttribute("class",tds[i].className.replace('on','high'));
+          }else{
+            tds[i].setAttribute("class",tds[i].className.replace('high','on'));
+          };
+        };
+      };
+    };
+
+    function highlightSite(me){
+      
+      tds = me.parentNode.getElementsByTagName('td');
+
+      for (i=0;i<tds.length;i++){
+        if (tds[i].className.indexOf('rowsite') > -1){
+          tds[i].setAttribute("class",tds[i].className.replace('rowsite','highsite'));
+        }else{
+          tds[i].setAttribute("class",tds[i].className.replace('highsite','rowsite'));
+        };
+      };
+    };
+
+    function color2value(){
+
+      var historical = $('#historical')[0];
+      var tablebody = historical.getElementsByTagName('tbody')[0];
+      spans = tablebody.getElementsByTagName('span');
+
+      for (i=0;i<spans.length;i++){
+        if(spans[i].style.display.indexOf('block') > -1){
+          spans[i].style.display = 'none';
+        }else{
+          spans[i].style.display = 'block';
+        };
+      };
+
+    };
+  </script>
+{% endblock %}
+
+{% block docready %}
+
+  {{block.super}}
+
+  var $callback = $("#callback");
+
+  $("select.multi_site").multiSelect({ 
+    noneSelectedText:'Filter by site', 
+    shadow:true
+  });
+
+{% endblock %}
+
+{% block content %}
+
+  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+
+  <h2>
+    Historical view of Robot <br/> from {{from|date:'M d, Y'}} to {{to|date:'M d, Y'}}
+  </h2>
+
+  <div id='usage'>
+    <h3>HINTS.</h3>
+    <p>
+    1.- This table represents the efficiency calculated as completed/completed+failed.<br>
+    2.- Click on the borders to highlight columns or rows.<br>
+    3.- Click on the stones to go to the daily summary.<br>
+    4.- Color legend.<br>
+ 
+    <table class="historical" style="background-color:white;margin-left:10px;">
+      <tr><td class="ongrey"></td><td style="border:0px;width:250px;">no test.</td></tr>
+      <tr><td class="onblue"></td><td style="border:0px;width:250px;">no completed and no failed jobs.</td></tr>
+      <tr><td class="onred"></td><td style="border:0px;width:250px;">efficiency < 80%.</td></tr>
+      <tr><td class="onyellow"></td><td style="border:0px;width:250px;">80% < efficiency < 95%.</td></tr>
+      <tr><td class="ongreen"></td><td style="border:0px;width:250px;">95% < efficiency.</td></tr>
+    </table>
+
+  </div>
+
+  {% load hc_tags %}
+
+  <form id="historical_form" method="GET" action="{% url historical-view app%}">
+    <label for="from">from: </label><input type="text" id="from" name="from" class="daypicker"/>
+    <label for="to"> &raquo; to: </label><input type="text" id="to" name="to" class="daypicker">
+    <input id="historical_submit" type="submit" value="Go"/>
+  </form>
+
+  <br/>
+
+  <ul class='map_options'>
+    <li onClick="color2value();">S<i>W</i>IT<i>C</i>H colors&values</li>
+  </ul>  
+
+  <table id="historical" class="historical">
+
+    {% for site,srs in hists.items%}
+      {% if srs %}
+
+        {% if forloop.first %}
+          <thead>
+          <tr>
+            <td>Site / Day </td> 
+            {% for sr in srs %}
+              <td class="onday {{sr.day|date:'Y-m-d'}}" onclick="highlight('{{sr.day|date:"Y-m-d"}}');">{{sr.day|date:"d"}}</td> 
+            {% endfor %}
+          </tr>
+          </thead>
+          <tbody>
+        {% endif %}
+        
+        <tr class="{{sr.site.name}} {{sr.site.cloud.name}}">
+          <td onclick="highlightSite(this);" class='rowsitename'>{{site|chop:20}}</td>
+          {% for sr in srs%}
+
+            <td onclick="DoNav('{% url robotsite-view app,sr.site.id %}?day={{sr.day|date:"Y-m-d"}}');" class="{% if sr.efficiency > 0.95 %}ongreen{% else %}{% if sr.efficiency > 0.8 %}onyellow{% else %}{% if sr.efficiency >= 0.0 %}onred{% else %}{% if sr.efficiency == -1.0 %}ongrey{% else %}onblue{% endif %}{% endif %}{% endif %}{% endif %} {{sr.day|date:'Y-m-d'}} rowsite">
+            <span style='display:none;' class="c2v">{{sr.efficiency|floatformat:2}}</span> 
+            </td>
+
+          {% endfor %}
+        </tr>
+      {% endif %}      
+
+      {% if forloop.last %}
+        </tbody>
+        <tfoot>
+        <tr>
+          <td>Site / Day </td>
+          {% for sr in srs %}
+            <td class="onday {{sr.day|date:'Y-m-d'}}" onclick="highlight('{{sr.day|date:"Y-m-d"}}');">{{sr.day|date:"d"}}</td>
+          {% endfor %}
+        </tr>
+        </tfoot>
+      {% endif %}
+
+    {% endfor %}
+
+  </table>
+
+
+{% endblock %}

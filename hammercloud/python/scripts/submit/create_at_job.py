@@ -1,7 +1,7 @@
 from hc.core.utils.generic.class_func import custom_import
 from django.db.models import Min
 
-import commands,time,os
+import commands,time,os,os.path
 
 class CreateAtJob:
 
@@ -51,13 +51,13 @@ class CreateAtJob:
       return 0
 
     time=test.starttime.strftime('%H:%M %m%d%y')
-#    atjobid = commands.getoutput('at -f %s/testdirs/run-test-%d.sh %s'%(HCAPP,test.id,time)).rstrip()
+    atjobid = commands.getoutput('at -f %s/testdirs/run-test-%d.sh %s'%(HCAPP,test.id,time)).rstrip()
     test.state   = 'scheduled'
-#    test.atjobid = int(atjobid.split()[1])
+    test.atjobid = int(atjobid.split()[1])
     test.host    = host
     test.save() 
 
-#    print '[INFO][%s][create_at_job] Starting test %s: %s\n'%(app,test.id,atjobid)
+    print '[INFO][%s][create_at_job] Starting test %s: %s\n'%(app,test.id,atjobid)
     return 1
 
   def run(self,app,dic):

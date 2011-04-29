@@ -45,8 +45,14 @@ function toggleDisplay(me){
 // items = [['name','percentage','rightcol','leftcol']]
 function generateTable(enlarge,items,metric){
 
-  toWrite = new Array(50);
-  toCount = new Array(50);
+  SIZE = parseInt(items.length / 5);
+
+  if (enlarge){
+    SIZE = SIZE * 4;
+  };
+
+  toWrite = new Array(SIZE);
+  toCount = new Array(SIZE);
 
   var TABLE_WIDTH = 15;
 
@@ -56,13 +62,13 @@ function generateTable(enlarge,items,metric){
   };
 
   if (enlarge){
-    length = [3,3,3,6,6,9];
+    length = [3,3,3,6,6,9,3];
   }else{
-    length = [1,1,1,3,3,4];
+    length = [1,1,1,3,3,4,1];
   };
-  height = [1,1,1,1,2,3];
+  height = [1,1,1,1,2,3,1];
 
-  colors  = ['ongrey','ongreen','onyellow','onred','onred','onred'];
+  colors  = ['ongrey','ongreen','onyellow','onred','onred','onred','onblue'];
 
   var myTable = document.getElementById("map");
   while(myTable.hasChildNodes()){
@@ -70,7 +76,9 @@ function generateTable(enlarge,items,metric){
   };
 
   for (s=0;s<items.length;s++){
-    if (items[s][1] < 0.0){
+    if (items[s][1] < -1.0){
+      lhc = 6;
+    }else if(items[s][1] < 0.0){
       lhc = 0;
     }else if(items[s][1] < 0.5){
       lhc = 5;
@@ -139,11 +147,16 @@ function generateTable(enlarge,items,metric){
         var message = ' ';
         if (toWrite[y][x][2].indexOf('red') > -1 || enlarge){
           var message = toWrite[y][x][3][0];
-        }
+          if (message.length > 15){
+            message = message.slice(0,14)+'...';
+          };
+        };
 
         customMsg = 'No test yesterday.';
-        if (toWrite[y][x][2] != 'ongrey'){
-          customMsg ="<p>"+metric+" "+toWrite[y][x][3][1]+"%</p>";
+        if (toWrite[y][x][2] != 'ongrey' && toWrite[y][x][2] != 'onblue'){
+          customMsg ="<p>"+metric+" "+toWrite[y][x][3][1]+"</p>";
+        }else if(toWrite[y][x][2] == 'onblue'){
+          customMsg = 'No concluded jobs yesterday.';
         }
 
         cell.innerHTML = message+"<span class='map_legend'><h3>"+toWrite[y][x][3][0]+"</h3>"+customMsg+"</span>";
@@ -151,7 +164,6 @@ function generateTable(enlarge,items,metric){
         cell.setAttribute("colspan",toWrite[y][x][0]);
         cell.setAttribute("class",toWrite[y][x][3][2]+' '+ toWrite[y][x][3][3]+' '+toWrite[y][x][2]);
         cell.setAttribute("onclick","DoNav('"+toWrite[y][x][3][4]+"');")
-//onclick="DoNav('{% url test-view app test.id %}');"
         if (enlarge){
           cell.style.width = '120px';
         };

@@ -3,14 +3,13 @@ from hc.core.base.models.abstract import *
 
 from hc.core.base.rss.abstract import *
 
-#class MetricPerm(MetricPermBase):
-#  pass
-
 ##
 ## SIMPLE CLASSES
 ##
+## *Alarm
 ## *Backend
 ## *Cloud
+## *CloudOption
 ## *Dspattern
 ## *GangaBin
 ## *Host
@@ -20,10 +19,13 @@ from hc.core.base.rss.abstract import *
 ## *TestOption
 ## *UserCode 
 ## 
-
+class Alarm(AlarmBase):
+  pass
 class Backend(BackendBase):
   pass
 class Cloud(CloudBase):
+  pass
+class CloudOption(CloudOptionBase):
   pass
 class Dspattern(DspatternBase):
   pass
@@ -48,11 +50,13 @@ class UserCode(UserCodeBase):
 ## SITE CLASSES
 ##
 ## *Site
+## *SiteOption
 ##
 
 class Site(SiteBase):
   pass
-
+class SiteOption(SiteOptionBase):
+  pass
 
 ##
 ## TEMPLATE CLASSES
@@ -89,7 +93,9 @@ class TemplateUser(TemplateUserBase):
 ## *TestCloud
 ## *TestDspattern
 ## *TestHost
+## *TestLog
 ## *TestSite
+## *TestSiteAlarm
 ## *TestState
 ## *TestUser
 ##
@@ -104,7 +110,11 @@ class TestDspattern(TestDspatternBase):
   pass
 class TestHost(TestHostBase):
   pass
+class TestLog(TestLogBase):
+  pass
 class TestSite(TestSiteBase):
+  pass
+class TestSiteAlarm(TestSiteAlarmBase):
   pass
 class TestState(TestStateBase):
   pass
@@ -118,28 +128,43 @@ class TestUser(TestUserBase):
 ##
 
 class Result(ResultBase):
-  exit_status_1         = models.IntegerField(null=True)
-  exit_status_2         = models.IntegerField(null=True)
-  inds                  = models.CharField(max_length=1023)
-  outds                 = models.CharField(max_length=1023)
-  output_location       = models.CharField(max_length=255)
-  wallclock             = models.IntegerField(null=True)
-  numevents             = models.IntegerField(null=True)
-  numfiles              = models.IntegerField(null=True)
-  percent_cpu           = models.IntegerField(null=True)
-  jdl_time              = models.DateTimeField(null=True)
-  ganga_number_of_files = models.IntegerField(null=True)
-  backend_id            = models.CharField(max_length=1023)
-  backend_reason        = models.CharField(max_length=1023)
-  net_eth_rx_preathena  = models.IntegerField(null=True)
-  net_eth_rx_postathena = models.IntegerField(null=True)
-  pandatime1            = models.IntegerField(null=True)
-  pandatime2            = models.IntegerField(null=True)
-  pandatime3            = models.IntegerField(null=True)
-  pandatime4            = models.IntegerField(null=True)
-  arch                  = models.CharField(max_length=511)
-  actual_ce             = models.CharField(max_length=127, null=True)
-  logfile_guid          = models.CharField(max_length=63, null=True)
+  # ATLAS parameters
+  exit_status_1         = models.IntegerField(blank=True,null=True)
+  exit_status_2         = models.IntegerField(blank=True,null=True)
+
+  actual_ce             = models.CharField(max_length=511, blank=True, null=True)
+  arch                  = models.CharField(max_length=511, blank=True, null=True)
+  inds                  = models.CharField(max_length=1023, blank=True, null=True)
+  logfile_guid          = models.CharField(max_length=511, blank=True, null=True)
+  outds                 = models.CharField(max_length=1023, blank=True, null=True)
+  output_location       = models.CharField(max_length=511, blank=True, null=True)
+
+  ganga_number_of_files = models.IntegerField(blank=True,null=True)
+  numevents             = models.IntegerField(blank=True,null=True)
+  numfiles              = models.IntegerField(blank=True,null=True)
+  percent_cpu           = models.FloatField(blank=True,null=True)
+  wallclock             = models.FloatField(blank=True,null=True)
+
+  #numevents / wallclock
+  eventrate             = models.FloatField(blank=True,null=True)
+  #numevents / pandatime3 || numevents / (ganga_time_4 - ganga_time_3)
+  events_athena         = models.FloatField(blank=True,null=True)
+  
+  jdl_time              = models.DateTimeField(blank=True,null=True)
+  pandatime1            = models.IntegerField(blank=True,null=True)  
+  pandatime2            = models.IntegerField(blank=True,null=True)
+  pandatime3            = models.IntegerField(blank=True,null=True)
+  pandatime4            = models.IntegerField(blank=True,null=True)
+  #ganga_time_2 - ganga_time_1
+  nonpandatime1         = models.IntegerField(blank=True,null=True)
+  #ganga_time_3 - ganga_time_2
+  nonpandatime2         = models.IntegerField(blank=True,null=True)
+  #ganga_time_4 - ganga_time_3
+  nonpandatime3         = models.IntegerField(blank=True,null=True)
+  #ganga_time_5 - ganga_time_4
+  nonpandatime4         = models.IntegerField(blank=True,null=True)
+
+  
 
 ##
 ## METRIC CLASSES
@@ -174,17 +199,69 @@ class UsgSite(UsgSiteBase):
 ##
 ## SUMMARY CLASSES
 ##
+## *SummaryEvolution
 ## *SummaryRobot
 ## *SummaryTest
 ## *SummaryTestSite
 ##
 
+class SummaryEvolution(SummaryEvolutionBase):
+  pass
 class SummaryRobot(SummaryRobotBase):
   pass
 class SummaryTest(SummaryTestBase):
-  pass
+
+  wallclock             = models.IntegerField(blank=True,null=True)
+  numevents             = models.IntegerField(blank=True,null=True)
+  numfiles              = models.IntegerField(blank=True,null=True)
+  percent_cpu           = models.IntegerField(blank=True,null=True)
+  ganga_number_of_files = models.IntegerField(blank=True,null=True) 
+
+  #numevents / wallclock
+  eventrate             = models.FloatField(blank=True,null=True)
+  #numevents / pandatime3 || numevents / (ganga_time_4 - ganga_time_3)
+  events_athena         = models.FloatField(blank=True,null=True)
+
+  pandatime1            = models.IntegerField(blank=True,null=True)
+  pandatime2            = models.IntegerField(blank=True,null=True)
+  pandatime3            = models.IntegerField(blank=True,null=True)
+  pandatime4            = models.IntegerField(blank=True,null=True)
+  #ganga_time_2 - ganga_time_1
+  nonpandatime1         = models.IntegerField(blank=True,null=True)
+  #ganga_time_3 - ganga_time_2
+  nonpandatime2         = models.IntegerField(blank=True,null=True)
+  #ganga_time_4 - ganga_time_3
+  nonpandatime3         = models.IntegerField(blank=True,null=True)
+  #ganga_time_5 - ganga_time_4
+  nonpandatime4         = models.IntegerField(blank=True,null=True)
+
+
 class SummaryTestSite(SummaryTestSiteBase):
-  pass
+
+  wallclock             = models.IntegerField(blank=True,null=True)
+  numevents             = models.IntegerField(blank=True,null=True)
+  numfiles              = models.IntegerField(blank=True,null=True)
+  percent_cpu           = models.IntegerField(blank=True,null=True)
+  ganga_number_of_files = models.IntegerField(blank=True,null=True) 
+
+  #numevents / wallclock
+  eventrate             = models.FloatField(blank=True,null=True)
+  #numevents / pandatime3 || numevents / (ganga_time_4 - ganga_time_3)
+  events_athena         = models.FloatField(blank=True,null=True)
+
+  pandatime1            = models.IntegerField(blank=True,null=True)
+  pandatime2            = models.IntegerField(blank=True,null=True)
+  pandatime3            = models.IntegerField(blank=True,null=True)
+  pandatime4            = models.IntegerField(blank=True,null=True)
+  #ganga_time_2 - ganga_time_1
+  nonpandatime1         = models.IntegerField(blank=True,null=True)
+  #ganga_time_3 - ganga_time_2
+  nonpandatime2         = models.IntegerField(blank=True,null=True)
+  #ganga_time_4 - ganga_time_3
+  nonpandatime3         = models.IntegerField(blank=True,null=True)
+  #ganga_time_5 - ganga_time_4
+  nonpandatime4         = models.IntegerField(blank=True,null=True)
+
 
 ##
 ## FEED CLASSES

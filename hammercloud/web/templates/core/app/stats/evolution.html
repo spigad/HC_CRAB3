@@ -1,0 +1,175 @@
+{% extends 'core/app/base.html' %}
+
+{% block css %}
+
+  {{block.super}}
+  <link type="text/css" href="{{ MEDIA_URL }}css/jquery.multiselect.css" rel="stylesheet" />
+{% endblock %}
+
+{% block javascript %}
+
+  {{block.super}}
+
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.multiselect.min.js"></script>
+  <script type='text/javascript' src="{{ MEDIA_URL }}js/AC_OETags.js" language="javascript"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script>
+  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  <script type='text/javascript'>
+    google.load('visualization', '1', {packages: ['annotatedtimeline']});
+    google.setOnLoadCallback(drawChart);
+
+    var chart     = new Array();
+    var showed    = new Array();
+    var tmpToShow = new Array();
+    var tmpToHide = new Array();
+    var data      = new Array();
+
+    function drawChart(){
+      data[1] = new google.visualization.DataTable();
+
+      var colors_chart = ['#6A9AC8','#E604FC','#34C348','#FF1A00','#FFFF88','#D9ED39','#FF0084','#C45FFE','#4D3032','#779BFD','#E87DB7','#5E7288','#A80E0B','#70A06E','#E4BD48','#F56D21','#EB86B8','#B8A02F','#000000','#36393D','#AFCEDE','#ADBC73','#3C9ABF','#646A9C'];
+
+      //Columns definition
+      data[1].addColumn('date', 'Date');
+      {% for title,v in titles %}
+        data[1].addColumn('number','{{title}}');
+      {% endfor %}
+
+      //Rows definition
+      data[1].addRows({{evol|length}});
+
+      //Data addition
+      {% for date,values in evol %}
+        data[1].setValue({{ forloop.counter0 }},0,new Date({{ date.year }},{{ date.month|add:'-1' }},{{ date.day }},{{ date.hour }},{{ date.minute }},{{ date.second }}));
+        {% for subtitle,value in values %}
+          {% if value and value > -1 %}
+            data[1].setValue({{ forloop.parentloop.counter0 }},{{forloop.counter}},{{value}});
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+
+      chart[1] = new google.visualization.AnnotatedTimeLine(document.getElementById('visualization'));
+
+      chart[1].draw(data[1], {
+       'colors': colors_chart,
+       'displayAnnotations': false,
+       'fill': 30,
+       'legendPosition': 'newRow',
+       'min':  0,
+       'scaleType': 'maximize',
+       'thickness': 2,
+      });
+
+      var end = new Date();
+      var start = new Date();
+      start.setDate(start.getDate()-5);
+      chart[1].setVisibleChartRange(start,end);
+
+      var toHide = new Array()
+      {% for t,v in titles %}
+        {% if not 'Overall' in t %}
+          toHide[{{forloop.counter0}}] = [{{forloop.counter0}}];
+        {% endif %}
+          showed[1] = showed[1] {% if 'Overall' in t%}+[{{forloop.counter0}}]{% endif %};
+      {% endfor %}
+
+      chart[1].hideDataColumns(toHide);
+      $(function() {
+        $("#chart_series").selectable({
+          start: function(event, ui) { tmpToShow[1] = new Array(); tmpToHide[1] = new Array() },
+          selected: function(event, ui) { tmpToShow[1].push(ui.selected.id) },
+          unselected: function(event, ui) { tmpToHide[1].push(ui.unselected.id) },
+          stop: function(event, ui) { updateSeries(1,tmpToHide[1],tmpToShow[1]); }
+        });
+      });
+
+    }
+  </script>
+
+
+{% endblock %}
+
+{% block docready %}
+
+  {{block.super}}
+  $("select.multi_cloud").multiSelect({ noneSelectedText:'Select cloud(s)',shadow:true});
+  $("select.multi_site").multiSelect({ noneSelectedText:'Select site(s)', shadow:true});
+  $("select.type").multiSelect({ noneSelectedText:'Select type' ,multiple: false, showHeader: false,
+    selectedText: function(numChecked, numTotal, checkedItem){return $(checkedItem).attr("title");}
+  });
+
+  $("input:submit", "#evol_form").button();
+
+{% endblock %}
+
+{% block content %}
+
+  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+
+  <h2>HC Evolution ({{type}})</h2>{% load hc_tags %}
+
+    <div id='usage'>
+      <h3>USAGE</h3>
+      <p>
+        1.- This graph shows the number of <b><i>running</i></b>, <b><i>submitted</i></b>, <b><i>completed</i></b>, <b><i>failed</i></b> or <b><i>total</i></b> jobs.<br/>
+        2.- The values are the daily <b><i>average</i></b> for running and submitted, and the <b><i>sum</i></b> for completed, failed or total.<br/>
+        3.- If the values have been summarized (average or sum) will have time <b><i>00:10</i></b> of the summarized day.<br/>
+        4.- <b><i>Overall</i></b> is the sum of all the values available in the graph for that moment <i>(remember that values at 00:10 represent the whole day)</i>.<br/>
+        5.- Default type: <b><i>running</i></b>.<br/>
+        5.- Default clouds: <b><i>ALL</i></b>.<br/>
+        6.- Default sites: <b><i>None</i></b>.<br/>
+        7.- Use the form on the <b><i>bottom</i></b> to make a different selection.<br/>
+      </p>
+    </div>
+
+    <div id="visualization" style="width: 980px; height: 420px;"></div>
+    <script language="JavaScript" type="text/javascript">
+      <!--
+        document.write('<div><ol id="chart_series" class="chart_series">{% for t,v in titles %}<li id="chart_{{ forloop.counter0 }}" class="ui-state-default{% if 'Overall' in t %} ui-selected{% endif %}">{{ t }}</li>{% endfor %}</ol></div>');
+      //-->
+    </script>
+
+    <div style="clear:both;">
+      Hold down the Ctrl key (cmd on MAC) to make multiple non-adjacent selections<br />
+      Click over an element and drag the pointer for multiple adjacent selections
+    </div>
+
+    <br/><br/>
+
+    <div id='evol_form'>
+
+      <form id="evolution_form" method="GET" action="{% url evolution-view app %}">
+
+        <select class="type" multiple="multiple" name="type" size="3">
+          <option value='running'>Running</option>
+          <option value='submitted'>Submitted</option>
+          <option value='completed'>Completed</option>
+          <option value='failed'>Failed</option>
+          <option value='total'>Total</option>
+        </select>
+
+        <select class="multi_cloud" multiple="multiple" name="cloud" size="3">
+          {% for cloud in clouds %}
+            <option value='{{cloud.id}}'>
+              {{ cloud.name|chop:20 }}
+            </option>
+          {% endfor %}
+        </select>
+
+        <select class="multi_site multiple="multiple" name="site" size="3">
+          {% for cloud in clouds %}
+            <optgroup label="{{ cloud.name }}">
+              {% for site in cloud.sites %}
+                <option value='{{ site.id }}'>{{ site.name|chop:20 }}</option>
+              {% endfor %}
+            </optgroup>
+          {% endfor %}
+        </select>
+
+        <input type="submit" value="Go !" class="submit"/>
+
+      </form>
+
+    </div>
+
+{% endblock %}

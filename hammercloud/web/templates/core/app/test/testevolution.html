@@ -1,0 +1,37 @@
+<div id="accordionevolution">
+
+  {% if evolution %}
+
+    {% for key,tms in evolution.items %}
+      {% if key == 'Overall' %}
+      <h3><a href="#">{{ key }}</a></h3> 
+      <div class="test-accordion">
+        {% for tm in tms %}
+          <img src="{{tm.metric.url}}" alt="{{tm.metric.metric_type}} = {{tm.test.id}}"/>
+        {% endfor %}
+      </div>  
+      {% endif %}
+    {% endfor %}
+  
+    {% for key,sms in evolution.items %}
+      {% if key != 'Overall' %}
+      <h3><a href="#">{{ key }}</a></h3>
+      <div class="test-accordion">
+        {% for sm in sms %}
+          <img src="{{sm.metric.url}}" alt="{{sm.metric.metric_type}} = {{sm.site.name}}"/>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endfor %}
+
+  {% else %}
+
+    No entries
+
+  {% endif %}
+
+</div>
+
+<script type="text/javascript">
+  $("#accordionevolution").accordion({autoHeight: false });
+</script>

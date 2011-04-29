@@ -35,9 +35,9 @@ echo ''
 
 cd $HCDIR
 
-echo '  CODE: ./python/scripts/dispatcher.py -f robot'
+echo '  CODE: python python/scripts/dispatcher.py -f robot'
 echo ''
-python2.5 python/scripts/dispatcher.py -f robot
+python python/scripts/dispatcher.py -f robot
 echo ''
 echo '  END CODE'
 rm -f /tmp/robot-main_$1.running

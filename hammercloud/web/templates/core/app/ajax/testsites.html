@@ -1,10 +1,12 @@
 <script type="text/javascript">
+  TableToolsInit.sSwfPath="{{MEDIA_URL}}swf/ZeroClipboard.swf";
   $(document).ready(function() {
     $('#{{type}}_table').dataTable({
       "sPaginationType": 'full_numbers',
       "bServerSide": true,
       "sAjaxSource": "{% url get_list-view app,type,test_id %}",          
       "aaSorting" : [[ 0, "desc" ]],
+      "sDom": 'T<"clear">lfrtip',
 
       "aoColumns":[
         null,null,null,null,null,null,null,null,null,null,null,null,{ "sType": "html" }
@@ -14,7 +16,7 @@
           $(nRow).addClass('red');
         }else if ((aData[1] == 0) && (aData[2] == 0) && (aData[3] == 0) && (aData[4] == 0)){
           $(nRow).addClass('grey');
-        }else if ((aData[1] < aData[8]) && (aData[2]<aData[9]) ){
+        }else if ( (parseInt(aData[1])<parseInt(aData[8])) && (parseInt(aData[2])<parseInt(aData[9])) ){
           $(nRow).addClass('green');
         }else{
           $(nRow).addClass('blue');
@@ -23,6 +25,13 @@
       }
     });
   });
+</script>
+<script type="text/javascript">
+
+  function siteJobs(val){
+    $("#tabs").tabs("option","selected",3);
+  };
+
 </script>
 
   <div id='usage'>
@@ -43,7 +52,7 @@
     <i>GREY: not jobs submittted.</i><br>
     <i>GREEN: submitting jobs.</i><br>
     <i>BLUE: stopped job submission according to algorithm parameters.</i><br>
-    <i>RED: stopped job submission. Something went badly.</i><br>
+    <i>RED: stopped job submission. Resubmission disabled (Something went badly or disabled by user).</i><br>
     </p>
 
   </div>

@@ -22,6 +22,6 @@ ls $HCAPP/testdirs/test_$1/jobs/*
 echo Cleaning $HCAPP/testdirs/test_$1/gangadir
 rm -rf $HCAPP/testdirs/test_$1/gangadir
 
-echo $GANGABIN --config=$HCAPP/config/CMS_ROBOTStart.INI.50 -o[Configuration]gangadir=$HCAPP/testdirs/test_$1/gangadir -o[CMSSW]CMSSW_VERSION=$CMSSW_VERSION -o[Logging]_logfile=$HCAPP/testdirs/test_$1/ganga.log $3 robot run $HCAPP/testdirs/test_$1/jobs/*
-$GANGABIN --config=$HCAPP/config/CMS_ROBOTStart.INI.50 -o[Configuration]gangadir=$HCAPP/testdirs/test_$1/gangadir -o[CMSSW]CMSSW_VERSION=$CMSSW_VERSION -o[Logging]_logfile=$HCAPP/testdirs/test_$1/ganga.log $3 robot run $HCAPP/testdirs/test_$1/jobs/*
+echo $GANGABIN --config=$HCAPP/config/CMS_ROBOTStart.INI.50 -o[Configuration]gangadir=$HCAPP/testdirs/test_$1/gangadir -o[CMSSW]CMSSW_VERSION=$CMSSW_VERSION -o[CMSSW]CMSSW_SETUP=$HCDIR/external/cms/crab/scripts -o[Logging]_logfile=$HCAPP/testdirs/test_$1/ganga.log $2 robot run $HCAPP/testdirs/test_$1/jobs/*
+$GANGABIN --config=$HCAPP/config/CMS_ROBOTStart.INI.50 -o[Configuration]gangadir=$HCAPP/testdirs/test_$1/gangadir -o[CMSSW]CMSSW_VERSION=$CMSSW_VERSION -o[CMSSW]CMSSW_SETUP=$HCDIR/external/cms/crab/scripts -o[Logging]_logfile=$HCAPP/testdirs/test_$1/ganga.log $2 robot run $HCAPP/testdirs/test_$1/jobs/*
 

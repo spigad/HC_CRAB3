@@ -45,14 +45,14 @@ class TestReport:
   def report(self,test,app,dic):
 
     # Path of the working directory
-    if os.environ.has_key('HCAPP'):
-      HCAPP = os.environ['HCAPP']
+    if os.environ.has_key('HCDIR'):
+      HCDIR = os.environ['HCDIR']
     else:
-      print '[ERROR][%s][test_report] No HCAPP found'%(app)
+      print '[ERROR][%s][test_report] No HCDIR found'%(app)
       return 0
 
-    print '[INFO][%s][test_report] /bin/sh %s/scripts/submit/test_report.sh %d "%s %s"'%(app,HCAPP,test.id,test.extraargs,test.testoption.report)
-    result =  os.system('/bin/sh %s/scripts/submit/test_report.sh %d "%s %s"'%(HCAPP,test.id,test.extraargs,test.testoption.submit))
+    print '[INFO][%s][test_report] /bin/sh %s/scripts/submit/test-report.sh %d "%s %s"'%(app,HCDIR,test.id,test.extraargs,test.testoption.report)
+    result =  os.system('/bin/sh %s/scripts/submit/test-report.sh %d "%s %s"'%(HCDIR,test.id,test.extraargs,test.testoption.report))
 
     #0 means good in shell scripting.
     if result == 0:

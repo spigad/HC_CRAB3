@@ -189,7 +189,7 @@ class TestEntriesFeed(Feed):
     return "Updates, changes and additions to test %s at HammerCloud-%s "%(test_feed.id,plugin.upper())
 
   def link(self,obj):
-    plugin,test_id - obj
+    plugin,test_id = obj
     return "/hc/feed/app/%s/test/%s/"%(plugin,test_id)
 
   def items(self,obj):

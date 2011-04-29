@@ -14,8 +14,7 @@
         "{% if sum.efficiency > -1 %}     {{sum.efficiency|floatformat:3}} {% else %} -- {% endif %}",
         "{% if sum.efficiencyNorm > -1 %} {{sum.efficiencyNorm|floatformat:3}} {% else %} -- {% endif %}",
         "{% if sum.errorrate > -1 %}      {{sum.errorrate|floatformat:3}} {% else %} -- {% endif %}",
-        "{% if sum.errorrateNorm > -1 %}  {{sum.errorrateNorm|floatformat:3}} {% else %} -- {% endif %}",
-
+        "{% if sum.errorrateNorm > -1 %}  {{sum.errorrateNorm|floatformat:3}} {% else %} -- {% endif %}"
     ]
 
     {% if not forloop.last %}

@@ -96,7 +96,7 @@ def getTestTotalJobs(test):
 #  '''
 #  result = ContentType.objects.get(app_label=test._meta.app_label, model="result").model_class()
 #  return result.objects.filter(test=test.id).count()
-  return test.getResults_for_test.count()
+  return test.getResults_for_test.exclude(ganga_subjobid=1000000).count()
 
 def getTestSubmittedJobs(test):
 #  '''
@@ -104,7 +104,7 @@ def getTestSubmittedJobs(test):
 #  '''
 #  result = ContentType.objects.get(app_label=test._meta.app_label, model="result").model_class()
 #  return result.objects.filter(test=test.id).filter(ganga_status='s').count()
-  return test.getResults_for_test.filter(ganga_status='s').count()
+  return test.getResults_for_test.filter(ganga_status='s').exclude(ganga_subjobid=1000000).count()
 
 def getTestRunningJobs(test):
 #  '''
@@ -112,7 +112,7 @@ def getTestRunningJobs(test):
 #  '''
 #  result = ContentType.objects.get(app_label=test._meta.app_label, model="result").model_class()
 #  return result.objects.filter(test=test.id).filter(ganga_status='r').count()
-  return test.getResults_for_test.filter(ganga_status='r').count()
+  return test.getResults_for_test.filter(ganga_status='r').exclude(ganga_subjobid=1000000).count()
 
 def getTestCompletedJobs(test):
 #  '''
@@ -120,7 +120,7 @@ def getTestCompletedJobs(test):
 #  '''
 #  result = ContentType.objects.get(app_label=test._meta.app_label, model="result").model_class()
 #  return result.objects.filter(test=test.id).filter(ganga_status='c').count()
-  return test.getResults_for_test.filter(ganga_status='c').count()
+  return test.getResults_for_test.filter(ganga_status='c').exclude(ganga_subjobid=1000000).count()
 
 def getTestFailedJobs(test):
 #  '''
@@ -128,7 +128,7 @@ def getTestFailedJobs(test):
 #  '''
 #  result = ContentType.objects.get(app_label=test._meta.app_label, model="result").model_class()
 #  return result.objects.filter(test=test.id).filter(ganga_status='f').count()
-  return test.getResults_for_test.filter(ganga_status='f').count()
+  return test.getResults_for_test.filter(ganga_status='f').exclude(ganga_subjobid=1000000).count()
 
 #########################################################################
 ## METRICS BLOCK
