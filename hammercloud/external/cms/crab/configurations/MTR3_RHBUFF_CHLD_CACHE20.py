@@ -40,7 +40,7 @@ process.demo = cms.EDAnalyzer('MiniTreeReco3',
                               
                               pdfSet = cms.untracked.string("cteq65.LHgrid"),
 
-                              rootfile = cms.string("MTR3.root"),
+                              rootfile = cms.string("MTR3_RHAUTO_CHLD_CACHE20.root"),
 
                               )
 
@@ -67,11 +67,11 @@ process.Timing = cms.Service("Timing",
 #                          )
 
 
-#process.AdaptorConfig = cms.Service("AdaptorConfig",
-#                                    tempDir=cms.untracked.string(""),
-#                                    cacheHint=cms.untracked.string("lazy-download"),
-#                                    readHint=cms.untracked.string("auto-detect"))
-#
+process.AdaptorConfig = cms.Service("AdaptorConfig",
+                                    #tempDir=cms.untracked.string(""),
+                                    cacheHint=cms.untracked.string("lazy-download"),
+                                    readHint=cms.untracked.string("read-ahead-buffered"))
+
 
 process.source.cacheSize = cms.untracked.uint32(20*1024*1024)
 

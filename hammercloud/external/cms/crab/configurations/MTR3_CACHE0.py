@@ -16,6 +16,7 @@ process.source = cms.Source("PoolSource",
 )
 
 
+
 process.demo = cms.EDAnalyzer('MiniTreeReco3',
                               JetCollection      = cms.untracked.InputTag("ak5CaloJets"),#,"cleanLayer1JetsPFc","cleanLayer1JetsSC5"),
                               GenJetCollection      = cms.untracked.InputTag("ak5GenJets"),#,"cleanLayer1JetsPFc","cleanLayer1JetsSC5"),
@@ -40,7 +41,7 @@ process.demo = cms.EDAnalyzer('MiniTreeReco3',
                               
                               pdfSet = cms.untracked.string("cteq65.LHgrid"),
 
-                              rootfile = cms.string("MTR3.root"),
+                              rootfile = cms.string("MTR3_CACHE0.root"),
 
                               )
 
@@ -71,9 +72,9 @@ process.Timing = cms.Service("Timing",
 #                                    tempDir=cms.untracked.string(""),
 #                                    cacheHint=cms.untracked.string("lazy-download"),
 #                                    readHint=cms.untracked.string("auto-detect"))
-#
 
-process.source.cacheSize = cms.untracked.uint32(20*1024*1024)
+
+process.source.cacheSize = cms.untracked.uint32(0)
 
 
 #process.myrecoJets = cms.Path(process.recoJets)

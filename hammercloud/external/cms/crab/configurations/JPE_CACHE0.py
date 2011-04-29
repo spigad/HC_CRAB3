@@ -13,15 +13,17 @@ process.maxEvents = cms.untracked.PSet(
 
 
 
+
 process.source = cms.Source("PoolSource",
                             #                            # replace 'myfile.root' with the source file you want to use
                             fileNames = cms.untracked.vstring('/store/mc/JobRobot/RelValProdTTbar/GEN-SIM-DIGI-RECO/MC_3XY_V24_JobRobot-v1/0001/F218B438-A02C-DF11-AADC-000423D99A8E.root')
                             )
 
+
 #############   Calo Jets  ###########################
 process.calo = cms.EDAnalyzer("CaloJetPlotsExample",
     JetAlgorithm  = cms.string('iterativeCone5CaloJets'),
-    HistoFileName = cms.string('JPE_RHAUTO_CHLD_CACHE20.root'),
+    HistoFileName = cms.string('JPE_CACHE0.root'),
     NJets         = cms.int32(2)
 )
 #############   Path       ###########################
@@ -30,13 +32,13 @@ process.p = cms.Path(process.calo)
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 
-process.AdaptorConfig = cms.Service("AdaptorConfig",
-                                    #tempDir=cms.untracked.string(""),
-                                    cacheHint=cms.untracked.string("lazy-download"),
-                                    readHint=cms.untracked.string("auto-detect"))
+#process.AdaptorConfig = cms.Service("AdaptorConfig",
+#                                    tempDir=cms.untracked.string(""),
+#                                    cacheHint=cms.untracked.string("application-only"),
+#                                    readHint=cms.untracked.string("auto-detect"))
 
 
-process.source.cacheSize = cms.untracked.uint32(20*1024*1024)
+process.source.cacheSize = cms.untracked.uint32(0)
 
 
 process.Timing = cms.Service("Timing",

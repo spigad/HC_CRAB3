@@ -21,7 +21,7 @@ process.source = cms.Source("PoolSource",
 #############   Calo Jets  ###########################
 process.calo = cms.EDAnalyzer("CaloJetPlotsExample",
     JetAlgorithm  = cms.string('iterativeCone5CaloJets'),
-    HistoFileName = cms.string('JPE_RHAUTO_CHLD_CACHE20.root'),
+    HistoFileName = cms.string('JPE_RHAUTO_CHAPP_CACHE20.root'),
     NJets         = cms.int32(2)
 )
 #############   Path       ###########################
@@ -32,7 +32,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 process.AdaptorConfig = cms.Service("AdaptorConfig",
                                     #tempDir=cms.untracked.string(""),
-                                    cacheHint=cms.untracked.string("lazy-download"),
+                                    cacheHint=cms.untracked.string("application-only"),
                                     readHint=cms.untracked.string("auto-detect"))
 
 

@@ -7,18 +7,13 @@ process.MessageLogger.cerr.threshold = "WARNING"
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 
+
+
 process.source = cms.Source("PoolSource",
 #                            # replace 'myfile.root' with the source file you want to use
                             fileNames = cms.untracked.vstring('/store/mc/JobRobot/RelValProdTTbar/GEN-SIM-DIGI-RECO/MC_3XY_V24_JobRobot-v1/0001/F218B438-A02C-DF11-AADC-000423D99A8E.root')
 #                                                        
 )
-
-#process.source.fileNames = []
-#mf = open("file.list")
-#for i in mf:
-#     i = i.strip("\n")
-#     process.source.fileNames.append(i)
-
 
 
 process.demo = cms.EDAnalyzer('MiniTreeReco3',
@@ -73,9 +68,11 @@ process.Timing = cms.Service("Timing",
 
 
 process.AdaptorConfig = cms.Service("AdaptorConfig",
-                                    tempDir=cms.untracked.string(""),
+                                    #tempDir=cms.untracked.string(""),
                                     cacheHint=cms.untracked.string("lazy-download"),
-                                    readHint=cms.untracked.string("read-ahead-buffered"))
+                                    readHint=cms.untracked.string("auto-detect"))
+
+
 process.source.cacheSize = cms.untracked.uint32(20*1024*1024)
 
 
