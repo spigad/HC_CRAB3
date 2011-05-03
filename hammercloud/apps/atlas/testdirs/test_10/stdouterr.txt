@@ -1,1 +1,0 @@
-/usr/local/bin/bash: line 8: ./test-scripts/testscript: No such file or directory
