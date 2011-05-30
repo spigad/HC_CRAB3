@@ -613,7 +613,7 @@ class GenericView():
     test = dic['Test']
     app  = test.__module__.split('.')[1]
 
-    if not list_type in  ['all','scheduled','submitting','error','running','completed']:
+    if not list_type in  ['all','functional','stress','scheduled','submitting','error','running','completed']:
         raise Http404
 
     list_type = 'testlist'+str(list_type)
@@ -659,6 +659,8 @@ class GenericView():
       mode = type.replace('testlist','')
       if mode == 'all':
         querySet = summary_test.objects.all()
+      elif mode in ['functional','stress']:
+        querySet = summary_test.objects.filter(test__template__category=mode)
       elif mode in ['scheduled','submitting','error','running','completed']:
         querySet = summary_test.objects.filter(test__state=mode)
       else:
