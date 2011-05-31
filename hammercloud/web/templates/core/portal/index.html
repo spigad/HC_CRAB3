@@ -18,7 +18,7 @@
       {% for app in apps %}
         <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
             onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
-            onclick="DoNav('{% url index-view app %}');">
+            onclick="DoNav({% if not 'atlas' in app %}'{% url index-view app %}'{% else %}'http://hammercloud.cern.ch/{{app}}'{% endif %});">
          <td id="{{app}}">{{app}}</td>
         </tr>
       {% endfor %}
