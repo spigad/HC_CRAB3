@@ -30,7 +30,7 @@ class AlarmBase(models.Model):
   id          = models.AutoField(primary_key=True)
   name        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   def __unicode__(self):
     return '%s'%self.name
@@ -45,7 +45,7 @@ class BackendBase(models.Model):
   id          = models.AutoField(primary_key=True)
   name        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   # Functions manager: -> hc.core.base.models.managers.functions.backend_fm
   # Admin manager    : -> hc.core.base.models.managers.admin.backend_am
@@ -69,7 +69,7 @@ class CloudBase(models.Model):
   code        = models.CharField(unique=True, max_length=63)
   name        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   # Functions manager: -> hc.core.base.models.managers.functions.cloud_fm
   # Admin manager    : -> hc.core.base.models.managers.admin.cloud_am
@@ -93,7 +93,7 @@ class CloudOptionBase(models.Model):
   id           = models.AutoField(primary_key=True)
   option_name  = models.CharField(max_length=63, blank=True)
   option_value = models.TextField(blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   #cloud     -> hc.core.base.models.keys.fk.generator.generateFK('Cloud','CloudOption','cloud',{})
 
@@ -108,7 +108,7 @@ class DspatternBase(models.Model):
   id          = models.AutoField(primary_key=True)
   pattern     = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   def __unicode__(self):
     return '%s'%self.pattern
@@ -128,7 +128,7 @@ class GangaBinBase(models.Model):
   id          = models.AutoField(primary_key=True)
   path        = models.CharField(unique=True,max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   def __unicode__(self):
     return '%s'%self.path
@@ -150,7 +150,7 @@ class HostBase(models.Model):
   description = models.CharField(max_length=2047, blank=True)
   loadavg1m   = models.FloatField(default=0)
   active      = models.BooleanField()
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   def __unicode__(self):
     return '%s'%self.name
@@ -170,7 +170,7 @@ class InputTypeBase(models.Model):
   id          = models.AutoField(primary_key=True)
   type        = models.CharField(unique=True,max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   def __unicode__(self):
     return '%s'%self.type
@@ -190,7 +190,7 @@ class JobTemplateBase(models.Model):
   id          = models.AutoField(primary_key=True)
   path        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   def __unicode__(self):
     return '%s'%self.path
@@ -210,7 +210,7 @@ class MetricPermBase(models.Model):
   id          = models.AutoField(primary_key=True)
   name        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   #index        -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPerm','index',{})
   #summary      -> hc.core.base.models.keys.m2m.generator.generateM2M('MetricType','MetricPerm','persite',{})
@@ -235,7 +235,7 @@ class OptionFileBase(models.Model):
   id          = models.AutoField(primary_key=True)
   path        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   def __unicode__(self):
     return '%s'%self.path
@@ -258,7 +258,7 @@ class TestOptionBase(models.Model):
   submit      = models.CharField(max_length=2047,blank=True)
   report      = models.CharField(max_length=2047,blank=True)
   description = models.CharField(max_length=2047,blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   def __unicode__(self):
     return '%s'%self.name
@@ -278,7 +278,7 @@ class UserCodeBase(models.Model):
   id          = models.AutoField(primary_key=True)
   path        = models.CharField(unique=True, max_length=255)
   description = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   def __unicode__(self):
     return '%s'%self.path
@@ -310,7 +310,7 @@ class SiteBase(models.Model):
   ddm            = models.CharField(max_length=511, blank=True)
   enabled        = models.BooleanField(blank=True)
   queue          = models.CharField(max_length=511, blank=True)
-  mtime          = models.DateTimeField(auto_now=True)
+  mtime          = models.DateTimeField()
 
   #cloud     -> hc.core.base.models.keys.fk.generator.generateFK('Cloud','Site','cloud',{})
   #backend   -> hc.core.base.models.kays.fk.generator.generateFK('Backend','Site','backend',{})
@@ -332,7 +332,7 @@ class SiteOptionBase(models.Model):
   id           = models.AutoField(primary_key=True)
   option_name  = models.CharField(max_length=63, blank=True)
   option_value = models.TextField(blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
   
   #site     -> hc.core.base.models.keys.fk.generator.generateFK('Site','SiteOption','site',{})
 
@@ -370,7 +370,7 @@ class TemplateBase(models.Model):
   lifetime           = models.IntegerField(default=0)
   output_dataset     = models.CharField(max_length = 1023, default='')
   extraargs          = models.CharField(max_length=1023, blank=True)
-  mtime              = models.DateTimeField(auto_now=True)
+  mtime              = models.DateTimeField()
 
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Template','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Template','usercode',{})
@@ -405,7 +405,7 @@ class TemplateBackendBase(models.Model):
   num_datasets_per_bulk = models.IntegerField(default=1, db_column='num_datasets_per_bulk')
   min_queue_depth       = models.IntegerField(default=0, db_column='min_queue_depth')
   max_running_jobs      = models.IntegerField(default=1, db_column='max_running_jobs')
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   #backend   -> hc.core.base.models.keys.fk.generator.generateFK('Backend','TemplateBackend','backend',{})
   #template  -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateBackend','template',{})
@@ -432,7 +432,7 @@ class TemplateCloudBase(models.Model):
   num_datasets_per_bulk = models.IntegerField(default=1, db_column='num_datasets_per_bulk')
   min_queue_depth       = models.IntegerField(default=0, db_column='min_queue_depth')
   max_running_jobs      = models.IntegerField(default=1, db_column='max_running_jobs')
-  mtime                 = models.DateTimeField(auto_now=True)
+  mtime                 = models.DateTimeField()
 
   #cloud               -> hc.core.base.models.keys.fk.generator.generateFK('Cloud','TemplateCloud','cloud',{})
   #template            -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateCloud','template',{})
@@ -454,7 +454,7 @@ class TemplateDspatternBase(models.Model):
   __metaclass__ = MetaCreator
 
   id          = models.AutoField(primary_key=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   #dspattern -> hc.core.base.models.keys.fk.generator.generateFK('Dspattern','TemplateDspattern','dspattern',{})
   #template  -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateDspattern','template',{})
@@ -476,7 +476,7 @@ class TemplateHostBase(models.Model):
   __metaclass__ = MetaCreator
 
   id         = models.AutoField(primary_key=True)
-  mtime      = models.DateTimeField(auto_now=True)
+  mtime      = models.DateTimeField()
 
   #host     -> hc.core.base.models.keys.fk.generator.generateFK('Host','TemplateHost','host',{})
   #template -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateHost','template',{})
@@ -503,7 +503,7 @@ class TemplateSiteBase(models.Model):
   num_datasets_per_bulk = models.IntegerField(default=1, db_column='num_datasets_per_bulk')
   min_queue_depth       = models.IntegerField(default=0, db_column='min_queue_depth')
   max_running_jobs      = models.IntegerField(default=1, db_column='max_running_jobs')
-  mtime                 = models.DateTimeField(auto_now=True)
+  mtime                 = models.DateTimeField()
 
   #site                -> hc.core.base.models.keys.fk.generator.generateFK('Site','TemplateSite','site',{})
   #template            -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateSite','template',{})
@@ -527,7 +527,7 @@ class TemplateUserBase(models.Model):
   id    = models.AutoField(primary_key=True)
 #  user = models.IntegerField()
   user  = models.CharField(max_length=127)
-  mtime = models.DateTimeField(auto_now=True)
+  mtime = models.DateTimeField()
 
   #template -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateUser','template',{})
 
@@ -590,7 +590,7 @@ class TestBase(models.Model):
   atjobid            = models.IntegerField(default = 0, null=True, blank=True)
   extraargs          = models.CharField(max_length=1023, blank=True, help_text="Add extra instructions to the ganga command.")
   cloned             = models.IntegerField(default = 0, blank=True)
-  mtime              = models.DateTimeField(auto_now=True)
+  mtime              = models.DateTimeField()
 
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Test','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Test','usercode',{})
@@ -767,7 +767,7 @@ class TestBackendBase(models.Model):
   num_datasets_per_bulk = models.IntegerField(default=1, db_column='num_datasets_per_bulk')
   min_queue_depth       = models.IntegerField(default=0, db_column='min_queue_depth')
   max_running_jobs      = models.IntegerField(default=1, db_column='max_running_jobs')
-  mtime     = models.DateTimeField(auto_now=True)
+  mtime     = models.DateTimeField()
 
   #backend -> hc.core.base.models.keys.fk.generator.generateFK('Backend','TestBackend','backend',{})
   #test    -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestBackend','test',{})
@@ -823,7 +823,7 @@ class TestCloudBase(models.Model):
   num_datasets_per_bulk = models.IntegerField(default=1, db_column='num_datasets_per_bulk')
   min_queue_depth       = models.IntegerField(default=0, db_column='min_queue_depth')
   max_running_jobs      = models.IntegerField(default=1, db_column='max_running_jobs')
-  mtime                 = models.DateTimeField(auto_now=True)
+  mtime                 = models.DateTimeField()
 
   #cloud               -> hc.core.base.models.keys.fk.generator.generateFK('Cloud','TestCloud','cloud',{})
   #test                -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestCloud','test',{})
@@ -875,7 +875,7 @@ class TestDspatternBase(models.Model):
   __metaclass__ = MetaCreator
 
   id          = models.AutoField(primary_key=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   #dspattern -> hc.core.base.models.keys.fk.generator.generateFK('Dspattern','TestDspattern','dspattern',{})
   #test      -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestDspattern','test',{})
@@ -901,7 +901,7 @@ class TestHostBase(models.Model):
   __metaclass__ = MetaCreator
 
   id     = models.AutoField(primary_key=True)
-  mtime  = models.DateTimeField(auto_now=True)
+  mtime  = models.DateTimeField()
 
   #host -> hc.core.base.models.keys.fk.generator.generateFK('Host','Test','host',{})
   #test -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestHost','test',{})
@@ -937,7 +937,7 @@ class TestLogBase(models.Model):
   comment     = models.CharField(max_length=4097)
   severity    = models.CharField(choices = SEVERITY_CHOICES, max_length = 15, default='common')
   user        = models.CharField(max_length = 31)
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   #test -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestLog','test',{})
 
@@ -959,7 +959,7 @@ class TestSiteBase(models.Model):
   num_datasets_per_bulk = models.IntegerField(default=1, db_column='num_datasets_per_bulk')
   min_queue_depth       = models.IntegerField(default=0, db_column='min_queue_depth')
   max_running_jobs      = models.IntegerField(default=1, db_column='max_running_jobs')
-  mtime                 = models.DateTimeField(auto_now=True)
+  mtime                 = models.DateTimeField()
 
   #site                -> hc.core.base.models.keys.fk.generator.generateFK('Site','TestSite','site',{})
   #test                -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestSite','test',{})
@@ -1075,7 +1075,7 @@ class TestSiteAlarmBase(models.Model):
   progress              = models.FloatField(default=0)
   log                   = models.CharField(max_length = 20000, blank=True, null=True)
   actions               = models.CharField(max_length = 1023, blank=True, null=True)
-  mtime                 = models.DateTimeField(auto_now=True)
+  mtime                 = models.DateTimeField()
 
   #alarm               -> hc.core.base.models.keys.fk.generator.generateFK('Alarm','TestSiteAlarm','alarm',{})
   #site                -> hc.core.base.models.keys.fk.generator.generateFK('Site','TestSiteAlarm','site',{})
@@ -1095,7 +1095,7 @@ class TestStateBase(models.Model):
   id          = models.AutoField(primary_key=True)
   ganga_jobid = models.IntegerField()
   copied      = models.BooleanField()
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   #test -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestState','test',{})
 
@@ -1118,7 +1118,7 @@ class TestUserBase(models.Model):
   id     = models.AutoField(primary_key=True)
 #  user  = models.IntegerField()
   user   = models.CharField(max_length=127)
-  mtime  = models.DateTimeField(auto_now=True)
+  mtime  = models.DateTimeField()
 
   #test -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestUser','test',{})
 
@@ -1167,7 +1167,7 @@ class ResultBase(models.Model):
 
   fixed          = models.BooleanField()
 
-  mtime          = models.DateTimeField(auto_now=True)
+  mtime          = models.DateTimeField()
 
   #site         -> hc.core.base.models.keys.fk.generator.generateFK('Site','Result','site',{})
   #test         -> hc.core.base.models.keys.fk.generator.generateFK('Test','Result','test',{})
@@ -1227,7 +1227,7 @@ class MetricTypeBase(models.Model):
   title       = models.CharField(max_length=255)
   type        = models.CharField(choices = PLOT_TYPE, max_length=15)
   description = models.CharField(max_length=2047,blank=True) 
-  mtime       = models.DateTimeField(auto_now=True)
+  mtime       = models.DateTimeField()
 
   def __unicode__(self):
     return '%s'%(self.title)
@@ -1246,7 +1246,7 @@ class MetricBase(models.Model):
 
   id            = models.AutoField(primary_key=True)
   url           = models.CharField(max_length=4095)
-  mtime         = models.DateTimeField(auto_now=True)
+  mtime         = models.DateTimeField()
 
   #metric_type -> hc.core.base.models.keys.fk.generator.generateFK('MetricType','Metric','metric_type',{})
 
@@ -1299,7 +1299,7 @@ class SiteMetricBase(models.Model):
   __metaclass__ = MetaCreator
 
   id       = models.AutoField(primary_key=True)
-  mtime    = models.DateTimeField(auto_now=True)
+  mtime    = models.DateTimeField()
 
   #metric -> hc.core.base.models.keys.fk.generator.generateFK('Metric','SiteMetric','metric',{})
   #site   -> hc.core.base.models.keys.fk.generator.generateFK('Site','SiteMetric','site',{})  
@@ -1318,7 +1318,7 @@ class TestMetricBase(models.Model):
   __metaclass__ = MetaCreator
 
   id       = models.AutoField(primary_key=True)
-  mtime    = models.DateTimeField(auto_now=True)
+  mtime    = models.DateTimeField()
 
   #metric -> hc.core.base.models.keys.fk.generator.generateFK('Metric','TestMetric','metric',{})
   #test   -> hc.core.base.models.keys.fk.generator.generateFK('Test','TestMetric','test',{})
@@ -1355,7 +1355,7 @@ class UsgSliceBase(models.Model):
   type  = models.CharField(choices = TYPE_CHOICES, max_length = 31)
   start = models.DateTimeField()
   end   = models.DateTimeField()
-  mtime = models.DateTimeField(auto_now=True)
+  mtime = models.DateTimeField()
 
 #  def save(self,*args,**kwargs):
 #    self.mtime = datetime.now()
@@ -1383,7 +1383,7 @@ class UsgSiteBase(models.Model):
   completed = models.IntegerField(default=0)
   failed    = models.IntegerField(default=0)
   type      = models.CharField(choices = TYPE_CHOICES, max_length = 31)
-  mtime     = models.DateTimeField(auto_now=True)
+  mtime     = models.DateTimeField()
 
   #site    -> hc.core.base.models.keys.fk.generator.generateFK('Site','UsgSite','site',{})
 
@@ -1443,7 +1443,7 @@ class SummaryTestBase(models.Model):
   c_t             = models.FloatField(default=0,null=True)
   f_t             = models.FloatField(default=0,null=True)
 
-  mtime           = models.DateTimeField(auto_now=True)
+  mtime           = models.DateTimeField()
 
   #test          -> hc.core.base.models.keys.fk.generator.generateFK('Test','SummaryTest','test',{})
 #  #s_metric -> hc.core.base.models.keys.fk.generator.generateFK('SummaryMetric','SummaryTest','s_metric',{})
@@ -1476,7 +1476,7 @@ class SummaryTestSiteBase(models.Model):
   c_t             = models.FloatField(default=0,null=True)
   f_t             = models.FloatField(default=0,null=True)
 
-  mtime           = models.DateTimeField(auto_now=True)
+  mtime           = models.DateTimeField()
 
   #test          -> hc.core.base.models.keys.fk.generator.generateFK('Test','SummaryTestSite','test',{})
   #site          -> hc.core.base.models.keys.fk.generator.generateFK('Site','SummaryTestSite','site',{})
@@ -1506,7 +1506,7 @@ class SummaryRobotBase(models.Model):
   errorrate      = models.FloatField(default=0)
   errorrateNorm  = models.FloatField(default=0)
   day            = models.DateField()
-  mtime          = models.DateTimeField(auto_now=True)
+  mtime          = models.DateTimeField()
 
   #site     -> hc.core.base.models.keys.fk.generator.generateFK('Site','SummaryRobot','site',{})
 
@@ -1533,7 +1533,7 @@ class SummaryEvolutionBase(models.Model):
   failed         = models.IntegerField(default=0)
   total          = models.IntegerField(default=0)
   time           = models.DateTimeField()
-  mtime          = models.DateTimeField(auto_now=True)
+  mtime          = models.DateTimeField()
 
   #test     -> hc.core.base.models.keys.fk.generator.generateFK('Test','SummaryEvolution','test',{})
   #site     -> hc.core.base.models.keys.fk.generator.generateFK('Site','SummaryEvolution','site',{})
