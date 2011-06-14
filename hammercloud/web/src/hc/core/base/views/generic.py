@@ -617,6 +617,7 @@ class GenericView():
         raise Http404
 
     list_type = 'testlist'+str(list_type)
+    help = True
 
     #Here there is no customization allowed.
     return render_to_response('core/app/test/testlist.html', locals(), context_instance = RequestContext(request))
@@ -1075,7 +1076,7 @@ class GenericView():
 
     t = loader.select_template(['%s/robot/historical.html'%(app),'core/app/robot/historical.html'])
     c = RequestContext(request,
-                      {'to':day_to,'from':day_from,'hists':hists,'length':LENGTH},
+                      {'to':day_to,'from':day_from,'hists':hists,'length':LENGTH,'help':True},
                       [defaultContext]
                     )
     return HttpResponse(t.render(c))
@@ -1153,7 +1154,7 @@ class GenericView():
 
     t = loader.select_template(['%s/stats/evolution.html'%(app),'core/app/stats/evolution.html'])
     c = RequestContext(request,
-                      {'titles':titles,'evol':evol,'clouds':clouds,'type':type},
+                      {'titles':titles,'evol':evol,'clouds':clouds,'type':type,'help':True},
                       [defaultContext]
                     )
     return HttpResponse(t.render(c))

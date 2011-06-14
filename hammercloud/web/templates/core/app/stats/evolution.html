@@ -102,15 +102,8 @@
 
 {% endblock %}
 
-{% block content %}
-
-  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
-
-  <h2>HC Evolution ({{type}})</h2>{% load hc_tags %}
-
-    <div id='usage'>
-      <h3>USAGE</h3>
-      <p>
+{% block help_title %}USAGE{% endblock %}
+{% block help_text %}
         1.- This graph shows the number of <b><i>running</i></b>, <b><i>submitted</i></b>, <b><i>completed</i></b>, <b><i>failed</i></b> or <b><i>total</i></b> jobs.<br/>
         2.- The values are the daily <b><i>average</i></b> for running and submitted, and the <b><i>sum</i></b> for completed, failed or total.<br/>
         3.- If the values have been summarized (average or sum) will have time <b><i>00:10</i></b> of the summarized day.<br/>
@@ -120,7 +113,13 @@
         6.- Default sites: <b><i>None</i></b>.<br/>
         7.- Use the form on the <b><i>bottom</i></b> to make a different selection.<br/>
       </p>
-    </div>
+{% endblock %}
+
+{% block content %}
+
+  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+
+  <h2>HC Evolution ({{type}})</h2>{% load hc_tags %}
 
     <div id="visualization" style="width: 980px; height: 420px;"></div>
     <script language="JavaScript" type="text/javascript">

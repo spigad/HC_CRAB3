@@ -82,16 +82,8 @@
 
 {% endblock %}
 
-{% block content %}
-
-  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
-
-  <h2>
-    Historical view of Robot <br/> from {{from|date:'M d, Y'}} to {{to|date:'M d, Y'}}
-  </h2>
-
-  <div id='usage'>
-    <h3>HINTS.</h3>
+{% block help_title %}HINTS{% endblock %}
+  {% block help_text %}
     <p>
     1.- This table represents the efficiency calculated as completed/completed+failed.<br>
     2.- Click on the borders to highlight columns or rows.<br>
@@ -106,7 +98,15 @@
       <tr><td class="ongreen"></td><td style="border:0px;width:250px;">95% < efficiency.</td></tr>
     </table>
 
-  </div>
+  {% endblock %}
+
+{% block content %}
+
+  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+
+  <h2>
+    Historical view of Robot <br/> from {{from|date:'M d, Y'}} to {{to|date:'M d, Y'}}
+  </h2>
 
   {% load hc_tags %}
 

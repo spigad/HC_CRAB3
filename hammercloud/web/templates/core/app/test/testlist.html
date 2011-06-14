@@ -55,13 +55,8 @@
   </script>
 {% endblock %}
 
-{% block content %}
-  <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/> 
-  <h2>Test list</h2>
-
-  <div id='usage'>
-    <h3>USAGE of the SEARCH field.</h3>
-    <p>
+{% block help_title %}USAGE of the SEARCH field.{% endblock %}
+{% block help_text %}
     1.- Put your mouse over the table column title. It a ballon appears with a code, you can search that field.<br/>
     2.- Remember the code.<br/>
     3.- Also the type of value to be introduced.<br/>
@@ -70,9 +65,11 @@
     &nbsp;&nbsp;&nbsp;'&gt;' &raquo; codeY&gt;value_desiredY<br/>
     &nbsp;&nbsp;&nbsp;'&lt;' &raquo; codeZ&lt;value_desiredZ<br/>
     &nbsp;&nbsp;&nbsp;'&amp;' &raquo; codeX:value_desiredX&amp;codeY&lt;value_desiredY<br/> 
-    </p>
+{% endblock %}
 
-  </div>
+{% block content %}
+  <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/> 
+  <h2>Test list</h2>
 
   <table cellpadding="0" cellspacing="0" border="0" class="testlist" id="testlist">
     <thead>
