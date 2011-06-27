@@ -1,5 +1,5 @@
 from GChartWrapper import *
-from math import ceil
+from math import ceil,floor
 import numpy
 
 def line(values, labels, legend, title, colors=['0000FF']):
@@ -34,7 +34,7 @@ def pie(values, labels, title, colors=['333333']):
     chart.color(*colors)
     return str(chart)
 
-def hist(x, bins, xlabel, title, x_range=None):
+def hist(x, bins, xlabel, title, x_range=None, mean_func=None):
 
     x_sub = []
     for k in x:
@@ -46,16 +46,18 @@ def hist(x, bins, xlabel, title, x_range=None):
     if not x:
         return None
     if not x_range:
-        x_range = (0,int(max(1,ceil(max(x)*0.1)*10)))
-    
-    mean = numpy.mean(x)
+        #x_range = (0,int(max(1,ceil(max(x)*0.1)*10)))
+        x_range = (0, ceil(max(x)))
+    if mean_func is None:
+        mean_func = numpy.mean
+    mean = mean_func(x)
     std = numpy.std(x)
     chart = Histogram(x,bins,x_range)
     chart.size(300,300)
     chart.color('4d89f9')
     chart.axes.type('xyxx')
-    chart.axes.range(0,x_range[0],x_range[1],ceil(((x_range[1]-x_range[0])/min(bins,8))/10)*10)
-    ylim = max(40,ceil((chart.get_max()*0.11))*10)
+    chart.axes.range(0,x_range[0],x_range[1],((x_range[1]-x_range[0])/min(bins,8)))
+    ylim = ceil(chart.get_max())
     chart.axes.range(1,0,ylim,ylim/10)
     chart.scale(0,ylim)
     chart.title(title)
@@ -69,7 +71,8 @@ class Histogram(VerticalBarGroup):
    
   def __init__(self, data, bins, x_range=None, **kwargs):
     if not x_range:
-      x_range = (0,ceil(max(data)/10)*10)
+      #x_range = (0,ceil(max(data)/10)*10)
+      x_range = (0, ceil(max(data)))
     val = dict()
     for i in xrange(bins):
       val[i+1] = 0
