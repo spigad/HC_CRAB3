@@ -3,7 +3,7 @@
 {% block css %}
 
   {{block.super}}
-  <link type="text/css" href="{{ MEDIA_URL }}css/jquery.multiselect.css" rel="stylesheet" /> 
+  <link type="text/css" href="{{ MEDIA_URL }}css/jquery.multiselect.new.css" rel="stylesheet" /> 
   <link type="text/css" href="{{ MEDIA_URL }}css/jquery.multiselect.filter.css" rel="stylesheet" />
 
 {% endblock %}
@@ -11,10 +11,14 @@
 {% block javascript %}
 
   {{block.super}}
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.5.min.js"></script>
   <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.multiselect.min.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.multiselect.filter.js"></script>
-
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.multiselect.new.min.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.multiselect.filter.min.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.cookie.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.collapse.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/json2.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/dumbFormState-1.js"></script>
   <script type="text/javascript" src="{{ MEDIA_URL }}js/time_dialog.js"></script>
 
 
@@ -69,6 +73,7 @@
 
 
   <script type='text/javascript' src="{{ MEDIA_URL }}js/AC_OETags.js" language="javascript"></script>
+  <script>document.documentElement.className = "js";</script> 
 
   {% ifequal type 'timeline' %}
 
@@ -145,6 +150,9 @@
 
     }    
   </script>
+  <script type='text/javascript'>
+
+  </script>
 
   {% endifequal %}
 
@@ -153,17 +161,65 @@
 {% block docready %}
 
   {{block.super}}
-  $("select.multi_metric_type").multiSelect({ noneSelectedText:'Filter by metric', shadow:true});
-  $("select.multi_site").multiSelect({ noneSelectedText:'Filter by site', shadow:true});
-  $("select.multi_cloud").multiSelect({ noneSelectedText:'Filter by cloud', shadow:true});
-  $("select.multi_test").multiSelect({ noneSelectedText:'Filter by test', shadow:true});
-  $("select.multi_template").multiSelect({ noneSelectedText:'Filter by template',shadow:true});
-  $("select.sort_by").multiSelect({ noneSelectedText:'Sort by' ,multiple: false, showHeader: false,
-    selectedText: function(numChecked, numTotal, checkedItem){return $(checkedItem).attr("title");}
+  $("select.multi_metric_type").multiselect({ noneSelectedText:'Metrics to show', shadow:true, minWidth:300, selectedList: 3});
+  $("select.multi_site").multiselect({ noneSelectedText:'Filter by site', shadow:true, minWidth:300, selectedList: 3});
+  $("select.multi_cloud").multiselect({ noneSelectedText:'Filter by cloud', shadow:true, minWidth:300, selectedList: 3});
+  $("select.multi_test").multiselect({ noneSelectedText:'Filter by test', shadow:true, minWidth:300, selectedList: 3});
+  $("select.multi_template").multiselect({ noneSelectedText:'Filter by template',shadow:true, minWidth:300, selectedList: 3});
+  $("select.sort_by").multiselect({ noneSelectedText:'Sort by' ,multiple: false, showHeader: false,
+    selectedText: function(numChecked, numTotal, checkedItem){return $(checkedItem).attr("title");},
+    click: function(event, ui){
+      if (ui.value == 'site') {
+        $("select.multi_cloud").multiselect('disable');
+      } else {
+        $("select.multi_cloud").multiselect('enable');
+      }
+   }, minWidth:300, selectedList: 3});
+  $("select.type").multiselect({ noneSelectedText:'Output type' ,multiple: false, showHeader: false,
+    selectedText: function(numChecked, numTotal, checkedItem){return $(checkedItem).attr("title");},
+    minWidth:300, selectedList: 3});
+  
+  if ($("select.sort_by").multiselect('getChecked').attr('value') == 'site') {
+        $("select.multi_cloud").multiselect('disable');
+  }
+  
+  $("select.multi_site").multiselect('refresh');
+  $("select.multi_cloud").multiselect('refresh');
+  $("select.multi_template").multiselect('refresh');
+  $("select.multi_test").multiselect('refresh');
+  
+  $("#datebox").collapse({
+      show: function(){
+        this.animate({
+          opacity: 'toggle', 
+          height: 'toggle'
+        }, 300);
+      },
+      hide : function() {
+        this.animate({
+          opacity: 'toggle', 
+          height: 'toggle'
+        }, 300);
+      },
+      head: "h3"
+    });
+
+  $(function(){
+    $('form').dumbFormState();
   });
-  $("select.type").multiSelect({ noneSelectedText:'Type' ,multiple: false, showHeader: false,
-    selectedText: function(numChecked, numTotal, checkedItem){return $(checkedItem).attr("title");}
-  });
+  
+  $('.stats_tips').hide();
+  show_help = false;
+  $('a#show_help').click(function(){
+    if (show_help) {
+        $('.stats_tips').hide('slow');
+        $('a#show_help').text('Show help'); 
+    } else {
+        $('.stats_tips').show('slow');
+        $('a#show_help').text('Hide help') 
+    }
+    show_help = !show_help;
+   });
 
 {% endblock %}
 
@@ -185,18 +241,55 @@
 
       {% if dialog %}
       <div id="sec_list">
-        <form method="get" action="{% url statistics-view app%}">
+        <a id="show_help" title="button">Show help</a>
+        <form method="post" action="{% url statistics-view app%}">
+          {% csrf_token %}
 
-
+          <h3>Basic configuration</h3>
+          <p class="stats_tips">Select the data you want to show in the query. All fields on this category are required.</p>
           <select class="type" multiple="multiple" name="type" size="3">
             <option value='plot' {% ifequal type 'plot' %}selected='selected'{% endifequal %}>Plot</option>
             <option value='rank' {% ifequal type 'rank' %}selected='selected'{% endifequal %}>Rank</option>
             <option value='timeline' {% ifequal type 'timeline' %}selected='selected'{% endifequal %}>Timeline</option>
           </select>
-
-
-          <p>Basic search:</p>
+          
           {% for key,list in dialog %}
+            {% if key == 'metric_type' %}
+            <select class="multi_{{ key }}" multiple="multiple" name="{{ key }}" size="5">
+              {% for item in list %}
+                {% if key != 'site' %}
+                  <option value='{{item.id}}' {% if item.selected %}selected='selected'{% endif %}>
+                    {% if key == 'metric_type' %}
+                      {{ item.title|chop:20 }}
+                    {% endif %}
+                    {% if key == 'cloud' %}
+                      {{ item.name|chop:20 }}
+                    {% endif %}
+                    {% if key == 'test' %}
+                      Test {{ item.id }}
+                    {% endif %}
+                    {% if key == 'template' %}
+                      {{ item.description|chop:20 }}
+                    {% endif %}
+                  </option>
+                {% endif %}
+              {% endfor %}
+              {% endif %}
+            </select>
+          {% endfor %}
+          
+          <select class="sort_by" multiple="multiple" name="sort_by" size="4">
+            <option value='cloud' {% ifequal sort_by 'cloud' %}selected='selected'{% endifequal %}>cloud</option>
+            <option value='site' {% ifequal sort_by 'site' %}selected='selected'{% endifequal %}>site</option>
+            <option value='test' {% ifequal sort_by 'test' %}selected='selected'{% endifequal %}>test</option>
+            <option value='template' {% ifequal sort_by 'template' %}selected='selected'{% endifequal %}>template</option>
+            <!--option value='metric' {% ifequal sort_by 'metric' %}selected='selected'{% endifequal %}>metric</option-->
+          </select>
+
+          <h3 id='toggle'>Data output filtering</h3>
+          <p class="stats_tips">Depending on the configuration of the query, you should select over which field you want to filter the results. For the majority of cases, this matches with the 'Sort by' option, but also you can apply filter over other parameters. Please select at least a filter over the field used to sort.</p>
+          {% for key,list in dialog %}
+            {% if key != 'metric_type' %}
             <select class="multi_{{ key }}" multiple="multiple" name="{{ key }}" size="5">
               {% for item in list %}
                 {% if key == 'site' %}
@@ -224,22 +317,18 @@
                 {% endif %}
               {% endfor %}
             </select><br/>
-
+          {% endif %}
           {% endfor %}
-          <select class="sort_by" multiple="multiple" name="sort_by" size="4">
-            <option value='cloud' {% ifequal sort_by 'cloud' %}selected='selected'{% endifequal %}>cloud</option>
-            <option value='site' {% ifequal sort_by 'site' %}selected='selected'{% endifequal %}>site</option>
-            <option value='test' {% ifequal sort_by 'test' %}selected='selected'{% endifequal %}>test</option>
-            <option value='template' {% ifequal sort_by 'template' %}selected='selected'{% endifequal %}>template</option>
-            <!--option value='metric' {% ifequal sort_by 'metric' %}selected='selected'{% endifequal %}>metric</option-->
-          </select>
 
           <div id="datebox">
-          <p>Advanced search:</p>
+          <h3>Advanced search</h3>
+          <div>
+          <p class="stats_tips">Advanced search allows you to set more specific options.</p>
           <input type="text" id="from" name="from" value="From" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" />
           <input type="text" id="starttime" name="starttime" value="Starttime" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" /><img id='starttime_img' src="{{ MEDIA_URL }}images/icon_clock.gif" alt="starttime"/>
           <input type="text" id="to" name="to" value="To" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" />
           <input type="text" id="endtime" name="endtime" value="Endtime" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" /><img id="endtime_img" src="{{ MEDIA_URL }}images/icon_clock.gif" alt="endtime"/>
+          </div>
           </div>
 
           <div id="start_dialog" class='dialog' title="Starttime">

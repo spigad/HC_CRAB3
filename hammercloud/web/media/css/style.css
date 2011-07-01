@@ -215,7 +215,7 @@ a{
 #section #sec_list{
 #        float:left;
         margin:auto;
-        width:240px;
+        width:360px;
         border:inset 1px;
         padding-top:10px;
         padding-bottom:10px;
@@ -923,6 +923,26 @@ th:hover span {
   top:-6px;
   padding-top:4px;
   height: 26px;
+}
+
+#show_help {
+  font-size: smaller;
+}
+
+.stats_tips {
+  font-size: smaller;
+  color: black;
+  text-decoration: none !important;
+  background: #aaa;
+  padding: 5px 5px;
+}
+
+#datebox h3 {
+  background: url("../images/arrows.png") no-repeat 0 -33px;
+}
+
+#datebox h3.active {
+  background-position: 0 5px;
 }
 
 .historical {

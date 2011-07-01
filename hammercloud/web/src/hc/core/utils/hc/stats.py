@@ -22,25 +22,25 @@ class Stats:
 
     query = {}
 
-    query['metric_type']     = request.GET.getlist('metric_type')
-    query['site']            = request.GET.getlist('site')
-    query['cloud']           = request.GET.getlist('cloud')
-    query['test']            = request.GET.getlist('test')
-    query['template']        = request.GET.getlist('template')
+    query['metric_type']     = request.REQUEST.getlist('metric_type')
+    query['site']            = request.REQUEST.getlist('site')
+    query['cloud']           = request.REQUEST.getlist('cloud')
+    query['test']            = request.REQUEST.getlist('test')
+    query['template']        = request.REQUEST.getlist('template')
 
     commands = {}
 
-    commands['type']            = request.GET.get('type','')
-    commands['go']              = request.GET.get('go','') 
-    commands['sort_by']         = request.GET.get('sort_by','')
-    commands['completed']       = request.GET.get('completed','')
+    commands['type']            = request.REQUEST.get('type','')
+    commands['go']              = request.REQUEST.get('go','') 
+    commands['sort_by']         = request.REQUEST.get('sort_by','')
+    commands['completed']       = request.REQUEST.get('completed','')
 
     advanced = {}
 
-    advanced['from']            = request.GET.get('from','')
-    advanced['starttime']       = request.GET.get('starttime','')
-    advanced['to']              = request.GET.get('to','')
-    advanced['endtime']         = request.GET.get('endtime','')
+    advanced['from']            = request.REQUEST.get('from','')
+    advanced['starttime']       = request.REQUEST.get('starttime','')
+    advanced['to']              = request.REQUEST.get('to','')
+    advanced['endtime']         = request.REQUEST.get('endtime','')
 
     Qobjects = {}
     error = ''
@@ -950,13 +950,13 @@ class Stats:
     obj['site']        = dic['Site']
 
     query = {}
-    query['site']            = list(set(request.GET.getlist('site')))
-    query['cloud']           = list(set(request.GET.getlist('cloud')))
+    query['site']            = list(set(request.REQUEST.getlist('site')))
+    query['cloud']           = list(set(request.REQUEST.getlist('cloud')))
 
     error = 0
 
     Qobjects = {}
-    Qobjects['type']         = request.GET.get('type','running')
+    Qobjects['type']         = request.REQUEST.get('type','running')
     TYPES = ['running','submitted','completed','failed','total']
 
     if not Qobjects['type'] in TYPES:
