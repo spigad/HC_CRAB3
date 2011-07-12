@@ -47,7 +47,7 @@ def hist(x, bins, xlabel, title, x_range=None, mean_func=None):
         return None
     if not x_range:
         #x_range = (0,int(max(1,ceil(max(x)*0.1)*10)))
-        x_range = (0, ceil(max(x)))
+        x_range = (floor(min(x)), ceil(max(x)))
     if mean_func is None:
         mean_func = numpy.mean
     mean = mean_func(x)
@@ -72,12 +72,20 @@ class Histogram(VerticalBarGroup):
   def __init__(self, data, bins, x_range=None, **kwargs):
     if not x_range:
       #x_range = (0,ceil(max(data)/10)*10)
-      x_range = (0, ceil(max(data)))
+      x_range = (floor(min(data)), ceil(max(data)))
+    assert x_range[0] < x_range[1]
+    assert bins > 0
+    bin_width = (x_range[1] - x_range[0]) / bins
     val = dict()
     for i in xrange(bins):
       val[i+1] = 0
     for k in data:
-      val[max(1,int(ceil(min(k,x_range[1]) / (float(x_range[1]) / bins))))] += 1
+      bin_index = int(ceil(((k - x_range[0]) / bin_width)))
+      if bin_index > bins:
+          bin_index = bins
+      elif bin_index < 1:
+          bin_index = 1
+      val[bin_index] += 1
     self.max_value = max(val.values())
     self.bar('a',1,1)
     VerticalBarGroup.__init__(self, val.values(), **kwargs)      
