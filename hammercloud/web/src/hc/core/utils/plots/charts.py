@@ -42,21 +42,20 @@ def hist(x, bins, xlabel, title, x_range=None, mean_func=None):
         x_sub += [float(k)]
 #    x = [float(k) for k in x]
     x = x_sub
-
     if not x:
         return None
-    if not x_range:
-        #x_range = (0,int(max(1,ceil(max(x)*0.1)*10)))
-        x_range = (floor(min(x)), ceil(max(x)))
     if mean_func is None:
         mean_func = numpy.mean
     mean = mean_func(x)
     std = numpy.std(x)
-    chart = Histogram(x,bins,x_range)
+    chart = Histogram(x,bins,x_range, mean_func)
     chart.size(300,300)
     chart.color('4d89f9')
     chart.axes.type('xyxx')
-    chart.axes.range(0,x_range[0],x_range[1],((x_range[1]-x_range[0])/min(bins,8)))
+    chart.axes.range(0,
+                     chart.get_x_range()[0],
+                     chart.get_x_range()[1],
+                     ((chart.get_x_range()[1]-chart.get_x_range()[0])/min(bins,8)))
     ylim = ceil(chart.get_max())
     chart.axes.range(1,0,ylim,ylim/10)
     chart.scale(0,ylim)
@@ -69,11 +68,23 @@ def hist(x, bins, xlabel, title, x_range=None, mean_func=None):
 
 class Histogram(VerticalBarGroup):
    
-  def __init__(self, data, bins, x_range=None, **kwargs):
+  def __init__(self, data, bins, x_range=None, mean_func=numpy.mean, **kwargs):
+    a = float(min(data))
+    b = float(max(data))
+    s = float(numpy.std(data))
+    m = float(mean_func(data))
     if not x_range:
-      #x_range = (0,ceil(max(data)/10)*10)
-      x_range = (floor(min(data)), ceil(max(data)))
-    assert x_range[0] < x_range[1]
+      if a < 0:
+          x_range = (a - 0.1 * (b - a), b + 0.1 * (b - a))
+      elif a == 0:
+          x_range = (0.0, 1.1 * b)
+      else:
+          if m / s > 10:
+              x_range = (a - 0.1 * (b - a), b + 0.1 * (b - a))
+          else:
+              x_range = (0.0, b + 0.1 * (b - a))
+    assert x_range is not None
+    assert x_range[0] <= x_range[1]
     assert bins > 0
     bin_width = (x_range[1] - x_range[0]) / bins
     val = dict()
@@ -88,7 +99,11 @@ class Histogram(VerticalBarGroup):
       val[bin_index] += 1
     self.max_value = max(val.values())
     self.bar('a',1,1)
-    VerticalBarGroup.__init__(self, val.values(), **kwargs)      
-       
+    self.x_range = x_range
+    VerticalBarGroup.__init__(self, val.values(), **kwargs)
+
+  def get_x_range(self):
+    return self.x_range
+
   def get_max(self):
     return self.max_value
