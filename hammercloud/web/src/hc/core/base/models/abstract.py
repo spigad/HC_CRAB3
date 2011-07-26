@@ -1228,6 +1228,7 @@ class MetricTypeBase(models.Model):
   type        = models.CharField(choices = PLOT_TYPE, max_length=15)
   description = models.CharField(max_length=2047,blank=True) 
   mtime       = models.DateTimeField(auto_now=True)
+  rate        = models.BooleanField(default=False)
 
   def __unicode__(self):
     return '%s'%(self.title)
@@ -1442,6 +1443,8 @@ class SummaryTestBase(models.Model):
   c_cf            = models.FloatField(default=0,null=True)
   c_t             = models.FloatField(default=0,null=True)
   f_t             = models.FloatField(default=0,null=True)
+  
+  timetorun       = models.IntegerField(null=True)
 
   mtime           = models.DateTimeField(auto_now=True)
 
@@ -1475,6 +1478,8 @@ class SummaryTestSiteBase(models.Model):
   c_cf            = models.FloatField(default=0,null=True)
   c_t             = models.FloatField(default=0,null=True)
   f_t             = models.FloatField(default=0,null=True)
+  
+  timetorun       = models.IntegerField(null=True)
 
   mtime           = models.DateTimeField(auto_now=True)
 

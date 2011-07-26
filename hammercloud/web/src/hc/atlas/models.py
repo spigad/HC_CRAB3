@@ -155,6 +155,7 @@ class Result(ResultBase):
   pandatime2            = models.IntegerField(blank=True,null=True)
   pandatime3            = models.IntegerField(blank=True,null=True)
   pandatime4            = models.IntegerField(blank=True,null=True)
+  pandatime5            = models.IntegerField(blank=True,null=True)
   #ganga_time_2 - ganga_time_1
   nonpandatime1         = models.IntegerField(blank=True,null=True)
   #ganga_time_3 - ganga_time_2
@@ -226,6 +227,7 @@ class SummaryTest(SummaryTestBase):
   pandatime2            = models.IntegerField(blank=True,null=True)
   pandatime3            = models.IntegerField(blank=True,null=True)
   pandatime4            = models.IntegerField(blank=True,null=True)
+  pandatime5            = models.IntegerField(blank=True,null=True)
   #ganga_time_2 - ganga_time_1
   nonpandatime1         = models.IntegerField(blank=True,null=True)
   #ganga_time_3 - ganga_time_2
@@ -253,6 +255,7 @@ class SummaryTestSite(SummaryTestSiteBase):
   pandatime2            = models.IntegerField(blank=True,null=True)
   pandatime3            = models.IntegerField(blank=True,null=True)
   pandatime4            = models.IntegerField(blank=True,null=True)
+  pandatime5            = models.IntegerField(blank=True,null=True)
   #ganga_time_2 - ganga_time_1
   nonpandatime1         = models.IntegerField(blank=True,null=True)
   #ganga_time_3 - ganga_time_2
