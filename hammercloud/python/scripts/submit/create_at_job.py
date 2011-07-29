@@ -36,6 +36,11 @@ class CreateAtJob:
       return HCDIR
   
   def logFileUpdated(self,app,test):
+    HCAPP = self.getHCAPP(app)
+    HCDIR = self.getHCDIR(app)
+    if not HCAPP or not HCDIR:
+      return 0
+
     try:
       mtime = os.stat('%s/testdirs/test_%d/stdouterr.txt'%(HCAPP,test.id)).st_mtime
     except OSError:
@@ -63,6 +68,10 @@ class CreateAtJob:
     return True
 
   def testPaused(self,app,test):
+    HCAPP = self.getHCAPP(app)
+    HCDIR = self.getHCDIR(app)
+    if not HCAPP or not HCDIR:
+      return 0
     txt = 'Test %d is paused'%test.id
     cmd = 'grep "%s" %s/testdirs/test_%d/stdouterr.txt'%(txt,HCAPP,test.id)
     if os.system(cmd):
@@ -71,6 +80,10 @@ class CreateAtJob:
     return True
 
   def checkFault(self,app,test):
+    HCAPP = self.getHCAPP(app)
+    HCDIR = self.getHCDIR(app)
+    if not HCAPP or not HCDIR:
+      return 0
     # check logfile for JobAccessError or segmentation fault                                                                                                                          
     txt = ['JobAccessError','Segmentation fault']
     for t in txt:
@@ -131,7 +144,11 @@ class CreateAtJob:
     return 1
 
   def rescheduleJob(self,app,test):
-    atjobid = commands.getoutput('at -f %s/testdirs/run-test-%d.sh now'%(app,test.id)).rstrip()
+    HCAPP = self.getHCAPP(app)
+    if not HCAPP:
+      return 0
+
+    atjobid = commands.getoutput('at -f %s/testdirs/run-test-%d.sh now'%(HCAPP,test.id)).rstrip()
     test.atjobid = int(atjobid.split()[1])
     test.save()
     print '[INFO][%s][create_at_job] restarting test %d: %s\n'%(app,test.id,atjobid)
@@ -173,7 +190,8 @@ class CreateAtJob:
           for thl in test_hosts:
             print '%s: %3f'%(thl.host.name,thl.host.loadavg1m)
     
-    test = test.objects.fitler(state='running')
+    test = custom_import('hc.%s.models.Test'%(app))
+    tests = test.objects.filter(state='running')
     if not tests:
       print '[INFO][%s][create_at_job] No tests found on state: running'%(app)
     
