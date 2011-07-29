@@ -1,5 +1,6 @@
 from hc.core.utils.generic.class_func import custom_import
 from datetime import datetime
+import time
 
 class TestGenerate:
 
@@ -33,9 +34,9 @@ class TestGenerate:
       print '[ERROR][%s][test_generate] Could not get test with id %s from DB.'%(app,testid)
       return 0
 
-    if not test.starttime.replace( second = 0 ) < datetime.now():
-      print '[ERROR][%s][test_generate] Test %s starttime value is on the future.'%(app,testid)
-      return 0
+    #if not test.starttime.replace( second = 0 ) < datetime.now():
+    #  print '[ERROR][%s][test_generate] Test %s starttime value is on the future.'%(app,testid)
+    #  return 0
 
     if not test.state == 'scheduled':
       print '[ERROR][%s][test_generate] Test %s is on state %s, instead of scheduled.'%(app,test.id,test.state)
@@ -66,8 +67,17 @@ class TestGenerate:
           print '[INFO][%s][test_generate] Test %s is in submitting state.'%(app,test.id)
 
           return 1
+        else:
+          time.sleep(300)
+          test.state = 'error'
+          test.save()
+          print '[ERROR][%s][test_generate] Error running %s.python.scripts.submit.test_generate.TestGenerate'%(app,app)
+          return 0
       else:
-        #Game over !                                      
+        #Game over !
+        time.sleep(300)                                      
+        test.state = 'error'
+        test.save()
         print '[ERROR][%s][test_generate] Could not import %s.python.scripts.submit.test_generate.TestGenerate'%(app,app)
         return 0
     else:
