@@ -61,8 +61,8 @@ class TestGenerate:
         datasetpatterns.append(td.dspattern.pattern)
 
     jobtemplate = basePath + '/inputfiles/templates/' + test.jobtemplate.path
-    userarea    = basePath + '/inputfiles/usercodes/' + test.usercode.path
-    joboptions  = basePath + '/inputfiles/optionfiles/' + test.optionfile.path    
+    userarea    = basePath + '/inputfiles/templates/' + test.usercode.path
+    joboptions  = basePath + '/inputfiles/templates/' + test.optionfile.path    
 
     try:
       pattern = '.*/(.*)$'
@@ -70,7 +70,7 @@ class TestGenerate:
     except:
       joboptionsfilename = joboptions
 
-    outputdatasetname = 'hc.%d'%test.id #rows[0][3] + str(int(time.time()))
+    outputdatasetname = 'hc%d'%test.id #rows[0][3] + str(int(time.time()))
 
     inputtype = test.inputtype.type
 
@@ -147,6 +147,9 @@ class TestGenerate:
           fid = fid+1
           # site specific number of jobs
           maxnumdataset = sitenumjobs[site]
+          if maxnumdataset < 1:
+            print "%s has no more jobs needed. Skipping %s"%(site,location)
+            continue
 
           print('\n*** Generating %d jobs for site %s (ddm location %s)\n'%(maxnumdataset,site,location))
 
@@ -258,7 +261,8 @@ class TestGenerate:
             outFile_content = outFile_content.replace('####OUTPUTDATASETNAME####', outputdatasetname+'.'+site+'.'+str(fid) )
             outFile_content = outFile_content.replace('####DATASET####', repr(datasetAll))
             outFile_content = outFile_content.replace('####INPUTTYPE####', inputtype)
-            outFile_content = outFile_content.replace('####NUM####', repr((num-1)) )
+            outFile_content = outFile_content.replace('####NUM####', repr((num-1)))
+            outFile_content = outFile_content.replace('####TESTID####', str(test.id))
 
             outFileName = os.path.join( basePath, outFilePath, '%d_%03d_%s.py'%(fid,num-1,site) )
             outFile = open(outFileName,'w')
