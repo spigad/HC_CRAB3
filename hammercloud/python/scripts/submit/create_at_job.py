@@ -5,7 +5,7 @@ import commands,time,os,os.path
 
 me = 'hammercloud-noreply@cern.ch'
 #you = 'daniel.colin.vanderster@cern.ch,0041764870482@sms.switch.ch'                                                                                                                  
-you = 'daniel.colin.vanderster@cern.ch'
+you = 'daniel.colin.vanderster@cern.ch,ramon.medrano.llamas@cern.ch'
 
 class CreateAtJob:
 
