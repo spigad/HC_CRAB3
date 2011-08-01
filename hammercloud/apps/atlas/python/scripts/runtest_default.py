@@ -403,7 +403,7 @@ def process_job(job):
     stats = job.application.stats
   except:
     pass
-  metrics = ['percentcpu','systemtime','usertime','site','totalevents','wallclock','stoptime','outse','starttime','exitstatus','numfiles3','gangatime1','gangatime2','gangatime3','gangatime4','gangatime5','jdltime','pandatime1','pandatime2','pandatime3','pandatime4','arch','submittime']
+  metrics = ['percentcpu','systemtime','usertime','site','totalevents','wallclock','stoptime','outse','starttime','exitstatus','numfiles3','gangatime1','gangatime2','gangatime3','gangatime4','gangatime5','jdltime','NET_ETH_RX_PREATHENA','NET_ETH_RX_AFTERATHENA','pandatime1','pandatime2','pandatime3','pandatime4','pandatime5','arch','submittime']
   for m in metrics:
     try:
       x = stats[m]
@@ -436,17 +436,21 @@ def process_job(job):
              'ganga_time_4'          :stats['gangatime4'],
              'ganga_time_5'          :stats['gangatime5'],
              'start_time'            :stats['starttime'],
+             'submit_time'           :stats['submittime'],
              'stop_time'             :stats['stoptime'],
              'jdl_time'              :stats['jdltime'],
              'pandatime1'            :stats['pandatime1'],
              'pandatime2'            :stats['pandatime2'],
              'pandatime3'            :stats['pandatime3'],
-             'pandatime4'            :stats['pandatime4'], 
+             'pandatime4'            :stats['pandatime4'],
+             'pandatime5'            :stats['pandatime5'], 
              'output_location'       :stats['outse'],
              'wallclock'             :stats['wallclock'],
              'arch'                  :stats['arch'],
              'percent_cpu'           :stats['percentcpu'],
              'numevents'             :stats['totalevents'],
+             'net_eth_rx_preathena'  :stats['NET_ETH_RX_PREATHENA'],
+             'net_eth_rx_postathena' :stats['NET_ETH_RX_POSTATHENA'],
              'inds'                  :inds,
              'outds'                 :outds,
              'reason'                :job.backend.reason,
@@ -597,7 +601,7 @@ def process_subjob(job,subjob):
   except:
     pass
 
-  metrics = ['percentcpu','systemtime','usertime','site','totalevents','wallclock','stoptime','outse','starttime','exitstatus','numfiles3','gangatime1','gangatime2','gangatime3','gangatime4','gangatime5','jdltime','pandatime1','pandatime2','pandatime3','pandatime4','arch','submittime']
+  metrics = ['percentcpu','systemtime','usertime','site','totalevents','wallclock','stoptime','outse','starttime','exitstatus','numfiles3','gangatime1','gangatime2','gangatime3','gangatime4','gangatime5','jdltime','NET_ETH_RX_PREATHENA','NET_ETH_RX_AFTERATHENA','pandatime1','pandatime2','pandatime3','pandatime4','pandatime5','arch','submittime']
   for m in metrics:
     try:
       x = stats[m]
@@ -623,27 +627,31 @@ def process_subjob(job,subjob):
     pass
 
   #Translate from stats to DB names
-  results = {'ganga_status'          :subjob.status[0],
+  results = {'ganga_status'          :job.status[0],
              'ganga_time_1'          :stats['gangatime1'],
              'ganga_time_2'          :stats['gangatime2'],
              'ganga_time_3'          :stats['gangatime3'],
              'ganga_time_4'          :stats['gangatime4'],
              'ganga_time_5'          :stats['gangatime5'],
              'start_time'            :stats['starttime'],
+             'submit_time'           :stats['submittime'],
              'stop_time'             :stats['stoptime'],
              'jdl_time'              :stats['jdltime'],
              'pandatime1'            :stats['pandatime1'],
              'pandatime2'            :stats['pandatime2'],
              'pandatime3'            :stats['pandatime3'],
              'pandatime4'            :stats['pandatime4'],
+             'pandatime5'            :stats['pandatime5'], 
              'output_location'       :stats['outse'],
              'wallclock'             :stats['wallclock'],
              'arch'                  :stats['arch'],
              'percent_cpu'           :stats['percentcpu'],
              'numevents'             :stats['totalevents'],
+             'net_eth_rx_preathena'  :stats['NET_ETH_RX_PREATHENA'],
+             'net_eth_rx_postathena' :stats['NET_ETH_RX_POSTATHENA'],
              'inds'                  :inds,
              'outds'                 :outds,
-             'reason'                :subjob.backend.reason,
+             'reason'                :job.backend.reason,
              'ganga_number_of_files' :innumfiles,
              }
 
