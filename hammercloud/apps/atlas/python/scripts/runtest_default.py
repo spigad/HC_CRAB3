@@ -46,6 +46,15 @@ for rfield in Result._meta.fields:
   if rfield.__class__.__name__ == 'DateTimeField':
     value_types['DateTimeField'] += [rfield.name]
 
+# get category
+category = test.template.category
+logger.info('Test category: %s'%category)
+
+# Path of the working directory
+if os.environ.has_key('HCAPP'):
+  basePath = os.environ['HCAPP']
+else:
+  basePath = '/tmp'
 
 ##
 ## AUXILIAR FUNTIONS
@@ -73,75 +82,89 @@ def test_paused():
   return False
 
 def test_sleep(t):
-  logger.debug('Sleeping %d seconds'%t)
+  #logger.debug('Sleeping %d seconds'%t)
   time.sleep(t)
 
 ##
 ## UPDATE DATASETS
 ##
-
+datasetsAtSite = {}
 def updateDatasets(site,num):
-
+  global datasetsAtSite
+  global dsLocationsAtSite
+  global basePath
   from dq2.clientapi.DQ2 import DQ2
   dq2=DQ2()
-
-  # get DDM name from site
-  location = Site.objects.filter(name=site)[0].ddm
-  locations = location.split(',')
-
-  # Dataset patterns
-  datasetpatterns = []
-    
-  patterns = [ td.dspattern.pattern for td in test.getTestDspatterns_for_test.all() ]    
-
-  # Path of the working directory
-  if os.environ.has_key('HCAPP'):
-    basePath = os.environ['HCAPP']
-  else:
-    basePath = '/tmp'
-
-  for pattern in patterns:
-    if pattern.startswith('/'):
-      file = open(basePath + '/inputfiles/dspatterns' + pattern)
-      for l in file:
-        datasetpatterns.append(l.strip())
-      file.close()
-    else:
-      datasetpatterns.append(pattern)
-
-  # get list of datasets
+  
   datasets = []
-  for location in locations:
-    for datasetpattern in datasetpatterns:
-      temp = list(dq2.listDatasetsByNameInSite(site=location, name=datasetpattern))
-      datasets = datasets + temp
+  dsLocation = {}
+
+  try:
+    (datasets,dsLocation,ts) = datasetsAtSite[site]
+    logger.info('Read %d datasets for %s from cache (from %d)'%(len(datasets),site,int(ts)))
+  except:  
+    # get DDM name from site
+    location = Site.objects.filter(name=site)[0].ddm
+    locations = location.split(',')
+  
+    # Dataset patterns
+    datasetpatterns = []
+      
+    patterns = [ td.dspattern.pattern for td in test.getTestDspatterns_for_test.all() ]    
+  
+    for pattern in patterns:
+      if pattern.startswith('/'):
+        file = open(basePath + '/inputfiles/dspatterns' + pattern)
+        for l in file:
+          datasetpatterns.append(l.strip())
+        file.close()
+      else:
+        datasetpatterns.append(pattern)
+  
+    # get list of datasets
+    for location in locations:
+      for datasetpattern in datasetpatterns:
+        try:
+          temp = list(dq2.listDatasetsByNameInSite(site=location, name=datasetpattern))
+          datasets = datasets + temp
+          for ds in temp:
+            dsLocation[ds]=location
+        except:
+          pass
+    ts = time.time()
+    datasetsAtSite[site] = (datasets,dsLocation,ts)
+    logger.info('Wrote %d datasets for %s to cache at %d'%(len(datasets),site,int(ts)))
+    #TODO: checl that you got some datasets
+
 
   from random import shuffle
   shuffle(datasets)
 
   gooddatasets = []
-  for location in locations:
-    for dataset in datasets:
-      try:
-        # check if frozen and complete
-        datasetsiteinfo = dq2.listFileReplicas(location, dataset)
-        # Skip is data is not immutable
-        immutable = datasetsiteinfo[0]['immutable']
-        if not immutable:
-          continue
-        # Skip dataset if not complete at site
-        try:
-          incompleteLocations = dq2.listDatasetReplicas(dataset)[dq2.listDatasets(dataset)[dataset]['vuids'][0]][0]
-        except:
-          incompleteLocations = []
-        if location in incompleteLocations:
-          continue
-        gooddatasets.append(dataset)
-        if len(gooddatasets)>=num:
-          return gooddatasets
-
-      except:
+  for dataset in datasets:
+    try:
+      # check if frozen and complete
+      location = dsLocation[dataset]
+      datasetsiteinfo = dq2.listFileReplicas(location, dataset)
+      # Skip is data is not immutable
+      immutable = datasetsiteinfo[0]['immutable']
+      if not immutable:
         continue
+      # Skip dataset if not complete at site
+      try:
+        incompleteLocations = dq2.listDatasetReplicas(dataset)[dq2.listDatasets(dataset)[dataset]['vuids'][0]][0]
+      except:
+        incompleteLocations = []
+      if location in incompleteLocations:
+        continue
+      gooddatasets.append(dataset)
+      if len(gooddatasets)>=num:
+        return gooddatasets
+    except:
+      logger.warning('updateDatasets: error checking dataset %s'%dataset)
+      logger.warning(sys.exc_info()[0])
+      logger.warning(sys.exc_info()[1])
+      continue
 
   return gooddatasets
 
@@ -152,9 +175,9 @@ def updateDatasets(site,num):
 
 def jobToSite(job):
   siteMap = {
-    'ANALY_LONG_LYON': 'ANALY_LYON',
-    'ANALY_LONG_BNL_ATLAS': 'ANALY_BNL_ATLAS_1',
-    'ANALY_LONG_LYON_DCACHE': 'ANALY_LYON_DCACHE'
+#    'ANALY_LONG_LYON': 'ANALY_LYON',
+#    'ANALY_LONG_BNL_ATLAS': 'ANALY_BNL_ATLAS_1',
+#    'ANALY_LONG_LYON_DCACHE': 'ANALY_LYON_DCACHE'
   }
 
   site = ''
@@ -177,16 +200,42 @@ def jobToSite(job):
 ##
 ## COPY JOB
 ##
+newJobLastAttempt = {}
 
 def _copyJob(job,site):
+  global category
+  global newJobLastAttempt
 
   logger.info('Copying job %d'%job.id)
-  nRetries = 3
+  if category == 'stress':
+    nRetries = 1
+  else:
+    nRetries = 0
   try:
-    j=job.copy()
+    if job.status == 'new':
+      j=job
+      logger.info('Not marking job %d as copied (reusing job %d in "new" state)'%(job.id,j.id))
+      try:
+        if time.time()-600 < newJobLastAttempt[j.id]:
+          logger.info('Skipping job %d in "new" state. Trying once every 10 minutes.'%j.id)
+          return
+      except:
+        pass
+      newJobLastAttempt[j.id]=time.time()
+    else:
+      j=job.copy()
+      test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
+      if test_state:
+        test_state = test_state[0] 
+      else:
+        test_state = TestState(test=test,ganga_jobid=job.id)
+      test_state.copied = 1
+      test_state.save()
+      logger.info('Marked job %d as copied (new one is job %d)'%(job.id,j.id))
+
     uuid = commands.getoutput('uuidgen')[0:3]
     t = int(time.time())
-    j.outputdata.datasetname='hc.%d.%s.%s.%s'%(testid,site,t,uuid)
+    j.outputdata.datasetname='hc%d.%s.%s.%s'%(testid,site,t,uuid)
     j.outputdata.location=''
     previous_datasets = j.inputdata.dataset
     logger.info('Previous input datasets = %s'%previous_datasets)
@@ -195,24 +244,21 @@ def _copyJob(job,site):
       num = test_site[0].num_datasets_per_bulk
     except:
       num = len(j.inputdata.dataset)
+
     try:
       j.inputdata.dataset = updateDatasets(site,num)
+      if not j.inputdata.dataset:
+        j.inputdata.dataset = previous_datasets[0:num]
     except:
       logger.warning('Failed to get new datasets from DQ2. Using previous datasets.')
+      logger.warning(sys.exc_info()[0])
+      logger.warning(sys.exc_info()[1])
       j.inputdata.dataset = previous_datasets[0:num]
 
     logger.info('New input datasets = %s'%j.inputdata.dataset)
     j.submit()
-        
-    test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
-    if test_state:
-      test_state = test_state[0] 
-    else:
-      test_state = TestState(test=test,ganga_jobid=job.id)
-    test_state.copied = 1
-    test_state.save()
-
     logger.info('Finished copying job %d'%job.id)
+    test_sleep(2)
     return
   except:
     logger.warning('Failed to submit job %d for %s. Retrying %d more times.'%(j.id,site,nRetries))
@@ -220,6 +266,10 @@ def _copyJob(job,site):
     logger.warning(sys.exc_info()[1])
     for i in xrange(nRetries):
       try:
+        uuid = commands.getoutput('uuidgen')[0:3]
+        t = int(time.time())
+        j.outputdata.datasetname='hc%d.%s.%s.%s'%(testid,site,t,uuid)
+        test_sleep((i+1)*2)
         j.submit()
         test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
         if test_state:
@@ -228,22 +278,21 @@ def _copyJob(job,site):
           test_state = TestState(test=test,ganga_jobid=job.id)
         test_state.copied = 1
         test_state.save()
-
         logger.info('Finished copying job %d'%job.id)
+        test_sleep(2)
         return
       except:
         logger.warning('Failed to submit job %d for %s. Retrying %d more times.'%(j.id,site,nRetries-i-1))
         logger.warning(sys.exc_info()[0])
         logger.warning(sys.exc_info()[1])
-        test_sleep((i+1)*10)
 
   # if here then submission and retries all failed
   logger.error('Failed copying job %d for %s %d times.'%(job.id,site,nRetries))
-  logger.error('Disabling test %d site %s with test_site.resubmit_enabled=0.'%(testid,site))
-  test_site = test.getTestSites_for_test.filter(site__name=site)[0]
-  test_site.resubmit_enabled = 0
-  test_site.save()
-
+  if category == 'stress':
+    logger.error('Disabling test %d site %s with test_site.resubmit_enabled=0.'%(testid,site))
+    test_site = test.getTestSites_for_test.filter(site__name=site)[0]
+    test_site.resubmit_enabled = 0
+    test_site.save()
 
 # We copy a job under these circumstances:
 #  1. test_site.resubmit_enabled is True and test_state(test,jobid).copied is False and #submitted < 30% and #failed < 70%
@@ -253,6 +302,8 @@ def _copyJob(job,site):
 #  2. If a job is copied, set test_state(test,jobid).copied to True
 #
 def copyJob(job):
+  global category
+  
   site = jobToSite(job)
 
   test_site = test.getTestSites_for_test.filter(site__name=site)
@@ -295,14 +346,18 @@ def copyJob(job):
     #logger.info('Not copying job %d: %d running > %d max'%(job.id,running,test_site.max_running_jobs))
     return
 
-  if len(job.subjobs) < 1:
-    logger.warning('Job %d has 0 subjobs. Not copying.'%job.id)
-    return
+#  if len(job.subjobs) < 1:
+#    logger.warning('Job %d has 0 subjobs. Not copying.'%job.id)
+#    return
 
-    if job.backend._impl._name == 'Panda':
-      if job.backend.buildjob and job.backend.buildjob.status not in ['finished','failed']:
-        logger.warning('Job %d has an incomplete buildjob. Not copying.'%job.id)
-        return
+  if job.backend._impl._name == 'Panda':
+    if job.backend.buildjob and job.backend.buildjob.status not in ['finished','failed']:
+      logger.warning('Job %d has an incomplete buildjob. Not copying.'%job.id)
+      return
+    if len(job.backend.buildjobs) > 0 and job.backend.buildjobs[0].status not in ['finished','failed']:
+      logger.warning('Job %d has an incomplete buildjob. Not copying.'%job.id)
+      return
+
 
   # total last 1 hours
   total = test.getResults_for_test.filter(site__name=site).filter(ganga_status__in=['c','f']).filter(mtime__gt=datetime.now()-timedelta(hours=1)).exclude(ganga_subjobid=1000000).count()
@@ -310,14 +365,12 @@ def copyJob(job):
   # failed last 1 hours
   failed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now()-timedelta(hours=1)).exclude(ganga_subjobid=1000000).count()
 
-
-  if total>20:
-    if float(failed)/float(total) > 0.7:
-      logger.warning('Not copying job %d: %d failed from %d finished (copy when <= 0.7)'%(job.id,failed,total))
-      logger.warning('Disabling site %s: test_site.resubmit_enabled <- 0'%site)
-      test_site.resubmit_enabled = 0
-      test_site.save()
-      return
+  if category == 'stress' and total>20 and float(failed)/float(total) > 0.7:
+    logger.warning('Not copying job %d: %d failed from %d finished (copy when <= 0.7)'%(job.id,failed,total))
+    logger.warning('Disabling site %s: test_site.resubmit_enabled <- 0'%site)
+    test_site.resubmit_enabled = 0
+    test_site.save()
+    return
 
   logger.info('Job %d at %s ran the gauntlet: %d submitted, %d running, %d failed, %d finished'%(job.id,site,submitted,running,failed,total))
   _copyJob(job,site)
@@ -458,11 +511,14 @@ def process_job(job):
              }
 
   if job.backend._impl._name in ['LCG','CREAM']:
-
     logfile_guid=None
+    logfile_loc=None
     for outfile in job.outputdata.output:
       if outfile.find('.log.tgz')!=-1:
         logfile_guid=outfile.split(',')[2]
+        logfile_loc=outfile.split(',')[5]
+      if not stats['outse']:
+        results['output_location'] = logfile_loc
 
     results['site']                  = job.backend.requirements.sites[0]    
     results['exit_status_1']         = job.backend.exitcode
@@ -504,6 +560,8 @@ def process_job(job):
     results['backendID']             = job.backend.id
     results['actual_ce']             = 'unknown'
     results['logfile_guid']          = None
+    if job.backend.status=='holding':
+      results['ganga_status'] = 'h'
 
   if job.status=='completing':
     results['ganga_status'] = 'g'
@@ -656,11 +714,14 @@ def process_subjob(job,subjob):
              }
 
   if subjob.backend._impl._name in ['LCG','CREAM']:
-
     logfile_guid=None
-    for outfile in subjob.outputdata.output:
+    logfile_loc=None
+    for outfile in job.outputdata.output:
       if outfile.find('.log.tgz')!=-1:
         logfile_guid=outfile.split(',')[2]
+        logfile_loc=outfile.split(',')[5]
+      if not stats['outse']:
+        results['output_location'] = logfile_loc
 
     results['site']                  = subjob.backend.requirements.sites[0]
     results['exit_status_1']         = subjob.backend.exitcode
@@ -702,6 +763,13 @@ def process_subjob(job,subjob):
     results['backendID']             = subjob.backend.id
     results['actual_ce']             = 'unknown'
     results['logfile_guid']          = None
+    if subjob.backend.status=='holding':
+      results['ganga_status'] = 'h'
+    try:
+      if subjob.backend.status=='defined' and job.backend.buildjobs[0].status=='failed':
+        results['ganga_status'] = 'k'
+    except IndexError:
+      pass
 
 
   if subjob.status=='completing':
@@ -959,7 +1027,7 @@ def hc_plot_summarize():
   logger.info('HC Plot Summarize Thread: Disconnected.')
     
 def hc_copy_thread():
-  test_sleep(60)
+  test_sleep(30)
   logger.info('HC Copy Thread: Connected to DB')
   while (test_active() and not test_paused() and not ct.should_stop()):
     logger.info('HC Copy Thread: TOP OF MAIN LOOP')
@@ -967,7 +1035,7 @@ def hc_copy_thread():
       if test_paused() or ct.should_stop():
          break
       copyJob(job)
-    test_sleep(20)
+    test_sleep(10)
 
   logger.info('HC Copy Thread: Disconnected from DB')
 
@@ -976,7 +1044,12 @@ pt = GangaThread(name="HCPlotSummary", target=hc_plot_summarize)
 
 logger.info('Connected to DB')
 
-if len(jobs):
+noJobs = False
+hasSubjobs = False
+for j in jobs:
+  if len(j.subjobs):
+    hasSubjobs = True
+if hasSubjobs:
   ct.start()
   pt.start()
   while (test_active() and not test_paused()):
@@ -1008,6 +1081,7 @@ if len(jobs):
           break
     test_sleep(20)
 else:
+  noJobs = True
   logger.warning('No jobs to monitor. Exiting now.')
 
 #Stop plotting and summarizing thread.
@@ -1016,7 +1090,10 @@ pt.stop()
 paused = test_paused()
 
 if not paused:
-  test.state   = "completed"
+  if noJobs:
+    test.state   = 'error'
+  else:
+    test.state   = "completed"
   test.endtime = datetime.now()
   test.save()
   logger.info('Test state updated to %s'%(test.state))
@@ -1033,7 +1110,7 @@ if not paused:
     logger.warning('Error killing jobs. PLEASE CHECK !')
 
 logger.info('HammerCloud runtest.py exiting')
-logger.info('Buf before, the last plots...')
+logger.info('But before, the last plots...')
 
 summarize()
 plot(True)
