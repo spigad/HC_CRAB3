@@ -317,7 +317,7 @@ def process_job(cursor,job):
         stats = job.application.stats
     except:
         pass
-    metrics = ['percentcpu','systemtime','usertime','site','totalevents','wallclock','stoptime','outse','starttime','exitstatus','numfiles3','gangatime1','gangatime2','gangatime3','gangatime4','gangatime5','jdltime','NET_ETH_RX_PREATHENA','NET_ETH_RX_AFTERATHENA','pandatime1','pandatime2','pandatime3','pandatime4','arch','submittime']
+    metrics = ['percentcpu','systemtime','usertime','site','totalevents','wallclock','stoptime','outse','starttime','exitstatus','numfiles3','gangatime1','gangatime2','gangatime3','gangatime4','gangatime5','jdltime','NET_ETH_RX_PREATHENA','NET_ETH_RX_AFTERATHENA','pandatime1','pandatime2','pandatime3','pandatime4','pandatime5','arch','submittime']
     for m in metrics:
         try:
             x = stats[m]
@@ -349,18 +349,18 @@ def process_job(cursor,job):
             for outfile in job.outputdata.output:
                 if outfile.find('.log.tgz')!=-1:
                     logfile_guid=outfile.split(',')[2]
-            vals = [testid,job.id,1000000,job.status[0],job.backend.requirements.sites[0],job.backend.exitcode,stats['exitstatus'],inds,outds,stats['outse'],'NULL',stats['starttime'],stats['wallclock'],stats['totalevents'],stats['numfiles3'],stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],innumfiles,repr(job.backend.id),job.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['arch'],job.backend.actualCE,logfile_guid]
+            vals = [testid,job.id,1000000,job.status[0],job.backend.requirements.sites[0],job.backend.exitcode,stats['exitstatus'],inds,outds,stats['outse'],'NULL',stats['starttime'],stats['wallclock'],stats['totalevents'],stats['numfiles3'],stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],innumfiles,repr(job.backend.id),job.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['pandatime5'],stats['arch'],job.backend.actualCE,logfile_guid]
             if job.status=='running' and job.backend.status=='Done (Success)':
                 vals[3] = 'd'
         elif job.backend._impl._name == 'NG':
             sit = 'condor.titan.uio.no'
             if job.backend.CE:
                 sit = job.backend.CE
-            vals = [testid,job.id,1000000,job.status[0],sit,stats['exitstatus'],stats['exitstatus'],inds,outds,stats['outse'],'NULL',stats['starttime'],stats['wallclock'],stats['totalevents'],stats['numfiles3'],stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],innumfiles,job.backend.id,job.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['arch'],job.backend.actualCE,None]
+            vals = [testid,job.id,1000000,job.status[0],sit,stats['exitstatus'],stats['exitstatus'],inds,outds,stats['outse'],'NULL',stats['starttime'],stats['wallclock'],stats['totalevents'],stats['numfiles3'],stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],innumfiles,job.backend.id,job.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['pandatime5'],stats['arch'],job.backend.actualCE,None]
             if job.status=='submitted' and not job.backend.status:
                 vals[3] = 'n'
         elif job.backend._impl._name == 'Panda':
-            vals = [testid,job.id,1000000,job.status[0],jobToSite(job),job.backend.exitcode,job.backend.piloterrorcode,inds,outds,stats['outse'],stats['submittime'],stats['starttime'],stats['wallclock'],stats['totalevents'],innumfiles,stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],innumfiles,job.backend.id,job.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['arch'],'unknown',None]
+            vals = [testid,job.id,1000000,job.status[0],jobToSite(job),job.backend.exitcode,job.backend.piloterrorcode,inds,outds,stats['outse'],stats['submittime'],stats['starttime'],stats['wallclock'],stats['totalevents'],innumfiles,stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],innumfiles,job.backend.id,job.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['pandatime5'],stats['arch'],'unknown',None]
     except:
         logger.warning("Error in metric values: skipping this job")
         logger.warning(sys.exc_info()[0])
@@ -372,11 +372,11 @@ def process_job(cursor,job):
   
     logger.debug('Writing to DB') 
     try: # insert new result 
-        cmd = "insert result (test,ganga_jobid,ganga_subjobid,ganga_status,site,exit_status_1,exit_status_2,inds,outds,output_location,submit_time,start_time,wallclock,numevents,numfiles,percent_cpu,stop_time,ganga_time_1,ganga_time_2,ganga_time_3,ganga_time_4,ganga_time_5,jdl_time,ganga_number_of_files,backend_id,backend_reason,net_eth_rx_preathena,net_eth_rx_postathena,pandatime1,pandatime2,pandatime3,pandatime4,arch,actual_ce,logfile_guid) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,from_unixtime(%s),from_unixtime(%s),%s,%s,%s,%s,from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cmd = "insert result (test,ganga_jobid,ganga_subjobid,ganga_status,site,exit_status_1,exit_status_2,inds,outds,output_location,submit_time,start_time,wallclock,numevents,numfiles,percent_cpu,stop_time,ganga_time_1,ganga_time_2,ganga_time_3,ganga_time_4,ganga_time_5,jdl_time,ganga_number_of_files,backend_id,backend_reason,net_eth_rx_preathena,net_eth_rx_postathena,pandatime1,pandatime2,pandatime3,pandatime4,pandatime5,arch,actual_ce,logfile_guid) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,from_unixtime(%s),from_unixtime(%s),%s,%s,%s,%s,from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(cmd,vals)
         logger.debug('New row inserted')
     except: # update existing result
-        cmd = "update result set ganga_status=%s,site=%s,exit_status_1=%s,exit_status_2=%s,inds=%s,outds=%s,output_location=%s,submit_time=from_unixtime(%s),start_time=from_unixtime(%s),wallclock=%s,numevents=%s,numfiles=%s,percent_cpu=%s,stop_time=from_unixtime(%s),ganga_time_1=from_unixtime(%s),ganga_time_2=from_unixtime(%s),ganga_time_3=from_unixtime(%s),ganga_time_4=from_unixtime(%s),ganga_time_5=from_unixtime(%s),jdl_time=from_unixtime(%s),ganga_number_of_files=%s,backend_id=%s,backend_reason=%s,net_eth_rx_preathena=%s,net_eth_rx_postathena=%s,pandatime1=%s,pandatime2=%s,pandatime3=%s,pandatime4=%s,arch=%s,actual_ce=%s,logfile_guid=%s where test=%s and ganga_jobid=%s and ganga_subjobid=%s";
+        cmd = "update result set ganga_status=%s,site=%s,exit_status_1=%s,exit_status_2=%s,inds=%s,outds=%s,output_location=%s,submit_time=from_unixtime(%s),start_time=from_unixtime(%s),wallclock=%s,numevents=%s,numfiles=%s,percent_cpu=%s,stop_time=from_unixtime(%s),ganga_time_1=from_unixtime(%s),ganga_time_2=from_unixtime(%s),ganga_time_3=from_unixtime(%s),ganga_time_4=from_unixtime(%s),ganga_time_5=from_unixtime(%s),jdl_time=from_unixtime(%s),ganga_number_of_files=%s,backend_id=%s,backend_reason=%s,net_eth_rx_preathena=%s,net_eth_rx_postathena=%s,pandatime1=%s,pandatime2=%s,pandatime3=%s,pandatime4=%s,pandatime5=%s,arch=%s,actual_ce=%s,logfile_guid=%s where test=%s and ganga_jobid=%s and ganga_subjobid=%s";
         val = vals[3:]+vals[0:3]
         cursor.execute(cmd,val)
         logger.debug('Existing row updated')
@@ -414,7 +414,7 @@ def process_subjob(cursor,job,subjob):
         stats = subjob.application.stats
     except:
         pass
-    metrics = ['percentcpu','systemtime','usertime','site','totalevents','wallclock','stoptime','outse','starttime','exitstatus','numfiles3','gangatime1','gangatime2','gangatime3','gangatime4','gangatime5','jdltime','NET_ETH_RX_PREATHENA','NET_ETH_RX_AFTERATHENA','pandatime1','pandatime2','pandatime3','pandatime4','arch','submittime']
+    metrics = ['percentcpu','systemtime','usertime','site','totalevents','wallclock','stoptime','outse','starttime','exitstatus','numfiles3','gangatime1','gangatime2','gangatime3','gangatime4','gangatime5','jdltime','NET_ETH_RX_PREATHENA','NET_ETH_RX_AFTERATHENA','pandatime1','pandatime2','pandatime3','pandatime4','pandatime5','arch','submittime']
     for m in metrics:
         try:
             x = stats[m]
@@ -446,19 +446,19 @@ def process_subjob(cursor,job,subjob):
             for outfile in subjob.outputdata.output:
                 if outfile.find('.log.tgz')!=-1:
                     logfile_guid=outfile.split(',')[2]
-            vals = [testid,job.id,subjob.id,subjob.status[0],subjob.backend.requirements.sites[0],subjob.backend.exitcode,stats['exitstatus'],inds,outds,stats['outse'],'NULL',stats['starttime'],stats['wallclock'],stats['totalevents'],stats['numfiles3'],stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],innumfiles,subjob.backend.id,subjob.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['arch'],subjob.backend.actualCE,logfile_guid]
+            vals = [testid,job.id,subjob.id,subjob.status[0],subjob.backend.requirements.sites[0],subjob.backend.exitcode,stats['exitstatus'],inds,outds,stats['outse'],'NULL',stats['starttime'],stats['wallclock'],stats['totalevents'],stats['numfiles3'],stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],innumfiles,subjob.backend.id,subjob.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['pandatime5'],stats['arch'],subjob.backend.actualCE,logfile_guid]
             if subjob.status=='running' and subjob.backend.status=='Done (Success)':
                 vals[3] = 'd'
         elif subjob.backend._impl._name == 'NG':
             sit = 'condor.titan.uio.no'
             if subjob.backend.CE:
                 sit = subjob.backend.CE
-            vals = [testid,job.id,subjob.id,subjob.status[0],sit,stats['exitstatus'],stats['exitstatus'],inds,outds,stats['outse'],'NULL',stats['starttime'],stats['wallclock'],stats['totalevents'],stats['numfiles3'],stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],innumfiles,subjob.backend.id,subjob.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['arch'],subjob.backend.actualCE,None]
+            vals = [testid,job.id,subjob.id,subjob.status[0],sit,stats['exitstatus'],stats['exitstatus'],inds,outds,stats['outse'],'NULL',stats['starttime'],stats['wallclock'],stats['totalevents'],stats['numfiles3'],stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],innumfiles,subjob.backend.id,subjob.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['pandatime5'],stats['arch'],subjob.backend.actualCE,None]
             if subjob.status=='submitted' and not subjob.backend.status:
                 vals[3] = 'n'
         elif subjob.backend._impl._name == 'Panda':
 #            if subjob.backend.actualCE != 'ANALY_ARC':
-            vals = [testid,job.id,subjob.id,subjob.status[0],jobToSite(subjob),subjob.backend.exitcode,subjob.backend.piloterrorcode,inds,outds,stats['outse'],stats['submittime'],stats['starttime'],stats['wallclock'],stats['totalevents'],innumfiles,stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],innumfiles,subjob.backend.id,subjob.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['arch'],'unknown',None]
+            vals = [testid,job.id,subjob.id,subjob.status[0],jobToSite(subjob),subjob.backend.exitcode,subjob.backend.piloterrorcode,inds,outds,stats['outse'],stats['submittime'],stats['starttime'],stats['wallclock'],stats['totalevents'],innumfiles,stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],innumfiles,subjob.backend.id,subjob.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['pandatime5'],stats['arch'],'unknown',None]
 #            else:
                 #vals = [testid,job.id,subjob.id,subjob.status[0],subjob.backend.jobSpec['computingElement'],subjob.backend.exitcode,subjob.backend.piloterrorcode,subjob.inputdata.dataset[0],outds,stats['outse'],stats['submittime'],stats['starttime'],stats['wallclock'],stats['totalevents'],subjob.inputdata.number_of_files,stats['percentcpu'],stats['stoptime'],stats['gangatime1'],stats['gangatime2'],stats['gangatime3'],stats['gangatime4'],stats['gangatime5'],stats['jdltime'],subjob.inputdata.number_of_files,subjob.backend.id,subjob.backend.reason,stats['NET_ETH_RX_PREATHENA'],stats['NET_ETH_RX_AFTERATHENA'],stats['pandatime1'],stats['pandatime2'],stats['pandatime3'],stats['pandatime4'],stats['arch']]
     except:
@@ -472,11 +472,11 @@ def process_subjob(cursor,job,subjob):
   
     logger.debug('Writing to DB') 
     try: # insert new result 
-        cmd = "insert result (test,ganga_jobid,ganga_subjobid,ganga_status,site,exit_status_1,exit_status_2,inds,outds,output_location,submit_time,start_time,wallclock,numevents,numfiles,percent_cpu,stop_time,ganga_time_1,ganga_time_2,ganga_time_3,ganga_time_4,ganga_time_5,jdl_time,ganga_number_of_files,backend_id,backend_reason,net_eth_rx_preathena,net_eth_rx_postathena,pandatime1,pandatime2,pandatime3,pandatime4,arch,actual_ce,logfile_guid) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,from_unixtime(%s),from_unixtime(%s),%s,%s,%s,%s,from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cmd = "insert result (test,ganga_jobid,ganga_subjobid,ganga_status,site,exit_status_1,exit_status_2,inds,outds,output_location,submit_time,start_time,wallclock,numevents,numfiles,percent_cpu,stop_time,ganga_time_1,ganga_time_2,ganga_time_3,ganga_time_4,ganga_time_5,jdl_time,ganga_number_of_files,backend_id,backend_reason,net_eth_rx_preathena,net_eth_rx_postathena,pandatime1,pandatime2,pandatime3,pandatime4,pandatime5,arch,actual_ce,logfile_guid) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,from_unixtime(%s),from_unixtime(%s),%s,%s,%s,%s,from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),from_unixtime(%s),%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(cmd,vals)
         logger.debug('New row inserted')
     except: # update existing result
-        cmd = "update result set ganga_status=%s,site=%s,exit_status_1=%s,exit_status_2=%s,inds=%s,outds=%s,output_location=%s,submit_time=from_unixtime(%s),start_time=from_unixtime(%s),wallclock=%s,numevents=%s,numfiles=%s,percent_cpu=%s,stop_time=from_unixtime(%s),ganga_time_1=from_unixtime(%s),ganga_time_2=from_unixtime(%s),ganga_time_3=from_unixtime(%s),ganga_time_4=from_unixtime(%s),ganga_time_5=from_unixtime(%s),jdl_time=from_unixtime(%s),ganga_number_of_files=%s,backend_id=%s,backend_reason=%s,net_eth_rx_preathena=%s,net_eth_rx_postathena=%s,pandatime1=%s,pandatime2=%s,pandatime3=%s,pandatime4=%s,arch=%s,actual_ce=%s,logfile_guid=%s where test=%s and ganga_jobid=%s and ganga_subjobid=%s";
+        cmd = "update result set ganga_status=%s,site=%s,exit_status_1=%s,exit_status_2=%s,inds=%s,outds=%s,output_location=%s,submit_time=from_unixtime(%s),start_time=from_unixtime(%s),wallclock=%s,numevents=%s,numfiles=%s,percent_cpu=%s,stop_time=from_unixtime(%s),ganga_time_1=from_unixtime(%s),ganga_time_2=from_unixtime(%s),ganga_time_3=from_unixtime(%s),ganga_time_4=from_unixtime(%s),ganga_time_5=from_unixtime(%s),jdl_time=from_unixtime(%s),ganga_number_of_files=%s,backend_id=%s,backend_reason=%s,net_eth_rx_preathena=%s,net_eth_rx_postathena=%s,pandatime1=%s,pandatime2=%s,pandatime3=%s,pandatime4=%s,pandatime5=%s,arch=%s,actual_ce=%s,logfile_guid=%s where test=%s and ganga_jobid=%s and ganga_subjobid=%s";
         val = vals[3:]+vals[0:3]
         cursor.execute(cmd,val)
         logger.debug('Existing row updated')
