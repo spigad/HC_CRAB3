@@ -165,6 +165,9 @@ class Result(ResultBase):
   #ganga_time_5 - ganga_time_4
   nonpandatime4         = models.IntegerField(blank=True,null=True)
 
+  net_eth_rx_preathena  = models.IntegerField(null=True, blank=True)
+  net_eth_rx_postathena = models.IntegerField(null=True, blank=True)
+
   
 
 ##
