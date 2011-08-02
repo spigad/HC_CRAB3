@@ -180,7 +180,8 @@ class Result(ResultBase):
 ##
 
 class MetricType(MetricTypeBase):
-  pass
+  rate                  = models.BooleanField(default=False)
+
 class Metric(MetricBase):
   pass
 class SiteMetric(SiteMetricBase):
