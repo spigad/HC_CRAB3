@@ -239,7 +239,7 @@ class SummaryTest(SummaryTestBase):
   nonpandatime3         = models.IntegerField(blank=True,null=True)
   #ganga_time_5 - ganga_time_4
   nonpandatime4         = models.IntegerField(blank=True,null=True)
-  timetorun             = models.FloatField(blank=True,null,True)
+  timetorun             = models.FloatField(blank=True,null=True)
 
 
 class SummaryTestSite(SummaryTestSiteBase):
@@ -268,7 +268,7 @@ class SummaryTestSite(SummaryTestSiteBase):
   nonpandatime3         = models.IntegerField(blank=True,null=True)
   #ganga_time_5 - ganga_time_4
   nonpandatime4         = models.IntegerField(blank=True,null=True)
-  timetorun             = models.FloatField(blank=True,null,True)
+  timetorun             = models.FloatField(blank=True,null=True)
 
 
 ##
