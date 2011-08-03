@@ -456,7 +456,7 @@ def process_job(job):
     stats = job.application.stats
   except:
     pass
-  metrics = ['percentcpu','systemtime','usertime','site','totalevents','wallclock','stoptime','outse','starttime','exitstatus','numfiles3','gangatime1','gangatime2','gangatime3','gangatime4','gangatime5','jdltime','NET_ETH_RX_PREATHENA','NET_ETH_RX_AFTERATHENA','pandatime1','pandatime2','pandatime3','pandatime4','pandatime5','arch','submittime']
+  metrics = ['percentcpu','systemtime','usertime','site','totalevents','wallclock','stoptime','outse','starttime','exitstatus','numfiles3','gangatime1','gangatime2','gangatime3','gangatime4','gangatime5','jdltime','NET_ETH_RX_PREATHENA','NET_ETH_RX_POSTATHENA','pandatime1','pandatime2','pandatime3','pandatime4','pandatime5','arch','submittime']
   for m in metrics:
     try:
       x = stats[m]
@@ -659,7 +659,7 @@ def process_subjob(job,subjob):
   except:
     pass
 
-  metrics = ['percentcpu','systemtime','usertime','site','totalevents','wallclock','stoptime','outse','starttime','exitstatus','numfiles3','gangatime1','gangatime2','gangatime3','gangatime4','gangatime5','jdltime','NET_ETH_RX_PREATHENA','NET_ETH_RX_AFTERATHENA','pandatime1','pandatime2','pandatime3','pandatime4','pandatime5','arch','submittime']
+  metrics = ['percentcpu','systemtime','usertime','site','totalevents','wallclock','stoptime','outse','starttime','exitstatus','numfiles3','gangatime1','gangatime2','gangatime3','gangatime4','gangatime5','jdltime','NET_ETH_RX_PREATHENA','NET_ETH_RX_POSTATHENA','pandatime1','pandatime2','pandatime3','pandatime4','pandatime5','arch','submittime']
   for m in metrics:
     try:
       x = stats[m]
