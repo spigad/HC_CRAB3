@@ -3,7 +3,7 @@ from random import shuffle
 
 class TestGenerate:
 
-  def run(self,test):
+  def run(self,test,mode):
     raise RuntimeError('Testing test_generate.')
     try:
       sys.stderr = open("/dev/null", "w")
