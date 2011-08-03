@@ -59,13 +59,20 @@ class TestGenerate:
     if test and mode:
 
       tg = custom_import('%s.python.scripts.submit.test_generate.TestGenerate'%(app))
+      
       if tg:
-        if tg().run(test,mode):
-
+        
+        try:
+          result = tg().run(test,mode)
+        except:
+          import sys
+          print '[INFO][%s][test_generate] Error while generating jobs for test %d. %s %s'%(app,test.id,sys.exc_info()[0],sys.exc_info()[1])
+          result = 0
+        
+        if result:
           test.state = 'submitting'
           test.save()
           print '[INFO][%s][test_generate] Test %s is in submitting state.'%(app,test.id)
-
           return 1
         else:
           time.sleep(300)
