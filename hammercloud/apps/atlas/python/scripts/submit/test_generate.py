@@ -4,7 +4,7 @@ from random import shuffle
 class TestGenerate:
 
   def run(self,test):
-
+    raise RuntimeError('Testing test_generate.')
     try:
       sys.stderr = open("/dev/null", "w")
       import dq2.info.TiersOfATLAS as TiersOfATLAS
