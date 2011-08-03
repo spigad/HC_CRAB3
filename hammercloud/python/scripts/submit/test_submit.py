@@ -1,6 +1,7 @@
 from hc.core.utils.generic.class_func import custom_import
 
 import os
+import os.path
 
 class TestSubmit:
 
@@ -45,9 +46,21 @@ class TestSubmit:
     else:
       print '[ERROR][%s][test_submit] No HCDIR found'%(app)
       return 0
+    
+    if os.environ.has_key('HCAPP'):
+      HCAPP = os.environ['HCAPP']
+    else:
+      print '[ERROR][%s][test_submit] No HCAPP found'%(app)
+      return 0
 
-    print '[INFO][%s][test_submit] /bin/sh %s/scripts/submit/test-submit.sh %d "%s %s"'%(app,HCDIR,test.id,test.extraargs,test.testoption.submit)
-    result =  os.system('/bin/sh %s/scripts/submit/test-submit.sh %d "%s %s"'%(HCDIR,test.id,test.extraargs,test.testoption.submit))
+    # Check if the application has an specific script for this task
+    if os.path.exists('%s/scripts/submit/test-submit.sh' % HCAPP):
+      base = HCAPP
+    else:
+      base = HCDIR
+
+    print '[INFO][%s][test_submit] /bin/sh %s/scripts/submit/test-submit.sh %d "%s %s"'%(app,base,test.id,test.extraargs,test.testoption.submit)
+    result =  os.system('/bin/sh %s/scripts/submit/test-submit.sh %d "%s %s"'%(base,test.id,test.extraargs,test.testoption.submit))
 
     #0 means good in shell scripting.
     if result == 0:

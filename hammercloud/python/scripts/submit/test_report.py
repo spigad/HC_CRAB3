@@ -51,8 +51,20 @@ class TestReport:
       print '[ERROR][%s][test_report] No HCDIR found'%(app)
       return 0
 
-    print '[INFO][%s][test_report] /bin/sh %s/scripts/submit/test-report.sh %d "%s %s"'%(app,HCDIR,test.id,test.extraargs,test.testoption.report)
-    result =  os.system('/bin/sh %s/scripts/submit/test-report.sh %d "%s %s"'%(HCDIR,test.id,test.extraargs,test.testoption.report))
+    if os.environ.has_key('HCAPP'):
+      HCAPP = os.environ['HCAPP']
+    else:
+      print '[ERROR][%s][test_submit] No HCAPP found'%(app)
+      return 0
+
+    # Check if the application has an specific script for this task
+    if os.path.exists('%s/scripts/submit/test-submit.sh' % HCAPP):
+      base = HCAPP
+    else:
+      base = HCDIR
+
+    print '[INFO][%s][test_report] /bin/sh %s/scripts/submit/test-report.sh %d "%s %s"'%(app,base,test.id,test.extraargs,test.testoption.report)
+    result =  os.system('/bin/sh %s/scripts/submit/test-report.sh %d "%s %s"'%(base,test.id,test.extraargs,test.testoption.report))
 
     #0 means good in shell scripting.
     if result == 0:
