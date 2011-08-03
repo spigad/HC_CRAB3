@@ -61,6 +61,7 @@ class TestReport:
     if os.path.exists('%s/scripts/submit/test-submit.sh' % HCAPP):
       base = HCAPP
     else:
+      print '[INFO][%s][test_submit] Specific test_submit does not exist.'%(app)
       base = HCDIR
 
     print '[INFO][%s][test_report] /bin/sh %s/scripts/submit/test-report.sh %d "%s %s"'%(app,base,test.id,test.extraargs,test.testoption.report)
