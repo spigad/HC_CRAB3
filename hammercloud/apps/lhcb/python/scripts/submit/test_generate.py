@@ -27,6 +27,7 @@ class TestGenerate:
     usercode        = test.usercode.path
     optionfile      = test.optionfile.path
     inputtype       = test.inputtype
+    testoption      = test.testoption
 
     outputdataset   = str(test.output_dataset) + str(int(time.time()))
 
@@ -88,6 +89,14 @@ class TestGenerate:
         outFile_content = outFile_content.replace('####_OPTSFILE_####', usercode)
         outFile_content = outFile_content.replace('####_SITE_####', site)
         outFile_content = outFile_content.replace('####_PATTERN_####', datasetpatterns[index])
+
+        if testoption.name.startswith( '_ce_' ):
+
+          opts = testoption.submit.split(' ')
+          for opt in opts:
+            if opt.startswith( '_ce_' ):
+              outFile_content = outFile_content.replace('####_SITE_CE_####', opt.replace( '_ce_', '' ) )
+              break
 
         # 1 because there is only one dataset.
         outFileName = os.path.join( basePath, outFilePath, '%d_%03d_%s.py'%(fid,1,site) )
