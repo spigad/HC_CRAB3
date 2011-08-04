@@ -623,12 +623,11 @@ def process_job(job):
 #    elif v == 'NULL':
 #      logger.info([k,v])
 
-  result.save()
-
   if job.status in ('completed','failed'):
-    logger.debug('Job is in final state, marking row as fixed')
+    logger.warning('Job is in final state, marking row as fixed')
     result.fixed = 1
-    result.save()
+
+  result.save()
 
 ##
 ## PROCESS SUBJOBS
@@ -847,12 +846,11 @@ def process_subjob(job,subjob):
 #    elif v == 'NULL':
 #      logger.info([k,v])
 
-  result.save()
-
   if subjob.status in ('completed','failed'):
-    logger.debug('SubJob is in final state, marking row as fixed')
+    logger.warning('SubJob is in final state, marking row as fixed')
     result.fixed = 1
-    result.save()
+
+  result.save()
 
 ##
 ## SUMMARIZE
