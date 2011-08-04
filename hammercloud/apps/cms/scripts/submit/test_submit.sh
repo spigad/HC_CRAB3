@@ -15,6 +15,7 @@ echo PYTHONPATH=$PYTHONPATH
 echo CMS_SITEDB_CACHE_DIR=$CMS_SITEDB_CACHE_DIR
 echo CMS_CRAB_CACHE_DIR=$CMS_CRAB_CACHE_DIR
 echo CMSSW_VERSION=$CMSSW_VERSION
+echo CRAB_VERSION=$CRAB_VERSION
 
 echo Submitting test $1 with jobs in $HCAPP/testdirs/test_$1/jobs:
 ls $HCAPP/testdirs/test_$1/jobs/*

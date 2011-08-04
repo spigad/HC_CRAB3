@@ -13,7 +13,7 @@ Job (
     jobtype = 'cmssw',
     scheduler = 'glite',
     rb = 'HC',
-    dont_check_proxy = 1
+    dont_check_proxy = 1,
     remove_default_blacklist = 1,
     CE_white_list = '####CE_WHITE_LIST####',
     SE_white_list = '####SE_WHITE_LIST####',

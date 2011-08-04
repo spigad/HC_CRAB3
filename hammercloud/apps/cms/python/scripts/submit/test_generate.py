@@ -85,29 +85,34 @@ class TestGenerate:
       for pattern in datasetpatterns:
 
         dataset = ''
-        try:
-          url = 'https://cmsweb.cern.ch/dbs_discovery/aSearchShowAll?case=on&cff=0&caseSensitive=on&userInput=find%20dataset%20where%20dataset%20like%20%25'+pattern+'%25%20and%20site%3D'+site+'%20and%20dataset.status%20like%20VALID*&grid=0&fromRow=0&xml=0&sortName=&dbsInst=cms_dbs_prod_global&html=1&limit=-1&sortOrder=desc&userMode=user&method=dbsapi'
-          request = Request(str(url))
-          f = urlopen(request)
-          dataset = f.read()
-          f.close()
-        except HTTPError, e:
-          print "HTTPError: "+str(e.code)+"\n"
-          print str(url)+'\n'
-        except URLError, e:
-          print "URLError: "+str(e.code)+"\n"
-          print str(url)+'\n'
+        if False:
+          try:
+            url = 'https://cmsweb.cern.ch/dbs_discovery/aSearchShowAll?case=on&cff=0&caseSensitive=on&userInput=find%20dataset%20where%20dataset%20like%20%25'+pattern+'%25%20and%20site%3D'+site+'%20and%20dataset.status%20like%20VALID*&grid=0&fromRow=0&xml=0&sortName=&dbsInst=cms_dbs_prod_global&html=1&limit=-1&sortOrder=desc&userMode=user&method=dbsapi'
+            request = Request(str(url))
+            f = urlopen(request)
+            dataset = f.read()
+            f.close()
+          except HTTPError, e:
+            print "HTTPError: "+str(e.code)+"\n"
+            print str(url)+'\n'
+          except URLError, e:
+            print "URLError: "+str(e.code)+"\n"
+            print str(url)+'\n'
 
-        dataset = dataset.replace(' ','')
-        ds = dataset.split('\n')
-        try:
-          ds.remove('')
-        except:
-          pass
-        random.shuffle(ds)
-        for dset in ds:
-          if not dset in datasets[site]:
-            datasets[site].append(dset)
+          dataset = dataset.replace(' ','')
+          ds = dataset.split('\n')
+          try:
+            ds.remove('')
+          except:
+            pass
+          random.shuffle(ds)
+          for dset in ds:
+            if not dset in datasets[site]:
+              print "Pattern: "+pattern+"  Dataset from pattern: "+dset
+              datasets[site].append(dset)
+        else:
+          print "Pattern: "+pattern+"  Dataset from pattern: "+pattern
+          datasets[site].append(pattern)
 
       print "   end  : "+str(datetime.now())
 
