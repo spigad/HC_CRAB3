@@ -85,7 +85,10 @@
             Ganga Job Template: {{ test.jobtemplate }}<br />
             User code: {{ test.usercode }}<br />
             Option file: {{ test.optionfile }}<br />
-            Template: <a href="{% url template-view app test.template.id %}">{{ test.template.description }}</a>
+            Template: <a href="{% url template-view app test.template.id %}">{{ test.template.description }}</a><br />
+            {% if app == "cms" %}
+                <a href="http://vocms38.cern.ch/test_{{ test.id }}">Logs</a>
+            {% endif %}
           </p>
         {% endblock %}
         {% for tm in test_metrics %}

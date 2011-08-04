@@ -82,6 +82,7 @@ def createTest(testReq):
         TestSite = custom_import("hc.%s.models.TestSite"%app)
         Template = custom_import("hc.%s.models.Template"%app)
         Site = custom_import("hc.%s.models.Site"%app)
+        TestOption = custom_import("hc.%s.models.TestOption"%app)
 
         if not testReq.has_key('template'):
           return (False,{'type':'MISSING','response':'missing template key'})
@@ -114,7 +115,7 @@ def createTest(testReq):
             if not site:
               return (False,{'type':'UNKNOWN','response':'site %s not valid'%s['name']})
             siteObjs.append(site[0])
-   
+
         if not testReq.has_key('duration'):
           return (False,{'type':'MISSING','response':'missing duration key'})
 
@@ -122,7 +123,25 @@ def createTest(testReq):
           return (False,{'type':'MISSING','response':'wrong duration format'})
 
         if not testReq.has_key('description'):
-          return (False,{'type':'MISSING','response':'missing description key'})
+          return (False,{'type':'MISSING','response':'missing description key'})  
+
+#        testoption = template.testoption 
+#
+#        if testReq.has_key('extraoptions'):
+#
+#          if testReq['extraoptions'].has_key('ce'):
+#
+#            ce         = testReq['extraoptions']['ce']
+#            testoption = TestOption.objects.filter( name = '_ce_%s' % ce )
+#            if not testoption:
+#              
+#              to         = template.testoption
+#              testoption = TestOption( name = '_ce_%s' % ce, description = to.description, config = to.config, submit = to.submit, report = to.report )
+##              testoption.submit += '_ce_%s' % ce 
+#              testoption.save() 
+#
+#            else:
+#              testoption = testoption[0]              
 
         starttime = datetime.now()
 
@@ -154,6 +173,17 @@ def createTest(testReq):
                 state='tobescheduled'
             )
             test.save()
+            
+            if testReq.has_key( 'extraargs' ):
+              extraargs = testReq[ 'extraargs' ]
+              if extraargs != '':
+                test.extraargs = extraargs
+                test.save()
+
+#            # Small hack for lhcb
+#            test.testoption = testoption
+#            test.save()
+
         except:
             return (False,{'type':'UNKNOWN','response':'error saving test'})
 
