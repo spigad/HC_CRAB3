@@ -636,30 +636,70 @@ class TestBase(models.Model):
     # Voodoo time: the t[0].id==id is doing magic, do not delete !!!
     if t and t[0].id==self.id:
 
+      # DON'T BE UGLY WITH THIS !
+      # You can overwrite from python commands any test option,
+      # but keep in mind what are you doing.
+
+      try:
+        jobtemplate = self.jobtemplate
+      except:
+        jobtemplate = t[0].jobtemplate
+
+      try:
+        usercode = self.usercode
+      except:
+        usercode = t[0].usercode
+
+      try:
+        optionfile = self.optionfile
+      except:
+        optionfile = t[0].optionfile
+
+      try:
+        inputtype = self.inputtype
+      except:
+        inputtype = t[0].inputtype
+
+      try:
+        output_dataset = self.output_dataset
+      except:
+        output_dataset = t[0].output_dataset
+
+      try:
+        testoption = self.testoption
+      except:
+        testoption = t[0].testoption
+
+      try:
+        template = self.template
+      except:
+        template = t[0].template
+
       try:
         gangabin = self.gangabin
       except:
-        gangabin = -1
+        gangabin = t[0].gangabin
 
       try:
         extraargs = self.extraargs
       except:
-        extraargs = -1
+        extraargs = t[0].extraargs
 
-      #extraargs = self.extraargs
+      try:
+        metricperm = self.metricperm
+      except:
+        metricperm = t[0].metricperm
 
-      self.jobtemplate    = t[0].template.jobtemplate
-      self.usercode       = t[0].template.usercode
-      self.optionfile     = t[0].template.optionfile
-      self.inputtype      = t[0].template.inputtype
-      self.output_dataset = t[0].template.output_dataset
-      self.testoption     = t[0].template.testoption
-      self.template       = t[0].template
-      if not gangabin:
-        self.gangabin     = t[0].gangabin
-      if not extraargs:
-        self.extraargs      = t[0].extraargs
-      self.metricperm     = t[0].metricperm
+      self.jobtemplate    = jobtemplate
+      self.usercode       = usercode
+      self.optionfile     = optionfile     
+      self.inputtype      = inputtype
+      self.output_dataset = output_dataset
+      self.testoption     = testoption
+      self.template       = template
+      self.gangabin       = gangabin
+      self.extraargs      = extraargs
+      self.metricperm     = metricperm
 
       super(TestBase, self).save()
 
@@ -1228,7 +1268,6 @@ class MetricTypeBase(models.Model):
   type        = models.CharField(choices = PLOT_TYPE, max_length=15)
   description = models.CharField(max_length=2047,blank=True) 
   mtime       = models.DateTimeField(auto_now=True)
-  rate        = models.BooleanField(default=False)
 
   def __unicode__(self):
     return '%s'%(self.title)
@@ -1443,8 +1482,6 @@ class SummaryTestBase(models.Model):
   c_cf            = models.FloatField(default=0,null=True)
   c_t             = models.FloatField(default=0,null=True)
   f_t             = models.FloatField(default=0,null=True)
-  
-  timetorun       = models.IntegerField(null=True)
 
   mtime           = models.DateTimeField(auto_now=True)
 
@@ -1478,8 +1515,6 @@ class SummaryTestSiteBase(models.Model):
   c_cf            = models.FloatField(default=0,null=True)
   c_t             = models.FloatField(default=0,null=True)
   f_t             = models.FloatField(default=0,null=True)
-  
-  timetorun       = models.IntegerField(null=True)
 
   mtime           = models.DateTimeField(auto_now=True)
 
