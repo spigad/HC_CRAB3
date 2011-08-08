@@ -39,7 +39,12 @@ echo '  CODE: python python/scripts/dispatcher.py -f create_functional_tests'
 echo ''
 python python/scripts/dispatcher.py -f create_functional_tests
 echo ''
-echo '  END CODE'
+
+echo '  CODE: python python/scripts/dispatcher.py -f blacklist'
+echo ''
+python python/scripts/dispatcher.py -f blacklist
+echo ''
+
 rm -f /tmp/server-main_$1.running
 
 echo '  Lock released: '/tmp/server-main_$1.running
