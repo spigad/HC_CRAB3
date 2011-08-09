@@ -5,7 +5,7 @@ import time
 import unittest
 
 from hc.core.utils.hc import cernmail
-from hc.atlas.models import Result, SiteOption, TemplateSite, Test, TestLog
+from hc.atlas.models import Result, SiteOption, Template, TemplateSite, Test, TestLog
 from pandatools import Client
 
 
@@ -16,7 +16,7 @@ class Policy:
     """Filters by template ID."""
     return filter(lambda x: x.test.template.id == template, jobs)
 
-  def evaluate(self, jobs, site, blacklist, failed_target, from_last_templates):
+  def evaluate(self, jobs, site, blacklist, failed_templates_target, num_jobs_per_template):
     """Generic evaluator for XFromY templates."""
     if not jobs:
       blacklist.site_has_no_jobs(site)
@@ -25,13 +25,13 @@ class Policy:
     ids = []
     for t in blacklist.templates:
       template_jobs = self.filter_jobs_by_template(jobs, t)
-      if len(template_jobs) < from_last_templates:
+      if len(template_jobs) < num_jobs_per_template:
         blacklist.sitesNeedingJobs[t].append(site)
         continue
-      if reduce(lambda x, y: x and y.ganga_status == 'f', template_jobs[:from_last_templates], True):
+      if reduce(lambda x, y: x and y.ganga_status == 'f', template_jobs[:num_jobs_per_template], True):
         failed_templates += 1
-        ids.extend(map(lambda x: x.backendID, template_jobs[:from_last_templates]))
-    if failed_templates < failed_target:
+        ids.extend(map(lambda x: x.backendID, template_jobs[:num_jobs_per_template]))
+    if failed_templates < failed_templates_target:
       return False
     blacklist.add_reason(site, 'BlackListing policy %s True. See jobs %s' % (self.__class__.__name__, repr(ids)))
     return True
@@ -39,7 +39,7 @@ class Policy:
 
 class BlackListingPolicyLastOneFromAll(Policy):
   def evaluate(self, jobs, site, blacklist):
-    return Policy.evaluate(self, jobs, site, blacklist, 1, 1)
+    return Policy.evaluate(self, jobs, site, blacklist, 4, 1)
 
 
 class BlackListingPolicyLastTwoFromTwo(Policy):
@@ -114,12 +114,11 @@ class BlacklistingTest(unittest.TestCase):
   def create_result_list_from_tuples(self, tuples):
     results = []
     for (ganga_status, template_id, backendID) in tuples:
-      resulsts.append(Result(ganga_status=ganga_status, test=Test(template=Template(id=template_id)), backendID=backendID))
+      results.append(Result(ganga_status=ganga_status, test=Test(template=Template(id=template_id)), backendID=backendID))
     return results
 
   def testBlacklistingPolicyLastOneFromAll(self):
-    b = Blacklist()
-    b.debug = True
+    b = Blacklist(templates=(67, 80, 95, 96), debug=True)
 
     self.assertEqual(False, BlackListingPolicyLastOneFromAll().evaluate((), 'ANALY_TEST', b)) # base case
 
@@ -127,22 +126,21 @@ class BlacklistingTest(unittest.TestCase):
     self.assertEqual(True, BlackListingPolicyLastOneFromAll().evaluate(self.create_result_list_from_tuples(failed), 'ANALY_TEST', b))
 
     notall = (('f', 67, None), ('c', 80, None), ('f', 95, None), ('f', 96, None))
-    self.assertEqual(True, BlackListingPolicyLastOneFromAll().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
+    self.assertEqual(False, BlackListingPolicyLastOneFromAll().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
 
     notall = (('c', 67, None), ('c', 80, None), ('f', 95, None), ('f', 96, None))
-    self.assertEqual(True, BlackListingPolicyLastOneFromAll().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
+    self.assertEqual(False, BlackListingPolicyLastOneFromAll().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
 
     notall = (('c', 67, None), ('c', 80, None), ('c', 95, None), ('c', 96, None))
-    self.assertEqual(True, BlackListingPolicyLastOneFromAll().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
+    self.assertEqual(False, BlackListingPolicyLastOneFromAll().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
 
     notall = (('f', 67, None), ('f', 80, None), ('f', 95, None))
-    self.assertEqual(True, BlackListingPolicyLastOneFromAll().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
+    self.assertEqual(False, BlackListingPolicyLastOneFromAll().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
 
   def testBlacklistingPolicyLastTwoFromTwo(self):
-    b = Blacklist()
-    b.debug = True
+    b = Blacklist(templates=(67, 80, 95, 96), debug=True)
 
-    self.assertEqual(True, BlackListingPolicyLastTwoFromTwo().evaluate((), 'ANALY_TEST', b)) # base case
+    self.assertEqual(False, BlackListingPolicyLastTwoFromTwo().evaluate((), 'ANALY_TEST', b)) # base case
 
     failed = (('f', 67, None), ('f', 80, None), ('f', 95, None), ('f', 96, None), ('f', 67, None), ('f', 80, None), ('f', 95, None), ('f', 96, None))
     self.assertEqual(True, BlackListingPolicyLastTwoFromTwo().evaluate(self.create_result_list_from_tuples(failed), 'ANALY_TEST', b))
@@ -154,19 +152,18 @@ class BlacklistingTest(unittest.TestCase):
     self.assertEqual(True, BlackListingPolicyLastTwoFromTwo().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
 
     notall = (('c', 67, None), ('c', 80, None), ('c', 95, None), ('c', 96, None), ('c', 67, None), ('c', 80, None), ('c', 95, None), ('c', 96, None))
-    self.assertEqual(True, BlackListingPolicyLastTwoFromTwo().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
+    self.assertEqual(False, BlackListingPolicyLastTwoFromTwo().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
 
   def testBlacklistingPolicyLastFourFromOne(self):
-    b = Blacklist()
-    b.debug = False
+    b = Blacklist(templates=(67, 80, 95, 96), debug=True)
 
-    self.assertEqual(True, BlackListingPolicyLastFourFromOne().evaluate((), 'ANALY_TEST', b)) # base case
+    self.assertEqual(False, BlackListingPolicyLastFourFromOne().evaluate((), 'ANALY_TEST', b)) # base case
 
     failed = (('f', 67, None), ('f', 67, None), ('f', 67, None), ('f', 67, None))
     self.assertEqual(True, BlackListingPolicyLastFourFromOne().evaluate(self.create_result_list_from_tuples(failed), 'ANALY_TEST', b))
 
     notall = (('f', 67, None), ('f', 67, None), ('c', 67, None), ('f', 67, None))
-    self.assertEqual(True, BlackListingPolicyLastFourFromOne().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
+    self.assertEqual(False, BlackListingPolicyLastFourFromOne().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
 
 
 class Blacklist:
@@ -176,13 +173,19 @@ class Blacklist:
   daops = 'atlas-project-adc-operations-analysis-shifts@cern.ch,atlasdast@gmail.com,dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
   daexp = 'dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
 
-  def __init__(self):
-    self.templates = (65, 93)
+  def __init__(self, templates=None, debug=False):
+    if not templates:
+      self.templates = (65, 93)
+    else:
+      self.templates = templates
     self.policies_for_brokeroff = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,
                                    BlackListingPolicyLastThreeFromOne, WhiteListingPolicyLastTwoFromAll)
     self.policies_for_online = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,
                                 BlackListingPolicyLastThreeFromOne)
-    self.debug = False
+    if not debug:
+      self.debug = False
+    else:
+      self.debug = debug
     self.test = False
     self.runningTests = None
     self.sitesNeedingJobs = {}
@@ -201,7 +204,10 @@ class Blacklist:
     if self.debug:
       self.daops = self.daexp = self.dan
     if self.test:
-      unittest.main()
+      import sys
+      sys.argv = ['']
+      suite = unittest.TestLoader().loadTestsFromTestCase(BlacklistingTest)
+      unittest.TextTestRunner(verbosity=2).run(suite)
       return True
     self.get_running_test()
     self.check_brokeroff_sites()
