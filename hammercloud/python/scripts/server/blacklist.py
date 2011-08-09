@@ -13,7 +13,7 @@ class Blacklist:
 
     if app_script:
       try:
-        app_script().run(debug=True)
+        app_script().run(debug=True, test=False)
       except:
         print '[ERROR][%s][blacklist] app blacklisting script failed.' % (app)
         return 0
