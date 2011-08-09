@@ -4,9 +4,8 @@ import re
 import time
 import unittest
 
-import hc.core.utils.hc.cernmail
-
-from atlas.models import Result, SiteOption, TemplateSite, Test, TestLog
+from hc.core.utils.hc import cernmail
+from hc.atlas.models import Result, SiteOption, TemplateSite, Test, TestLog
 from pandatools import Client
 
 
@@ -173,7 +172,7 @@ class BlacklistingTest(unittest.TestCase):
 class Blacklist:
   """ATLAS Blacklisting script."""
 
-  dan = 'daniel.colin.vanderster@cern.ch,ramon.medrano.llamas@cern.ch'#,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de'       
+  dan = 'daniel.colin.vanderster@cern.ch,ramon.medrano.llamas@cern.ch'#,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de'
   daops = 'atlas-project-adc-operations-analysis-shifts@cern.ch,atlasdast@gmail.com,dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
   daexp = 'dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
 
@@ -203,11 +202,12 @@ class Blacklist:
       self.daops = self.daexp = self.dan
     if self.test:
       unittest.main()
-      return
+      return True
     self.get_running_test()
     self.check_brokeroff_sites()
     self.check_online_sites()
     self.send_alert()
+    return True
 
   def check_brokeroff_sites(self):
     self.sitesNeedingJobs = {}
@@ -216,12 +216,15 @@ class Blacklist:
     for x in self.templates:
       self.sitesNeedingJobs[x] = []
     bo_sites = self.get_sites(status='brokeroff')
-    (_, newsites) = check_in_templates(bo_sites)
+    (_, newsites) = self.check_in_templates(bo_sites)
     if newsites:
       self.add_log('** New brokeroff sites not in templates: %s' % repr(newsites))
       self.store_log('** New brokeroff sites not in templates: %s' % repr(newsites), 'error')
+    print self.runningTests
     for site in bo_sites:
-      res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=self.runningTests).filter(site__name=site).order_by('-mtime')
+      # The map() for the test ID is needed because MySQL 5.1 does not support nested IN
+      # with ALL in a subquery (makes this QuerySet a little bit slower).
+      res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).order_by('-mtime')
       if reduce(lambda x, y: x and not y, map(lambda x: x().evaluate(res, site, self), self.policies_for_brokeroff), True) and self.site_needs_jobs(site):
         sitesToAutoSetOnline.append(site)
       else:
@@ -231,22 +234,23 @@ class Blacklist:
       self.add_log("AUTO-WHITELIST: The following brokeroff sites will be set to online:")
       self.add_log("%s" % sitesToAutoSetOnline)
       for s in sitesToAutoSetOnline:
-        if self.change_site_state(s, 'online'):
+        if self.change_site_status(s, 'online'):
           self.store_log('Site %s was set to online' % s)
           self.send_cloud_online_alert(s)
 
   def check_online_sites(self):
     self.sitesNeedingJobs = {}
     sitesToSetBrokeroff = []
+    limit = datetime.datetime.now() - datetime.timedelta(hours=3)
     for x in self.templates:
       self.sitesNeedingJobs[x] = []
     online_sites = self.get_sites(status='online')
-    (_, newsites) = check_in_templates(online_sites)
+    (_, newsites) = self.check_in_templates(online_sites)
     if newsites:
       self.add_log('** New online sites not in templates: %s' % repr(newsites))
       self.store_log('** New online sites not in templates: %s' % repr(newsites), 'error')
-    for site in bo_sites:
-      res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=self.runningTests).filter(site__name=site).order_by('-mtime')
+    for site in online_sites:
+      res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).order_by('-mtime')
       if reduce(lambda x, y: x or y, map(lambda x: x().evaluate(res, site, self), self.policies_for_online), False):
         sitesToSetBrokeroff.append(site)
 
@@ -257,12 +261,12 @@ class Blacklist:
         self.add_log("%s" % ', '.join(self.sitesNeedingJobs[t]))
         self.store_log("The following online sites need more test jobs for template %d: %s" % (t, ', '.join(self.sitesNeedingJobs[t])))
 
-    if sitesToAutoSetOnline:
+    if sitesToSetBrokeroff:
       self.add_log("")
       self.add_log("BLACKLIST: The following brokeroff sites will be set to online:")
       self.add_log("%s" % sitesToSetBrokeroff)
       for s in sitesToSetBrokeroff:
-        if self.change_site_state(s, 'brokeroff'):
+        if self.change_site_status(s, 'brokeroff'):
           self.store_log('Site %s will be set to brokeroff' % s, 'error')
           self.store_log('%s blacklisting reason is %s' % (s, self.reasons[s]), 'error')
           self.send_cloud_alert(s)
@@ -315,7 +319,7 @@ class Blacklist:
       if TemplateSite.objects.filter(template__id__in=self.templates).filter(site__name=site).count() == len(self.templates):
         result[0].append(site)
       else:
-        self.reasons.append(site, 'Missing from some templates.')
+        self.add_reason(site, 'Missing from some templates.')
         result[1].append(site)
     return result
 
@@ -323,7 +327,7 @@ class Blacklist:
     os = []
     to_exclude = map(lambda x: x.site.name, SiteOption.objects.filter(option_name='autoexclusion').filter(option_value='disable'))
     for s in Client.PandaSites.keys():
-      if Client.PandaSites[s]['status'] == status and not re.search('test', s, re.I) and not re.search('local', s, re.I) and s not in to_ignore:
+      if Client.PandaSites[s]['status'] == status and not re.search('test', s, re.I) and not re.search('local', s, re.I) and s not in to_exclude:
         if status == 'brokeroff':
           if Client.PandaSites[s]['comment'] in ('HC.Blacklist.set.brokeroff', 'HC.Blacklist.set.manual', 'HC.Test.Me'):
             os.append(s)
@@ -344,7 +348,7 @@ class Blacklist:
     if not self.debug:
       TestLog(test=self.runningTests[0], comment=msg, severity=category, user=1).save()
 
-  def log_reasons(self, sites=self.reasons.keys()):
+  def log_reasons(self, sites):
     for site in sites:
       s = '%s (%s):' % (site, Client.PandaSites[site]['status'])
       s += '\n    %s\n' % ('\n'.join(reasons[site]))
@@ -362,7 +366,7 @@ class Blacklist:
     return False
 
   def add_reason(self, site, reason):
-    if self.reasons(site, None):
+    if self.reasons.get(site, None):
       self.reasons[site].append(reason)
     else:
       self.reasons[site] = [reason]
@@ -378,9 +382,9 @@ class Blacklist:
     to = cloud_support + ',' + daops
     if self.debug:
         to = dan
-    subject = "[HammerCloud] %s reset online at %s CET" % (site, time.ctime())
+    subject = "[HCv4] %s reset online at %s CET" % (site, time.ctime())
     if self.debug:
-        subject += 'DEBUG DEBUG'
+        subject += ' DEBUG'
     body = "Dear %s,\n\n" % cloud_support
     body += "%s is passing the HC test jobs and was automatically set online." % site
     body += "\n\n"
@@ -401,9 +405,9 @@ class Blacklist:
     to = cloud_support + ',' + daops
     if self.debug:
         to = dan
-    subject = "[HammerCloud] %s Auto-Excluded at %s CET" % (site, time.ctime())
+    subject = "[HCv4] %s Auto-Excluded at %s CET" % (site, time.ctime())
     if self.debug:
-        subject += 'DEBUG DEBUG'
+        subject += ' DEBUG'
     body = "Dear %s,\n\n" % cloud_support
     body += "%s has been automatically excluded from PanDA distributed analysis because it " % site
     body += "has failed the recent HC test jobs. You can see the exclusion policy at [1].\n\nEXCLUSION REASON:\n"
@@ -427,14 +431,15 @@ class Blacklist:
 
     cernmail.send(to, subject, body)
 
-  def send_alert(self, msg):
-    if not msg:
+  def send_alert(self):
+    if not self.log:
         return
-    to = daexp
-    subject = "[HammerCloud] Blacklisting Report at %s CET" % time.ctime()
+    to = self.daexp
+    subject = "[HCv4] Blacklisting Report at %s CET" % time.ctime()
     if self.debug:
-        subject += 'DEBUG DEBUG'
-    body = "%s\n\n\nReport generated on voatlas49 by HammerCloud ATLAS blacklisting service." % msg
+        to = self.dan
+        subject += ' DEBUG'
+    body = "%s\n\n\nReport generated on voatlas49 by HammerCloud ATLAS blacklisting service." % self.log
     cernmail.send(to, subject, body)
 
 
