@@ -14,17 +14,17 @@ then
     exit
 fi
 
-if [ -f /tmp/server-main_$1.running ]
+if [ -f /tmp/blacklist-main_$1.running ]
 then
-    echo '  ERROR! Script 'server-main_$1 already running.
+    echo '  ERROR! Script 'blacklist-main_$1 already running.
     echo ''
     echo '_ End Server Main.'
     echo ''
     exit
 fi
 
-touch /tmp/server-main_$1.running
-echo '  Lock written: '/tmp/server-main_$1.running
+touch /tmp/blacklist-main_$1.running
+echo '  Lock written: '/tmp/blacklist-main_$1.running
 
 #Get HCDIR from current installation.
 HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
@@ -35,14 +35,14 @@ echo ''
 
 cd $HCDIR
 
-echo '  CODE: python python/scripts/dispatcher.py -f create_functional_tests'
+echo '  CODE: python python/scripts/dispatcher.py -f blacklist'
 echo ''
-python python/scripts/dispatcher.py -f create_functional_tests
+python python/scripts/dispatcher.py -f blacklist
 echo ''
 
-rm -f /tmp/server-main_$1.running
+rm -f /tmp/blacklist-main_$1.running
 
-echo '  Lock released: '/tmp/server-main_$1.running
+echo '  Lock released: '/tmp/blacklist-main_$1.running
 echo ''
 echo '_ End Server Main.'
 echo ''
