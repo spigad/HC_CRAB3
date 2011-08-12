@@ -958,7 +958,11 @@ def plot(completed=False):
 
   commands = {'sort_by':'test', 'type':'plot', 'completed':completed}
 
-  test_title, values = stats.process(Qobjects, commands)[0][0]
+  try:
+    test_title, values = stats.process(Qobjects, commands)[0][0]
+  except:
+    return
+
   for metric_title, urls in values:
 
     mt = MetricType.objects.filter(title=metric_title)
