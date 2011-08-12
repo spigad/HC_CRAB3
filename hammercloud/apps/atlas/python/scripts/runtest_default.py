@@ -876,6 +876,7 @@ def summarize():
   try:
     title, values = stats.process(Qobjects, commands)[0]
   except:
+    logger.warning('Bug during summary')
     return
   values = dict(values)
 
@@ -960,6 +961,7 @@ def plot(completed=False):
 
   try:
     test_title, values = stats.process(Qobjects, commands)[0][0]
+    lgger.warning('Bug during plot')
   except:
     return
 
