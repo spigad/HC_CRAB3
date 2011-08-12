@@ -1,11 +1,11 @@
 from django.conf.urls.defaults import *
 
 urlpatterns = patterns('hc.core.views',
-  url(r'^$','portal', name='portal-view'),
+  url(r'^$', 'portal', name='portal-view'),
   )
 
 urlpatterns += patterns('django.views.generic.simple',
-  ('^app/(?P<app>[a-z]+)/admin/$', 'redirect_to', {'url': '/hc/admin/'}),
+  ('^app/(?P<app>[a-z]+)/admin/$', 'redirect_to', {'url': '/hc/admin/%(app)s/'}),
   )
 
 urlpatterns += patterns('hc.core.base.views.control',
@@ -38,7 +38,7 @@ urlpatterns += patterns('hc.core.base.views.dispatcher',
   url(r'^app/(?P<app>[a-z]+)/site/(?P<site_id>\d+)/$'         , 'dispatcher', name='site-view'         , kwargs={'func':'site'}),
   url(r'^app/(?P<app>[a-z]+)/templates/$'                     , 'dispatcher', name='templates-view'    , kwargs={'func':'templates'}),
   url(r'^app/(?P<app>[a-z]+)/template/(?P<template_id>\d+)/$' , 'dispatcher', name='template-view'     , kwargs={'func':'template'}),
-  url(r'^app/(?P<app>[a-z]+)/testoptions/$'                   , 'dispatcher', name='testoptions-view'  , kwargs={'func':'testoptions'}), 
+  url(r'^app/(?P<app>[a-z]+)/testoptions/$'                   , 'dispatcher', name='testoptions-view'  , kwargs={'func':'testoptions'}),
   url(r'^app/(?P<app>[a-z]+)/usercodes/$'                     , 'dispatcher', name='usercodes-view'    , kwargs={'func':'usercodes'}),
 
   #TEST
@@ -48,15 +48,15 @@ urlpatterns += patterns('hc.core.base.views.dispatcher',
   url(r'^app/(?P<app>[a-z]+)/testmodify/(?P<test_id>\d+)/$'   , 'dispatcher', name='testmodify-view'   , kwargs={'func':'testmodify'}),
 
   #AJAX
-  url(r'^app/(?P<app>[a-z]+)/ajax/test/(?P<test_id>\d+)/(?P<type>[a-z]+)/$'    , 'dispatcher', name ='testaccordion-view'  ,kwargs={'func':'testaccordion'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/testlogs/(?P<test_id>\d+)/$'                 , 'dispatcher', name ='ajaxtestlogs-view' ,kwargs={'func':'ajaxtestlogs'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/testlogs/(?P<test_id>\d+)/report$', 'dispatcher', name='ajaxtestlogreport-view',kwargs={'func':'ajaxtestlogreport'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/testalarms/(?P<test_id>\d+)/$'               , 'dispatcher', name ='ajaxtestalarms-view' ,kwargs={'func':'ajaxtestalarms'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/testmetrics/(?P<test_id>\d+)/$'   , 'dispatcher', name = 'ajaxtestmetrics-view', kwargs={'func':'ajaxtestmetrics'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/testsites/(?P<test_id>\d+)/$'     , 'dispatcher', name = 'ajaxtestsites-view'  , kwargs={'func':'ajaxtestsites'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/testjobs/(?P<test_id>\d+)/$'      , 'dispatcher', name = 'ajaxtestjobs-view'  , kwargs={'func':'ajaxtestjobs'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/testevolution/(?P<test_id>\d+)/$' , 'dispatcher', name = 'ajaxtestevolution-view',kwargs={'func':'ajaxtestevolution'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/(?P<type>[a-z]+)/get_list/(?P<id>\d+)/$'     , 'dispatcher', name = 'get_list-view'     ,kwargs={'func':'get_list'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/test/(?P<test_id>\d+)/(?P<type>[a-z]+)/$'    , 'dispatcher', name='testaccordion-view'  , kwargs={'func':'testaccordion'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/testlogs/(?P<test_id>\d+)/$'                 , 'dispatcher', name='ajaxtestlogs-view' , kwargs={'func':'ajaxtestlogs'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/testlogs/(?P<test_id>\d+)/report$', 'dispatcher', name='ajaxtestlogreport-view', kwargs={'func':'ajaxtestlogreport'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/testalarms/(?P<test_id>\d+)/$'               , 'dispatcher', name='ajaxtestalarms-view' , kwargs={'func':'ajaxtestalarms'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/testmetrics/(?P<test_id>\d+)/$'   , 'dispatcher', name='ajaxtestmetrics-view', kwargs={'func':'ajaxtestmetrics'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/testsites/(?P<test_id>\d+)/$'     , 'dispatcher', name='ajaxtestsites-view'  , kwargs={'func':'ajaxtestsites'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/testjobs/(?P<test_id>\d+)/$'      , 'dispatcher', name='ajaxtestjobs-view'  , kwargs={'func':'ajaxtestjobs'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/testevolution/(?P<test_id>\d+)/$' , 'dispatcher', name='ajaxtestevolution-view', kwargs={'func':'ajaxtestevolution'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/(?P<type>[a-z]+)/get_list/(?P<id>\d+)/$'     , 'dispatcher', name='get_list-view'     , kwargs={'func':'get_list'}),
 
 
   #ROBOT
@@ -69,10 +69,10 @@ urlpatterns += patterns('hc.core.base.views.dispatcher',
   url(r'^app/(?P<app>[a-z]+)/robot/autoexclusion/$'           , 'dispatcher', name='autoexclusion-view', kwargs={'func':'autoexclusion'}),
 
   #STATS
-  url(r'^app/(?P<app>[a-z]+)/stats/$'                         , 'dispatcher', name ='stats-view'      , kwargs={'func':'stats'}),
-  url(r'^app/(?P<app>[a-z]+)/evolution/$'                     , 'dispatcher', name ='evolution-view'  , kwargs={'func':'evolution'}),
-  url(r'^app/(?P<app>[a-z]+)/statistics/$'                    , 'dispatcher', name ='statistics-view' , kwargs={'func':'statistics'}),
-  
+  url(r'^app/(?P<app>[a-z]+)/stats/$'                         , 'dispatcher', name='stats-view'      , kwargs={'func':'stats'}),
+  url(r'^app/(?P<app>[a-z]+)/evolution/$'                     , 'dispatcher', name='evolution-view'  , kwargs={'func':'evolution'}),
+  url(r'^app/(?P<app>[a-z]+)/statistics/$'                    , 'dispatcher', name='statistics-view' , kwargs={'func':'statistics'}),
+
 
   #XHR
   #url(r'^app/(?P<app>[a-z]+)/xhr/(?P<format>\w+)/$'         , 'dispatcher', name ='xhr-view'      , kwargs={'func':'xhr'}),  
