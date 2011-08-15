@@ -846,6 +846,10 @@ def process_subjob(job, subjob):
 #    elif v == 'NULL':
 #      logger.info([k,v])
 
+  logger.warning('************************************************************')
+  logger.warning(results)
+  logger.warning('************************************************************')
+
   if subjob.status in ('completed', 'failed'):
     logger.warning('SubJob is in final state, marking row as fixed')
     result.fixed = 1
