@@ -455,6 +455,7 @@ def process_job(job):
   try:
     stats = job.application.stats
   except:
+    logger.warning('Ganga application stats for job not available')
     pass
   metrics = ['percentcpu', 'systemtime', 'usertime', 'site', 'totalevents', 'wallclock', 'stoptime', 'outse', 'starttime', 'exitstatus', 'numfiles3', 'gangatime1', 'gangatime2', 'gangatime3', 'gangatime4', 'gangatime5', 'jdltime', 'NET_ETH_RX_PREATHENA', 'NET_ETH_RX_POSTATHENA', 'pandatime1', 'pandatime2', 'pandatime3', 'pandatime4', 'pandatime5', 'arch', 'submittime']
   for m in metrics:
@@ -655,9 +656,6 @@ def process_subjob(job, subjob):
   stats = {}
   try:
     stats = subjob.application.stats
-    logger.warning('#########################################################')
-    logger.warning(stats)
-    logger.warning('#########################################################')
   except:
     logger.warning('Ganga application stats not avaible')
     pass
@@ -850,12 +848,6 @@ def process_subjob(job, subjob):
       setattr(result, k, v)
 #    elif v == 'NULL':
 #      logger.info([k,v])
-
-  logger.warning('************************************************************')
-  logger.warning(results)
-  logger.warning('************************************************************')
-  logger.warning(result)
-  logger.warning('************************************************************')
 
   if subjob.status in ('completed', 'failed'):
     logger.warning('SubJob is in final state, marking row as fixed')
