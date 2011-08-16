@@ -575,16 +575,16 @@ def process_job(job):
   if results['numevents'] != 'NULL' and results['wallclock'] != 'NULL':
     try:
       eventrate = results['numevents'] / results['wallclock']
-      logger.info('Eventrare for test %f job %f = %f' % (test.id, job.id, eventrate))
+      logger.info('Eventrare for test %s job %s = %s' % (repr(test.id), repr(job.id), repr(eventrate)))
       results['eventrate'] = eventrate
     except:
       pass
   else:
-    logger.warning('Eventrare for test %d job %d not calculable (%s, %s)' % (test.id, job.id, repr(results['numevents']), repr(results['wallclock'])))
+    logger.warning('Eventrare for test %s job %s not calculable (%s, %s)' % (repr(test.id), repr(job.id), repr(results['numevents']), repr(results['wallclock'])))
 
   #EVENTS/ATHENA
   if results['numevents'] != 'NULL':
-    logger.warning('pandatime3 for job %d = %f' % (results['backendID'], results['pandatime3']))
+    logger.warning('pandatime3 for job %s = %s' % (repr(results['backendID']), repr(results['pandatime3'])))
     time = 0
     if results['pandatime3'] != 'NULL':
       time = results['pandatime3']
@@ -598,7 +598,7 @@ def process_job(job):
       except:
         pass
   else:
-    logger.warning('Events/Athena for test %d job %d not calculable (%s)' % (test.id, job.id, repr(results['numevents'])))
+    logger.warning('Events/Athena for test %s job %s not calculable (%s)' % (repr(test.id), repr(job.id), repr(results['numevents'])))
 
   try:
     results['site'] = Site.objects.filter(name=results['site'])[0]
