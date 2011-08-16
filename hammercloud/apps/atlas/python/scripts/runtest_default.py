@@ -964,7 +964,6 @@ def plot(completed=False):
 
   try:
     test_title, values = stats.process(Qobjects, commands)[0][0]
-    lgger.warning('Bug during plot')
   except:
     return
 
