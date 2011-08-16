@@ -578,9 +578,9 @@ def process_job(job):
       logger.info('Eventrare for test %s job %s = %s' % (repr(test.id), repr(job.id), repr(eventrate)))
       results['eventrate'] = eventrate
     except:
-      pass
+      logger.warning('Eventrare for test %s job %s exception (%s, %s)' % (repr(test.id), repr(job.id), repr(results['numevents']), repr(results['wallclock'])))
   else:
-    logger.warning('Eventrare for test %s job %s not calculable (%s, %s)' % (repr(test.id), repr(job.id), repr(results['numevents']), repr(results['wallclock'])))
+    logger.warning('Eventrare for tet %s job %s not calculable (%s, %s)' % (repr(test.id), repr(job.id), repr(results['numevents']), repr(results['wallclock'])))
 
   #EVENTS/ATHENA
   if results['numevents'] != 'NULL':
