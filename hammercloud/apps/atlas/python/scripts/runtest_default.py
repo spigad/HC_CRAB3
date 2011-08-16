@@ -940,6 +940,7 @@ def summarize():
           setattr(sts, metric.name, mean)
 
     sts.save()
+  logger.info('Summarize ended')
 
 ##
 ## PLOT
@@ -1017,6 +1018,7 @@ def plot(completed=False):
     else:
       logger.info('No metric type recognised with this name: %s' % (metric_title))
 
+  logger.info('Plot ended')
     #logger.info(value[0])    
 
 ##
