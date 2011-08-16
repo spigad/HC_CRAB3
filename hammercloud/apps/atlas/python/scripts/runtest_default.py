@@ -575,16 +575,12 @@ def process_job(job):
   if results['numevents'] != 'NULL' and results['wallclock'] != 'NULL':
     try:
       eventrate = results['numevents'] / results['wallclock']
-      logger.info('Eventrare for test %s job %s = %s' % (repr(test.id), repr(job.id), repr(eventrate)))
       results['eventrate'] = eventrate
     except:
-      logger.warning('Eventrare for test %s job %s exception (%s, %s)' % (repr(test.id), repr(job.id), repr(results['numevents']), repr(results['wallclock'])))
-  else:
-    logger.warning('Eventrare for tet %s job %s not calculable (%s, %s)' % (repr(test.id), repr(job.id), repr(results['numevents']), repr(results['wallclock'])))
+      pass
 
   #EVENTS/ATHENA
   if results['numevents'] != 'NULL':
-    logger.warning('pandatime3 for job %s = %s' % (repr(results['backendID']), repr(results['pandatime3'])))
     time = 0
     if results['pandatime3'] != 'NULL':
       time = results['pandatime3']
@@ -597,8 +593,6 @@ def process_job(job):
         results['events_athena'] = events_athena
       except:
         pass
-  else:
-    logger.warning('Events/Athena for test %s job %s not calculable (%s)' % (repr(test.id), repr(job.id), repr(results['numevents'])))
 
   try:
     results['site'] = Site.objects.filter(name=results['site'])[0]
