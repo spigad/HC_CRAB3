@@ -10,14 +10,18 @@ urlpatterns = patterns('',
   #added, add them here.
   #(r'^app/atlas', include('hc.atlas.urls'))
 
-  (r'',                   include('hc.core.urls')                               ),
-  (r'',                   include('hc.core.base.rss.urls')                      ),
-  (r'',                   include('hc.core.base.xhr.urls')                      ),
-  (r'',                   include('hc.core.base.xmlrpc.urls')                   ),
+  (r'', include('hc.core.urls')),
+  (r'', include('hc.core.base.rss.urls')),
+  (r'', include('hc.core.base.xhr.urls')),
+  (r'', include('hc.core.base.xmlrpc.urls')),
 
   url(r'^admin/', include(admin.site.urls) , kwargs={'SSL':True}),
 
 #  (r'^accounts/login/$',  'django.contrib.auth.views.login', {'template_name': 'core/app/login.html'}),
-    
+
 )
+
+urlpatterns += patterns('django.views.generic.simple',
+  ('^app/(?P<app>[a-z]+)/admin/$', 'redirect_to', {'url': '/hc/admin/%(app)s/'}),
+  )
 
