@@ -455,9 +455,12 @@ def process_job(job):
   try:
     stats = job.application.stats
   except:
-    logger.warning('Ganga application stats for job not available')
-    pass
-  metrics = ['percentcpu', 'systemtime', 'usertime', 'site', 'totalevents', 'wallclock', 'stoptime', 'outse', 'starttime', 'exitstatus', 'numfiles3', 'gangatime1', 'gangatime2', 'gangatime3', 'gangatime4', 'gangatime5', 'jdltime', 'NET_ETH_RX_PREATHENA', 'NET_ETH_RX_POSTATHENA', 'pandatime1', 'pandatime2', 'pandatime3', 'pandatime4', 'pandatime5', 'arch', 'submittime']
+    try:
+      stats = job._impl.backend.get_stats()
+    except:
+      logger.warning('Ganga application stats for job not available')
+
+  metrics = ['percentcpu', 'systemtime', 'usertime', 'site', 'totalevents', 'wallclock', 'stoptime', 'outse', 'starttime', 'exitstatus', 'numfiles3', 'gangatime1', 'gangatime2', 'gangatime3', 'gangatime4', 'gangatime5', 'jdltime', 'NET_ETH_RX_PREATHENA', 'NET_ETH_RX_AFTERATHENA', 'pandatime1', 'pandatime2', 'pandatime3', 'pandatime4', 'pandatime5', 'arch', 'submittime']
   for m in metrics:
     try:
       x = stats[m]
@@ -504,7 +507,7 @@ def process_job(job):
              'percent_cpu'           :stats['percentcpu'],
              'numevents'             :stats['totalevents'],
              'net_eth_rx_preathena'  :stats['NET_ETH_RX_PREATHENA'],
-             'net_eth_rx_postathena' :stats['NET_ETH_RX_POSTATHENA'],
+             'NET_ETH_RX_AFTERATHENA' :stats['NET_ETH_RX_AFTERATHENA'],
              'inds'                  :inds,
              'outds'                 :outds,
              'reason'                :job.backend.reason,
@@ -656,10 +659,12 @@ def process_subjob(job, subjob):
   try:
     stats = subjob.application.stats
   except:
-    logger.warning('Ganga application stats not avaible')
-    pass
+    try:
+      stats = subjob._impl.backend.get_stats()
+    except:
+      logger.warning('Ganga application stats not avaible')
 
-  metrics = ['percentcpu', 'systemtime', 'usertime', 'site', 'totalevents', 'wallclock', 'stoptime', 'outse', 'starttime', 'exitstatus', 'numfiles3', 'gangatime1', 'gangatime2', 'gangatime3', 'gangatime4', 'gangatime5', 'jdltime', 'NET_ETH_RX_PREATHENA', 'NET_ETH_RX_POSTATHENA', 'pandatime1', 'pandatime2', 'pandatime3', 'pandatime4', 'pandatime5', 'arch', 'submittime']
+  metrics = ['percentcpu', 'systemtime', 'usertime', 'site', 'totalevents', 'wallclock', 'stoptime', 'outse', 'starttime', 'exitstatus', 'numfiles3', 'gangatime1', 'gangatime2', 'gangatime3', 'gangatime4', 'gangatime5', 'jdltime', 'NET_ETH_RX_PREATHENA', 'NET_ETH_RX_AFTERATHENA', 'pandatime1', 'pandatime2', 'pandatime3', 'pandatime4', 'pandatime5', 'arch', 'submittime']
   for m in metrics:
     try:
       x = stats[m]
@@ -707,7 +712,7 @@ def process_subjob(job, subjob):
              'percent_cpu'           :stats['percentcpu'],
              'numevents'             :stats['totalevents'],
              'net_eth_rx_preathena'  :stats['NET_ETH_RX_PREATHENA'],
-             'net_eth_rx_postathena' :stats['NET_ETH_RX_POSTATHENA'],
+             'NET_ETH_RX_AFTERATHENA' :stats['NET_ETH_RX_AFTERATHENA'],
              'inds'                  :inds,
              'outds'                 :outds,
              'reason'                :job.backend.reason,
