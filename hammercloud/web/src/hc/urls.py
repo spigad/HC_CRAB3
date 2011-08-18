@@ -20,8 +20,3 @@ urlpatterns = patterns('',
 #  (r'^accounts/login/$',  'django.contrib.auth.views.login', {'template_name': 'core/app/login.html'}),
 
 )
-
-urlpatterns += patterns('django.views.generic.simple',
-  ('^app/(?P<app>[a-z]+)/admin/$', 'redirect_to', {'url': '/hc/admin/%(app)s/'}),
-  )
-
