@@ -17,7 +17,9 @@
         "{{summary.pandatime1}}",
         "{{summary.pandatime2}}",
         "{{summary.pandatime3}}",
-        "{{summary.pandatime4}}"
+        "{{summary.pandatime4}}",
+        "{{summary.pandatime5}}",
+        "{{summary.timetorun}}"
     ]
 
     {% if not forloop.last %}
