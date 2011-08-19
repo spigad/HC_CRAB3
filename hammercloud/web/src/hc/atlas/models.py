@@ -168,7 +168,12 @@ class Result(ResultBase):
   net_eth_rx_preathena  = models.IntegerField(null=True, blank=True)
   net_eth_rx_postathena = models.IntegerField(null=True, blank=True)
 
-  
+  timetorun             = models.FloatField(null=True, blank=True)
+
+  def save(self):
+    td = self.start_time - self.submit_time
+    self.timetorun = (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) / 10**6
+    super(Result, self).save()
 
 ##
 ## METRIC CLASSES
