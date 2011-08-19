@@ -171,8 +171,11 @@ class Result(ResultBase):
   timetorun             = models.FloatField(null=True, blank=True)
 
   def save(self):
-    td = self.start_time - self.submit_time
-    self.timetorun = (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) / 10**6
+    try:
+      td = self.start_time - self.submit_time
+      self.timetorun = (td.microseconds + (td.seconds + td.days * 24 * 3600) * 10**6) / 10**6
+    except TypeError: # Just for the Nones on the times.
+      pass
     super(Result, self).save()
 
 ##
