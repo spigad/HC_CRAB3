@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo ''
-echo '_ Server Main.'
+echo '_ Blacklist Main.'
 echo ''
 
 
@@ -9,7 +9,7 @@ if [ -z $1 ]
 then
     echo '  ERROR! Please, set application tag.'
     echo ''
-    echo '_ End Server Main.'
+    echo '_ End Blacklist Main.'
     echo ''
     exit
 fi
@@ -18,7 +18,7 @@ if [ -f /tmp/blacklist-main_$1.running ]
 then
     echo '  ERROR! Script 'blacklist-main_$1 already running.
     echo ''
-    echo '_ End Server Main.'
+    echo '_ End Blacklist Main.'
     echo ''
     exit
 fi
@@ -44,5 +44,5 @@ rm -f /tmp/blacklist-main_$1.running
 
 echo '  Lock released: '/tmp/blacklist-main_$1.running
 echo ''
-echo '_ End Server Main.'
+echo '_ End Blacklist Main.'
 echo ''
