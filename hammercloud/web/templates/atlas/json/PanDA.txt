@@ -6,7 +6,6 @@
     {% for summary in querySet %}
     [   
         "{{summary.test_site.site.name}}",
-        "{{summary.total}}",
         "{{summary.c_cf|floatformat:3}}",
         "{{summary.percent_cpu}}",
         "{{summary.numevents}}",
