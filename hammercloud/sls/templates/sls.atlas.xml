@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<serviceupdate xmlns="http://sls.cern.ch/SLS/XML/update">
+  <id>HC.ATLAS</id>
+  <availability>###AVAILABILITY###</availability>
+  <timestamp>###TIMESTAMP###</timestamp>
+  <validityduration>PT30M</validityduration>
+  <refreshperiod>PT5M</refreshperiod>
+  <lemon>
+    <host>voatlas49</host>
+    <host>voatlas65</host>
+    <host>voatlas73</host>
+  </lemon>
+</serviceupdate>
