@@ -35,8 +35,8 @@ echo ''
 if [ "$1" == "cms" ]
 then
     echo 'Synch CMS'
-    echo '--------- vocms57 --------'
-    rsync -av /data/hc/apps/cms/config/ --delete vocms57:/data/hc/apps/cms/config/
+    echo '--------- vocms06 --------'
+    rsync -av /data/hc/apps/cms/ --exclude '*testdirs*' --delete vocms06:/data/hc/apps/cms/
 fi
 
 rm -f /tmp/synch-app_$1.running
