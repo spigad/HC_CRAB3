@@ -1,6 +1,7 @@
 from hc.core.utils.generic.class_func import custom_import
 
 from datetime import datetime,timedelta
+from random import random
 
 class CreateFunctionalTests:
 
@@ -26,7 +27,8 @@ class CreateFunctionalTests:
       if not tests:
         print '[INFO][%s][create_functional_tests] Inserting new test for template %s - %s'%(app,template.id,template.description)
         token = 1
-        new_test = test(starttime=datetime.now(),endtime=datetime.now()+timedelta(days=template.lifetime),template=template,state='tobescheduled')
+        rnd_life = float(template.lifetime) * (1.0 + random() * 0.2 - 0.1)
+        new_test = test(starttime=datetime.now(),endtime=datetime.now()+timedelta(days=rnd_life),template=template,state='tobescheduled')
         new_test.save()
         new_test.output_dataset = 'GR%s'%(template.id)
         new_test.save()
