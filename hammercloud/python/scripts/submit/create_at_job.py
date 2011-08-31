@@ -191,7 +191,7 @@ class CreateAtJob:
             print '%s: %3f'%(thl.host.name,thl.host.loadavg1m)
     
     test = custom_import('hc.%s.models.Test'%(app))
-    tests = test.objects.filter(state='running')
+    tests = test.objects.filter(state='running').filter(host__name=hostname)
     if not tests:
       print '[INFO][%s][create_at_job] No tests found on state: running'%(app)
     
