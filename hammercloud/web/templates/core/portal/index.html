@@ -23,10 +23,11 @@
       {% for app in apps %}
         {% if 'atlas' in app %}
         <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
-            onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
-            id="{{app}}-wrapper">
-         <td id="{{app}}">{{app}}</td>
-        </tr>
+            onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';">
+         <td id="{{app}}">{{app}}</td></tr>
+        <tr id="atlas-popover"><td>
+          <a href="/atlas">Go to v2 (current)</a> - <a href="/hc/app/atlas">Go to v4 (next)</a>
+        </td></tr>
         {% else %}
         <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
             onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
@@ -40,27 +41,12 @@
     <p>No apps.</p>
   {% endif %}
 
-  <h1>HammerCloud v.4.2<a href="{% url portal-view %}feed/"><img src="{{ MEDIA_URL }}images/rss_grey.ico" border="0" alt="rss"/></a></h1>
+  <h1>HammerCloud v4.2<a href="{% url portal-view %}feed/"><img src="{{ MEDIA_URL }}images/rss_grey.ico" border="0" alt="rss"/></a></h1>
 </div>
 
-<div id="atlas-popover">
-  <div class="header">
-    Select the ATLAS version
-  </div>
-  <div class="content">
-    <ul>
-      <li><a href="/atlas">v2</a></li>
-      <li><a href="/hc/app/atlas">v4</a></li>
-    </ul>
-  </div>
-</div>
-
-
-  <script type="text/javascript">
+ <script type="text/javascript">
     $('#atlas').click(function() {
-      $('#atlas-popover').show('slow', function() {
-         
-      });
+      $('#atlas-popover').toggle('fast');
     });
   </script>
 </body>
