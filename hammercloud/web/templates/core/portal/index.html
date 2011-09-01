@@ -7,6 +7,13 @@
   <link type="text/css" href="{{MEDIA_URL}}css/portal/style.css" rel="stylesheet" />
   <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
   <script type="text/javascript" src="{{ MEDIA_URL }}js/hm.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/popover.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      $('#atlas').popover({header:  '#atlas-popover > .header',
+                           content: '#atlas-popover > .content'});
+    });
+  </script>
   <title>HammerCloud</title>
 </head>
 
@@ -16,18 +23,38 @@
   {% if apps %}
     <table>
       {% for app in apps %}
+        {% if 'atlas' in app %}
         <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
             onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
-            onclick="DoNav({% if not 'atlas' in app %}'{% url index-view app %}'{% else %}'http://hammercloud.cern.ch/{{app}}'{% endif %});">
+            id="{{app}}-wrapper">
          <td id="{{app}}">{{app}}</td>
         </tr>
+        {% else %}
+        <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
+            onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
+            onclick="DoNav('{% url index-view app %}');">
+         <td id="{{app}}">{{app}}</td>
+        </tr>
+        {% endif %}
       {% endfor %}
     </table>
   {% else %}
     <p>No apps.</p>
   {% endif %}
 
-  <h1>HammerCloud v.4<a href="{% url portal-view %}feed/"><img src="{{ MEDIA_URL }}images/rss_grey.ico" border="0" alt="rss"/></a></h1>
+  <h1>HammerCloud v.4.2<a href="{% url portal-view %}feed/"><img src="{{ MEDIA_URL }}images/rss_grey.ico" border="0" alt="rss"/></a></h1>
+</div>
+
+<div id="atlas-popover">
+  <div class="header">
+    Select the ATLAS version
+  </div>
+  <div class="content">
+    <ul>
+      <li><a href="/atlas">v2</a></li>
+      <li><a href="/hc/app/atlas">v4</a></li>
+    </ul>
+  </div>
 </div>
 </body>
 
