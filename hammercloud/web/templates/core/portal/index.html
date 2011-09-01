@@ -7,11 +7,9 @@
   <link type="text/css" href="{{MEDIA_URL}}css/portal/style.css" rel="stylesheet" />
   <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.2.min.js"></script>
   <script type="text/javascript" src="{{ MEDIA_URL }}js/hm.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/popover.js"></script>
   <script type="text/javascript">
     $(document).ready(function() {
-      $('#atlas').popover({header:  '#atlas-popover > .header',
-                           content: '#atlas-popover > .content'});
+      $('#atlas-popover').hide();
     });
   </script>
   <title>HammerCloud</title>
@@ -56,6 +54,15 @@
     </ul>
   </div>
 </div>
+
+
+  <script type="text/javascript">
+    $('#atlas').click(function() {
+      $('#atlas-popover').show('slow', function() {
+         
+      });
+    });
+  </script>
 </body>
 
 </html>
