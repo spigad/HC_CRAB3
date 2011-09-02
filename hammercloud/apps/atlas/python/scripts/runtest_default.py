@@ -565,10 +565,15 @@ def process_job(job):
       results['ganga_status'] = 'n'
 
   elif job.backend._impl._name == 'Panda':
+    try:
+      results['exit_status_2'] = int(job.backend.buildjobs[0].jobSpec['pilotErrorCode'])
+      results['reason'] = job.backend.buildjobs[0].jobSpec['pilotErrorDiag']
+    except:
+      results['exit_status_2'] = job.backend.piloterrorcode
+      results['reason'] = ''
 
     results['site'] = jobToSite(job)
     results['exit_status_1'] = job.backend.exitcode
-    results['exit_status_2'] = job.backend.piloterrorcode
     results['numfiles'] = innumfiles
     results['submit_time'] = stats['submittime']
     results['backendID'] = job.backend.id
