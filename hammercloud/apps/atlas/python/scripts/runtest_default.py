@@ -372,6 +372,16 @@ def copyJob(job):
     test_site.save()
     return
 
+  # Check if build job failed due to missing CMTCONFIG
+  bfailed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2=1109)
+  
+  if bfailed > 0:
+    logger.warning('Not copying job %d: build job failed with pilot error code 1109 (missing CMTCONFIG)' % job.id)
+    logger.warning('Disabling site %s: test_site.resubmit_enabled <- 0' % site)
+    test_site.resubmit_enabled = 0
+    test_site.save()
+    return
+
   logger.info('Job %d at %s ran the gauntlet: %d submitted, %d running, %d failed, %d finished' % (job.id, site, submitted, running, failed, total))
   _copyJob(job, site)
   return
