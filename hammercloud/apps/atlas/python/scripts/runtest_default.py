@@ -468,7 +468,8 @@ def process_job(job):
     try:
       stats = job._impl.backend.get_stats()
     except:
-      logger.warning('Ganga application stats for job not available')
+      #logger.warning('Ganga application stats for job not available')
+      pass
 
   metrics = ['percentcpu', 'systemtime', 'usertime', 'site', 'totalevents', 'wallclock', 'stoptime', 'outse', 'starttime', 'exitstatus', 'numfiles3', 'gangatime1', 'gangatime2', 'gangatime3', 'gangatime4', 'gangatime5', 'jdltime', 'NET_ETH_RX_PREATHENA', 'NET_ETH_RX_AFTERATHENA', 'pandatime1', 'pandatime2', 'pandatime3', 'pandatime4', 'pandatime5', 'arch', 'submittime']
   for m in metrics:
@@ -686,14 +687,15 @@ def process_subjob(job, subjob):
     try:
       stats = subjob._impl.backend.get_stats()
     except:
-      logger.warning('Ganga application stats not avaible')
+      #logger.warning('Ganga application stats not avaible')
+      pass
 
   metrics = ['percentcpu', 'systemtime', 'usertime', 'site', 'totalevents', 'wallclock', 'stoptime', 'outse', 'starttime', 'exitstatus', 'numfiles3', 'gangatime1', 'gangatime2', 'gangatime3', 'gangatime4', 'gangatime5', 'jdltime', 'NET_ETH_RX_PREATHENA', 'NET_ETH_RX_AFTERATHENA', 'pandatime1', 'pandatime2', 'pandatime3', 'pandatime4', 'pandatime5', 'arch', 'submittime']
   for m in metrics:
     try:
       x = stats[m]
     except KeyError:
-      logger.warning('Metric "%s" not available in Ganga application stats' % m)
+      #logger.warning('Metric "%s" not available in Ganga application stats' % m)
       stats[m] = None
 
   outds = None
