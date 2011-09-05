@@ -661,10 +661,19 @@ def process_subjob(job, subjob):
     logger.debug('subjob result is already fixed in database... skipping')
     return False
 
-  if (subjob.status == 'completed' and not subjob.application.stats) or subjob.status == 'failed':
+  stats = None
+  try:
+    stats = subjob.application.stats
+  except:
+    try:
+      stats = subjob._impl.backend.get_stats()
+    except:
+      pass
+
+  if (subjob.status == 'completed' and not stats) or subjob.status == 'failed':
     logger.warning('Forced postprocess')
     try:
-      subjob.application.postprocess()
+      subob.application.postprocess()
     except:
       logger.warning('Error in postprocess')
       logger.warning(sys.exc_info()[0])
