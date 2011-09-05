@@ -23,6 +23,7 @@
         }else{
           $(nRow).addClass('grey');
         }
+        {% block custom_row_callback %}{% endblock %}
         return nRow;
       }
     });
