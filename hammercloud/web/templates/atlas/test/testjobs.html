@@ -1,5 +1,5 @@
-{% extends 'core/app/test/test.html' %}
+{% extends 'core/app/test/testjobs.html' %}
 
 {% block custom_row_callback %}
-  $('td:eq(4)', nRow).html('<a href="http://panda.cern.ch/server/pandamon/query?job=' + String(aData[4]) + '">' + String(aData[4]) + '</a>');
+  $('td:eq(4)', nRow).html('<a href="http://panda.cern.ch/server/pandamon/query?job=' + aData[4] + '">' + aData[4] + '</a>');
 {% endblock %}
