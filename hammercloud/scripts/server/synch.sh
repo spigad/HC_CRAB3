@@ -39,6 +39,13 @@ then
     rsync -av /data/hc/apps/cms/ --exclude '*testdirs*' --delete vocms06:/data/hc/apps/cms/
 fi
 
+if [ "$1" == "atlas" ]
+then
+    echo 'Synch ATLAS'
+    echo '-------- voatlas65 -------'
+    rsync -av /data/hc/apps/atlas/ --exclude '*testdirs*' --delete voatlas65:/data/hc/apps/atlas/
+fi
+
 rm -f /tmp/synch-app_$1.running
 
 echo '  Lock released: '/tmp/synch-app_$1.running
