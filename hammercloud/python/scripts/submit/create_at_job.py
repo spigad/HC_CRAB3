@@ -136,7 +136,7 @@ class CreateAtJob:
     time=test.starttime.strftime('%H:%M %m%d%y')
     test.state   = 'scheduled'
     test.host    = host
-    test.save()
+    test.save(commit=True)
     atjobid = commands.getoutput('at -f %s/testdirs/run-test-%d.sh %s'%(HCAPP,test.id,time)).rstrip()
     test.atjobid = int(atjobid.split()[1])
     test.save()
