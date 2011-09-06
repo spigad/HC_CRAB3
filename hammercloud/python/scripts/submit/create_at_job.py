@@ -134,11 +134,12 @@ class CreateAtJob:
       return 0
 
     time=test.starttime.strftime('%H:%M %m%d%y')
-    atjobid = commands.getoutput('at -f %s/testdirs/run-test-%d.sh %s'%(HCAPP,test.id,time)).rstrip()
     test.state   = 'scheduled'
-    test.atjobid = int(atjobid.split()[1])
     test.host    = host
-    test.save() 
+    test.save()
+    atjobid = commands.getoutput('at -f %s/testdirs/run-test-%d.sh %s'%(HCAPP,test.id,time)).rstrip()
+    test.atjobid = int(atjobid.split()[1])
+    test.save()
 
     print '[INFO][%s][create_at_job] Starting test %s: %s\n'%(app,test.id,atjobid)
     return 1

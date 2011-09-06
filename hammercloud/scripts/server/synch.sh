@@ -36,14 +36,14 @@ if [ "$1" == "cms" ]
 then
     echo 'Synch CMS'
     echo '--------- vocms06 --------'
-    rsync -av /data/hc/apps/cms/ --exclude '*testdirs*' --delete vocms06:/data/hc/apps/cms/
+    rsync -av /data/hc/ --exclude '*testdirs*' --delete vocms06:/data/hc/
 fi
 
 if [ "$1" == "atlas" ]
 then
     echo 'Synch ATLAS'
     echo '-------- voatlas65 -------'
-    rsync -av /data/hc/apps/atlas/ --exclude '*testdirs*' --delete voatlas65:/data/hc/apps/atlas/
+    rsync -av /data/hc/ --exclude '*testdirs*' --delete voatlas65:/data/hc/
 fi
 
 rm -f /tmp/synch-app_$1.running

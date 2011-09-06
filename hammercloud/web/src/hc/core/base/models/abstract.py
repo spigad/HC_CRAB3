@@ -610,6 +610,8 @@ class TestBase(models.Model):
 
   def save(self,*args,**kwargs):
 #    self.mtime = datetime.now()
+    self.starttime = self.starttime.replace(second=0)
+    self.endtime = self.endtime.replace(second=0)
 
     #If we want default behaviour:
     if args and args[0].has_key('default') and args[0]['default']:  
