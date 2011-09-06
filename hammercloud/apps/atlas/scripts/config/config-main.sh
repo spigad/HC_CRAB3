@@ -46,7 +46,8 @@ HAMMERCLOUD_ORIGINAL_PATH=$PATH
 #   creates testdirs/test_N/jobs
 source /afs/cern.ch/atlas/offline/external/GRID/DA/panda-client/latest/etc/panda/panda_setup.sh
 echo '  Sourced PanDA tools.'
-source /afs/cern.ch/atlas/offline/external/GRID/ddm/DQ2Clients/setup.sh
+#source /afs/cern.ch/atlas/offline/external/GRID/ddm/DQ2Clients/setup.sh
+source /afs/cern.ch/atlas/offline/external/GRID/ddm/DQ2Clients/slc5_setup.sh
 echo '  Sourced DQ2 Client.'
 
 #Dirty hack to use our own Ganga, but with our environment
