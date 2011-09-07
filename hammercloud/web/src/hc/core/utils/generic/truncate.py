@@ -14,5 +14,5 @@ def truncateList(list,top):
 def truncateString(string,max):
 
     if len(string) > max:
-      string = str(string[:max])+'...'
+      string = str(string[:max])+'....'
     return string
