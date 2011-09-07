@@ -2,7 +2,7 @@
 
 {% block content %}
 
-  <p>Welcome to HammerCloud-{{app|upper}}. Click <a href="{% url evolution-view app %}"><b><i>HERE</i></b></a> above to see the currently running jobs.</p>
+  <p>Welcome to HammerCloud-{{app|upper}}.</p>
 
   {% for key,list in tests.items %}
      <div class="runningjobs">
