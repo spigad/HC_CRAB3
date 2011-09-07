@@ -766,6 +766,20 @@ class GenericView():
     c = Context({'app':app,'test':test,'type':type, 'MEDIA_URL':settings.MEDIA_URL})
     return HttpResponse(t.render(c))
 
+  def ajaxtestjobsbysite(self,request,test_id,site_id,dic={'Test':None, 'Site':None},*args,**kwargs):
+
+    test = dic['Test']
+    site = dic['Site']
+    app  = test.__module__.split('.')[1]
+
+    test = get_object_or_404(test,pk=test_id)
+    site = get_object_or_404(site,pk=site_id)
+    type = 'testjobs'
+
+    t = loader.select_template(['%s/test/testjobs.html'%(app),'core/app/test/testjobs.html'])
+    c = Context({'app':app,'test':test,'site':site,'type':type, 'MEDIA_URL':settings.MEDIA_URL})
+    return HttpResponse(t.render(c))
+
   def ajaxtestevolution(self,request,test_id,dic={'Test':None},*args,**kwargs):
 
     test = dic['Test']
