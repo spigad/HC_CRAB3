@@ -7,7 +7,7 @@
     Input DS Patterns: {% for td in patterns %}{{ td.dspattern.pattern }}{% if not forloop.last %}, {% endif %}{% endfor %}<br />
     Ganga Job Template: {{ test.jobtemplate }}<br />
     Athena User Area: {{ test.usercode }}<br />
-    Athena Option file: {{ test.option_file }}<br />
+    Athena Option file: {{ test.optionfile }}<br />
     Template: <a href="{% url template-view app test.template.id %}">{{ test.template.description }}</a><br />
     <a href="http://voatlas159.cern.ch/test_{{ test.id }}">View Test Directory (for debugging)</a>
   </p>
