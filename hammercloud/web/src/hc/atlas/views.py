@@ -137,6 +137,10 @@ def ajaxtestjobs(request,test_id):
   pass
 
 @GenView_dec(params={'on':True})
+def ajaxtestjobsbysite(request,test_id,site_id):
+  pass
+
+@GenView_dec(params={'on':True})
 def ajaxtestevolution(request,test_id):
   pass
 
