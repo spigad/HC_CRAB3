@@ -36,7 +36,7 @@ if [ "$1" == "cms" ]
 then
     echo 'Synch CMS'
     echo '--------- vocms06 --------'
-    rsync -av /data/hc/ --exclude '*testdirs*' --exclude '*logs*' vocms06:/data/hc/
+    rsync -av /data/hc/ --exclude '*testdirs*' --exclude '*logs*' --exclude '/data/hc/*.jdl' --exclude '/data/hc/*.submit.log' --exclude '/data/hc/glite_*' vocms06:/data/hc/
 fi
 
 if [ "$1" == "atlas" ]
