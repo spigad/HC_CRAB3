@@ -731,14 +731,14 @@ class TestBase(models.Model):
 #        #We cannot create tests in error or completed states.
 #        return 0
 
-      if not clone:
-        #HOSTS (ONLY UPDATED ON CREATION)
-        test_host      = custom_import('hc.'+self._meta.app_label+'.models.TestHost')
-        template_hosts = self.template.getTemplateHosts_for_template.all()
-        for th in template_hosts:
-          th = test_host(host = th.host, test=self)
-          th.save()
+      #HOSTS (ALWAYS GOT FROM THE TEMPLATE)
+      test_host      = custom_import('hc.'+self._meta.app_label+'.models.TestHost')
+      template_hosts = self.template.getTemplateHosts_for_template.all()
+      for th in template_hosts:
+        th = test_host(host = th.host, test=self)
+        th.save()
 
+      if not clone:
         #SITES (ONLY UPDATED ON CREATION)
         test_site      = custom_import('hc.'+self._meta.app_label+'.models.TestSite')
         template_sites = self.template.getTemplateSites_for_template.all()
