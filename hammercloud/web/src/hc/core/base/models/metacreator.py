@@ -32,6 +32,7 @@ class MetaCreator(ModelBase):
   GangaBin, InputType, JobTemplate, OptionFile, TestOption, UserCode = None, None, None, None, None, None
   Metric, MetricType, MetricPerm = None, None, None
   Result = None
+  BlacklistEvent = None
   SiteMetric, TestMetric = None, None
   SummaryTest, SummaryTestSite, SummaryRobot, SummaryEvolution = None, None, None, None
   Template, TemplateBackend, TemplateCloud, TemplateDspattern, TemplateHost, TemplateSite, TemplateUser = None, None, None, None, None, None, None
