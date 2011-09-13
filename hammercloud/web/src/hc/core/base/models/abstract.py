@@ -1601,7 +1601,7 @@ class BlacklistEventBase(models.Model):
   )
 
   id          = models.AutoField(primary_key=True)
-  type        = models.CharField(choices = EVENT_CHOICES, max_length = 31)
+  event       = models.CharField(choices = EVENT_CHOICES, max_length = 31)
   reason      = models.CharField(max_length=4095)
   timestamp   = models.DateTimeField()
   mtime       = models.DateTimeField(auto_now=True)
