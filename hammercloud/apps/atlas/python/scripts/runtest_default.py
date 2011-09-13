@@ -1073,7 +1073,7 @@ def hc_copy_thread():
   while (test_active() and not test_paused() and not ct.should_stop()):
     logger.info('HC Copy Thread: TOP OF MAIN LOOP')
     for job in jobs:
-      if test_paused() or ct.should_stop():
+      if not test_active() or test_paused() or ct.should_stop():
          break
       copyJob(job)
     test_sleep(10)
