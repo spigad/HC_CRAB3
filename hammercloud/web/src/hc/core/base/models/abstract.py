@@ -1585,3 +1585,30 @@ class SummaryEvolutionBase(models.Model):
     db_table = u'summary_evolution'
     #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
 
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+##
+## BLACKLISTING BASE CLASSES
+##
+## *BlacklistEventBase
+##
+
+class BlacklistEventBase(models.Model):
+  __metaclass__ = MetaCreator
+
+  EVENT_CHOICES = (
+    (u'blacklist', u'blacklist'),
+    (u'whitelist', u'whitelist'),
+  )
+
+  id          = models.AutoField(primary_key=True)
+  reason      = models.CharField(max_length=4095)
+  timestamp   = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
+  external    = models.BooleanField()
+
+  #test        -> hc.core.base.models.keys.fk.generator.generateFK('Test','BlacklistEvent','test',{})
+  #site        -> hc.core.base.models.keys.fk.generator.generateFK('Site','BlacklistEvent','site',{})
+
+  class Meta:
+    abstract = True
+    db_table = u'blacklist_event'

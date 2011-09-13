@@ -9,6 +9,7 @@
 BASE_CLASS_NAMES_FK_RELATED = [
                                "AlarmBase",
                                "BackendBase",
+                               "BlacklistEventBase",
                                "CloudBase",
                                "CloudFeedBase",
                                "CloudOptionBase",
@@ -93,6 +94,7 @@ FK_LIST = [
            ('MetricType','Metric','metric_type',{}),
            ('OptionFile','Template','optionfile',{}),
            ('OptionFile','Test','optionfile',{}),
+           ('Site', 'BlacklistEvent', 'site', {}),
            ('Site','SiteFeed','site',{}),
            ('Site','SiteMetric','site',{}),
            ('Site','SiteOption','site',{}),
@@ -111,6 +113,7 @@ FK_LIST = [
            ('Template','TemplateSite','template',{}),
            ('Template','TemplateUser','template',{}),
            ('Template','Test','template',{'help':'You can not add ACTIVE FUNCTIONAL templates.'}),
+           ('Test', 'BlacklistEvent', 'test', {'null':'True'}),
            ('Test','TestFeed','test',{}),
            ('Test','TestMetric','test',{}),
            ('Test','SiteMetric','test',{}),
