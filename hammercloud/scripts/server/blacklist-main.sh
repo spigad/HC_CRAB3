@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo ''
-echo '_ Server Main.'
+echo '_ Blacklist Main.'
 echo ''
 
 
