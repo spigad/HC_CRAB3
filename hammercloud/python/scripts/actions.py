@@ -1,4 +1,4 @@
-from scripts.server import create_functional_tests,robot,compress_summary_table,blacklist
+from scripts.server import create_functional_tests,robot,compress_summary_table,blacklist,external_queue_update
 from scripts.submit import register_host,create_at_job,test_generate,test_submit,test_report,test_alarm,test_summary
 
 class CronActions:
@@ -6,6 +6,10 @@ class CronActions:
   def blacklist(self,app,dic):
     bl = blacklist.Blacklist()
     bl.run(app,dic)
+
+  def external_queue_update(self,app,dic):
+    qu = external_queue_update.ExternalQueueUpdate()
+    qu.run(app,dic)
 
   def create_functional_tests(self,app,dic):
     cft = create_functional_tests.CreateFunctionalTests()
