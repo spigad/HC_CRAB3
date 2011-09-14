@@ -34,7 +34,7 @@ class ExternalQueueUpdate:
         status = Client.PandaSites[site.name]['status']
         comment = Client.PandaSites[site.name]['comment']
     except KeyError:
-        logging.error("No information available for site %s in PanDA tools", site.name)
+        logging.warning("No information available for site %s in PanDA tools", site.name)
         return
     # Get current status stored in the DB.
     try:
@@ -59,7 +59,7 @@ class ExternalQueueUpdate:
             if status == 'online':
               self.save_blacklistevent_for_site(site, 'whitelist', 'Set to online by an external tool or user.')
             elif status == 'brokeroff':
-              self.save_blacklistevent_for_site(site, 'blacklist', 'Set to online by an external tool or user.')
+              self.save_blacklistevent_for_site(site, 'blacklist', 'Set to brokeroff by an external tool or user.')
             else:
               logging.info('Site %s is now in %s status set by an external tool or user.', site_name, status)
         except DoesNotExist, MultipleObjectsReturned:
@@ -81,3 +81,4 @@ class ExternalQueueUpdate:
     """Main runner of the updater script."""
     for site in Site.objects.filter(enabled=True).filter(name__startswith='ANALY'):
       self.update_status_for_site(site)
+    return True
