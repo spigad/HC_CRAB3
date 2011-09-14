@@ -179,16 +179,17 @@ M2M_LIST = [
 #(Obj1,(keys))
 
 UNIQUE_TOGETHER_DIC = {
+                        'BlacklistEventBase'    : ('site','timestamp'),
                         'CloudOptionBase'       : ('cloud','option_name'),
                         'ResultBase'            : ('ganga_jobid','ganga_subjobid','test'),
-                        'SiteOptionBase'        : ('site','option_name'),                        
+                        'SiteOptionBase'        : ('site','option_name'),
                         'SummaryTestSiteBase'   : ('test_site','test'),
                         'SummaryRobotBase'      : ('day','site'),
                         'SummaryEvolutionBase'  : ('test','site','time'),
                         'TemplateBackendBase'   : ('backend','template'),
                         'TemplateCloudBase'     : ('cloud','template'),
                         'TemplateDspatternBase' : ('dspattern','template'),
-                        'TemplateHostBase'	: ('host','template'),
+                        'TemplateHostBase'      : ('host','template'),
                         'TemplateSiteBase'      : ('site','template'),
                         'TemplateUserBase'      : ('user','template'),
                         'TestBackendBase'       : ('backend','test'),

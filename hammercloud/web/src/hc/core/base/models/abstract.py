@@ -1613,3 +1613,4 @@ class BlacklistEventBase(models.Model):
   class Meta:
     abstract = True
     db_table = u'blacklist_event'
+    #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
