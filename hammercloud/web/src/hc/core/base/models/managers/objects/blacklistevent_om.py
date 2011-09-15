@@ -1,0 +1,77 @@
+import datetime
+from collections import defaultdict
+from django.db import models
+
+
+class BlacklistAutomata(object):
+  _transitions = { 0: { 'blacklist': (1, None, 1),
+                        'whitelist': (2, None, 0) },
+                   1: { 'blacklist': (1, None, 1),
+                        'whitelist': (2, None, 0) },
+                   2: { 'blacklist': (1, None, 1),
+                        'whitelist': (2, None, 0) },
+                   3: { 'blacklist': (0, None, 0),
+                        'whitelist': (0, None, 0) } }
+
+  def __init__(self, site=None):
+    super(BlacklistAutomata, self).__init__()
+    self.site = site
+    self.status = 0
+    self.count = 0
+
+  def event(self, event):
+    (self.status, action, self.count) = self._transitions[self.status][event]
+    if action:
+      action()
+
+
+def timify_events(events):
+  events = iter(events)
+  last_time = None
+  group = []
+
+  while True:
+    try:
+      i = events.next()
+      if i.timestamp != last_time:
+        if group:
+          yield group
+        group = []
+        last_time = i.timestamp
+      group.append(i)
+    except StopIteration:
+      break
+
+
+class BlacklistEventManager(models.Manager):
+  '''
+  Class that override the default Manager for the BlacklistEvent object in the data models
+  '''
+  def get_autoexclusion_chart(self, time_limit=None, site=None, cloud=None):
+    '''
+    Method that return the default Queryset
+    '''
+    events = super(BlacklistEventManager, self).get_query_set()
+    if time_limit:
+      events = events.filter(timestamp__gte=datetime.datetime.now() - time_limit)
+    if cloud:
+      events = events.filter(site__cloud=cloud)
+    if site:
+      events = events.filter(site=site)
+    events = events.order_by('timestamp')
+    site_statuses = defaultdict(BlacklistAutomata)
+    chart = []
+    for event_group in timify_events(events):
+      sites_boff, sites_online = [], []
+      for e in event_group:
+        site_statuses[e.site.name].event(e.event)
+        if e.event == 'blacklist':
+          sites_boff.append(e.site.name)
+        elif e.event == 'whitelist':
+          sites_online.append(e.site.name)
+      chart.append((e.timestamp,
+                    sum(map(lambda x: x.count, site_statuses.values())),
+                    sites_boff,
+                    sites_online))
+    return chart
+

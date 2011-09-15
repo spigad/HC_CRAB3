@@ -1,7 +1,108 @@
 {% extends 'core/app/robot/autoexclusion.html' %}
 
+{% block javascript %}
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/AC_OETags.js" language="javascript"></script>
+  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+  
+    // Major version of Flash required
+    var requiredMajorVersion = 8;
+    // Minor version of Flash required
+    var requiredMinorVersion = 0;
+    // Minor version of Flash required
+    var requiredRevision = 0;
+    // Version check based upon the values entered above in "Globals"
+    var hasRequestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
+
+    // TODO(rmedrano): Improve Flash detection and show a static graph if not available.
+    if (!hasRequestedVersion)
+      document.write('This site needs Flash to work properly');
+    
+    google.load('visualization', '1', {'packages':['annotatedtimeline']});
+
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('datetime', 'Date');
+      data.addColumn('number', 'Sites autoexcluded');
+      data.addColumn('string', 'title1');
+      data.addColumn('string', 'text1');
+
+      data.addRows([
+      {% for point in chart.data %}
+        [new Date({{ point.0.year }},{{ point.0.month|add:'-1' }},{{ point.0.day }},{{ point.0.hour }},{{ point.0.minute }},{{ point.0.second }}),
+         {{ point.1 }},
+         {% if point.2 %} '{{ point.0 }}' {% else %} undefined {% endif %},
+         {% if point.2 and point.3 %}
+           '{{ point.2|join:', ' }} blacklisted. {{ point.3|join:', ' }} went online. '
+         {% else %}
+           {% if point.2 %}
+             '{{ point.2|join:', ' }} blacklisted.'
+           {% else %}
+             {% if point.3 %}
+               '{{ point.3|join:', ' }} went online.'
+             {% else %}
+               undefined
+             {% endif %}
+           {% endif %}
+         {% endif %}],
+      {% endfor %}
+      ]);
+
+      chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div'));
+      google.visualization.events.addListener(chart, 'ready', selectRange);
+      chart.draw(data, {displayAnnotations:true, displayAnnotationsFilter:true, min:0, scaleType:'fixed', thickness: 2, fill: 30});
+    }
+
+    function selectRange(e) {
+      chart.setVisibleChartRange(new Date(chart.getVisibleChartRange().end - 259200000), chart.getVisibleChartRange().end);
+    }
+    
+    $(document).ready(function() {
+       $('#content').width('1060px');
+    });
+  </script>
+{% endblock %}
+
 {% block autoexclusion_info %}
+<p>HammerCloud will automatically set a site to brokeroff status if it fails FUNCTIONAL tests. See the policy <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud#10_HammerCloud_Automatic_Site_Ex">here</a>.</p>
 
-  <p>It works!</p>
+<h3 style="clear:both">{{ chart.main_title }}</h3>
+<form method="get" name="Form" action="">
+  <label>Select Cloud:
+    <select name="cloud" onchange="document.forms['Form'].submit()">
+      <option value="">Overall</option>
+      <option value="" selected="selected">---</option>
+      {% for c in clouds %}
+      <option value="{{ c.id }}">{{ c.code }}</option>
+      {% endfor %}
+  </select></label>
+  <label>Select Site:
+    <select name="site" onchange="document.forms['Form'].submit()">
+      <option value="">Overall</option>
+      <option value="" selected="selected">---</option>
+      {% for s in sites %}
+      <option value="{{ s.id }}">{{ s.name }}</option>
+      {% endfor %}
+  </select></label>
+</form>
+<div id="chart_div" style="width: 980px; height: 420px; margin: 10px 5px 25px auto;"></div>
 
+<div style="clear:both">
+  <h3>Autoexclusion configuration</h3>
+  {% if site_options %}
+  <table cellspacing="10" style="margin-right:auto;margin-left:auto">
+    <tr><th>Site</th><th>Option</th></tr>
+    {% for so in site_options %}
+    <tr><td>{{ so.site.name }}</td><td>{{ so.option_value }}</td></tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p>No data available.</p>
+  {% endif %}
+</div>
+
+<p style="clear:both;font-size:smaller">Note: It is possible to disable this service on a site-by-site basis (see <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud#10_HammerCloud_Automatic_Site_Ex">policy</a>). The sites listed above have an explicit setting. Sites labelled "disable" will not be set to "brokeroff", even if they are failing test jobs. Site not listed are "enabled"; they will be auto-excluded in PanDA when necessary.</p>
+<p style="clear:both;font-size:smaller">*: The * ('certainity') parameter in the exclusion time rank is based on whether HammerCloud knows when the site is online or, if data is missing because the queue has been set back online manually, an assumption of 24 hours after the exclusion event is taken (marking as * in the table).</p>
 {% endblock %}

@@ -1095,27 +1095,50 @@ class GenericView():
                     )
     return HttpResponse(t.render(c))
 
-  def autoexclusion(self,request,dic={'SiteOption':None},*args,**kwargs):
+  def autoexclusion(self,request,dic={'SiteOption':None, 'Cloud':None, 'Site':None, 'BlacklistEvent':None},*args,**kwargs):
 
     so   = dic['SiteOption']
+    cl   = dic['Cloud']
+    si   = dic['Site']
+    be   = dic['BlacklistEvent']
     app  = so.__module__.split('.')[1]
 
     params = {}
     if kwargs.has_key('params'):
-      params = kwargs['params']    
+      params = kwargs['params']
 
+    clouds       = []
+    sites        = []
     site_options = []
     message      = ''
+    ext          = ''
+    chart        = None
 
     #Autoexclusion enabled
-    if params.has_key('autoexclusion'):  
+    if params.has_key('autoexclusion'):
+      try:
+          cloud_id = int(request.GET.get('cloud', '0'))
+      except ValueError, IndexError:
+          cloud_id = 0
+      try:
+          site_id = int(request.GET.get('site', '0'))
+      except ValueError, IndexError:
+          site_id = 0
+      if cloud_id != 0:
+          ext = ' for cloud %s' % cl.objects.filter(id=cloud_id)[0].code
+      elif site_id != 0:
+          ext = ' for site %s' % si.objects.filter(id=site_id)[0].name
       site_options = so.objects.filter(**params['autoexclusion']).order_by('site__name')
+      clouds = cl.objects.all().exclude(name__startswith='ALL')
+      sites = si.objects.all().only('id','name')
+      chart = be.objects.get_autoexclusion_chart()
     else:
       message = 'AutoExclussion not enabled for %s.'%(app)
 
     t = loader.select_template(['%s/robot/autoexclusion.html'%(app),'core/app/robot/autoexclusion.html'])
     c = RequestContext(request,
-                       {'site_options': site_options,'message':message},
+                       {'site_options': site_options,'message':message,
+                        'clouds':clouds, 'sites':sites, 'chart': chart},
                        [defaultContext])
 
     return HttpResponse(t.render(c))
