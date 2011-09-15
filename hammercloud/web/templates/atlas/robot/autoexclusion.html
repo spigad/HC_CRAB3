@@ -30,7 +30,7 @@
       data.addColumn('string', 'text1');
 
       data.addRows([
-      {% for point in chart.data %}
+      {% for point in chart %}
         [new Date({{ point.0.year }},{{ point.0.month|add:'-1' }},{{ point.0.day }},{{ point.0.hour }},{{ point.0.minute }},{{ point.0.second }}),
          {{ point.1 }},
          {% if point.2 %} '{{ point.0 }}' {% else %} undefined {% endif %},
@@ -58,17 +58,13 @@
     function selectRange(e) {
       chart.setVisibleChartRange(new Date(chart.getVisibleChartRange().end - 259200000), chart.getVisibleChartRange().end);
     }
-    
-    $(document).ready(function() {
-       $('#content').width('1060px');
-    });
   </script>
 {% endblock %}
 
 {% block autoexclusion_info %}
 <p>HammerCloud will automatically set a site to brokeroff status if it fails FUNCTIONAL tests. See the policy <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud#10_HammerCloud_Automatic_Site_Ex">here</a>.</p>
 
-<h3 style="clear:both">{{ chart.main_title }}</h3>
+<h3 style="clear:both">{{ main_title }}</h3>
 <form method="get" name="Form" action="">
   <label>Select Cloud:
     <select name="cloud" onchange="document.forms['Form'].submit()">
