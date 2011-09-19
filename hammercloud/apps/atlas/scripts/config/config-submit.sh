@@ -19,6 +19,7 @@ for i
 do
   case "$i" in
         -m) shift;echo '    _ HC_MODE: '$1;HC_MODE=$1;shift;;
+        --) shift
   esac
 done
 
