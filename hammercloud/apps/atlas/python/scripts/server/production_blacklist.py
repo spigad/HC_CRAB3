@@ -166,8 +166,8 @@ class BlacklistingTest(unittest.TestCase):
     self.assertEqual(False, BlackListingPolicyLastFourFromOne().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
 
 
-class AnalysisBlacklist:
-  """ATLAS Blacklisting script for AFTs."""
+class ProductionBlacklist:
+  """ATLAS Blacklisting script for production queues."""
 
   dan = 'daniel.colin.vanderster@cern.ch,ramon.medrano.llamas@cern.ch'#,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de'
   daops = 'atlas-project-adc-operations-analysis-shifts@cern.ch,atlasdast@gmail.com,dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
@@ -175,7 +175,7 @@ class AnalysisBlacklist:
 
   def __init__(self, templates=None, debug=False):
     if not templates:
-      self.templates = (65, 93)
+      self.templates = (116, 164)
     else:
       self.templates = templates
     self.policies_for_brokeroff = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,
@@ -441,7 +441,7 @@ class AnalysisBlacklist:
     if not self.log:
         return
     to = self.daexp
-    subject = "[HCv4] Analysis Blacklisting Report at %s CET" % time.ctime()
+    subject = "[HCv4] Production Blacklisting Report at %s CET" % time.ctime()
     if self.debug:
         to = self.dan
         subject += ' DEBUG'
