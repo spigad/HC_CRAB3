@@ -1,5 +1,6 @@
 from hc.core.base.views.decorator import GenView_dec
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_page
 
 @GenView_dec(params={'on':True})
 def index(request):
@@ -181,6 +182,7 @@ def robotstats(request):
 def robotjobs(request):
   pass
 
+@cache_page(60 * 30)
 @GenView_dec(params={'on':True,'autoexclusion':{'option_name':'autoexclusion','option_value':'disable','site__name__startswith':'ANALY'}})
 def autoexclusion(request):
   pass

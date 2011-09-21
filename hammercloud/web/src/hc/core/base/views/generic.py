@@ -1119,19 +1119,15 @@ class GenericView():
       try:
           cloud_id = int(request.GET.get('cloud', '0'))
       except ValueError, IndexError:
-          cloud_id = 0
+          cloud_id = None
       try:
           site_id = int(request.GET.get('site', '0'))
       except ValueError, IndexError:
-          site_id = 0
-      if cloud_id != 0:
-          ext = ' for cloud %s' % cl.objects.filter(id=cloud_id)[0].code
-      elif site_id != 0:
-          ext = ' for site %s' % si.objects.filter(id=site_id)[0].name
-      site_options = so.objects.filter(**params['autoexclusion']).order_by('site__name')
-      clouds = cl.objects.all().exclude(name__startswith='ALL')
-      sites = si.objects.all().only('id','name')
-      chart = be.objects.get_autoexclusion_chart()
+          site_id = None
+      site_options = so.objects.select_related().filter(**params['autoexclusion']).order_by('site__name')
+      clouds = cl.objects.exclude(name__startswith='ALL')
+      sites = si.objects.exclude(enabled=False)
+      chart = be.objects.get_autoexclusion_chart(site=site_id, cloud=cloud_id)
     else:
       message = 'AutoExclussion not enabled for %s.'%(app)
 

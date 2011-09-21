@@ -51,27 +51,29 @@ class BlacklistEventManager(models.Manager):
     '''
     Method that return the default Queryset
     '''
-    events = super(BlacklistEventManager, self).get_query_set()
+    limit = datetime.datetime.now() - datetime.timedelta(days=30)
+    events = super(BlacklistEventManager, self).get_query_set().select_related()
     if time_limit:
       events = events.filter(timestamp__gte=datetime.datetime.now() - time_limit)
     if cloud:
-      events = events.filter(site__cloud=cloud)
+      events = events.filter(site__cloud__id=cloud)
     if site:
-      events = events.filter(site=site)
+      events = events.filter(site__id=site)
     events = events.order_by('timestamp')
     site_statuses = defaultdict(BlacklistAutomata)
     chart = []
+    # Avoid multiquery. select_related does not work on generic relations.
     for event_group in timify_events(events):
       sites_boff, sites_online = [], []
       for e in event_group:
         site_statuses[e.site.name].event(e.event)
-        if e.event == 'blacklist':
-          sites_boff.append(e.site.name)
-        elif e.event == 'whitelist':
-          sites_online.append(e.site.name)
+        if e.timestamp > limit:
+          if e.event == 'blacklist':
+            sites_boff.append(e.site.name) # Should be in query cache
+          elif e.event == 'whitelist':
+            sites_online.append(e.site.name) # Should be in query cache
       chart.append((e.timestamp,
                     sum(map(lambda x: x.count, site_statuses.values())),
                     sites_boff,
                     sites_online))
     return chart
-
