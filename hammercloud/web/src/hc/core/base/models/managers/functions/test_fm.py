@@ -81,7 +81,7 @@ def getTestHostNames(test):
 #########################################################################
 
 def getTestSiteNames(test):
-  return [ts.site.name for ts in test.getTestSites_for_test.all()]
+  return [ts.site.name for ts in test.getTestSites_for_test.all().select_related('site')]
 
 def getTestNumSites(test):
   return test.getTestSites_for_test.count()   
