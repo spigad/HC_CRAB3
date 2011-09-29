@@ -29,7 +29,6 @@ class CreateFunctionalTests:
         token = 1
         rnd_life = float(template.lifetime) * (1.0 + random() * 0.2 - 0.1)
         new_test = test(starttime=datetime.now(),endtime=datetime.now()+timedelta(days=rnd_life),template=template,state='tobescheduled')
-        new_test.save()
         new_test.output_dataset = 'GR%s'%(template.id)
         new_test.save()
 
