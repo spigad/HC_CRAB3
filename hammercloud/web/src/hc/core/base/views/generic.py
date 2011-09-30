@@ -645,13 +645,13 @@ class GenericView():
       jsonTemplatePath += 'testsites.txt'
 
     elif type == 'testsummary':
-      querySet = summary_test_site.objects.filter(test__id=id)
-      metr = querySet[0].test.metricperm.summary.all() 
+      querySet = summary_test_site.objects.select_related('site', 'test_site', 'test_site__site', 'test__metricperm', 'test__metricperm__summary').filter(test__id=id)
+      metr = querySet[0].test.metricperm.summary.all()
       columnIndexNameMap = {0:'test_site__site__name'} 
       for i in xrange(0,len(metr)):
         metric = metr[i].name
         columnIndexNameMap[i+1] = metr[i].name
-        searchableColumns[metr[i].name] = metr[i].name        
+        searchableColumns[metr[i].name] = metr[i].name
 
       jsonTemplatePath = str(app)+'/json/'+str(querySet[0].test.metricperm.name)+'.txt'
 
