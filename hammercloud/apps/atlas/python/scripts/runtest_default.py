@@ -29,7 +29,7 @@ except IndexError:
 ##
 
 try:
-  test = Test.objects.get(pk=testid)
+  test = Test.objects.select_related('template', 'metricperm__index', 'metricperm__summary', 'metricperm__pertab').get(pk=testid)
   if test.pause:
     logger.info('Un-pausing test.')
     test.pause = 0
@@ -110,7 +110,7 @@ def updateDatasets(site, num):
     # Dataset patterns
     datasetpatterns = []
 
-    patterns = [ td.dspattern.pattern for td in test.getTestDspatterns_for_test.all() ]
+    patterns = [ td.dspattern.pattern for td in test.getTestDspatterns_for_test.select_related('dspattern').all() ]
 
     for pattern in patterns:
       if pattern.startswith('/'):
@@ -1096,7 +1096,7 @@ if hasSubjobs:
   while (test_active() and not test_paused()):
 
     #We need to refresh the test object
-    test = Test.objects.get(pk=testid)
+    test = Test.objects.select_related('template', 'metricperm__index', 'metricperm__summary', 'metricperm__pertab').get(pk=testid)
 
     try:
       print_summary()
