@@ -22,8 +22,13 @@ class SQLLogMiddleware:
            Details:
              time = %s
              count = %s
+             
+           QUERIES:
+           
+             %s
         '''
     if send:
-      cernmail.send('ramon.medrano.llamas@cern.ch', 'SLOW VIEW', str(t % (request.path, time, count)))
+      queries = '\n\n\n'.join([q['sql'] for c in connections for q in connections[c].queries])
+      cernmail.send('ramon.medrano.llamas@cern.ch', 'SLOW VIEW', str(t % (request.path, time, count, queries)))
       
     return response
