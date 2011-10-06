@@ -169,13 +169,13 @@ class BlacklistingTest(unittest.TestCase):
 class ProductionBlacklist:
   """ATLAS Blacklisting script for production queues."""
 
-  dan = 'daniel.colin.vanderster@cern.ch,ramon.medrano.llamas@cern.ch'#,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de'
+  dan = 'daniel.colin.vanderster@cern.ch,ramon.medrano.llamas@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,gs@hep.ucl.ac.uk'
   daops = 'atlas-project-adc-operations-analysis-shifts@cern.ch,atlasdast@gmail.com,dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
   daexp = 'dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
 
   def __init__(self, templates=None, debug=False):
     if not templates:
-      self.templates = (116, 164)
+      self.templates = (164,)
     else:
       self.templates = templates
     self.policies_for_brokeroff = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,
@@ -357,7 +357,7 @@ class ProductionBlacklist:
   def log_reasons(self, sites):
     for site in sites:
       s = '%s (%s):' % (site, Client.PandaSites[site]['status'])
-      s += '\n    %s\n' % ('\n'.join(reasons[site]))
+      s += '\n    %s\n' % ('\n'.join(self.reasons[site]))
       self.add_log(s)
 
   def site_has_no_jobs(self, site):
