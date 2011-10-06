@@ -8,6 +8,8 @@ from hc.core.utils.hc import cernmail
 from hc.atlas.models import Result, SiteOption, Template, TemplateSite, Test, TestLog
 from pandatools import Client
 
+SITETYPE = 'analysis'
+Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
 
 class Policy:
   """Base class for blacklisting policies."""
@@ -312,8 +314,8 @@ class AnalysisBlacklist:
         option.site = Site.objects.get(name=site)
       option.save()
 
-      Client.refreshSpecs()
-      if not self.debug and Client.PandSites[site]['status'] != new_status:
+      Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
+      if not self.debug and Client.PandaSites[site]['status'] != new_status:
         self.add_log('Error setting %s to %s' % (site, new_status))
         self.store_log('Error setting %s to %s' % (site, new_status), 'error')
         return False
