@@ -357,7 +357,7 @@ class AnalysisBlacklist:
   def log_reasons(self, sites):
     for site in sites:
       s = '%s (%s):' % (site, Client.PandaSites[site]['status'])
-      s += '\n    %s\n' % ('\n'.join(reasons[site]))
+      s += '\n    %s\n' % ('\n'.join(self.reasons[site]))
       self.add_log(s)
 
   def site_has_no_jobs(self, site):
