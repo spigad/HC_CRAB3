@@ -613,9 +613,14 @@ class TestBase(models.Model):
 #    self.mtime = datetime.now()
     self.starttime = self.starttime.replace(second=0)
     self.endtime = self.endtime.replace(second=0)
+    # Set the test on draft status to prevent race condition when saving all the
+    # test takes more than 0.
+    final_state = self.state
+    self.state = 'draft'
 
     #If we want default behaviour:
-    if args and args[0].has_key('default') and args[0]['default']:  
+    if args and args[0].has_key('default') and args[0]['default']:
+      self.state = final_state  
       super(TestBase,self).save()
       return 1
 
@@ -632,7 +637,8 @@ class TestBase(models.Model):
     t    = test.objects.filter(id = self.id)
 
     dontsave = ['error','completed']
-    if self.state in dontsave:
+    if final_state in dontsave:
+      self.state = final_state
       super(TestBase, self).save()
       return 0
 
@@ -793,6 +799,10 @@ class TestBase(models.Model):
                             min_queue_depth=tb.min_queue_depth,
                             max_running_jobs=tb.max_running_job)
           tb.save()
+
+      # Storing the final state.
+      self.state = final_state
+      super(TestBase, self).save()
 
       return 1
 
