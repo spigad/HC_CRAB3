@@ -100,14 +100,13 @@
 </form>
 <div id="chart_div" style="width: 980px; height: 420px; margin: 10px 5px 25px auto;"></div>
 
-<div style="float:left;">
+<div style="float:left;font-size:smaller;">
 <h3>Top excluded sites in last 7 days</h3>
 <div style="float:left; margin:0px;">
   {% if top_week %}
   <table id="panda_report">
     <tr><th>Site</th><th>Exclusions</th></tr>
     {% for ta in top_week %}
-    {{ta}}
     <tr><td>{{ ta.0 }}</td><td>{{ ta.1 }}</td></tr>
     {% endfor %}
   </table>
@@ -118,7 +117,7 @@
 {% block addtional_week %}{% endblock %}
 </div>
 
-<div style="float:right;">
+<div style="float:right;font-size:smaller;">
 <h3>Top excluded sites in last 30 days</h3>
 <div style="float:left; margin:0px;">
   {% if top_month %}
@@ -135,11 +134,11 @@
 {% block addtional_month %}{% endblock %}
 </div>
 
-<div style="clear:both">
-  <h3>Autoexclusion configuration</h3>
+<div style="clear:both;font-size:smaller;padding-top:1em">
+  <h3>Autoexclusion service status</h3>
   {% if site_options %}
   <table cellspacing="10" style="margin-right:auto;margin-left:auto">
-    <tr><th>Site</th><th>Option</th></tr>
+    <tr><th>Site</th><th>Service status</th></tr>
     {% for so in site_options %}
     <tr><td>{{ so.site.name }}</td><td>{{ so.option_value }}</td></tr>
     {% endfor %}
