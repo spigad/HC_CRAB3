@@ -1115,6 +1115,8 @@ class GenericView():
     chart        = None
     top_month    = None
     top_week     = None
+    top_month_extra = None
+    top_week_extra = None
 
     #Autoexclusion enabled
     if params.has_key('autoexclusion'):
@@ -1132,6 +1134,13 @@ class GenericView():
       chart = be.objects.get_autoexclusion_chart(site=site_id, cloud=cloud_id)
       top_month = be.objects.get_top_excluded_sites(time_limit=30)
       top_week = be.objects.get_top_excluded_sites(time_limit=7)
+      
+      if params.has_key('extra_report'):
+        extra_report = custom_import(params['extra_report'])
+        if extra_report:
+          top_month_extra = extra_report(days=7)
+          top_week_extra = extra_report(days=30)
+      
     else:
       message = 'AutoExclussion not enabled for %s.'%(app)
 

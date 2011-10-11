@@ -3,6 +3,22 @@
 {% block app_notes %}<p>NOTE: the exclusion scripts are running on debug mode by now and this information may be outdated.</p>
 <p>For the latest autoexclusion report, please visit <a href="http://hammercloud.cern.ch/atlas/autoexclusion/">previous version</a>. Sorry for the inconvenience.</p>{% endblock %}
 
-{% block addtional_week %}{% endblock %}
+{% block addtional_week %}
+<div style="float:right; margin:0px;">
+  {% if top_week_extra %}
+  {% autoescape off %}{{ top_week_extra }}{% endautoescape %}
+  {% else %}
+  <p>No data available.</p>
+  {% endif %}
+</div>
+{% endblock %}
 
-{% block addtional_month %}{% endblock %}
+{% block addtional_month %}
+<div style="float:right; margin:0px;">
+  {% if top_month_extra %}
+  {% autoescape off %}{{ top_month_extra }}{% endautoescape %}
+  {% else %}
+  <p>No data available.</p>
+  {% endif %}
+</div>
+{% endblock %}

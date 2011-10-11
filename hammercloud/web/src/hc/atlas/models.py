@@ -1,7 +1,8 @@
 from django.db import models
 from hc.core.base.models.abstract import *
-
 from hc.core.base.rss.abstract import *
+
+import subprocess
 
 ##
 ## SIMPLE CLASSES
@@ -306,3 +307,12 @@ class TestFeed(TestFeedBase):
 
 class BlacklistEvent(BlacklistEventBase):
   pass
+
+# Custom functions to get the reports of downtime from PanDA. Please remove as soon
+# as DDM offers this capability.
+def blacklisting_panda_report(days=30):
+  try:
+    command = r'/afs/cern.ch/user/r/rmedrano/public/panda_report/panda_report'
+    return subprocess.Popen([command, '-t', str(days), '-w'], stdout=subprocess.PIPE).communicate()[0]
+  except OSError:
+    return 'Could not retrieve data from PanDA incidents database.'
