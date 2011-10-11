@@ -3,6 +3,7 @@ from django.db import models
 from hc.core.base.models.metacreator import MetaCreator
 from hc.core.base.models.managers.objects.test_om import TestManager
 from hc.core.base.models.managers.objects.blacklistevent_om import BlacklistEventManager
+from hc.core.base.models.managers.objects.testlog_om import TestLogManager
 from hc.core.base.models.managers.functions import test_fm
 from hc.core.utils.generic.class_func import custom_import
 
