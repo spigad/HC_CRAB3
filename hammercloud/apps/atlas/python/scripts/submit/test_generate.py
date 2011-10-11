@@ -60,6 +60,11 @@ class TestGenerate:
       else:
         datasetpatterns.append(td.dspattern.pattern)
 
+    if len(datasetpatterns) == 0:
+      print 'No dspatterns found for this test!'
+      return 0
+    print 'Dataset patterns to be used: %s' % datasetpatterns
+
     jobtemplate = basePath + '/inputfiles/templates/' + test.jobtemplate.path
     userarea    = basePath + '/inputfiles/templates/' + test.usercode.path
     joboptions  = basePath + '/inputfiles/templates/' + test.optionfile.path    

@@ -23,7 +23,7 @@ class CreateFunctionalTests:
     token = 0
  
     for template in templates:
-      tests = template.getTests_for_template.filter(state__in=['running','tobescheduled','submitting','scheduled'])
+      tests = template.getTests_for_template.filter(state__in=['running','tobescheduled','submitting','scheduled','draft'])
       if not tests:
         print '[INFO][%s][create_functional_tests] Inserting new test for template %s - %s'%(app,template.id,template.description)
         token = 1

@@ -36,14 +36,14 @@ if [ "$1" == "cms" ]
 then
     echo 'Synch CMS'
     echo '--------- vocms06 --------'
-    rsync -av /data/hc/ --exclude '*testdirs*' --exclude '*logs*' --exclude '/data/hc/*.jdl' --exclude '/data/hc/*.submit.log' --exclude '/data/hc/glite_*' vocms06:/data/hc/
+    rsync -av /data/hc/ --exclude '*settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude '/data/hc/*.jdl' --exclude '/data/hc/*.submit.log' --exclude '/data/hc/glite_*' vocms06:/data/hc/
 fi
 
 if [ "$1" == "atlas" ]
 then
     echo 'Synch ATLAS'
     echo '-------- voatlas65 -------'
-    rsync -av /data/hc/ --exclude '*testdirs*' --exclude '*logs*' voatlas65:/data/hc/
+    rsync -av /data/hc/ --exclude '*settings.py*' --exclude '*testdirs*' --exclude '*logs*' voatlas65:/data/hc/
 fi
 
 rm -f /tmp/synch-app_$1.running

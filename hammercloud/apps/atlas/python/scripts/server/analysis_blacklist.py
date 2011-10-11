@@ -171,7 +171,7 @@ class BlacklistingTest(unittest.TestCase):
 class AnalysisBlacklist:
   """ATLAS Blacklisting script for AFTs."""
 
-  dan = 'daniel.colin.vanderster@cern.ch,ramon.medrano.llamas@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,gs@hep.ucl.ac.uk'
+  dan = 'daniel.colin.vanderster@cern.ch,ramon.medrano.llamas@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de'
   daops = 'atlas-project-adc-operations-analysis-shifts@cern.ch,atlasdast@gmail.com,dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
   daexp = 'dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
 

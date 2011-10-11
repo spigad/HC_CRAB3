@@ -615,8 +615,11 @@ class TestBase(models.Model):
     self.endtime = self.endtime.replace(second=0)
     # Set the test on draft status to prevent race condition when saving all the
     # test takes more than 0.
-    final_state = self.state
-    self.state = 'draft'
+    if self.state == 'tobescheduled':
+        final_state = self.state
+        self.state = 'draft'
+    else:
+        final_state = self.state
 
     #If we want default behaviour:
     if args and args[0].has_key('default') and args[0]['default']:
