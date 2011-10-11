@@ -1,0 +1,28 @@
+{% extends 'core/app/base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+
+<div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+
+<h2>Application failed jobs summary</h2>
+
+{% if site_data %}
+  <table class="testslist">
+    <thead>
+      <tr><th>Aborted job<br />count</th><th>Error code</th><th>Full error string</th></tr>
+    </thead>
+    <tbody>
+      {% for s in site_data %}
+        <tr>
+        {%for i in s.values %}<td>{{ i }}</td>{% endfor %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
+
+{% endblock %}
