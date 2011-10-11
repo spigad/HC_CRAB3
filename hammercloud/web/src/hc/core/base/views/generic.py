@@ -1111,7 +1111,7 @@ class GenericView():
         page = int(request.GET.get('page', '1'))
     except ValueError:
         page = 1
-    incidents = tl.objects.all()
+    incidents = tl.objects.get_filtered_incidents(query=q, time=hours)
     paginator = Paginator(list(incidents), 25)
     try:
         incident_list = paginator.page(page)

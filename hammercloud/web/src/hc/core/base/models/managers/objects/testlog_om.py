@@ -12,10 +12,12 @@ class TestLogManager(models.Manager):
     '''
     Filter for the incidents view, mainly.
     '''
-    if not filter or len(filter) == 0:
-      filter = '%'
-    if not hours or hours <= 0:
-      hours = 72
-    return (super(TestLogManager, self).filter(comment__like=filter)
-                                       .filter(mtime__gte=(datetime.datetime.now - datetime.timedelta(hours=hours)))
+    if not query or len(query) == 0:
+      query = ''
+    if not time or time <= 0:
+      time = 72
+    return (super(TestLogManager, self).get_query_set()
+                                       .select_related('test')
+                                       .filter(comment__contains=query)
+                                       .filter(mtime__gte=(datetime.datetime.now() - datetime.timedelta(hours=time)))
                                        .order_by('-mtime'))
