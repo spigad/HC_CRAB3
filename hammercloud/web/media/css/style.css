@@ -240,6 +240,41 @@ a{
         font-family: Trebuchet MS,Tahoma,Verdana,Arial,sans-serif;      
 }
 
+.incidencelist{
+    width: 100%;
+    margin: 0;
+    padding: 5px;
+    border: none;
+}
+
+.incidencelist th{
+        color: #FFFFFF;
+    background-color: #20548E;
+    margin: 0;
+    padding: 10px;
+}
+
+.incidencelist td{
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: black;
+    padding: 5px 0;
+}
+
+.incidencelist .left{
+    text-align: left;
+}
+
+.incidencelist .comment{
+    width: 500px;
+}
+
+.incidencelist td.comment {
+    color: black;
+    font-family: monospace;
+    font-size: 90%;
+}
+
 .dialog ul{
         list-style-type: none;
 }

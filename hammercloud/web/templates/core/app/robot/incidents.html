@@ -1,0 +1,63 @@
+{% extends 'core/app/base.html' %}
+
+{% block title %}{{block.super}} | Incidents{% endblock %}
+
+{% block content %}
+<div style="float: left;"><a href="javascript:history.go(-1)">&lt;&lt; Back</a></div>
+
+<h2>PanDA Incidents history</h2>
+<p>The following table summarizes the incidents happened in HammerCloud tests. You can filter the results using the form below and clicking in 'Refresh'.</p>
+
+<form method="get" name="Form" action="">
+  <label>Search string:
+    <input type="text" name="q"{% if q %}value="{{ q }}"{% endif %} />
+  </label>
+  <label>Hours limit:
+    <input type="text" name="hours"{% if hours %}value="{{ hours }}"{% endif %} />
+  </label>
+  <input type="submit" value="Refresh" />
+</form>
+
+<h3>PanDA incidents for last {{ hours|default:"72" }} hours</h3>
+{% if q %}
+<p>Using the following string as filter: {{ q }}</p>
+{% endif %}
+<table class="incidencelist">
+  <thead>
+  <tr><th class="left">Timestamp</th><th>Severity</th><th class="comment left">Comment</th><th>User</th><th>Test</th></tr>
+  </thead>
+  <tbody>
+  {% if incident_list and incident_list.paginator.count > 0 %}
+  {% for i in incident_list.object_list %}
+  <tr{% if i.severity == 'error' %} style="background-color:#FFB8AA;"{% endif %}><td class="left">{{ i.mtime|date:"D d M Y H:i:s" }}</td><td>{{ i.severity }}</td><td class="comment left">{% autoescape off %}{{ i.comment }}{% endautoescape %}</td><td>{{ i.user }}</td>
+      <td>{% if i.4 == 0 %}&nbsp;{% else %}<a href="{% url test-view app,i.test.id %}">{{ i.test.id }} &raquo;</a>{% endif %}</td></tr>
+  {% endfor %}
+  {% else %}
+  <tr><td colspan="5">No incidents found.</td><tr>
+  {% endif %}
+  </tbody>
+</table>
+
+{% if incident_list and incident_list.paginator.count > 0 %}
+<div style="">
+    <span style="padding:10px">
+        <a href="?page=1{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">&laquo;&laquo; first</a>
+    
+        {% if incident_list.has_previous %}
+            <a href="?page={{ incident_list.previous_page_number }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">&laquo; previous</a>
+        {% endif %}
+
+        <span style="font-weight: bold">
+            Page {{ incident_list.number }} of {{ incident_list.paginator.num_pages }}
+        </span>
+        
+        {% if incident_list.has_next %}
+            <a href="?page={{ incident_list.next_page_number }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">next &raquo;</a>
+        {% endif %}
+
+        <a href="?page={{ incident_list.paginator.num_pages }}{% for key,value in request.GET.items %}{% ifnotequal key 'page' %}&{{ key }}={{ value }}{% endifnotequal %}{% endfor %}">last &raquo;&raquo;</a>
+    </span>
+</div>
+{% endif %}
+
+{% endblock %}

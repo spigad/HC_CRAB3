@@ -187,6 +187,10 @@ def robotjobs(request):
 def historical(request):
   pass
 
+@GenView_dec(params={'on':True})
+def incidents(request):
+  pass
+
 @GenView_dec(params={'on':False})
 def autoexclusion(request):
   pass
@@ -205,4 +209,16 @@ def stats(request):
 
 @GenView_dec(params={'on':True})
 def statistics(request):
+  pass
+
+@GenView_dec(params={'on':False})
+def joberrors(request):
+  pass
+
+@GenView_dec(params={'on':False})
+def abortedjobs(request):
+  pass
+
+@GenView_dec(params={'on':False})
+def failedjobs(request):
   pass

@@ -12,6 +12,7 @@ from hc.core.base.views.json.records import get_records
 from django.db.models import Min,Max,Count,Q
 from django.forms.models import modelformset_factory
 from django.core.cache import cache
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
@@ -1094,6 +1095,30 @@ class GenericView():
                       {'to':day_to,'from':day_from,'hists':hists,'length':LENGTH,'help':True},
                       [defaultContext]
                     )
+    return HttpResponse(t.render(c))
+
+  def incidents(self,request,dic={'TestLog':None},*args,**kwargs):
+
+    tl   = dic['TestLog']
+    app  = tl.__module__.split('.')[1]
+
+    q = request.GET.get('q', None)
+    try:
+        hours = int(request.GET.get('hours', ''))
+    except ValueError, TypeError:
+        hours = None
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    incidents = tl.objects.all()
+    paginator = Paginator(list(incidents), 25)
+    try:
+        incident_list = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        incident_list = paginator.page(paginator.num_pages)
+    t = loader.select_template(['%s/robot/incidents.html'%(app),'core/app/robot/incidents.html'])
+    c = RequestContext(request, locals(), [defaultContext])
     return HttpResponse(t.render(c))
 
   def autoexclusion(self,request,dic={'SiteOption':None, 'Cloud':None, 'Site':None, 'BlacklistEvent':None},*args,**kwargs):

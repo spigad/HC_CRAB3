@@ -989,6 +989,8 @@ class TestLogBase(models.Model):
     (u'other',u'other')
   )
 
+  objects = TestLogManager()
+
   id          = models.AutoField(primary_key=True)
   comment     = models.CharField(max_length=4097)
   severity    = models.CharField(choices = SEVERITY_CHOICES, max_length = 15, default='common')

@@ -183,8 +183,16 @@ def robotstats(request):
 def robotjobs(request):
   pass
 
+@GenView_dec(params={'on':True})
+def historical(request):
+  pass
+
+@GenView_dec(params={'on':True})
+def incidents(request):
+  pass
+
 @cache_page(60 * 30)
-@GenView_dec(params={'on':True,'autoexclusion':{'option_name':'autoexclusion','option_value':'disable','site__name__startswith':'ANALY'}})
+@GenView_dec(params={'on':True,'autoexclusion':{'option_name':'autoexclusion','option_value':'disable','site__name__startswith':'ANALY'},'extra_report':'hc.atlas.models.blacklisting_panda_report'})
 def autoexclusion(request):
   pass
 
@@ -198,4 +206,16 @@ def stats(request):
 
 @GenView_dec(params={'on':True})
 def statistics(request):
+  pass
+
+@GenView_dec(params={'on':True,'field':'ganga_status','finished':'c','failed':'f','aborted':'k'})
+def joberrors(request):
+  pass
+
+@GenView_dec(params={'on':True,'field':'reason'})
+def abortedjobs(request):
+  pass
+
+@GenView_dec(params={'on':True,'field':'exit_status_2'})
+def failedjobs(request):
   pass

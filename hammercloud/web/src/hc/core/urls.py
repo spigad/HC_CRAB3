@@ -67,12 +67,16 @@ urlpatterns += patterns('hc.core.base.views.dispatcher',
   url(r'^app/(?P<app>[a-z]+)/robot/stats/$'                   , 'dispatcher', name='robotstats-view'   , kwargs={'func':'robotstats'}),
   url(r'^app/(?P<app>[a-z]+)/robot/jobs/$'                    , 'dispatcher', name='robotjobs-view'    , kwargs={'func':'robotjobs'}),
   url(r'^app/(?P<app>[a-z]+)/robot/historical/$'              , 'dispatcher', name='historical-view'   , kwargs={'func':'historical'}),
+  url(r'^app/(?P<app>[a-z]+)/robot/incidents/$'               , 'dispatcher', name='incidents-view'    , kwargs={'func':'incidents'}),
   url(r'^app/(?P<app>[a-z]+)/robot/autoexclusion/$'           , 'dispatcher', name='autoexclusion-view', kwargs={'func':'autoexclusion'}),
 
   #STATS
   url(r'^app/(?P<app>[a-z]+)/stats/$'                         , 'dispatcher', name='stats-view'      , kwargs={'func':'stats'}),
   url(r'^app/(?P<app>[a-z]+)/evolution/$'                     , 'dispatcher', name='evolution-view'  , kwargs={'func':'evolution'}),
   url(r'^app/(?P<app>[a-z]+)/statistics/$'                    , 'dispatcher', name='statistics-view' , kwargs={'func':'statistics'}),
+  url(r'^app/(?P<app>[a-z]+)/joberrors/$'                    , 'dispatcher', name='joberrors-view' , kwargs={'func':'joberrors'}),
+  url(r'^app/(?P<app>[a-z]+)/abortedjobs/$'                    , 'dispatcher', name='abortedjobs-view' , kwargs={'func':'abortedjobs'}),
+  url(r'^app/(?P<app>[a-z]+)/failedjobs/$'                    , 'dispatcher', name='failedjobs-view' , kwargs={'func':'failedjobs'}),
 
 
   #XHR
