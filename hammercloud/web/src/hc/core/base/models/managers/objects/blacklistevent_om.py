@@ -1,6 +1,7 @@
 import datetime
 from collections import defaultdict
 from django.db import models
+from django.db.models import Count
 
 
 class BlacklistAutomata(object):
@@ -77,3 +78,15 @@ class BlacklistEventManager(models.Manager):
                     sites_boff,
                     sites_online))
     return chart
+
+  def get_top_excluded_sites(self, time_limit=30, number=None):
+    '''
+    Method that returns the list of sites with more exclusions for a given
+    number of days. If specified, can select only the number top of sites.
+    '''
+    return (super(BlacklistEventManager, self).get_query_set()
+                                              .filter(event='blacklist')
+                                              .filter(timestamp__gte=(datetime.datetime.now() - datetime.timedelta(days=time_limit)))
+                                              .values_list('site__name')
+                                              .annotate(blacklists=Count('event'))
+                                              .order_by('-blacklists')[:number])
