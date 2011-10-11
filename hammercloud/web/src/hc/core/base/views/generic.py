@@ -11,6 +11,7 @@ from hc.core.base.forms import forms
 from hc.core.base.views.json.records import get_records
 from django.db.models import Min,Max,Count,Q
 from django.forms.models import modelformset_factory
+from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
@@ -1138,8 +1139,14 @@ class GenericView():
       if params.has_key('extra_report'):
         extra_report = custom_import(params['extra_report'])
         if extra_report:
-          top_month_extra = extra_report(days=7)
-          top_week_extra = extra_report(days=30)
+          top_month_extra = cache.get('%s_top_month_extra'%app)
+          if not top_month_extra:
+            top_month_extra = extra_report(days=30)
+            cache.set('%s_top_month_extra'%app, top_month_extra, 7200)
+          top_week_extra = cache.get('%s_top_week_extra'%app)
+          if not top_week_extra:
+            top_week_extra = extra_report(days=7)
+            cache.set('%s_top_week_extra'%app, top_week_extra, 3600)
         else:
           raise RuntimeError('Could no import extra_report for %s: %s, %s' % (app, params['extra_report'], extra_report))
       
