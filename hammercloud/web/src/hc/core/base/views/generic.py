@@ -1140,6 +1140,8 @@ class GenericView():
         if extra_report:
           top_month_extra = extra_report(days=7)
           top_week_extra = extra_report(days=30)
+        else:
+          raise RuntimeError('Could no import extra_report for %s: %s, %s' % (app, params['extra_report'], extra_report))
       
     else:
       message = 'AutoExclussion not enabled for %s.'%(app)
