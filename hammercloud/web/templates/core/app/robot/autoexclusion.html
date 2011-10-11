@@ -3,6 +3,7 @@
 {% block title %}{{block.super}} | AutoExclusion{% endblock %}
 
 {% block javascript %}
+  {{block.super}}
   <script type="text/javascript" src="{{ MEDIA_URL }}js/AC_OETags.js" language="javascript"></script>
   <script type="text/javascript" src="http://www.google.com/jsapi"></script>
   <script type="text/javascript">
