@@ -74,7 +74,9 @@
     <p>{{message}}</p>
 
   {% else %}
-  
+
+{% block app_notes %}{% endblock %}
+
 <p>HammerCloud will automatically set a site to brokeroff status if it fails FUNCTIONAL tests. See the policy <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud#10_HammerCloud_Automatic_Site_Ex">here</a>.</p>
 
 <h3 style="clear:both">{{ main_title }}</h3>
