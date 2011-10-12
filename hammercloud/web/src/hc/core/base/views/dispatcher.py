@@ -9,6 +9,6 @@ def dispatcher(request,app,*args,**kwargs):
     m = custom_import('hc.'+app+'.views.'+func)
     res = m(request,*args,**kwargs)
   except:
-    raise Http404
+    raise
 
   return res
