@@ -1,0 +1,40 @@
+{% extends 'core/app/base.html' %}
+
+{% block menu %}
+  <li><a href="{% url index-view app %}">Home</a></li>
+  <li><a href="{% url clouds-view app %}">{{ config.cloud }}s</a></li>
+  <li><a href="{% url testlist-view app,'all' %}">Tests</a>
+    <ul>
+      <li><a href="{% url testlist-view app,'functional' %}">All functional</a></li>
+      <li><a href="{% url testlist-view app,'stress' %}">All stress</a></li>
+      <li><a href="{% url testlist-view app,'all' %}">All</a></li>
+    </ul>
+  </li>
+  <li><a href="{% url statistics-view app %}">Statistics</a>
+    <ul>
+      <li><a href="{% url statistics-view app %}?type=plot">Plots</a></li>
+      <li><a href='{% url statistics-view app %}?type=rank'>Ranks</a></li>
+      <li><a href='{% url statistics-view app %}?type=timeline'>Timelines</a></li>
+    </ul>
+  </li>
+  <li><a href="{% url robot-view app %}">Robot</a>
+    <ul>
+      <li><a href='{% url historical-view app %}'>Historical</a></li>
+      <li><a href='{% url autoexclusion-view app %}'>AutoExclusion</a></li>
+      <li><a href="http://panda.cern.ch:25980/server/pandamon/query?dash=analysis&processingType=gangarobot&reload=yes">PandaMon (ext)</a></li>
+      <li><a href='{% url incidents-view app %}'>Incidents</a></li>
+    </ul> 
+  </li>
+  <li><a href="#">PanDA Dashb.</a>
+    <ul>
+      <li><a href="http://panda.cern.ch:25980/server/pandamon/query?dash=analysis&processingType=gangarobot&reload=yes">GangaRobot</a></li>
+      <li><a href="http://panda.cern.ch:25980/server/pandamon/query?dash=analysis&processingType=hammercloud&reload=yes">HammerCloud</a></li>
+    </ul>
+  </li>
+  <li><a href="{% url more-view app %}">More HC...</a>
+    <ul>
+      <li><a href="{% url evolution-view app %}">Evolution</a></li>
+      <li><a href="{% url stats-view app %}">Stats</a></li>
+    </ul>
+  </li>
+{% endblock %}

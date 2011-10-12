@@ -201,6 +201,10 @@ def autoexclusion(request):
 #######################################################
 
 @GenView_dec(params={'on':True})
+def evolution(request):
+  pass
+
+@GenView_dec(params={'on':True})
 def stats(request):
   pass
 
