@@ -622,7 +622,7 @@ class GenericView():
     help = True
 
     #Here there is no customization allowed.
-    return render_to_response('core/app/test/testlist.html', locals(), context_instance = RequestContext(request))
+    return render_to_response('core/app/test/testlist.html', locals(), context_instance = RequestContext(request, {}, [defaultContext]))
 
 
 #######################################################
