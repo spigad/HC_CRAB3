@@ -517,7 +517,7 @@ def process_job(job):
              'arch'                  :stats['arch'],
              'percent_cpu'           :stats['percentcpu'],
              'numevents'             :stats['totalevents'],
-             'net_eth_rx_preathena'  :stats['NET_ETH_RX_PREATHENA'],
+             'NET_ETH_RX_PREATHENA'  :stats['NET_ETH_RX_PREATHENA'],
              'NET_ETH_RX_AFTERATHENA' :stats['NET_ETH_RX_AFTERATHENA'],
              'inds'                  :inds,
              'outds'                 :outds,
@@ -593,12 +593,11 @@ def process_job(job):
   #EVENTRATE
   if results['numevents'] != 'NULL' and results['wallclock'] != 'NULL':
     try:
-      eventrate = results['numevents'] / results['wallclock']
+      eventrate = float(results['numevents']) / float(results['wallclock'])
       results['eventrate'] = eventrate
     except:
       logger.warning('Bug during pj eventrate')
-      logger.warning(sys.exc_info()[0])
-      logger.warning(sys.exc_info()[1])
+
 
   #EVENTS/ATHENA
   if results['numevents'] != 'NULL':
@@ -610,12 +609,10 @@ def process_job(job):
 
     if time:
       try:
-        events_athena = results['numevents'] / time
+        events_athena = float(results['numevents']) / float(time)
         results['events_athena'] = events_athena
       except:
-        logger.warning('Bug during pj event_atehan')
-        logger.warning(sys.exc_info()[0])
-        logger.warning(sys.exc_info()[1])
+        logger.warning('Bug during pj event_athena')
 
   try:
     results['site'] = Site.objects.filter(name=results['site'])[0]
@@ -741,7 +738,7 @@ def process_subjob(job, subjob):
              'arch'                  :stats['arch'],
              'percent_cpu'           :stats['percentcpu'],
              'numevents'             :stats['totalevents'],
-             'net_eth_rx_preathena'  :stats['NET_ETH_RX_PREATHENA'],
+             'NET_ETH_RX_PREATHENA'  :stats['NET_ETH_RX_PREATHENA'],
              'NET_ETH_RX_AFTERATHENA' :stats['NET_ETH_RX_AFTERATHENA'],
              'inds'                  :inds,
              'outds'                 :outds,
@@ -824,12 +821,11 @@ def process_subjob(job, subjob):
   #EVENTRATE
   if results['numevents'] != 'NULL' and results['wallclock'] != 'NULL':
     try:
-      eventrate = results['numevents'] / results['wallclock']
+      eventrate = float(results['numevents']) / float(results['wallclock'])
       results['eventrate'] = eventrate
     except:
       logger.warning('Bug during sj eventrate')
-      logger.warning(sys.exc_info()[0])
-      logger.warning(sys.exc_info()[1])
+                
 
   #EVENTS/ATHENA
   if results['numevents'] != 'NULL':
@@ -842,12 +838,10 @@ def process_subjob(job, subjob):
 
     if time:
       try:
-        events_athena = results['numevents'] / time
+        events_athena = float(results['numevents']) / float(time)
         results['events_athena'] = events_athena
       except:
-        logger.warning('Bug during sj event_atehan')
-        logger.warning(sys.exc_info()[0])
-        logger.warning(sys.exc_info()[1])
+        logger.warning('Bug during sj event_athena')
 
 
   logger.debug('Writing to DB')
