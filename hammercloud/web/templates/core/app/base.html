@@ -76,7 +76,6 @@
 
             {% block menu %}
               <li><a href="{% url index-view app %}">Home</a></li>
-              <li><a href="{% url clouds-view app %}">{{ config.cloud }}s</a></li>
               <li><a href="{% url testlist-view app,'all' %}">Tests</a>
                 <ul>
                   <li><a href="{% url testlist-view app,'functional' %}">All functional</a></li>

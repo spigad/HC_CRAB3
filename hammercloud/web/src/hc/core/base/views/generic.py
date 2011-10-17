@@ -1310,8 +1310,9 @@ class GenericView():
     t = loader.select_template(['%s/stats/statistics.html'%(app),'core/app/stats/statistics.html'])
     return HttpResponse(t.render(c))
 
-  def joberrors(self,request,dic={'Site':None,'Result':None},*args,**kwargs):
+  def joberrors(self,request,dic={'Site':None,'Result':None, 'Cloud':None},*args,**kwargs):
     site = dic['Site']
+    cloud = dic['Cloud']
     result = dic['Result']
     app = site.__module__.split('.')[1]
 
@@ -1328,18 +1329,21 @@ class GenericView():
     end_date = request.GET.get('end_date', None)
     if end_date:
       result_filters = result_filters | Q(mtime__lte=dateutil.parser.parse(end_date))
-    tests = request.GET.getlist('test')
+    tests = filter(None, request.GET.getlist('test'))
     if tests:
       result_filters = result_filters | Q(test__in=tests)
-    sites = request.GET.getlist('site')
+    sites = filter(None, request.GET.getlist('site'))
     if sites:
       site_filters = site_filters | Q(id__in=sites)
-    clouds = request.GET.getlist('cloud')
+    clouds = filter(None, request.GET.getlist('cloud'))
     if clouds:
       site_filters = site_filters | Q(cloud__id__in=clouds)
-    templates = request.GET.getlist('template')
+    templates = filter(None, request.GET.getlist('template'))
     if templates:
       result_filters = result_filters | Q(test__template__id__in=templates)
+
+    sites_list = site.objects.exclude(enabled=False)
+    clouds_list = cloud.objects.all()
 
     site_data = []
     sites_filtered = site.objects.filter(site_filters)
@@ -1371,7 +1375,7 @@ class GenericView():
       del get_params['site']
     except KeyError:
       pass
-    c = RequestContext(request, {'site_data': site_data, 'get': get_params}, [defaultContext])
+    c = RequestContext(request, locals(), [defaultContext])
     t = loader.select_template(['%s/stats/joberrors.html'%(app),'core/app/stats/joberrors.html'])
     return HttpResponse(t.render(c))
 
@@ -1448,31 +1452,3 @@ class GenericView():
     c = RequestContext(request, {'site_data': site_data}, [defaultContext])
     t = loader.select_template(['%s/stats/failedjobs.html'%(app),'core/app/stats/failedjobs.html'])
     return HttpResponse(t.render(c))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
