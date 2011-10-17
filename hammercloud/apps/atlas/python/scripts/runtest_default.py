@@ -567,6 +567,15 @@ def process_job(job):
 
   elif job.backend._impl._name == 'Panda':
     try:
+      results['pandatime1'] = int(stats['pandatime1'])
+      results['pandatime2'] = int(stats['pandatime2'])
+      results['pandatime3'] = int(stats['pandatime3'])
+      results['pandatime4'] = int(stats['pandatime4'])
+      results['pandatime5'] = int(stats['pandatime5'])
+    except:
+      logger.warning('Bug during pj pandatime reprocessing')
+    
+    try:
       results['exit_status_2'] = int(job.backend.buildjobs[0].jobSpec['pilotErrorCode'])
       results['reason'] = job.backend.buildjobs[0].jobSpec['pilotErrorDiag']
     except:
@@ -787,6 +796,14 @@ def process_subjob(job, subjob):
       results['ganga_status'] = 'n'
 
   elif subjob.backend._impl._name == 'Panda':
+    try:
+      results['pandatime1'] = int(stats['pandatime1'])
+      results['pandatime2'] = int(stats['pandatime2'])
+      results['pandatime3'] = int(stats['pandatime3'])
+      results['pandatime4'] = int(stats['pandatime4'])
+      results['pandatime5'] = int(stats['pandatime5'])
+    except:
+      logger.warning('Bug during sj pandatime reprocessing')
 
     results['site'] = jobToSite(subjob)
     results['exit_status_1'] = subjob.backend.exitcode
