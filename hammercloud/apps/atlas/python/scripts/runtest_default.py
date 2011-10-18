@@ -605,7 +605,8 @@ def process_job(job):
       eventrate = float(results['numevents']) / float(results['wallclock'])
       results['eventrate'] = eventrate
     except:
-      logger.warning('Bug during pj eventrate')
+      pass
+      #logger.warning('Bug during pj eventrate')
 
 
   #EVENTS/ATHENA
@@ -621,7 +622,8 @@ def process_job(job):
         events_athena = float(results['numevents']) / float(time)
         results['events_athena'] = events_athena
       except:
-        logger.warning('Bug during pj event_athena')
+        pass
+        #logger.warning('Bug during pj event_athena')
 
   try:
     results['site'] = Site.objects.filter(name=results['site'])[0]
@@ -841,7 +843,8 @@ def process_subjob(job, subjob):
       eventrate = float(results['numevents']) / float(results['wallclock'])
       results['eventrate'] = eventrate
     except:
-      logger.warning('Bug during sj eventrate')
+      pass
+      #logger.warning('Bug during sj eventrate')
                 
 
   #EVENTS/ATHENA
@@ -858,7 +861,8 @@ def process_subjob(job, subjob):
         events_athena = float(results['numevents']) / float(time)
         results['events_athena'] = events_athena
       except:
-        logger.warning('Bug during sj event_athena')
+        pass
+        #logger.warning('Bug during sj event_athena')
 
 
   logger.debug('Writing to DB')
