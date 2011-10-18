@@ -11,14 +11,14 @@
         "{{summary.numevents}}",
         "{{summary.numfiles}}",
         "{{summary.ganga_number_of_files}}",
-        "{{summary.events_athena}}",
-        "{{summary.eventrate}}",
+        "{% if summary.events_athena %}{{summary.events_athena|floatformat:3}}{% else %}None{% endif %}",
+        "{% if summary.eventrate %}{{summary.eventrate|floatformat:3}}{% else %}None{% endif %}",
         "{{summary.pandatime1}}",
         "{{summary.pandatime2}}",
         "{{summary.pandatime3}}",
         "{{summary.pandatime4}}",
         "{{summary.pandatime5}}",
-        "{{summary.timetorun}}"
+        "{% if summary.timetorun %}{{summary.timetorun|floatformat:1}}{% else %}None{% endif %}"
     ]
 
     {% if not forloop.last %}
