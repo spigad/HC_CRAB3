@@ -1320,27 +1320,28 @@ class GenericView():
     if kwargs.has_key('params'):
       params = kwargs['params']
 
-    # Get the GET parameters for the QuerySet
     site_filters = Q()
     result_filters = Q()
+
+    # Get the GET parameters for the QuerySet
     start_date = request.GET.get('start_date', None)
     if start_date:
-      result_filters = result_filters | Q(mtime__gte=dateutil.parser.parse(start_date))
+      result_filters = result_filters & Q(mtime__gte=dateutil.parser.parse(start_date))
     end_date = request.GET.get('end_date', None)
     if end_date:
-      result_filters = result_filters | Q(mtime__lte=dateutil.parser.parse(end_date))
+      result_filters = result_filters & Q(mtime__lte=dateutil.parser.parse(end_date))
     tests = filter(None, request.GET.getlist('test'))
     if tests:
-      result_filters = result_filters | Q(test__in=tests)
+      result_filters = result_filters & Q(test__in=tests)
     sites = filter(None, request.GET.getlist('site'))
     if sites:
-      site_filters = site_filters | Q(id__in=sites)
+      site_filters = site_filters & Q(id__in=sites)
     clouds = filter(None, request.GET.getlist('cloud'))
     if clouds:
-      site_filters = site_filters | Q(cloud__id__in=clouds)
+      site_filters = site_filters & Q(cloud__id__in=clouds)
     templates = filter(None, request.GET.getlist('template'))
     if templates:
-      result_filters = result_filters | Q(test__template__id__in=templates)
+      result_filters = result_filters & Q(test__template__id__in=templates)
 
     sites_list = site.objects.exclude(enabled=False)
     clouds_list = cloud.objects.all()
@@ -1350,21 +1351,19 @@ class GenericView():
     results_filtered = result.objects.filter(result_filters)
 
     for s in sites_filtered.filter(enabled=1):
+      r = results_filtered.filter(site=s)
+      q = Q(ganga_status='f')
+      if params.has_key('failed'):
+        q = q & Q(**params['failed'])
       i = {'site': s,
-           'finished': 0,
-           'failed': 0,
+           'finished': r.count(),
+           'failed': r.filter(q).count(),
            'aborted': 0,
            'efficiency': 0.0}
-      for r in results_filtered.values(params['field']).filter(site=s).annotate(jcount=Count(params['field'])):
-        if r[params['field']] == params['failed']:
-          i['failed'] = r['jcount']
-        elif r[params['field']] == params['finished']:
-          i['finished'] = r['jcount']
-        elif r[params['field']] == params['aborted']:
-          i['aborted'] = r['jcount']
-      i['total'] = i['finished'] + i['aborted'] + i['failed']
-      if i['total'] > 0:
-        i['efficiency'] = 1.0 - float(i['aborted'] + i['failed']) / float(i['total'])
+      total_failed = r.filter(ganga_status='f').count()
+      i['aborted'] = total_failed - i['failed']
+      if i['finished'] > 0:
+        i['efficiency'] = float(i['finished'] - total_failed) / float(i['finished'])
       site_data.append(i)
 
     #site_data.sort(key=lambda x: x['efficiency'], reverse=True)
@@ -1392,16 +1391,16 @@ class GenericView():
     result_filters = Q()
     start_date = request.GET.get('start_date', None)
     if start_date:
-      result_filters = result_filters | Q(mtime__gte=dateutil.parser.parse(start_date))
+      result_filters = result_filters & Q(mtime__gte=dateutil.parser.parse(start_date))
     end_date = request.GET.get('end_date', None)
     if end_date:
-      result_filters = result_filters | Q(mtime__lte=dateutil.parser.parse(end_date))
+      result_filters = result_filters & Q(mtime__lte=dateutil.parser.parse(end_date))
     tests = request.GET.getlist('test')
     if tests:
-      result_filters = result_filters | Q(test__in=tests)
+      result_filters = result_filters & Q(test__in=tests)
     templates = request.GET.getlist('template')
     if templates:
-      result_filters = result_filters | Q(test__template__id__in=templates)
+      result_filters = result_filters & Q(test__template__id__in=templates)
 
     site = request.GET.get('site', None)
     if not site:
@@ -1429,16 +1428,16 @@ class GenericView():
     result_filters = Q()
     start_date = request.GET.get('start_date', None)
     if start_date:
-      result_filters = result_filters | Q(mtime__gte=dateutil.parser.parse(start_date))
+      result_filters = result_filters & Q(mtime__gte=dateutil.parser.parse(start_date))
     end_date = request.GET.get('end_date', None)
     if end_date:
-      result_filters = result_filters | Q(mtime__lte=dateutil.parser.parse(end_date))
+      result_filters = result_filters & Q(mtime__lte=dateutil.parser.parse(end_date))
     tests = request.GET.getlist('test')
     if tests:
-      result_filters = result_filters | Q(test__in=tests)
+      result_filters = result_filters & Q(test__in=tests)
     templates = request.GET.getlist('template')
     if templates:
-      result_filters = result_filters | Q(test__template__id__in=templates)
+      result_filters = result_filters & Q(test__template__id__in=templates)
 
     site = request.GET.get('site', None)
     if not site:

@@ -213,7 +213,7 @@ def statistics(request):
   pass
 
 @cache_page(60 * 60 * 2)
-@GenView_dec(params={'on':True,'field':'ganga_status','finished':'c','failed':'f','aborted':'k'})
+@GenView_dec(params={'on':True})
 def joberrors(request):
   pass
 
