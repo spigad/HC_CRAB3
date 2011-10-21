@@ -1395,10 +1395,10 @@ class GenericView():
     end_date = request.GET.get('end_date', None)
     if end_date:
       result_filters = result_filters & Q(mtime__lte=dateutil.parser.parse(end_date))
-    tests = request.GET.getlist('test')
+    tests = filter(None, request.GET.getlist('test'))
     if tests:
       result_filters = result_filters & Q(test__in=tests)
-    templates = request.GET.getlist('template')
+    templates = filter(None, request.GET.getlist('template'))
     if templates:
       result_filters = result_filters & Q(test__template__id__in=templates)
 
@@ -1432,10 +1432,10 @@ class GenericView():
     end_date = request.GET.get('end_date', None)
     if end_date:
       result_filters = result_filters & Q(mtime__lte=dateutil.parser.parse(end_date))
-    tests = request.GET.getlist('test')
+    tests = filter(None, request.GET.getlist('test'))
     if tests:
       result_filters = result_filters & Q(test__in=tests)
-    templates = request.GET.getlist('template')
+    templates = filter(None, request.GET.getlist('template'))
     if templates:
       result_filters = result_filters & Q(test__template__id__in=templates)
 
