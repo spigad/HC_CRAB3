@@ -68,7 +68,7 @@ export PYTHONPATH=$PYTHONPATH:$HCDIR/external/django/$version:$HCDIR/web/src
 export PYTHONPATH=$PYTHONPATH:$HCDIR/apps
 
 #Export local site-packages for Python 2.5
-export PYTHONPATH=$PYTHONPATH:/usr/lib/python2.5/site-packages
+#export PYTHONPATH=$PYTHONPATH:/usr/lib/python2.5/site-packages
 
 echo '  PATH='$PATH
 echo '  PYTHONPATH='$PYTHONPATH
