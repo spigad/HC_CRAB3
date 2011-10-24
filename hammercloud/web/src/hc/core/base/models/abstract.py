@@ -714,6 +714,7 @@ class TestBase(models.Model):
       self.extraargs      = extraargs
       self.metricperm     = metricperm
 
+      self.state = final_state
       super(TestBase, self).save()
 
     else:
