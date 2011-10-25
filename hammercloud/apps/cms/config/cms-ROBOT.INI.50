@@ -41,7 +41,7 @@ VirtualOrganisation = cms
 
 #CMSSW_VERSION = CMSSW_3_7_0
 #CMSSW_SETUP = scripts/CMSSW_3_7_0.sh
-CRAB_VERSION = CRAB_2_7_8_patch1
+CRAB_VERSION = CRAB_2_7_9_patch1
 location = /data/hc/external/cms/crab
 
 [USER_CFG]
