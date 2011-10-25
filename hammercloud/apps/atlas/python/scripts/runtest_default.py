@@ -698,7 +698,7 @@ def process_subjob(job, subjob):
   if (subjob.status == 'completed' and not stats) or subjob.status == 'failed':
     logger.warning('Forced postprocess')
     try:
-      subob.application.postprocess()
+      subjob.application.postprocess()
     except:
       logger.warning('Error in postprocess')
       logger.warning(sys.exc_info()[0])
