@@ -1286,7 +1286,11 @@ class MetricTypeBase(models.Model):
   name        = models.CharField(unique=True, max_length=255)
   title       = models.CharField(max_length=255)
   type        = models.CharField(choices = PLOT_TYPE, max_length=15)
-  description = models.CharField(max_length=2047,blank=True) 
+  description = models.CharField(max_length=2047,blank=True)
+  rate        = models.BooleanField(default=False)
+  scale_max   = models.FloatField(blank=True,null=True)
+  scale_min   = models.FloatField(blank=True,null=True)
+  hist_bins   = models.IntegerField(blank=True,null=True)
   mtime       = models.DateTimeField(auto_now=True)
 
   def __unicode__(self):
