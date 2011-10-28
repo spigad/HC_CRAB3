@@ -25,6 +25,8 @@ class AddSiteToFT:
     sys.argv.reverse()
     sys.argv.pop()
     sys.argv.pop()
+    sys.argv.pop()
+    sys.argv.pop()
 
     # Add the sites
     for site_name in sys.argv:

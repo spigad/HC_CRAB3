@@ -37,7 +37,7 @@ cd $HCDIR
 
 echo '  CODE: python python/scripts/dispatcher.py -f remove_site_from_templates'
 echo ''
-python python/scripts/dispatcher.py -f remove_site_from_templates
+python python/scripts/dispatcher.py -f remove_site_from_templates $*
 echo ''
 
 rm -f /tmp/remove-site-from-templates_$1.running
