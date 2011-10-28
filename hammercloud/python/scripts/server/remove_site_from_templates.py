@@ -18,7 +18,7 @@ class RemoveSiteFromTemplates:
     templatesite = custom_import('hc.%s.models.TemplateSite'%(app))
     
     # Find the AFT templates
-    templates = template.objects #.filter(description__contains='AFT')
+    templates = template.objects.all() #.filter(description__contains='AFT')
     print 'Using templates:', templates
     
     # Get args
