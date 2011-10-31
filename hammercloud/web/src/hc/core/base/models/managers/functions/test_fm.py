@@ -130,6 +130,18 @@ def getTestFailedJobs(test):
 #  return result.objects.filter(test=test.id).filter(ganga_status='f').count()
   return test.getResults_for_test.filter(ganga_status='f').exclude(ganga_subjobid=1000000).count()
 
+def getTestOtherJobs(test):
+#  '''
+#  Method that return the number of other jobs of the Test object instance
+#  '''
+#  result = ContentType.objects.get(app_label=test._meta.app_label, model="result").model_class()
+#  return result.objects.filter(test=test.id).filter(ganga_status='f').count()
+  return (test.getResults_for_test.exclude(ganga_status='s')
+                                  .exclude(ganga_status='r')
+                                  .exclude(ganga_status='c')
+                                  .exclude(ganga_status='f')
+                                  .exclude(ganga_subjobid=1000000).count())
+
 #########################################################################
 ## METRICS BLOCK
 #########################################################################

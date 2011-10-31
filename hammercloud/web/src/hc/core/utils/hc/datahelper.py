@@ -13,6 +13,7 @@ class Datahelper:
     test.failed    = test_fm.getTestFailedJobs(test)
     test.completed = test_fm.getTestCompletedJobs(test)
     test.running   = test_fm.getTestRunningJobs(test)
+    test.other     = test_fm.getTestOtherJobs(test)
     return test
 
   def annotateTests(self,tests):
