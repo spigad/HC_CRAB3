@@ -129,6 +129,8 @@ def _copyJob(job):
 
   try:
     site = job.inputdata.CE_white_list
+    if site is None:
+      site = job.inputdata.target_site
   except:
     try:
       site = job.inputdata.target_site
@@ -202,6 +204,8 @@ def copyJob(job):
 
   try:
     site = job.inputdata.CE_white_list
+    if site is None:
+      site = job.inputdata.target_site
   except:
     try:
       site = job.inputdata.target_site
@@ -295,6 +299,8 @@ def print_summary():
 
     try:
       site = j.inputdata.CE_white_list
+      if site is None:
+        site = j.inputdata.target_site
     except:
       try:
         site = j.inputdata.target_site
@@ -328,6 +334,8 @@ def print_summary():
 
     try:
       site = j.inputdata.CE_white_list
+      if site is None:
+        site = j.inputdata.target_site
     except:
       try:
         site = j.inputdata.target_site
@@ -352,6 +360,8 @@ def process_subjob(job,subjob):
 
   try:
     site = job.inputdata.CE_white_list
+    if site is None:
+      site = job.inputdata.target_site
   except:
     try:
       site = job.inputdata.target_site
