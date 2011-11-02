@@ -127,7 +127,14 @@ def updateDatasets(site):
 
 def _copyJob(job):
 
-  site = job.inputdata.CE_white_list
+  try:
+    site = job.inputdata.CE_white_list
+  except:
+    try:
+      site = job.inputdata.target_site
+    except:
+      logger.error('The site cannot be read from the Ganga CRABDataset (_copyJob)')
+      return
 
   logger.info('Copying job %d'%job.id)
   nRetries = 3
@@ -193,7 +200,14 @@ def _copyJob(job):
 
 def copyJob(job):
 
-  site = job.inputdata.CE_white_list
+  try:
+    site = job.inputdata.CE_white_list
+  except:
+    try:
+      site = job.inputdata.target_site
+    except:
+      logger.error('The site cannot be read from the Ganga CRABDataset (copyJob)')
+      return
 
   logger.debug('copyJob called for job %d at site %s'%(job.id,site))
 
@@ -279,7 +293,14 @@ def print_summary():
   active = 0
   for j in jobs:
 
-    site = j.inputdata.CE_white_list
+    try:
+      site = j.inputdata.CE_white_list
+    except:
+      try:
+        site = j.inputdata.target_site
+      except:
+        logger.error('The site cannot be read from the Ganga CRABDataset (print_summary 1)')
+        site = '<unknown>'
 
     t = len(j.subjobs)
     s = len(j.subjobs.select(status='submitted'))
@@ -305,7 +326,15 @@ def print_summary():
     if test_state and test_state[0].copied:
       continue
 
-    site = j.inputdata.CE_white_list
+    try:
+      site = j.inputdata.CE_white_list
+    except:
+      try:
+        site = j.inputdata.target_site
+      except:
+        logger.error('The site cannot be read from the Ganga CRABDataset (print_summary 2)')
+        site = '<unknown>'
+
 
     t = len(j.subjobs)
     s = len(j.subjobs.select(status='submitted'))
@@ -321,7 +350,14 @@ def print_summary():
 
 def process_subjob(job,subjob):
 
-  site = job.inputdata.CE_white_list
+  try:
+    site = job.inputdata.CE_white_list
+  except:
+    try:
+      site = job.inputdata.target_site
+    except:
+      logger.error('The site cannot be read from the Ganga CRABDataset (process_subjob)')
+      return
   
   logger.debug('Processing jobs(%d).subjobs(%d) with status %s'%(job.id,subjob.id,subjob.status))
 
