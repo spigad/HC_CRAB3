@@ -8,6 +8,7 @@
   <refreshperiod>PT5M</refreshperiod>
   <lemon>
     <host>vocms38</host>
+    <host>vocms06</host>
     <host>vocms57</host>
   </lemon>
 </serviceupdate>
