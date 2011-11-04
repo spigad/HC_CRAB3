@@ -132,11 +132,8 @@ def _copyJob(job):
     if site is None:
       site = job.inputdata.target_site
   except:
-    try:
-      site = job.inputdata.target_site
-    except:
-      logger.error('The site cannot be read from the Ganga CRABDataset (_copyJob)')
-      return
+    logger.error('The site cannot be read from the Ganga CRABDataset (_copyJob)')
+    return
 
   logger.info('Copying job %d'%job.id)
   nRetries = 3
@@ -207,11 +204,8 @@ def copyJob(job):
     if site is None:
       site = job.inputdata.target_site
   except:
-    try:
-      site = job.inputdata.target_site
-    except:
-      logger.error('The site cannot be read from the Ganga CRABDataset (copyJob)')
-      return
+    logger.error('The site cannot be read from the Ganga CRABDataset (copyJob)')
+    return
 
   logger.debug('copyJob called for job %d at site %s'%(job.id,site))
 
@@ -302,11 +296,8 @@ def print_summary():
       if site is None:
         site = j.inputdata.target_site
     except:
-      try:
-        site = j.inputdata.target_site
-      except:
-        logger.error('The site cannot be read from the Ganga CRABDataset (print_summary 1)')
-        site = '<unknown>'
+      logger.error('The site cannot be read from the Ganga CRABDataset (print_summary 1)')
+      site = '<unknown>'
 
     t = len(j.subjobs)
     s = len(j.subjobs.select(status='submitted'))
@@ -337,11 +328,8 @@ def print_summary():
       if site is None:
         site = j.inputdata.target_site
     except:
-      try:
-        site = j.inputdata.target_site
-      except:
-        logger.error('The site cannot be read from the Ganga CRABDataset (print_summary 2)')
-        site = '<unknown>'
+      logger.error('The site cannot be read from the Ganga CRABDataset (print_summary 2)')
+      site = '<unknown>'
 
 
     t = len(j.subjobs)
@@ -363,11 +351,8 @@ def process_subjob(job,subjob):
     if site is None:
       site = job.inputdata.target_site
   except:
-    try:
-      site = job.inputdata.target_site
-    except:
-      logger.error('The site cannot be read from the Ganga CRABDataset (process_subjob)')
-      return
+    logger.error('The site cannot be read from the Ganga CRABDataset (process_subjob)')
+    return
   
   logger.debug('Processing jobs(%d).subjobs(%d) with status %s'%(job.id,subjob.id,subjob.status))
 
