@@ -9,7 +9,7 @@ def portal(request):
   apps = []
 
   for app in settings.INSTALLED_APPS:
-    if not app.startswith('django'):
+    if app.startswith('hc'):
       app = app.split('.')[1]
       if app != 'core':
         apps.append(app)    
