@@ -171,27 +171,28 @@ class CreateAtJob:
     if not tests:
       print '[INFO][%s][create_at_job] No tests found on state: tobescheduled'%(app)      
 
-    for test in tests:
-      test_hosts = test.getTestHosts_for_test.all().filter(host__active=1).order_by('host__loadavg1m')
+    for t in tests:
+      test_hosts = sorted(t.getTestHosts_for_test.all().filter(host__active=1),
+                          key=lambda x: x.host.loadavg1m + test.objects.filter(starttime__gte=(datetime.now() - timedelta(seconds=300))).filter(host=x.host).count()*3.0)
 
       if not test_hosts:
-        print '[ERROR][%s][create_at_job] Test %s without active test_hosts.'%(app,test.id)
+        print '[ERROR][%s][create_at_job] Test %s without active test_hosts.'%(app,t.id)
 
       else:
         if test_hosts[0].host.name == hostname:
-          print '[INFO][%s][create_at_job] Test %s assigned to %s'%(app,test.id,hostname)
+          print '[INFO][%s][create_at_job] Test %s assigned to %s'%(app,t.id,hostname)
         
-          if self.createScript(app,test):
-           if self.scheduleJob(app,test,test_hosts[0].host):
+          if self.createScript(app,t):
+           if self.scheduleJob(app,t,test_hosts[0].host):
              time.sleep(10)  
 
         else:
-          print '[INFO][%s][create_at_job] Test %s NOT assigned to %s.'%(app,test.id,hostname) 
+          print '[INFO][%s][create_at_job] Test %s NOT assigned to %s.'%(app,t.id,hostname) 
           print '[INFO][create_at_job][%s] Registered loads.'%(app)
           for thl in test_hosts:
             print '%s: %3f'%(thl.host.name,thl.host.loadavg1m)
     
-    test = custom_import('hc.%s.models.Test'%(app))
+    #test = custom_import('hc.%s.models.Test'%(app))
     tests = test.objects.filter(state='running').filter(host__name=hostname)
     if not tests:
       print '[INFO][%s][create_at_job] No tests found on state: running'%(app)
