@@ -1,6 +1,7 @@
 from hc.core.utils.generic.class_func import custom_import
 from django.db.models import Min
 
+from datetime import datetime, timedelta
 import commands,time,os,os.path
 
 me = 'hammercloud-noreply@cern.ch'
