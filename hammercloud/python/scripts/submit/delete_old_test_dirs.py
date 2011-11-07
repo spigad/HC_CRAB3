@@ -21,13 +21,13 @@ def main():
     
 
     #cursor.execute ("select distinct id,endtime from test where date_add(endtime,interval 30 day)<now()")
-    days = timedelta(days=30)
+    days = timedelta(days=3)
     begin = date.today() - days
     t = custom_import('hc.%s.models.Test'%(app))
     tests = t.objects.filter(endtime__lt=begin)
     for test in tests:
         print "Test #%d: ended %s."%(test.id, test.endtime),
-        dir = '/data/hc/apps/cms/testdirs/test_%d'%test.id
+        dir = '/data/hc/apps/%s/testdirs/test_%d'%(app,test.id)
         if os.path.exists(dir):
             print "going to rm -rf %s"%dir,
             if doit: 
@@ -37,7 +37,7 @@ def main():
                 print "need to --doit",
         else:
             print "testdir already deleted",
-        f = '/data/hc/apps/cms/testdirs/run-test-%d.sh'%test.id
+        f = '/data/hc/apps/%s/testdirs/run-test-%d.sh'%(app,test.id)
         if os.path.exists(f):
             print "going to rm %s"%f,
             if doit: 
