@@ -29,7 +29,7 @@ except IndexError:
 ##
 
 try:
-  test = Test.objects.select_related('template', 'metricperm__index', 'metricperm__summary', 'metricperm__pertab').get(pk=testid)
+  test = Test.objects.get(pk=testid) #select_related('template', 'metricperm__index', 'metricperm__summary', 'metricperm__pertab').get(pk=testid)
   if test.pause:
     logger.info('Un-pausing test.')
     test.pause = 0
@@ -110,7 +110,7 @@ def updateDatasets(site, num):
     # Dataset patterns
     datasetpatterns = []
 
-    patterns = [ td.dspattern.pattern for td in test.getTestDspatterns_for_test.select_related('dspattern').all() ]
+    patterns = [ td.dspattern.pattern for td in test.getTestDspatterns_for_test.all() ] #select_related('dspattern').all() ]
 
     for pattern in patterns:
       if pattern.startswith('/'):
@@ -308,7 +308,7 @@ def copyJob(job):
 
   test_site = test.getTestSites_for_test.filter(site__name=site)
   if not test_site:
-    print 'Failed to get TestSite with Test: %s and Site: %s' % (test.id, site)
+    logger.warning('Failed to get TestSite with Test: %s and Site: %s' % (test.id, site))
     return
   else:
     test_site = test_site[0]
@@ -322,7 +322,7 @@ def copyJob(job):
     return
 
   if not test_site.resubmit_enabled:
-    #logger.info('Not copying job %d: test_site.resubmit_enabled is False for test %d at %s'%(job.id,testid,site))
+    logger.debug('Not copying job %d: test_site.resubmit_enabled is False for test %d at %s'%(job.id,testid,site))
     return
 
   test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
@@ -334,16 +334,18 @@ def copyJob(job):
 
   # submitted
   submitted = test.getResults_for_test.filter(ganga_status='s').filter(site__name=site).exclude(ganga_subjobid=1000000).count()
+  #submitted = Result.objects.filter(test=test).filter(ganga_status='s').filter(site__name=site).exclude(ganga_subjobid=1000000).count()
 
   # running
   running = test.getResults_for_test.filter(ganga_status='r').filter(site__name=site).exclude(ganga_subjobid=1000000).count()
+  #running = Result.objects.filter(test=test).filter(ganga_status='r').filter(site__name=site).exclude(ganga_subjobid=1000000).count()
 
   if submitted > test_site.min_queue_depth:
-    #logger.info('Not copying job %d: %d submitted > q.d %d'%(job.id,submitted,test_site.min_queue_depth))
+    logger.debug('Not copying job %d: %d submitted > q.d %d'%(job.id,submitted,test_site.min_queue_depth))
     return
 
   if running > test_site.max_running_jobs:
-    #logger.info('Not copying job %d: %d running > %d max'%(job.id,running,test_site.max_running_jobs))
+    logger.debug('Not copying job %d: %d running > %d max'%(job.id,running,test_site.max_running_jobs))
     return
 
 #  if len(job.subjobs) < 1:
@@ -361,9 +363,11 @@ def copyJob(job):
 
   # total last 1 hours
   total = test.getResults_for_test.filter(site__name=site).filter(ganga_status__in=['c', 'f']).filter(mtime__gt=datetime.now() - timedelta(hours=1)).exclude(ganga_subjobid=1000000).count()
+  #total = Result.objects.filter(test=test).filter(site__name=site).filter(ganga_status__in=['c', 'f']).filter(mtime__gt=datetime.now() - timedelta(hours=1)).exclude(ganga_subjobid=1000000).count()
 
   # failed last 1 hours
   failed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).exclude(ganga_subjobid=1000000).count()
+  #failed = Result.objects.filter(test=test).filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).exclude(ganga_subjobid=1000000).count()
 
   if category == 'stress' and total > 20 and float(failed) / float(total) > 0.7:
     logger.warning('Not copying job %d: %d failed from %d finished (copy when <= 0.7)' % (job.id, failed, total))
@@ -374,6 +378,7 @@ def copyJob(job):
 
   # Check if build job failed due to missing CMTCONFIG
   bfailed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).count()
+  #bfailed = Result.objects.filter(test=test).filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).count()
   
   if bfailed > 0:
     logger.warning('Not copying job %d: build job failed with pilot error code 1109 or 1211' % job.id)
@@ -1143,7 +1148,7 @@ if hasSubjobs:
   while (test_active() and not test_paused()):
 
     #We need to refresh the test object
-    test = Test.objects.select_related('template', 'metricperm__index', 'metricperm__summary', 'metricperm__pertab').get(pk=testid)
+    test = Test.objects.get(pk=testid) #select_related('template', 'metricperm__index', 'metricperm__summary', 'metricperm__pertab').get(pk=testid)
 
     try:
       print_summary()
