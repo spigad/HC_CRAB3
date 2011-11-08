@@ -7,7 +7,7 @@ from hc.core.utils.plots.charts import hist,pie,line
 
 import numpy
 
-def summarize(app,test):
+def summarize(app,test,completed=False):
 
   now = datetime.now()
 
@@ -22,7 +22,7 @@ def summarize(app,test):
   Qobjects['metric_type'] = list(set(list(test.metricperm.index.all()) + list(test.metricperm.pertab.all()) + list(test.metricperm.summary.all())))
   Qobjects['site']        = [ ts.site for ts in test.getTestSites_for_test.all() ]
 
-  commands = {'sort_by':'test','type':'raw_value','completed':False}
+  commands = {'sort_by':'test','type':'raw_value','completed':completed}
 
   title,values = stats.process(Qobjects,commands)[0]
   values = dict(values)
