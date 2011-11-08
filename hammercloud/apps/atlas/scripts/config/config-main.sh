@@ -29,7 +29,7 @@ then
     HC_MODE="default"
 fi
 
-if [ "$HC_MODE" != default -a "$HC_MODE" != t3 ]
+if [ "$HC_MODE" != default -a "$HC_MODE" != t3 -a "$HC_MODE" != prod -a "$HC_MODE" != experimental ]
 then
     echo '    _ Wrong mode, '$HC_MODE
     echo '    _ Using default HC_MODE=default'
