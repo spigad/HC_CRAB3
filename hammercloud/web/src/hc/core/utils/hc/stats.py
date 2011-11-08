@@ -155,7 +155,7 @@ class Stats:
 
   def filterStatus(self,query,dic):
 
-    status = ['c','f','r','s','n']
+    status = ['c','f','r','s','n','g','h','k','d']
 
     if not query.count():
       return dic
@@ -725,9 +725,10 @@ class Stats:
           container[title] += [(metric.title,plot_list)]
 
 #    color = dict({'c':'5EFB6E', 'f':'FF0000', 'r':'79BAEC', 's':'FFF380', 'n':'F75D59', 'o':'38ACEC'})
-    color = dict({'c':'15ca00', 'f':'e81c01', 'r':'0094ee', 's':'e7a900', 'n':'03aaf9', 'o':'bdb9b9'})
+    color = dict({'c':'15ca00', 'f':'e81c01', 'r':'0094ee', 's':'e7a900', 'n':'03aaf9', 'o':'bdb9b9',
+                  'g':'ffd561', 'h':'6bc6ff', 'k':'fe7867', 'd':'76d3fe'})
 
-    status = ['c','f','r','s','n']
+    status = ['c','f','r','s','n','g','h','k','d']
 
     for title,values in pie_list:
       if not container.has_key(title):
