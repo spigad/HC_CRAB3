@@ -482,13 +482,13 @@ def hc_copy_thread():
   logger.info('HC Copy Thread: Disconnected from DB')
 
 ct = GangaThread(name="HCCopyThread", target=hc_copy_thread)
-#pt = GangaThread(name="HCPlotSummary", target=hc_plot_summarize)
+pt = GangaThread(name="HCPlotSummary", target=hc_plot_summarize)
 
 logger.info('Connected to DB')
 
 if len(jobs):
   ct.start()
-#  pt.start()
+  pt.start()
 
   while (test_active() and not test_paused()):
 
@@ -516,7 +516,7 @@ else:
   logger.warning('No jobs to monitor. Exiting now.')
 
 #Stop plotting and summarizing thread.
-#pt.stop()
+pt.stop()
 ct.stop()
 
 paused = test_paused()
@@ -541,8 +541,8 @@ if not paused:
 logger.info('HammerCloud runtest.py exiting')
 logger.info('Buf before, the last plots...')
 
-#summarize()
-#plot(True)
+summarize()
+plot(True)
 
 logger.info('Over and out. Have a good day.')
 
