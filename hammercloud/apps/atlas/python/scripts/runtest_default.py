@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 
 from django.db.models import Count
 from hc.atlas.models import Test, TestState, Site, Result, SummaryTest, SummaryTestSite, Metric, TestMetric, SiteMetric, MetricType, TestLog, SummaryEvolution
+from lib.summary import summary
 
 from hc.core.utils.hc.stats import Stats
 from numpy import *
@@ -942,86 +943,8 @@ def process_subjob(job, subjob):
 ##
 
 def summarize():
-
-  logger.info('Summarize')
-
-  s_t = test.getSummaryTests_for_test.all()[0]
-  s_t_s = test.getSummaryTestSites_for_test.all()
-
-  stats = Stats()
-
-  Qobjects = {}
-  Qobjects['test'] = [test]
-  #small hack to remove duplicated in the list
-  Qobjects['metric_type'] = list(set(list(test.metricperm.index.all()) + list(test.metricperm.pertab.all()) + list(test.metricperm.summary.all())))
-  Qobjects['site'] = [ ts.site for ts in test.getTestSites_for_test.all() ]
-
-  commands = {'sort_by':'test', 'type':'raw_value', 'completed':False}
-
-  try:
-    title, values = stats.process(Qobjects, commands)[0]
-  except:
-    logger.warning('Bug during summary')
-    return
-  values = dict(values)
-
-  s_t.submitted = float(test.getResults_for_test.filter(ganga_status='s').exclude(ganga_subjobid=1000000).count())
-  s_t.running = float(test.getResults_for_test.filter(ganga_status='r').exclude(ganga_subjobid=1000000).count())
-  s_t.completed = float(test.getResults_for_test.filter(ganga_status='c').exclude(ganga_subjobid=1000000).count())
-  s_t.failed = float(test.getResults_for_test.filter(ganga_status='f').exclude(ganga_subjobid=1000000).count())
-  s_t.total = float(test.getResults_for_test.exclude(ganga_subjobid=1000000).count())
-
-  if s_t.total:
-    s_t.c_t = s_t.completed / s_t.total
-    s_t.f_t = s_t.failed / s_t.total
-
-  if s_t.completed or s_t.failed:
-    s_t.c_cf = s_t.completed / (s_t.completed + s_t.failed)
-
-  if values.has_key('Overall.'):
-    for metric in test.metricperm.summary.all():
-      rate = [float(dic[metric.name]) for dic in values['Overall.'] if (metric.name != 'c_cf' and dic[metric.name] != None)]
-      if rate:
-        mean = round(numpy.mean(rate), 3)
-        setattr(s_t, metric.name, mean)
-
-  s_t.save()
-
-  frozen_time = datetime.now()
-  evol_lock = SummaryEvolution.objects.filter(test=test).filter(time__gt=frozen_time - timedelta(minutes=5))
-
-  for sts in s_t_s:
-    sts.submitted = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='s').exclude(ganga_subjobid=1000000).count())
-    sts.running = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='r').exclude(ganga_subjobid=1000000).count())
-    sts.completed = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='c').exclude(ganga_subjobid=1000000).count())
-    sts.failed = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='f').exclude(ganga_subjobid=1000000).count())
-    sts.total = float(test.getResults_for_test.filter(site=sts.test_site.site).exclude(ganga_subjobid=1000000).count())
-
-    if not evol_lock:
-      #Save to Summary Evolution
-      se = SummaryEvolution(test=test, site=sts.test_site.site, time=frozen_time)
-      se.submitted = sts.submitted
-      se.running = sts.running
-      se.completed = sts.completed
-      se.failed = sts.failed
-      se.total = sts.total
-      se.save()
-
-    if sts.total:
-      sts.c_t = sts.completed / sts.total
-      sts.f_t = sts.failed / sts.total
-
-    if sts.completed or sts.failed:
-      sts.c_cf = sts.completed / (sts.completed + sts.failed)
-
-    if values.has_key(sts.test_site.site.name):
-      for metric in test.metricperm.summary.all():
-        rate = [float(dic[metric.name]) for dic in values[sts.test_site.site.name] if (metric.name != 'c_cf' and dic[metric.name] != None)]
-        if rate:
-          mean = round(numpy.mean(rate), 3)
-          setattr(sts, metric.name, mean)
-
-    sts.save()
+  logger.info('Summarize (using lib)')
+  summary.summarize('atlas',test,completed=False)
   logger.info('Summarize ended')
 
 ##
@@ -1029,77 +952,8 @@ def summarize():
 ##
 
 def plot(completed=False):
-
-  logger.info('Plot')
-
-  s_t = test.getSummaryTests_for_test.all()[0]
-  s_t_s = test.getSummaryTestSites_for_test.all()
-
-  stats = Stats()
-
-  Qobjects = {}
-  Qobjects['test'] = [test]
-  #small hack to remove duplicated in the list
-  Qobjects['metric_type'] = list(set(list(test.metricperm.index.all()) + list(test.metricperm.pertab.all())))
-  Qobjects['site'] = [ ts.site for ts in test.getTestSites_for_test.all() ]
-
-  commands = {'sort_by':'test', 'type':'plot', 'completed':completed}
-
-  try:
-    test_title, values = stats.process(Qobjects, commands)[0][0]
-  except:
-    return
-
-  for metric_title, urls in values:
-
-    mt = MetricType.objects.filter(title=metric_title)
-    if mt:
-
-      for plot_title, url in urls:
-
-        if plot_title == 'Overall.' and url:
-          # then, it goes to TestMetric
-
-          test_metric = test.getTestMetrics_for_test.filter(metric__metric_type__title=metric_title)
-
-          if test_metric:
-            test_metric = test_metric[0]
-            metric = test_metric.metric
-            metric.url = url
-            metric.save()
-          else:
-            m = Metric(url=url, metric_type=mt[0])
-            m.save()
-            tm = TestMetric(metric=m, test=test)
-            tm.save()
-
-        elif url:
-          # then, it goes to SiteMetric
-
-          site = Site.objects.filter(name=plot_title)
-          if site:
-
-            site_metric = test.getSiteMetrics_for_test.filter(site=site[0]).filter(metric__metric_type__title=metric_title)
-
-            if site_metric:
-              site_metric = site_metric[0]
-              metric = site_metric.metric
-              metric.url = url
-              metric.save()
-            else:
-              m = Metric(url=url, metric_type=mt[0])
-              m.save()
-              sm = SiteMetric(metric=m, test=test, site=site[0])
-              sm.save()
-          else:
-            logger.info("Wow, I don't know this site: %s" % (plot_title))
-
-        else:
-          logger.info('No url')
-
-    else:
-      logger.info('No metric type recognised with this name: %s' % (metric_title))
-
+  logger.info('Plot (using lib)')
+  summary.plot('atlas',test,completed=completed)
   logger.info('Plot ended')
     #logger.info(value[0])    
 
