@@ -37,17 +37,17 @@
     <li onClick="DoNav('{% url robotjobs-view app %}');">S<i>W</i>IT<i>C</i>H to jobs</li>
   </ul>
 
-  <p>
-    <b>Efficiency      :</b> completed/(completed+failed)<br>
-    <b>Efficiency(norm):</b> efficiency*completed<br>
-    <b>Error rate      :</b> failed/(completed+failed)<br>
-    <b>Error rate(norm):</b> error_rate*failed<br>
-  </p>
-
   {% for url in urls %}
 
     <img src="{{url}}"/>
 
   {% endfor %}
+  
+  <p>
+    <b>Efficiency      :</b> completed/(completed+failed) 
+    <b>Efficiency (norm):</b> efficiency*completed<br>
+    <b>Error rate      :</b> failed/(completed+failed) 
+    <b>Error rate (norm):</b> error_rate*failed<br>
+  </p>
 
 {% endblock %}

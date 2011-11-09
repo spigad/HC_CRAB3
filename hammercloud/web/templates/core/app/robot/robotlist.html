@@ -58,11 +58,40 @@
     });
   });
   </script>
+  <script type="text/javascript" charset="utf-8">
+      $(function() {
+        $('#usage').dialog({
+          autoOpen: false,
+          resizable: false
+    });
+    $('#help img').click(function() {
+          $('#usage').dialog('open');
+          return false;
+    });
+      })
+      </script>
 {% endblock %}
 
 {% block content %}
 
   <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  
+  <div id='help' style="float: right">
+    <img src='{{ MEDIA_URL }}images/help.png' />
+      </div>
+      <div id='usage'>
+        <h3>USAGE of the SEARCH field.</h3>
+    <p>
+    1.- Put your mouse over the table column title. It a ballon appears with a code, you can search that field.<br>
+    2.- Remember the code.<br>
+    3.- Also the type of value to be introduced.<br>
+    4.- Actions allowed are ':', '>', '<'. Use '&' to join actions.<br>
+    &nbsp;&nbsp;&nbsp;':' &raquo; codeX:value_desiredX<br>
+    &nbsp;&nbsp;&nbsp;'>' &raquo; codeY>value_desiredY<br>
+    &nbsp;&nbsp;&nbsp;'&lt;' &raquo; codeZ&lt;value_desiredZ<br>
+    &nbsp;&nbsp;&nbsp;'&' &raquo; codeX:value_desiredX&codeY&lt;value_desiredY<br>
+    </p>
+      </div>
 
   <h2>
     Robot for {{day|date:'M d, Y'}}
@@ -78,21 +107,6 @@
     <li> -- </li>
     <li onClick="DoNav('{% url robotjobs-view app %}');">S<i>W</i>IT<i>C</i>H to jobs</li>
   </ul>
-
-  <div id='usage'>
-    <h3>USAGE of the SEARCH field.</h3>
-    <p>
-    1.- Put your mouse over the table column title. It a ballon appears with a code, you can search that field.<br>
-    2.- Remember the code.<br>
-    3.- Also the type of value to be introduced.<br>
-    4.- Actions allowed are ':', '>', '<'. Use '&' to join actions.<br>
-    &nbsp;&nbsp;&nbsp;':' &raquo; codeX:value_desiredX<br>
-    &nbsp;&nbsp;&nbsp;'>' &raquo; codeY>value_desiredY<br>
-    &nbsp;&nbsp;&nbsp;'&lt;' &raquo; codeZ&lt;value_desiredZ<br>
-    &nbsp;&nbsp;&nbsp;'&' &raquo; codeX:value_desiredX&codeY&lt;value_desiredY<br>
-    </p>
-
-  </div>
 
   <table cellpadding="0" cellspacing="0" border="0" class="display" id="robotlist_table">
     <thead>

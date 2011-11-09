@@ -60,28 +60,28 @@
     });
   });
   </script>
+  <script type="text/javascript" charset="utf-8">
+      $(function() {
+        $('#usage').dialog({
+          autoOpen: false,
+          resizable: false
+    });
+    $('#help img').click(function() {
+          $('#usage').dialog('open');
+          return false;
+    });
+      })
+      </script>
 {% endblock %}
 
 {% block content %}
 
   <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
 
-  <h2>
-    Robot for {{day|date:'M d, Y'}}
-    <form id="robot_form" method="GET" action="{% url robotjobs-view app%}">
-      <input type="hidden" id="day" name="day"/>
-    </form>
-  </h2>
-
-  <ul class='map_options'>
-    <li onClick="DoNav('{% url robot-view app %}');">S<i>W</i>IT<i>C</i>H to map</li> 
-    <li> -- </li>
-    <li onClick="DoNav('{% url robotlist-view app %}');">S<i>W</i>IT<i>C</i>H to list</li>
-    <li> -- </li>
-    <li onClick="DoNav('{% url robotstats-view app %}');">S<i>W</i>IT<i>C</i>H to statistics</li>
-  </ul>
-
-  <div id='usage'>
+<div id='help' style="float: right">
+    <img src='{{ MEDIA_URL }}images/help.png' />
+      </div>
+      <div id='usage'>
     <h3>USAGE of the SEARCH field.</h3>
     <p>
     1.- Put your mouse over the table column title. It a ballon appears with a code, you can search that field.<br>
@@ -106,9 +106,23 @@
     7.- Submit: Job submission time (retrieved from backend).<br>
     8.- Start: Job running time (retrieved from backend).<br>
     9.- End: Job finishing time (retrieved from backend).<br>
-    </p>
+    </p>    
+      </div>
 
-  </div>
+  <h2>
+    Robot for {{day|date:'M d, Y'}}
+    <form id="robot_form" method="GET" action="{% url robotjobs-view app%}">
+      <input type="hidden" id="day" name="day"/>
+    </form>
+  </h2>
+
+  <ul class='map_options'>
+    <li onClick="DoNav('{% url robot-view app %}');">S<i>W</i>IT<i>C</i>H to map</li> 
+    <li> -- </li>
+    <li onClick="DoNav('{% url robotlist-view app %}');">S<i>W</i>IT<i>C</i>H to list</li>
+    <li> -- </li>
+    <li onClick="DoNav('{% url robotstats-view app %}');">S<i>W</i>IT<i>C</i>H to statistics</li>
+  </ul>
 
   <table cellpadding="0" cellspacing="0" border="0" class="display" id="robotjobs_table">
     <thead>
