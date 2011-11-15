@@ -83,7 +83,7 @@ class Robot:
         endtime     = str(row_test.stop_time)     
         gangajobid  = str(row_test.ganga_jobid)       
         gangastatus = str(row_test.ganga_status)       
-        site        = str(row_test.site.name)       
+        site_name   = str(row_test.site.name)       
         inds        = str(row_test.inds)       
         reason      = str(row_test.reason)       
         ce          = str(row_test.actual_ce)
@@ -91,7 +91,7 @@ class Robot:
         # LCG SAM, Blacklist
         #distinguish panda sites (CE unknown) from WMS sites (actual CE)
         if (ce=="unknown"):   #panda
-            string = site
+            string = site_name
         else:   #lcg
           # remove queue from ce
           if (ce.find(':2119/')>0): 
@@ -112,7 +112,7 @@ class Robot:
           testresult["endtime"]   = endtime     
           testresult["gangajobid"]  = gangajobid        
           testresult["gangastatus"] = gangastatus        
-          testresult["site"]   = site         
+          testresult["site"]   = site_name
           testresult["inds"]   = inds         
           testresult["reason"]   = reason        
           testresult["ce"]    = ce
@@ -156,8 +156,8 @@ class Robot:
     hours_panda = 3
     hours_lcg = 12
     #   test_panda = (67,80,95,96)
-    test_panda = (71,72)
-    test_lcg = (93,)
+    test_panda = (146,160,145,163,162)
+    test_lcg = (140,)
     #get id of last 2 tests for each test template 
     # --> limit should always be #templates*2, to get the tests running in the last day
     pandaIDString = [list(Test.objects.filter(template__id=test_template).order_by('-id')[:2]) for test_template in test_panda]
@@ -257,7 +257,7 @@ class Robot:
     return samreports, effresults, siteagis, siteidHC, pandablacklist
 
 
-  def genReport(self, samreport, effresults, siteagis, siteid, pandablacklist):
+  def genReport(self, samreport, effresults, siteagis, siteid, pandablacklist,tiersofatlas):
     today = date.today()
     filedate = today.isoformat()+'_' 
     now = datetime.now()
@@ -444,7 +444,7 @@ class Robot:
     outeffLCG = sorted(outeffLCG, key=str.lower)
     outeffPanda = sorted(outeffPanda, key=str.lower)
     outfailedLCG = sorted(outfailedLCG, key=str.lower)
-    outfailedPanda = sorted(outfailedPanda, key=str.lower)
+    outfailedPanda = sorted(outfailedPanda, key=unicode.lower)
     rawOutFile = os.path.join(htmlDirReport, 'sum.txt')
     rf = open(rawOutFile,'w')
     rf.write(':'.join(outfailedLCG))             
@@ -517,7 +517,7 @@ class Robot:
     tiersofatlas = self.getTiersOfATLASCache()
     #samreport is for SAM report, effresults, siteagis siteid is for BL and SSB
     samreport, effresults, siteagis, siteid, pandablacklist = self.queryDB(tiersofatlas)
-    self.genReport(samreport, effresults, siteagis, siteid, pandablacklist)
+    self.genReport(samreport, effresults, siteagis, siteid, pandablacklist,tiersofatlas)
     #remove old files
     print "removing old files"
     command ="find /data/hc/app/atlas/sam -mtime +7 -exec rm {} \;"
