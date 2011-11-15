@@ -16,8 +16,8 @@ function generateTableCloud(items, metric, cloud) {
 		toCount[i] = new Array(TABLE_WIDTH);
 	}
 
-	length = [ 3, 3, 3, 4 ];
-	height = [ 1, 1, 1, 2 ];
+	length = [ 3, 3, 3, 3 ];
+	height = [ 1, 1, 1, 1 ];
 	colors = [ 'ongrey', 'ongreen', 'onyellow', 'onred' ];
 
 	var myTable = $('#centerbar');
@@ -26,11 +26,12 @@ function generateTableCloud(items, metric, cloud) {
 	myTable = $('#centerbar > table:last');
 
 	for (s = 0; s < items.length; s++) {
-		if (items[s][1] < 0.0) {
+		e = parseFloat(items[s][1])
+		if (e < 0.0) {
 			lhc = 0;
-		} else if (items[s][1] = 0.0) {
+		} else if (e == 0.0) {
 			lhc = 3;
-		} else if (items[s][1] < 0.5) {
+		} else if (e < 0.5) {
 			lhc = 2;
 		} else {
 			lhc = 1;
