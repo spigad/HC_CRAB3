@@ -30,7 +30,7 @@ echo '  Lock written: '/tmp/robot-main_$1.running
 HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
 
 echo ''
-source '$HCDIR/scripts/config/config-main.sh $1'
+source $HCDIR/scripts/config/config-main.sh $1
 echo ''
 
 cd $HCDIR
