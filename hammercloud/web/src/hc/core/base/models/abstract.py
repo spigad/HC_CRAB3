@@ -312,6 +312,7 @@ class SiteBase(models.Model):
   ddm            = models.CharField(max_length=511, blank=True)
   enabled        = models.BooleanField(blank=True)
   queue          = models.CharField(max_length=511, blank=True)
+  monitoring_link= models.CharField(max_length=2047, blank=True)
   mtime          = models.DateTimeField(auto_now=True)
 
   #cloud     -> hc.core.base.models.keys.fk.generator.generateFK('Cloud','Site','cloud',{})
