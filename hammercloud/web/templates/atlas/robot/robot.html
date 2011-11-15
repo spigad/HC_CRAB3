@@ -1,0 +1,104 @@
+{% extends config.base_template %}
+
+{% block javascript %}
+  {{block.super}}
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/atlas/maps.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      $("#day").datepicker({
+        changeMonth: true,
+        changeYear: true,
+        showOn: 'button',
+        buttonImage: '{{ MEDIA_URL }}images/icon_calendar.gif',
+        buttonImageOnly: true,
+        dateFormat : 'yy-mm-dd',
+        onSelect: function(dateText, inst){$('#robot_form')[0].submit()}
+      });
+    });
+  </script>
+{% endblock %}
+
+{% block docready %}
+  {{block.super}}
+  {% for backend in backends %}
+    generateTablesBackend({ {% for cloud in clouds %}'{{cloud.name}}':[{% for site in sites %}{% if site.cloud.id = cloud.id and site.backend.id = backend.id %}['{{site.name}}', '{{site.eff}}', '{% if site.monitoring_link %}{{ site.monitoring_link }}{% else %}{% url robotsite-view app, site.id %}{% endif %}'],{% endif %}{% endfor %}],{% endfor %} }, 'Efficiency', '{{backend.name|capfirst}}');
+  {% endfor%}
+{% endblock %}
+
+{% block content %}
+
+  <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+  <h2>
+    Robot for {{day|date:'M d, Y'}}
+    <form id="robot_form" method="GET" action="{% url robot-view app%}">
+      <input type="hidden" id="day" name="day"/>
+    </form>
+  </h2>
+  {% block robot_links %}{% endblock %}
+  <ul class='map_options'>
+    <li onClick="DoNav('{% url robotlist-view app %}');">S<i>W</i>IT<i>C</i>H to list</li>
+    <li> -- </li>
+    <li onClick="DoNav('{% url robotstats-view app %}');">S<i>W</i>IT<i>C</i>H to statistics</li>
+    <li> -- </li>
+    <li onClick="DoNav('{% url robotjobs-view app %}');">S<i>W</i>IT<i>C</i>H to jobs</li>
+  </ul>
+
+  <div id='grid'>
+
+  <div id='leftbar'>
+    {% if clouds %}
+    <p>{{config.cloud|upper}}S:</p>
+    <ul>
+      {% for cloud in clouds%}
+        <a href="#c{{cloud.name}}">{{cloud.name|upper}}</a>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+
+  <div id='centerbar'></div>
+
+  <div id='rightbar'>
+    {% if backends %}
+    <p>BACKENDS:</p>
+    <ul>
+      {% for backend in backends%}
+        <a href="#b{{backend.name}}">{{backend.name|capfirst}}</a>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+  </div>
+
+  <div id='footerbar'>
+    <p>LEGEND:</p>
+    <table class='map'>
+      <tr>
+        <td class='ongrey'>
+          <span class='map_legend'>
+            <h3>Missing tests.</h3>
+          </span>
+        </td>
+        <td class='onred'>
+          <span class='map_legend'>
+            <h3>Blacklisted</h3>
+          </span>
+        </td>
+        <td class='onyellow'>
+          <span class='map_legend'>
+            <h3>At risk</h3>
+          </span>
+        </td>
+        <td class='ongreen'>
+          <span class='map_legend'>
+            <h3>OK</h3>
+          </span>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  </div>
+
+{% endblock %}

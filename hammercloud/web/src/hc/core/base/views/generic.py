@@ -923,7 +923,10 @@ class GenericView():
     if not bool(re.compile(r'[^0-9-]').search(day)):
       day = datetime(*time.strptime(day, "%Y-%m-%d")[0:5])
     else:
-      day = date.today()-timedelta(1)
+      day = date.today()
+      #FIXME: This is not generic!
+      if app != 'atlas':
+        day = date.today()-timedelta(1)
 
     sites = dh.annotateSitesEfficiency(sites,day)  
 
