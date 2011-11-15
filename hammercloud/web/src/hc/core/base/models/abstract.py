@@ -986,10 +986,14 @@ class TestLogBase(models.Model):
   __metaclass__ = MetaCreator
 
   SEVERITY_CHOICES = (
-    (u'common', u'common'),
-    (u'maintenance', u'maintenance'),
+    (u'blacklisting', u'blacklisting'),
+    (u'whitelisting', u'whitelisting'),
+    (u'debug',u'debug'),
+    (u'warning',u'warning'),
     (u'error',u'error'),
-    (u'other',u'other')
+    (u'testinfo',u'testinfo'),
+    (u'queuecontrol',u'queuecontrol'),
+    (u'other',u'other'),
   )
 
   objects = TestLogManager()

@@ -9,6 +9,20 @@
 <p>The following table summarizes the incidents happened in HammerCloud tests. You can filter the results using the form below and clicking in 'Refresh'.</p>
 
 <form method="get" name="Form" action="">
+  <label>Select Site:
+    <select name="site">
+      <option value="" selected="selected">---</option>
+      {% for s in sites %}
+      <option value="{{ s.name }}">{{ s.name }}</option>
+      {% endfor %}
+  </select></label>
+  <label>Select category:
+    <select name="severity">
+      <option value="" selected="selected">---</option>
+      {% for s in severities %}
+      <option value="{{ s }}">{{ s }}</option>
+      {% endfor %}
+  </select></label><br />
   <label>Search string:
     <input type="text" name="q"{% if q %}value="{{ q }}"{% endif %} />
   </label>

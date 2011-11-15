@@ -1100,9 +1100,10 @@ class GenericView():
                     )
     return HttpResponse(t.render(c))
 
-  def incidents(self,request,dic={'TestLog':None},*args,**kwargs):
+  def incidents(self,request,dic={'TestLog':None,'Site':None},*args,**kwargs):
 
     tl   = dic['TestLog']
+    si   = dic['Site']
     app  = tl.__module__.split('.')[1]
 
     q = request.GET.get('q', None)
@@ -1114,7 +1115,20 @@ class GenericView():
         page = int(request.GET.get('page', '1'))
     except ValueError:
         page = 1
-    incidents = tl.objects.get_filtered_incidents(query=q, time=hours)
+    try:
+        site_name = request.GET.get('site', None)
+    except ValueError, TypeError:
+        site_name = None
+    try:
+        severity = request.GET.get('severity', None)
+    except ValueError, TypeError:
+        severity = None
+    incidents = tl.objects.get_filtered_incidents(query=q,
+                                                  time=hours,
+                                                  site_name=site_name,
+                                                  severity=severity)
+    sites = si.objects.filter(enabled=True)
+    severities = zip(*tl.SEVERITY_CHOICES)[0]
     paginator = Paginator(list(incidents), 25)
     try:
         incident_list = paginator.page(page)
