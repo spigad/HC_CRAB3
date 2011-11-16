@@ -913,9 +913,9 @@ class GenericView():
   
     sites    = site.objects.order_by('cloud')
     cloud    = dic['Cloud']
-    clouds   = cloud.objects.all()
+    clouds   = list(cloud.objects.all())
     backend  = dic['Backend']
-    backends = backend.objects.all()
+    backends = list(backend.objects.all())
 
     dh = Datahelper()
 

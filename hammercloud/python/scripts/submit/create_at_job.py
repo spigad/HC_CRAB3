@@ -153,6 +153,8 @@ class CreateAtJob:
     atjobid = commands.getoutput('at -f %s/testdirs/run-test-%d.sh now'%(HCAPP,test.id)).rstrip()
     test.atjobid = int(atjobid.split()[1])
     test.save()
+    test_log = custom_import('hc.%s.models.TestLog'%(app))
+    test_log(test=test, comment='Test %d was restarted.'%test.id, user='gangarbt', severity='testinfo').save()
     print '[INFO][%s][create_at_job] restarting test %d: %s\n'%(app,test.id,atjobid)
     return atjobid
 
@@ -165,6 +167,7 @@ class CreateAtJob:
 
     # IMPORTS
     test = custom_import('hc.%s.models.Test'%(app))
+    test_log = custom_import('hc.%s.models.TestLog'%(app))
     
     hostname = commands.getoutput('hostname')
 
@@ -181,6 +184,7 @@ class CreateAtJob:
 
       else:
         if test_hosts[0].host.name == hostname:
+          test_log(test=t, comment='Test %d was assigned to %s.'%(t.id,hostname), user='gangarbt', severity='testinfo').save()
           print '[INFO][%s][create_at_job] Test %s assigned to %s'%(app,t.id,hostname)
         
           if self.createScript(app,t):

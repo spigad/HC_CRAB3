@@ -62,8 +62,10 @@ class ExternalQueueUpdate:
               self.save_blacklistevent_for_site(site, 'blacklist', 'Set to brokeroff by an external tool or user.')
             else:
               logging.info('Site %s is now in %s status set by an external tool or user.', site_name, status)
+            TestLog(comment="%s was set to '%s' by an external agent."%(site.name,status), severity='queuecontrol', user=1).save()
         except DoesNotExist, MultipleObjectsReturned:
           logging.error("PanDA options for site '%s' are inconsistent", site.name)
+          TestLog(comment="QueueControl detected that PanDA options for site %s ('%s') are inconsistent."%(site.name,status), severity='warning', user=1).save()
           return
       else:
         logging.info("Site '%s' not needed to be updated (status='%s')", site.name, status)
@@ -75,6 +77,7 @@ class ExternalQueueUpdate:
       return
     except MultipleObjectsReturned:
       logging.error("PanDA status '%s' for site '%s' is inconsistent (duplicated).", STATUS_OPTION, site.name)
+      TestLog(comment="QueueControl error: PanDA status '%s' for site '%s' is inconsistent (duplicated)."%(STATUS_OPTION,site.name), severity='warning', user=1).save()
       return
 
   def run(self, debug=False, test=False):

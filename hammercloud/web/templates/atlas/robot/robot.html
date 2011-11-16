@@ -22,7 +22,12 @@
 {% block docready %}
   {{block.super}}
   {% for backend in backends %}
-    generateTablesBackend({ {% for cloud in clouds %}'{{cloud.name}}':[{% for site in sites %}{% if site.cloud.id = cloud.id and site.backend.id = backend.id %}['{{site.name}}', '{{site.eff}}', '{% if site.monitoring_link %}{{ site.monitoring_link }}{% else %}{% url robotsite-view app, site.id %}{% endif %}'],{% endif %}{% endfor %}],{% endfor %} }, 'Efficiency', '{{backend.name|capfirst}}');
+    {% if backend.name == 'PanDA' %}
+    generateTablesBackend({ {% for cloud in clouds %}'{{cloud.name}}':[{% for site in sites %}{% if site.cloud.id == cloud.id and site.backend.id == backend.id and 'PROD' not in cloud.name %}['{{site.name}}', '{{site.eff}}', '{% if site.monitoring_link %}{{ site.monitoring_link }}{% else %}{% url robotsite-view app, site.id %}{% endif %}'],{% endif %}{% endfor %}],{% endfor %} }, 'Efficiency', 'PanDA-Analysis');
+    generateTablesBackend({ {% for cloud in clouds %}'{{cloud.name}}':[{% for site in sites %}{% if site.cloud.id == cloud.id and site.backend.id == backend.id and 'PROD' in cloud.name %}['{{site.name}}', '{{site.eff}}', '{% if site.monitoring_link %}{{ site.monitoring_link }}{% else %}{% url robotsite-view app, site.id %}{% endif %}'],{% endif %}{% endfor %}],{% endfor %} }, 'Efficiency', 'PanDA-Production');
+    {% else %}
+    generateTablesBackend({ {% for cloud in clouds %}'{{cloud.name}}':[{% for site in sites %}{% if site.cloud.id == cloud.id and site.backend.id == backend.id %}['{{site.name}}', '{{site.eff}}', '{% if site.monitoring_link %}{{ site.monitoring_link }}{% else %}{% url robotsite-view app, site.id %}{% endif %}'],{% endif %}{% endfor %}],{% endfor %} }, 'Efficiency', '{{backend.name|capfirst}}');
+    {%endif %}
   {% endfor%}
 {% endblock %}
 
@@ -64,7 +69,12 @@
     <p>BACKENDS:</p>
     <ul>
       {% for backend in backends%}
+      {% if backend.name == 'PanDA' %}
+        <a href="#bPanDA-Analysis">PanDA (Analysis)</a>
+        <a href="#bPanDA-Production">PanDA (Production)</a>
+      {% else %}
         <a href="#b{{backend.name}}">{{backend.name|capfirst}}</a>
+      {% endif %}
       {% endfor %}
     </ul>
     {% endif %}

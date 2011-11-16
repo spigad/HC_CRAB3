@@ -227,7 +227,7 @@ class AnalysisBlacklist:
     (_, newsites) = self.check_in_templates(bo_sites)
     if newsites:
       self.add_log('** New brokeroff sites not in templates: %s' % repr(newsites))
-      self.store_log('** New brokeroff sites not in templates: %s' % repr(newsites), 'error')
+      self.store_log('** New brokeroff sites not in templates: %s' % repr(newsites), 'warning')
     print self.runningTests
     for site in bo_sites:
       # The map() for the test ID is needed because MySQL 5.1 does not support nested IN
@@ -243,7 +243,7 @@ class AnalysisBlacklist:
       self.add_log("%s" % sitesToAutoSetOnline)
       for s in sitesToAutoSetOnline:
         if self.change_site_status(s, 'online'):
-          self.store_log('Site %s was set to online' % s)
+          self.store_log('Site %s was set to online' % s, 'whitelisting')
           self.send_cloud_online_alert(s)
 
   def check_online_sites(self):
@@ -256,7 +256,7 @@ class AnalysisBlacklist:
     (_, newsites) = self.check_in_templates(online_sites)
     if newsites:
       self.add_log('** New online sites not in templates: %s' % repr(newsites))
-      self.store_log('** New online sites not in templates: %s' % repr(newsites), 'error')
+      self.store_log('** New online sites not in templates: %s' % repr(newsites), 'warning')
     for site in online_sites:
       res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).order_by('-mtime')
       if reduce(lambda x, y: x or y, map(lambda x: x().evaluate(res, site, self), self.policies_for_online), False):
@@ -267,7 +267,7 @@ class AnalysisBlacklist:
         self.sitesNeedingJobs[t] = sorted(list(set(self.sitesNeedingJobs[t])))
         self.add_log("The following online sites need more test jobs for template %d:" % t)
         self.add_log("%s" % ', '.join(self.sitesNeedingJobs[t]))
-        self.store_log("The following online sites need more test jobs for template %d: %s" % (t, ', '.join(self.sitesNeedingJobs[t])))
+        self.store_log("The following online sites need more test jobs for template %d: %s" % (t, ', '.join(self.sitesNeedingJobs[t])), 'warning')
 
     if sitesToSetBrokeroff:
       self.add_log("")
@@ -275,8 +275,8 @@ class AnalysisBlacklist:
       self.add_log("%s" % sitesToSetBrokeroff)
       for s in sitesToSetBrokeroff:
         if self.change_site_status(s, 'brokeroff'):
-          self.store_log('Site %s will be set to brokeroff' % s, 'error')
-          self.store_log('%s blacklisting reason is %s' % (s, self.reasons[s]), 'error')
+          self.store_log('Site %s will be set to brokeroff' % s, 'blacklisting')
+          self.store_log('%s blacklisting reason is %s' % (s, self.reasons[s]), 'blacklisting')
           self.send_cloud_alert(s)
 
   def change_site_status(self, site, new_status):

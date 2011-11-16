@@ -36,7 +36,7 @@ try:
     test.pause = 0
     test.save()
     comment = 'Test modifications: pause -> False,'
-    testlog = TestLog(test=test, comment=comment, user='gangarbt')
+    testlog = TestLog(test=test, comment=comment, user='gangarbt', severity='testinfo')
     testlog.save()
 except:
   print ' ERROR! Could not extract Test %s from DB' % (testid)
