@@ -1000,7 +1000,7 @@ class TestLogBase(models.Model):
 
   id          = models.AutoField(primary_key=True)
   comment     = models.CharField(max_length=4097)
-  severity    = models.CharField(choices = SEVERITY_CHOICES, max_length = 15, default='common')
+  severity    = models.CharField(choices = SEVERITY_CHOICES, max_length = 15, default='other')
   user        = models.CharField(max_length = 31)
   mtime       = models.DateTimeField(auto_now=True)
 
