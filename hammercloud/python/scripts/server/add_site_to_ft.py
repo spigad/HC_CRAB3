@@ -1,4 +1,4 @@
-import sys
+import sys,getopt
 
 from hc.core.utils.generic.class_func import custom_import
 from hc.atlas.models import Template, Site, TemplateSite
@@ -16,17 +16,32 @@ class AddSiteToFT:
     template = custom_import('hc.%s.models.Template'%(app))
     site     = custom_import('hc.%s.models.Site'%(app))
     templatesite = custom_import('hc.%s.models.TemplateSite'%(app))
-    
-    # Find the AFT templates
-    templates = template.objects.filter(description__contains='AFT')
-    print 'Using templates:', templates
-    
+
     # Get args
     sys.argv.reverse()
     sys.argv.pop()
     sys.argv.pop()
     sys.argv.pop()
     sys.argv.pop()
+    sys.argv.reverse()
+    
+    try:
+      dict = {}
+      opts, args = getopt.getopt(sys.argv, 'p:')
+      for o,a in opts:
+        dict[o] = a 
+    except getopt.GetoptError, err:
+      print str(err) 
+      return 0
+    
+    try:
+      pattern = dict['-p']
+    except:
+      pattern = 'AFT'
+
+    # Find the AFT templates
+    templates = template.objects.filter(description__contains=pattern)
+    print 'Using templates:', templates    
 
     # Add the sites
     for site_name in sys.argv:

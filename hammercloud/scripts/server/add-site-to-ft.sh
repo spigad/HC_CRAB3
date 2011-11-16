@@ -35,9 +35,9 @@ echo ''
 
 cd $HCDIR
 
-echo '  CODE: python python/scripts/dispatcher.py -f add_site_to_ft' $*
+echo '  CODE: python python/scripts/dispatcher.py -f add_site_to_ft' $@
 echo ''
-python python/scripts/dispatcher.py -f add_site_to_ft $*
+python python/scripts/dispatcher.py -f add_site_to_ft $@
 echo ''
 
 rm -f /tmp/add-site-to-ft_$1.running
