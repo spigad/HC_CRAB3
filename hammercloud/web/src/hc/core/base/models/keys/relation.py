@@ -125,7 +125,7 @@ FK_LIST = [
            ('Test','TestCloud','test',{}),
            ('Test','TestDspattern','test',{}),
            ('Test','TestHost','test',{}),
-           ('Test','TestLog','test',{}),
+           ('Test','TestLog','test',{'null':'True'}),
            ('Test','TestSite','test',{}),
            ('Test','TestSiteAlarm','test',{}),
            ('Test','TestState','test',{}),
