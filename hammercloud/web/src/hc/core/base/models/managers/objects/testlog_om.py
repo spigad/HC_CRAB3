@@ -1,7 +1,7 @@
 import datetime
 from collections import defaultdict
 from django.db import models
-from django.db.models import Count
+from django.db.models import Count,Q
 
 
 class TestLogManager(models.Manager):
@@ -22,7 +22,10 @@ class TestLogManager(models.Manager):
                                         .filter(mtime__gte=(datetime.datetime.now() - datetime.timedelta(hours=time))))
     # Filter by severity
     if severity:
-      basic = basic.filter(severity=severity)
+      if severity == u'white+blacklisting':
+        basic = basic.filter(Q(severity='whitelisting') | Q(severity='blacklisting'))
+      else:
+        basic = basic.filter(severity=severity)
     # Filter by site name.
     if site_name:
       basic = basic.filter(comment__contains=site_name)

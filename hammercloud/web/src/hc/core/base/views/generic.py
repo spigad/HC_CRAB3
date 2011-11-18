@@ -1127,8 +1127,8 @@ class GenericView():
                                                   time=hours,
                                                   site_name=site_name,
                                                   severity=severity)
-    sites = si.objects.filter(enabled=True)
-    severities = zip(*tl.SEVERITY_CHOICES)[0]
+    sites = si.objects.filter(enabled=True).exclude(name__contains='DISK')
+    severities = (u'white+blacklisting',)+zip(*tl.SEVERITY_CHOICES)[0]
     paginator = Paginator(list(incidents), 25)
     try:
         incident_list = paginator.page(page)
