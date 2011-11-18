@@ -9,7 +9,7 @@ function generateTableCloud(items, metric, cloud) {
 	var toWrite = new Array(SIZE);
 	var toCount = new Array(SIZE);
 
-	var TABLE_WIDTH = 15;
+	var TABLE_WIDTH = 25;
 
 	for (i = 0; i < toWrite.length; i++) {
 		toWrite[i] = new Array(TABLE_WIDTH);
@@ -20,10 +20,10 @@ function generateTableCloud(items, metric, cloud) {
 	height = [ 1, 1, 1, 1 ];
 	colors = [ 'ongrey', 'ongreen', 'onyellow', 'onred' ];
 
-	var myTable = $('#centerbar');
-	myTable.append('<h4 id="c' + cloud + '">' + cloud + '</h4>');
+	var myTable = $('#atlasrobot');
+	myTable.append('<h4 id="c' + cloud + '" class="cloud_map">' + cloud + '</h4>');
 	myTable.append('<table id="map_' + cloud + '" class="map"></table>');
-	myTable = $('#centerbar > table:last');
+	myTable = $('#atlasrobot > table:last');
 
 	for (s = 0; s < items.length; s++) {
 		e = parseFloat(items[s][1])
@@ -92,13 +92,13 @@ function generateTableCloud(items, metric, cloud) {
 					message = message.slice(0, 14) + '...';
 				}
 
-				customMsg = 'No test yesterday.';
-				if (toWrite[y][x][2] != 'ongrey'
-						&& toWrite[y][x][2] != 'onblue') {
-					customMsg = "<p>" + metric + " " + toWrite[y][x][3][1]
-							+ "</p>";
-				} else if (toWrite[y][x][2] == 'onblue') {
-					customMsg = 'No concluded jobs yesterday.';
+				customMsg = 'Missing tests.';
+				if (toWrite[y][x][2] == 'ongreen') {
+					customMsg = 'Site is OK.';
+				} else if (toWrite[y][x][2] == 'onyellow') {
+					customMsg = 'Site at risk.';
+				} else if (toWrite[y][x][2] == 'onred') {
+					customMsg = 'Site is blacklisted!';
 				}
 
 				cell.innerHTML = message + "<span class='map_legend'><h3>"
@@ -108,7 +108,8 @@ function generateTableCloud(items, metric, cloud) {
 				cell.setAttribute("class", toWrite[y][x][2]);
 				cell.setAttribute("onclick", "DoNav('" + toWrite[y][x][3][2]
 						+ "');")
-				cell.style.width = '120px';
+				cell.style.width = '110px';
+				cell.style.height = '30px'
 				row.appendChild(cell);
 			}
 		}
@@ -119,7 +120,7 @@ function generateTableCloud(items, metric, cloud) {
 }
 
 function generateTablesBackend(items, metric, backend) {
-	var myTable = $('#centerbar');
+	var myTable = $('#atlasrobot');
 	//myTable.empty();
 	myTable.append('<h2 id="b' + backend + '"style="text-decoration:underline">' + backend + '</h2>');
 

@@ -1,4 +1,6 @@
 from hc.core.base.models.managers.functions import test_fm,site_fm
+from hc.core.utils.generic.class_func import custom_import
+
 
 from datetime import date,timedelta
 
@@ -58,17 +60,18 @@ class Datahelper:
       test.perSite.append(site)
     return test
 
-  def annotateSitesEfficiency(self,sites,day):
+  def annotateSitesEfficiency(self,sites,day,app):
 
 #    yesterday = date.today()-timedelta(1)
 
-    for site in sites:
+    s_r = custom_import('hc.%s.models.SummaryRobot'%(app))
 
-#      sr = site.getSummaryRobots_for_site.filter(day=yesterday)   
-      sr = site.getSummaryRobots_for_site.filter(day=day)
+    srs = list(s_r.objects.filter(site__in=sites).filter(day=day))
+
+    for site in list(sites):
+      sr = filter(lambda x: x.site_id == site.id, srs)
       if sr: 
-        sr = sr[0]
-        site.eff = sr.efficiency
+        site.eff = sr[0].efficiency
       else:
         site.eff = -1
 

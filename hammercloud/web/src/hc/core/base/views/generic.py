@@ -911,9 +911,9 @@ class GenericView():
     site = dic['Site']
     app  = site.__module__.split('.')[1]
   
-    sites    = site.objects.order_by('cloud')
+    sites    = list(site.objects.filter(enabled=True))
     cloud    = dic['Cloud']
-    clouds   = list(cloud.objects.all())
+    clouds   = list(cloud.objects.exclude(code__contains='ALL').exclude(name__contains='TEST'))
     backend  = dic['Backend']
     backends = list(backend.objects.all())
 
@@ -928,7 +928,7 @@ class GenericView():
       if app != 'atlas':
         day = date.today()-timedelta(1)
 
-    sites = dh.annotateSitesEfficiency(sites,day)  
+    sites = dh.annotateSitesEfficiency(sites,day,app)
 
     t = loader.select_template(['%s/robot/robot.html'%(app),'core/app/robot/robot.html'])
     c = RequestContext(request,
