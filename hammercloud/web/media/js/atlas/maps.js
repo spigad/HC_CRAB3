@@ -87,9 +87,9 @@ function generateTableCloud(items, metric, cloud) {
 			var cell = document.createElement("td");
 			if (toWrite[y][x]) {
 
-				var message = toWrite[y][x][3][0];
-				if (message.length > 15) {
-					message = message.slice(0, 14) + '...';
+				var message = toWrite[y][x][3][0]
+				if (toWrite[y][x][2] == 'onred' || toWrite[y][x][2] == 'ongrey') {
+					message = message + ' <a href="incidents/?site=' + toWrite[y][x][3][0] + '">?</a>';
 				}
 
 				customMsg = 'Missing tests.';
