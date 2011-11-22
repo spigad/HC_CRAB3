@@ -155,16 +155,29 @@ class Stats:
 
   def filterStatus(self,query,dic):
 
-    status = ['c','f','r','s','n','g','h','k','d']
+    status      = ['c','f','r','s','n','g','h','k','d']
+    status_done = ['c','f']
 
     if not query.count():
       return dic
 
-    for s in status:
-      if dic.has_key(s):
-        dic[s] += query.filter(ganga_status=s).count()
-      else:
-        dic[s] = query.filter(ganga_status=s).count()
+    q = query.exclude(test__state='completed')
+    if q.count() > 0:
+      for s in status:
+        c = q.filter(ganga_status=s).count()
+        if dic.has_key(s):
+          dic[s] += c
+        else:
+          dic[s] = c
+
+    q = query.filter(test__state='completed')
+    if q.count() > 0:
+      for s in status_done:
+        c = q.filter(ganga_status=s).count()
+        if dic.has_key(s):
+          dic[s] += c
+        else:
+          dic[s] = c
 
     return dic
 
