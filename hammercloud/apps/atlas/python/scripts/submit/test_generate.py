@@ -3,6 +3,20 @@ from random import shuffle
 
 class TestGenerate:
 
+  def convertQueueNameToDQ2Names(self, queue):
+    from pandatools import Client
+    from dq2.info.TiersOfATLAS import ToACache
+    sites = []
+    for site in Client.PandaSites[queue]['setokens'].values():
+      sites.append(Client.convSrmV2ID(site))
+    allowed_sites = []
+    for site in ToACache.sites:
+      if (site not in allowed_sites
+          and Client.convSrmV2ID(site) in sites
+          and site.find('TAPE') == -1 and 'DISK' in site):
+        allowed_sites.append(site)
+    return allowed_sites
+
   def run(self,test,mode):
 
     try:
@@ -30,14 +44,32 @@ class TestGenerate:
 
     for ts in test_sites:
       locs = ts.site.ddm.split(',')
+      site_locs = []
       for loc in locs:
         # ensure the locations are in ToACache
         if loc not in ToACache.sites.keys():
           continue
         if loc not in locations:
           locations.append(loc)
+          site_locs.append(loc)
+
+      try:
+        extra_locs = self.convertQueueNameToDQ2Names(ts.site.name)
+      except:
+        extra_locs = []
+
+      locations = locations + extra_locs
+      site_locs = site_locs + extra_locs
+      site_locs = list(set(site_locs)) # uniq
+
       sitenumjobs[ts.site.name] = int(ts.num_datasets_per_bulk)
-      sites[ts.site.name] = ts.site.ddm
+      sites[ts.site.name] = ','.join(site_locs)
+      print 'site', ts.site.name, 'locations', site_locs      
+      ts.site.ddm = sites[ts.site.name]
+      ts.save()
+
+    locations = list(set(locations))
+    print 'Looking in locations: %s' % locations
 
     # Locations to generate jobs for
     active_locations = locations
@@ -57,6 +89,17 @@ class TestGenerate:
         for l in file:
           datasetpatterns.append(l.strip())
         file.close()
+      elif td.dspattern.pattern.startswith('http'):
+        import urllib2
+        url = td.dspattern.pattern
+        try:
+          patterns = urllib2.urlopen(url).read().split()
+          print "Downloaded dspatterns", url, patterns
+          for p in patterns:
+            if p not in datasetpatterns:
+              datasetpatterns.append(p)
+        except:
+          print 'failed to download url pattern',url
       else:
         datasetpatterns.append(td.dspattern.pattern)
 
@@ -99,11 +142,13 @@ class TestGenerate:
       print "Datasets by pattern available at",location
       datasets = []
       for datasetpattern in datasetpatterns:
+        print time.ctime()
         print 'dq2.listDatasetsByNameInSite(site=%s, name=%s)'%(repr(location),repr(datasetpattern))
         temp = dq2.listDatasetsByNameInSite(site=location, name=datasetpattern)
         temp = list(temp)
         datasets = datasets + temp
         print datasetpattern, location, len(temp)
+        print time.ctime()
       datasetList[location] = datasets
       print
 
@@ -189,10 +234,10 @@ class TestGenerate:
             print '%s is enabled' %location
 
             num = 1
-            numberoffiles = 0
-            itriggerupdate = 0
-            guidlistAll = []
-            lfnlistAll = []
+            #numberoffiles = 0
+            #itriggerupdate = 0
+            #guidlistAll = []
+            #lfnlistAll = []
             datasetAll = []
             shuffle(datasets)
             for dataset in datasets:
@@ -201,14 +246,16 @@ class TestGenerate:
                 continue
               # remove certain dataset pattern
               #if dataset.find('singlepart')>=0 or dataset.find('pile')>=0 or dataset.find('test')>=0 or dataset.find('atlfast')>=0 or dataset.find('user')>=0 or dataset.find('users')>=0 or dataset.find('higgswg')>=0 or dataset.find('_sub')>=0:
-              if dataset.find('singlepart')>=0 or dataset.find('pile')>=0 or dataset.find('test')>=0 or dataset.find('atlfast')>=0 or dataset.find('users')>=0 or dataset.find('higgswg')>=0 or dataset.find('_sub')>=0:
+              if dataset.find('singlepart')>=0 or dataset.find('pile')>=0 or (dataset.find('test')>=0 and not 'HCtest' in dataset) or dataset.find('atlfast')>=0 or dataset.find('users')>=0 or dataset.find('higgswg')>=0 or dataset.find('_sub')>=0:
                 print 'Skipping %s' %dataset
                 continue
 
               # Get dataset info
               try:
+                print time.ctime()
                 print 'dq2.listFileReplicas(%s, %s)'%(repr(location),repr(dataset))
                 datasetsiteinfo = dq2.listFileReplicas(location, dataset)
+                print time.ctime()
               except:
                 print 'crash: %s, %s' %(location, dataset)
                 continue
@@ -222,27 +269,29 @@ class TestGenerate:
                 continue
               # Skip dataset if not complete at site
               try:
+                print time.ctime()
                 print 'dq2.listDatasetReplicas(%s)[dq2.listDatasets(%s)[%s][\'vuids\'][0]][0]'%(repr(dataset),repr(dataset),repr(dataset))
                 incompleteLocations = dq2.listDatasetReplicas(dataset)[dq2.listDatasets(dataset)[dataset]['vuids'][0]][0]
+                print time.ctime()
               except:
                 incompleteLocations = []
               if location in incompleteLocations:
                 print 'Not complete at %s, skip %s' %(location, dataset)
                 continue
 
-              numberoffiles = numberoffiles + datasetsiteinfo[0]['found']
-              if numberoffiles>0:
-                guidlist = datasetsiteinfo[0]['content']
-                lfnlist = []
-                print 'dq2.listFilesInDataset(%s)'%repr(dataset)
-                datasetfiles=dq2.listFilesInDataset(dataset)
-                for guid in guidlist:
-                  lfnlist.append(datasetfiles[0][guid]['lfn'])
-              else:
-                continue
+#              numberoffiles = numberoffiles + datasetsiteinfo[0]['found']
+#              if numberoffiles>0:
+#                guidlist = datasetsiteinfo[0]['content']
+#                lfnlist = []
+#                print 'dq2.listFilesInDataset(%s)'%repr(dataset)
+#                datasetfiles=dq2.listFilesInDataset(dataset)
+#                for guid in guidlist:
+#                  lfnlist.append(datasetfiles[0][guid]['lfn'])
+#              else:
+#                continue
 
-              guidlistAll = guidlistAll + guidlist
-              lfnlistAll = lfnlistAll + lfnlist
+              #guidlistAll = guidlistAll + guidlist
+              #lfnlistAll = lfnlistAll + lfnlist
               datasetAll.append(dataset)
 
               num = num + 1

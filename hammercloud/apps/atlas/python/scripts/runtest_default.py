@@ -119,6 +119,16 @@ def updateDatasets(site, num):
         for l in file:
           datasetpatterns.append(l.strip())
         file.close()
+      elif pattern.startswith('http'):
+        import urllib2
+        url = pattern
+        try:
+          tmp_patterns = urllib2.urlopen(url).read().split()
+          for p in tmp_patterns:
+            if p not in datasetpatterns:
+              datasetpatterns.append(p)
+        except:
+          logger.error('failed to download url pattern'%url)
       else:
         datasetpatterns.append(pattern)
 
