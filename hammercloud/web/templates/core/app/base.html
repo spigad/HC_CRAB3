@@ -133,9 +133,7 @@
         {% block account %}{% endblock %}
         <div id="social-bar">
           <div style="text-align: left;margin-top:1em;float:left;">
-	    <iframe src="//www.facebook.com/plugins/like.php?href&amp;send=false&amp;layout=button_count&amp;width=46&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font=arial&amp;height=20" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:46px; height:20px;" allowTransparency="true"></iframe>
-	    <a href="https://twitter.com/share" class="twitter-share-button" data-via="CERN" data-count="none">Tweet</a>
-            <div class="g-plusone" data-size="medium" data-annotation="none"></div>
+            <div class="g-plusone" data-size="medium" data-href="http://hammercloud.cern.ch/"></div>
           </div>
         </div>
     	<p style="text-align: right;">
@@ -156,8 +154,13 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); 
         })(); 
     </script>
-    <script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
-    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>
+    <script type="text/javascript">
+	  (function() {
+	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	    po.src = 'https://apis.google.com/js/plusone.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	  })();
+	</script>
   </body>
 
 </html>
