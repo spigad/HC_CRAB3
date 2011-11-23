@@ -389,9 +389,9 @@ class ProductionBlacklist:
 
     self.add_log('Sending auto-inclusion notice to %s cloud support.' % site)
 
-    to = cloud_support + ',' + daops
+    to = cloud_support + ',' + self.daops
     if self.debug:
-        to = dan
+        to = self.dan
     subject = "[HCv4] %s reset online at %s CET" % (site, time.ctime())
     if self.debug:
         subject += ' DEBUG'
@@ -412,9 +412,9 @@ class ProductionBlacklist:
 
     log('Sending exclusion notice to %s cloud support.' % site)
 
-    to = cloud_support + ',' + daops
+    to = cloud_support + ',' + self.daops
     if self.debug:
-        to = dan
+        to = self.dan
     subject = "[HCv4] %s Auto-Excluded at %s CET" % (site, time.ctime())
     if self.debug:
         subject += ' DEBUG'
