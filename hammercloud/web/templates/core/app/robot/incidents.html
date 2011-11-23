@@ -38,12 +38,12 @@
 {% endif %}
 <table class="incidencelist">
   <thead>
-  <tr><th class="left">Timestamp</th><th>Severity</th><th class="comment left">Comment</th><th>User</th><th>Test</th></tr>
+  <tr><th class="left">Timestamp</th><th>Severity</th><th class="comment left">Comment</th><th>Test</th></tr>
   </thead>
   <tbody>
   {% if incident_list and incident_list.paginator.count > 0 %}
   {% for i in incident_list.object_list %}
-  <tr{% if i.severity == 'error' %} style="background-color:#FFB8AA;"{% endif %}><td class="left">{{ i.mtime|date:"D d M Y H:i:s" }}</td><td>{{ i.severity }}</td><td class="comment left">{% autoescape off %}{{ i.comment }}{% endautoescape %}</td><td>{{ i.user }}</td>
+  <tr{% if i.severity == 'error' %} style="background-color:#FFB8AA;"{% endif %}><td class="left">{{ i.mtime|date:"D d M Y H:i:s" }}</td><td>{{ i.severity }}</td><td class="comment left">{% autoescape off %}{{ i.comment }}{% endautoescape %}</td>
       <td>{% if not i.test.id %}&nbsp;{% else %}<a href="{% url test-view app,i.test.id %}">{{ i.test.id }} &raquo;</a>{% endif %}</td></tr>
   {% endfor %}
   {% else %}
