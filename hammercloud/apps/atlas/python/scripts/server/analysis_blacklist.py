@@ -11,6 +11,7 @@ from pandatools import Client
 
 SITETYPE = 'analysis'
 Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
+DEBUG = True
 
 class Policy:
   """Base class for blacklisting policies."""
@@ -176,7 +177,7 @@ class AnalysisBlacklist:
   daops = 'atlas-project-adc-operations-analysis-shifts@cern.ch,atlasdast@gmail.com,dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
   daexp = 'dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
 
-  def __init__(self, templates=None, debug=False):
+  def __init__(self, templates=None):
     if not templates:
       self.templates = (432,433,434,436)
     else:
@@ -185,10 +186,7 @@ class AnalysisBlacklist:
                                    BlackListingPolicyLastThreeFromOne, WhiteListingPolicyLastTwoFromAll)
     self.policies_for_online = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,
                                 BlackListingPolicyLastThreeFromOne)
-    if not debug:
-      self.debug = False
-    else:
-      self.debug = debug
+    self.debug = DEBUG
     self.test = False
     self.runningTests = None
     self.sitesNeedingJobs = {}
@@ -198,11 +196,11 @@ class AnalysisBlacklist:
     self.reasons = {}
     self.log = ''
 
-  def run(self, debug=False, test=False):
+  def run(self, test=False):
     """Main runner of the blacklisting script."""
     self.reasons = {}
     self.log = ''
-    self.debug = debug
+    self.debug = DEBUG
     self.test = test
     if self.debug:
       self.daops = self.daexp = self.dan

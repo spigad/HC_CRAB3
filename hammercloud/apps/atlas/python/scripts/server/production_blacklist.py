@@ -5,11 +5,12 @@ import time
 import unittest
 
 from hc.core.utils.hc import cernmail
-from hc.atlas.models import Result, SiteOption, Template, TemplateSite, Test, TestLog
+from hc.atlas.models import Site, Result, SiteOption, Template, TemplateSite, Test, TestLog
 from pandatools import Client
 
 SITETYPE = 'production'
 Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
+DEBUG = True
 
 class Policy:
   """Base class for blacklisting policies."""
@@ -175,7 +176,7 @@ class ProductionBlacklist:
   daops = 'atlas-project-adc-operations-analysis-shifts@cern.ch,atlasdast@gmail.com,dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
   daexp = 'dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
 
-  def __init__(self, templates=None, debug=False):
+  def __init__(self, templates=None):
     if not templates:
       self.templates = (164,168)
     else:
@@ -184,10 +185,7 @@ class ProductionBlacklist:
                                    BlackListingPolicyLastThreeFromOne, WhiteListingPolicyLastTwoFromAll)
     self.policies_for_online = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,
                                 BlackListingPolicyLastThreeFromOne)
-    if not debug:
-      self.debug = False
-    else:
-      self.debug = debug
+    self.debug = DEBUG
     self.test = False
     self.runningTests = None
     self.sitesNeedingJobs = {}
@@ -197,11 +195,11 @@ class ProductionBlacklist:
     self.reasons = {}
     self.log = ''
 
-  def run(self, debug=False, test=False):
+  def run(self, test=False):
     """Main runner of the blacklisting script."""
     self.reasons = {}
     self.log = ''
-    self.debug = debug
+    self.debug = DEBUG
     self.test = test
     if self.debug:
       self.daops = self.daexp = self.dan

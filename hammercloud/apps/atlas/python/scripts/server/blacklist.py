@@ -15,7 +15,7 @@ class Blacklist:
     for module_name in blacklist_modules:
       try:
         script = custom_import(module_name)
-        script().run(debug=True, test=False)
+        script().run(test=False)
       except:
         print '[ERROR][atlas][blacklist] blacklisting script failed for module %s.' % module_name
 
