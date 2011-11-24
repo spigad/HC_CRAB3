@@ -385,7 +385,8 @@ class ProductionBlacklist:
     try:
       cloud_support = Site.objects.filter(name=site)[0].cloud.getCloudOptions_for_cloud.only('option_value').filter(option_name='contact')[0].option_value
     except:
-      return
+      self.add_reason(site, 'WARNING: could no get CloudOptions for site %s' % site)
+      cloud_support = self.dan
 
     self.add_log('Sending auto-inclusion notice to %s cloud support.' % site)
 
@@ -408,7 +409,8 @@ class ProductionBlacklist:
     try:
       cloud_support = Site.objects.filter(name=site)[0].cloud.getCloudOptions_for_cloud.only('option_value').filter(option_name='contact')[0].option_value
     except:
-      return
+      self.add_reason(site, 'WARNING: could no get CloudOptions for site %s' % site)
+      cloud_support = self.dan
 
     log('Sending exclusion notice to %s cloud support.' % site)
 
