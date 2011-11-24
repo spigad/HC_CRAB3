@@ -3,6 +3,7 @@ import datetime
 import re
 import time
 import unittest
+import sys
 
 from hc.core.utils.hc import cernmail
 from hc.atlas.models import Result, SiteOption, Template, TemplateSite, Test, TestLog
@@ -383,6 +384,7 @@ class AnalysisBlacklist:
     try:
       cloud_support = Site.objects.filter(name=site)[0].cloud.getCloudOptions_for_cloud.only('option_value').filter(option_name='contact')[0].option_value
     except:
+      print sys.exc_info()
       self.add_reason(site, 'WARNING: could no get CloudOptions for site %s' % site)
       cloud_support = self.dan
 
@@ -407,6 +409,7 @@ class AnalysisBlacklist:
     try:
       cloud_support = Site.objects.filter(name=site)[0].cloud.getCloudOptions_for_cloud.only('option_value').filter(option_name='contact')[0].option_value
     except:
+      print sys.exc_info()
       self.add_reason(site, 'WARNING: could no get CloudOptions for site %s' % site)
       cloud_support = self.dan
 
