@@ -225,7 +225,6 @@ class AnalysisBlacklist:
     bo_sites = self.get_sites(status='brokeroff')
     (_, newsites) = self.check_in_templates(bo_sites)
     if newsites:
-      self.add_log('** New brokeroff sites not in templates: %s' % repr(newsites))
       self.store_log('** New brokeroff sites not in templates: %s' % repr(newsites), 'warning')
     print self.runningTests
     for site in bo_sites:
@@ -254,7 +253,6 @@ class AnalysisBlacklist:
     online_sites = self.get_sites(status='online')
     (_, newsites) = self.check_in_templates(online_sites)
     if newsites:
-      self.add_log('** New online sites not in templates: %s' % repr(newsites))
       self.store_log('** New online sites not in templates: %s' % repr(newsites), 'warning')
     for site in online_sites:
       res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).order_by('-mtime')
@@ -264,8 +262,8 @@ class AnalysisBlacklist:
     for t in self.templates:
       if self.sitesNeedingJobs[t]:
         self.sitesNeedingJobs[t] = sorted(list(set(self.sitesNeedingJobs[t])))
-        self.add_log("The following online sites need more test jobs for template %d:" % t)
-        self.add_log("%s" % ', '.join(self.sitesNeedingJobs[t]))
+        #self.add_log("The following online sites need more test jobs for template %d:" % t)
+        #self.add_log("%s" % ', '.join(self.sitesNeedingJobs[t]))
         self.store_log("The following online sites need more test jobs for template %d: %s" % (t, ', '.join(self.sitesNeedingJobs[t])), 'warning')
 
     if sitesToSetBrokeroff:
@@ -315,7 +313,6 @@ class AnalysisBlacklist:
 
       Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
       if not self.debug and Client.PandaSites[site]['status'] != new_status:
-        self.add_log('Error setting %s to %s' % (site, new_status))
         self.store_log('Error setting %s to %s' % (site, new_status), 'error')
         return False
       return True
@@ -352,6 +349,7 @@ class AnalysisBlacklist:
       print self.log
 
   def store_log(self, msg, category='other'):
+    self.add_log(msg)
     if not self.debug:
       TestLog(test=self.runningTests[0], comment=msg, severity=category, user=1).save()
 
@@ -411,7 +409,7 @@ class AnalysisBlacklist:
       self.add_reason(site, 'WARNING: could no get CloudOptions for site %s' % site)
       cloud_support = self.dan
 
-    log('Sending exclusion notice to %s cloud support.' % site)
+    self.add_log('Sending exclusion notice to %s cloud support.' % site)
 
     to = cloud_support + ',' + self.daops
     if self.debug:

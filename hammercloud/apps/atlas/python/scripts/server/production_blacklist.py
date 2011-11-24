@@ -410,7 +410,7 @@ class ProductionBlacklist:
       self.add_reason(site, 'WARNING: could no get CloudOptions for site %s' % site)
       cloud_support = self.dan
 
-    log('Sending exclusion notice to %s cloud support.' % site)
+    self.add_log('Sending exclusion notice to %s cloud support.' % site)
 
     to = cloud_support + ',' + self.daops
     if self.debug:
