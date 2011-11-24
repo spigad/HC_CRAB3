@@ -90,18 +90,21 @@ class BlackListingPolicyLastTwoPlusOne(Policy):
       return True
     return False
 
-
 class WhiteListingPolicyLastTwoFromAll(Policy):
+  ''' returns True if site is missing jobs or didn't succeed the last two jobs '''
+  
   def evaluate(self, jobs, site, blacklist):
     if not jobs:
       blacklist.site_has_no_jobs(site)
-      return False
+      blacklist.add_reason(site, 'WhiteListing policy Last-Two-From-All not passed. See jobs %s' % repr(ids))
+      return True
     ok_templates = 0
     ids = []
     for t in blacklist.templates:
       template_jobs = self.filter_jobs_by_template(jobs, t)
       if len(template_jobs) < 2:
         blacklist.sitesNeedingJobs[t].append(site)
+        blacklist.add_reason(site, 'WhiteListing policy Last-Two-From-All not passed. Site needs jobs for template %s' % repr(t.id))
         continue
       if template_jobs[0].ganga_status == 'c' and template_jobs[1].ganga_status == 'c':
         ok_templates += 1
@@ -234,7 +237,7 @@ class AnalysisBlacklist:
       # The map() for the test ID is needed because MySQL 5.1 does not support nested IN
       # with ALL in a subquery (makes this QuerySet a little bit slower).
       res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).order_by('-mtime')
-      if reduce(lambda x, y: x and not y, map(lambda x: x().evaluate(res, site, self), self.policies_for_brokeroff), True) and self.site_needs_jobs(site):
+      if reduce(lambda x, y: x and not y, map(lambda x: x().evaluate(res, site, self), self.policies_for_brokeroff), True) and not self.site_needs_jobs(site):
         sitesToAutoSetOnline.append(site)
       else:
         self.log_reasons((site,))
