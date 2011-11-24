@@ -195,6 +195,7 @@ class AnalysisBlacklist:
     self.once = None
     self.reasons = {}
     self.log = ''
+    self.once = False
 
   def run(self, test=False):
     """Main runner of the blacklisting script."""
@@ -202,6 +203,7 @@ class AnalysisBlacklist:
     self.log = ''
     self.debug = DEBUG
     self.test = test
+    self.once = False
     if self.debug:
       self.daops = self.daexp = self.dan
     if self.test:
@@ -223,6 +225,7 @@ class AnalysisBlacklist:
     for x in self.templates:
       self.sitesNeedingJobs[x] = []
     bo_sites = self.get_sites(status='brokeroff')
+    self.add_log("Checking these sites currently brokeroff because of HC: %s"%bo_sites)
     (_, newsites) = self.check_in_templates(bo_sites)
     if newsites:
       self.store_log('** New brokeroff sites not in templates: %s' % repr(newsites), 'warning')
@@ -268,7 +271,7 @@ class AnalysisBlacklist:
 
     if sitesToSetBrokeroff:
       self.add_log("")
-      self.add_log("BLACKLIST: The following brokeroff sites will be set to online:")
+      self.add_log("BLACKLIST: The following online sites will be set to brokeroff:")
       self.add_log("%s" % sitesToSetBrokeroff)
       for s in sitesToSetBrokeroff:
         if self.change_site_status(s, 'brokeroff'):
@@ -329,9 +332,12 @@ class AnalysisBlacklist:
 
   def get_sites(self, status='online'):
     os = []
-    to_exclude = map(lambda x: x.site.name, SiteOption.objects.filter(option_name='autoexclusion').filter(option_value='disable'))
+    ignore_sites = map(lambda x: x.site.name, SiteOption.objects.filter(option_name='autoexclusion').filter(option_value='disable'))
+    if not self.once:
+      self.store_log("Sites disabled from autoexclusion: %s"%(','.join(ignore_sites),))
+      self.once = True
     for s in Client.PandaSites.keys():
-      if Client.PandaSites[s]['status'] == status and not re.search('test', s, re.I) and not re.search('local', s, re.I) and s not in to_exclude:
+      if Client.PandaSites[s]['status'] == status and not re.search('test', s, re.I) and not re.search('local', s, re.I) and s not in ignore_sites:
         if status == 'brokeroff':
           if Client.PandaSites[s]['comment'] in ('HC.Blacklist.set.brokeroff', 'HC.Blacklist.set.manual', 'HC.Test.Me'):
             os.append(s)
@@ -342,6 +348,7 @@ class AnalysisBlacklist:
   def get_running_test(self):
     """Sets the list of tests to process."""
     self.runningTests = Test.objects.filter(template__in=self.templates).exclude(state='error').order_by('-id').only('id')[:len(self.templates) * 2]
+    self.add_log("Checking last %d tests %s in templates %s"%(len(self.runningTests), ','.join([x.id for x in self.runningTests]), self.templates))
 
   def add_log(self, msg):
     self.log += '\n' + msg
