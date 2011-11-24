@@ -6,7 +6,7 @@ import unittest
 import sys
 
 from hc.core.utils.hc import cernmail
-from hc.atlas.models import Result, SiteOption, Template, TemplateSite, Test, TestLog
+from hc.atlas.models import Site, Result, SiteOption, Template, TemplateSite, Test, TestLog
 from pandatools import Client
 
 SITETYPE = 'analysis'
