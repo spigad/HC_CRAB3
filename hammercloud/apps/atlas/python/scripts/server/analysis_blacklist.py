@@ -391,7 +391,7 @@ class AnalysisBlacklist:
     to = cloud_support + ',' + self.daops
     if self.debug:
         to = self.dan
-    subject = "[HCv4] %s reset online at %s CET" % (site, time.ctime())
+    subject = "[HammerCloud] %s reset online at %s CET" % (site, time.ctime())
     if self.debug:
         subject += ' DEBUG'
     body = "Dear %s,\n\n" % cloud_support
@@ -416,7 +416,7 @@ class AnalysisBlacklist:
     to = cloud_support + ',' + self.daops
     if self.debug:
         to = self.dan
-    subject = "[HCv4] %s Auto-Excluded at %s CET" % (site, time.ctime())
+    subject = "[HammerCloud] %s Auto-Excluded at %s CET" % (site, time.ctime())
     if self.debug:
         subject += ' DEBUG'
     body = "Dear %s,\n\n" % cloud_support
@@ -446,7 +446,7 @@ class AnalysisBlacklist:
     if not self.log:
         return
     to = self.daexp
-    subject = "[HCv4] Analysis Blacklisting Report at %s CET" % time.ctime()
+    subject = "[HammerCloud] Analysis Blacklisting Report at %s CET" % time.ctime()
     if self.debug:
         to = self.dan
         subject += ' DEBUG'
