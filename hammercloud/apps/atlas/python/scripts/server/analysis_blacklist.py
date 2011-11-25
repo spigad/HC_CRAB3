@@ -91,12 +91,12 @@ class BlackListingPolicyLastTwoPlusOne(Policy):
     return False
 
 class WhiteListingPolicyLastTwoFromAll(Policy):
-  ''' returns True if site is missing jobs or didn't succeed the last two jobs '''
+  ''' returns True if site is missing jobs or didt succeed the last two jobs '''
   
   def evaluate(self, jobs, site, blacklist):
     if not jobs:
       blacklist.site_has_no_jobs(site)
-      blacklist.add_reason(site, 'WhiteListing policy Last-Two-From-All not passed. See jobs %s' % repr(ids))
+      blacklist.add_reason(site, 'WhiteListing policy Last-Two-From-All not passed. Site needs for all templates %s' % repr(blacklist.templates))
       return True
     ok_templates = 0
     ids = []
@@ -104,7 +104,7 @@ class WhiteListingPolicyLastTwoFromAll(Policy):
       template_jobs = self.filter_jobs_by_template(jobs, t)
       if len(template_jobs) < 2:
         blacklist.sitesNeedingJobs[t].append(site)
-        blacklist.add_reason(site, 'WhiteListing policy Last-Two-From-All not passed. Site needs jobs for template %s' % repr(t.id))
+        blacklist.add_reason(site, 'WhiteListing policy Last-Two-From-All not passed. Site needs jobs for template %s' % repr(t))
         continue
       if template_jobs[0].ganga_status == 'c' and template_jobs[1].ganga_status == 'c':
         ok_templates += 1
@@ -351,7 +351,7 @@ class AnalysisBlacklist:
   def get_running_test(self):
     """Sets the list of tests to process."""
     self.runningTests = Test.objects.filter(template__in=self.templates).exclude(state='error').order_by('-id').only('id')[:len(self.templates) * 2]
-    self.add_log("Checking last %d tests %s in templates %s"%(len(self.runningTests), ','.join([x.id for x in self.runningTests]), self.templates))
+    self.add_log("Checking last %d tests %s in templates %s"%(len(self.runningTests), ','.join([str(x.id) for x in self.runningTests]), repr(self.templates)))
 
   def add_log(self, msg):
     self.log += '\n' + msg

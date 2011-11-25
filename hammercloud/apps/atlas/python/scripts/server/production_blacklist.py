@@ -94,7 +94,8 @@ class WhiteListingPolicyLastTwoFromAll(Policy):
   def evaluate(self, jobs, site, blacklist):
     if not jobs:
       blacklist.site_has_no_jobs(site)
-      return False
+      blacklist.add_reason(site, 'WhiteListing policy Last-Two-From-All not passed. Site needs for all templates %s' % repr(blacklist.templates))
+      return True
     ok_templates = 0
     ids = []
     for t in blacklist.templates:
