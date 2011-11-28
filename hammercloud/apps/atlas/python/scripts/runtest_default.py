@@ -682,7 +682,7 @@ def process_job(job):
 #    elif v == 'NULL':
 #      logger.info([k,v])
 
-  if job.status in ('completed', 'failed'):
+  if result.ganga_status in ('c', 'f'):
     logger.warning('Job is in final state, marking row as fixed')
     result.fixed = 1
 
@@ -942,7 +942,7 @@ def process_subjob(job, subjob):
 #    elif v == 'NULL':
 #      logger.info([k,v])
 
-  if subjob.status in ('completed', 'failed'):
+  if result.ganga_status in ('c', 'f'):
     logger.warning('SubJob is in final state, marking row as fixed')
     result.fixed = 1
 
