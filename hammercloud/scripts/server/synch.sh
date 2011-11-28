@@ -44,6 +44,8 @@ then
     echo 'Synch ATLAS'
     echo '-------- voatlas65 -------'
     rsync -av /data/hc/ --exclude '*settings.py*' --exclude '*testdirs*' --exclude '*logs*' voatlas65:/data/hc/
+    echo '-------- voatlas167 -------'
+    rsync -av /data/hc/ --exclude '*settings.py*' --exclude '*testdirs*' --exclude '*logs*' voatlas167:/data/hc/
 fi
 
 rm -f /tmp/synch-app_$1.running
