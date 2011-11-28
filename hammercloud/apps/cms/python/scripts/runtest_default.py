@@ -427,7 +427,7 @@ def process_subjob(job,subjob):
 
   #logger.info(results)
 
-  if subjob.status in ('completed','failed'):
+  if result.ganga_status in ('c','f'):
     logger.debug('Subjob is in final state, marking row as fixed')
     result.fixed = 1
     result.save()    
