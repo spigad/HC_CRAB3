@@ -69,6 +69,7 @@ urlpatterns += patterns('hc.core.base.views.dispatcher',
   url(r'^app/(?P<app>[a-z]+)/robot/historical/$'              , 'dispatcher', name='historical-view'   , kwargs={'func':'historical'}),
   url(r'^app/(?P<app>[a-z]+)/robot/incidents/$'               , 'dispatcher', name='incidents-view'    , kwargs={'func':'incidents'}),
   url(r'^app/(?P<app>[a-z]+)/robot/autoexclusion/$'           , 'dispatcher', name='autoexclusion-view', kwargs={'func':'autoexclusion'}),
+  url(r'^app/(?P<app>[a-z]+)/autoexclusion/(?P<action>[a-z]+)/(?P<sitename>[A-Za-z0-9_-]+)$'           , 'dispatcher', name='autoexclusion_set-view', kwargs={'func':'autoexclusion_set'}),
 
   #STATS
   url(r'^app/(?P<app>[a-z]+)/stats/$'                         , 'dispatcher', name='stats-view'      , kwargs={'func':'stats'}),

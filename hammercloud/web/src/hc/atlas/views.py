@@ -196,6 +196,10 @@ def incidents(request):
 def autoexclusion(request):
   pass
 
+@GenView_dec(params={'on':True})
+def autoexclusion_set(request):
+  pass
+
 #######################################################
 ## STATS BLOCK
 #######################################################
