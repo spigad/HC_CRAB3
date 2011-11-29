@@ -69,6 +69,10 @@ class TestGenerate:
       ts.save()
 
     locations = list(set(locations))
+    shuffle(locations)
+    # hack for CERN
+    if 'CERN-PROD_LOCALGROUPDISK' in locations:
+        locations.remove('CERN-PROD_LOCALGROUPDISK')
     print 'Looking in locations: %s' % locations
 
     # Locations to generate jobs for

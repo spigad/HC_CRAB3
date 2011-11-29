@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from random import shuffle
 
 from django.db.models import Count
 from hc.atlas.models import Test, TestState, Site, Result, SummaryTest, SummaryTestSite, Metric, TestMetric, SiteMetric, MetricType, TestLog, SummaryEvolution
@@ -107,6 +108,9 @@ def updateDatasets(site, num):
     # get DDM name from site
     location = Site.objects.filter(name=site)[0].ddm
     locations = location.split(',')
+    # hack for CERN
+    if 'CERN-PROD_LOCALGROUPDISK' in locations:
+        locations.remove('CERN-PROD_LOCALGROUPDISK')
 
     # Dataset patterns
     datasetpatterns = []
@@ -148,7 +152,6 @@ def updateDatasets(site, num):
     #TODO: checl that you got some datasets
 
 
-  from random import shuffle
   shuffle(datasets)
 
   gooddatasets = []
