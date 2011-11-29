@@ -54,10 +54,9 @@ urlpatterns += patterns('hc.core.base.views.dispatcher',
   url(r'^app/(?P<app>[a-z]+)/ajax/testalarms/(?P<test_id>\d+)/$'               , 'dispatcher', name='ajaxtestalarms-view' , kwargs={'func':'ajaxtestalarms'}),
   url(r'^app/(?P<app>[a-z]+)/ajax/testmetrics/(?P<test_id>\d+)/$'   , 'dispatcher', name='ajaxtestmetrics-view', kwargs={'func':'ajaxtestmetrics'}),
   url(r'^app/(?P<app>[a-z]+)/ajax/testsites/(?P<test_id>\d+)/$'     , 'dispatcher', name='ajaxtestsites-view'  , kwargs={'func':'ajaxtestsites'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/testjobs/(?P<test_id>\d+)/$'      , 'dispatcher', name='ajaxtestjobs-view'  , kwargs={'func':'ajaxtestjobs'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/testjobs/(?P<test_id>\d+)/(?P<site_id>\d+)/$'      , 'dispatcher', name='ajaxtestjobsbysite-view'  , kwargs={'func':'ajaxtestjobsbysite'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/testjobs/(?P<test_id>\d+)(?:/(?P<site_id>\d+))?/$'      , 'dispatcher', name='ajaxtestjobs-view'  , kwargs={'func':'ajaxtestjobs'}),
   url(r'^app/(?P<app>[a-z]+)/ajax/testevolution/(?P<test_id>\d+)/$' , 'dispatcher', name='ajaxtestevolution-view', kwargs={'func':'ajaxtestevolution'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/(?P<type>[a-z]+)/get_list/(?P<id>\d+)/$'     , 'dispatcher', name='get_list-view'     , kwargs={'func':'get_list'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/(?P<type>[a-z]+)/get_list/(?P<id>\d+)(?:/(?P<filter>\d+))?/$'     , 'dispatcher', name='get_list-view'     , kwargs={'func':'get_list'}),
 
 
   #ROBOT

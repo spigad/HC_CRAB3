@@ -28,8 +28,10 @@
 </script>
 <script type="text/javascript">
 
-  function siteJobs(val){
+  function siteJobs(val,url){
+	$('#tabs').tabs('url',3,url);
     $("#tabs").tabs("option","selected",3);
+    $('#tabs').tabs('url',3,'{% url ajaxtestjobs-view app, test_id %}');
   };
 
 </script>

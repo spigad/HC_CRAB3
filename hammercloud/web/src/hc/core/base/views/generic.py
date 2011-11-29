@@ -629,7 +629,7 @@ class GenericView():
 ## AJAX BLOCK
 #######################################################
 
-  def get_list(self,request,type,id,dic={'SummaryTest':None,'SummaryTestSite':None,'SummaryRobot':None,'Result':None},*args,**kwargs):
+  def get_list(self,request,type,id,filter,dic={'SummaryTest':None,'SummaryTestSite':None,'SummaryRobot':None,'Result':None},*args,**kwargs):
 
     summary_test = dic['SummaryTest']
     app          = summary_test.__module__.split('.')[1]
@@ -689,6 +689,13 @@ class GenericView():
 
     elif type == 'testjobs':
       querySet = result.objects.filter(test__id=id).exclude(ganga_subjobid=1000000)
+      if filter is not None:
+        try:
+          site_id = int(filter)
+          if site_id > 0: 
+            querySet = querySet.filter(site__id=filter)
+        except:
+          pass
       columnIndexNameMap = {0:'ganga_status',1:'site__name',2:'ganga_jobid',3:'ganga_subjobid',4:'backendID',5:'submit_time',6:'start_time',7:'stop_time',8:'reason'}
       jsonTemplatePath += 'testjobs.txt'
 
@@ -756,30 +763,23 @@ class GenericView():
     c = Context({'plots':plots,'app':app,'test':test})
     return HttpResponse(t.render(c))
 
-  def ajaxtestjobs(self,request,test_id,dic={'Test':None},*args,**kwargs):
-
-    test = dic['Test']
-    app  = test.__module__.split('.')[1]
-
-    test = get_object_or_404(test,pk=test_id)
-    type = 'testjobs'
-
-    t = loader.select_template(['%s/test/testjobs.html'%(app),'core/app/test/testjobs.html'])
-    c = Context({'app':app,'test':test,'type':type, 'MEDIA_URL':settings.MEDIA_URL})
-    return HttpResponse(t.render(c))
-
-  def ajaxtestjobsbysite(self,request,test_id,site_id,dic={'Test':None, 'Site':None},*args,**kwargs):
+  def ajaxtestjobs(self,request,test_id,site_id,dic={'Test':None,'Site':None},*args,**kwargs):
 
     test = dic['Test']
     site = dic['Site']
     app  = test.__module__.split('.')[1]
 
     test = get_object_or_404(test,pk=test_id)
-    site = get_object_or_404(site,pk=site_id)
+    try:
+      site_id = int(site_id)
+      site = site.objects.get(id=site_id)
+    except:
+      site = None
+      site_id = 0
     type = 'testjobs'
 
     t = loader.select_template(['%s/test/testjobs.html'%(app),'core/app/test/testjobs.html'])
-    c = Context({'app':app,'test':test,'site':site,'type':type, 'MEDIA_URL':settings.MEDIA_URL})
+    c = Context({'app':app,'test':test,'site':site_id,'type':type, 'MEDIA_URL':settings.MEDIA_URL})
     return HttpResponse(t.render(c))
 
   def ajaxtestevolution(self,request,test_id,dic={'Test':None},*args,**kwargs):
