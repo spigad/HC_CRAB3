@@ -906,12 +906,13 @@ class GenericView():
 ## ROBOT BLOCK
 #######################################################
 
-  def robot(self,request,dic={'Site':None,'Cloud':None,'Backend':None},*args,**kwargs):
+  def robot(self,request,dic={'Site':None,'SiteOption':None,'Cloud':None,'Backend':None},*args,**kwargs):
 
     site = dic['Site']
+    siteoption = dic['SiteOption']
     app  = site.__module__.split('.')[1]
   
-    sites    = list(site.objects.filter(enabled=True))
+    sites    = list(site.objects.filter(enabled=True).exclude(id__in=map(lambda x: x.site_id, siteoption.objects.filter(option_name='autoexclusion').filter(option_value='disable'))))
     cloud    = dic['Cloud']
     clouds   = list(cloud.objects.exclude(code__contains='ALL').exclude(name__contains='TEST'))
     backend  = dic['Backend']

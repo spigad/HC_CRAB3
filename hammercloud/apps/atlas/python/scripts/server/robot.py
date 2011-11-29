@@ -169,7 +169,7 @@ class Robot:
     #print lcgID, pandaID
     #print lcgIDString, pandaIDString
     # getting sites
-    sites = Site.objects.filter(enabled=True)
+    sites = Site.objects.filter(enabled=True).exclude(id__in=map(lambda x: x.site_id, SiteOption.objects.filter(option_name='autoexclusion').filter(option_value='disable')))
     if not sites:
       print "Error no sites from DB query!"
     else:  
