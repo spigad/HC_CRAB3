@@ -86,7 +86,7 @@ def site(request,site_id):
 def templates(request):
   pass
 
-@login_required
+#@login_required
 @GenView_dec(params={'on':True})
 def template(request,template_id):
   pass
