@@ -39,6 +39,15 @@ fi
 export HC_MODE=$HC_MODE
 echo '  HC_MODE='$HC_MODE
 
+if [ "$HC_MODE" == prod ]
+then
+    #Set PROXY for Production testing
+    export X509_USER_PROXY=$HCAPP/config/x509prod
+else
+    export X509_USER_PROXY=$HCAPP/config/x509up
+fi
+echo '  X509_USER_PROXY='$X509_USER_PROXY
+
 HAMMERCLOUD_ORIGINAL_PYTHONPATH=$PYTHONPATH:$HCDIR/external/ganga/install/HEAD/python
 HAMMERCLOUD_ORIGINAL_PATH=$PATH
 
