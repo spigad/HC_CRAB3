@@ -6,12 +6,12 @@ import unittest
 import sys
 
 from hc.core.utils.hc import cernmail
-from hc.atlas.models import Site, Result, SiteOption, Template, TemplateSite, Test, TestLog
+from hc.atlas.models import Site, Result, SiteOption, Template, TemplateSite, Test, TestLog, BlacklistEvent
 from pandatools import Client
 
 SITETYPE = 'analysis'
 Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
-DEBUG = True
+DEBUG = False
 
 class Policy:
   """Base class for blacklisting policies."""
@@ -249,6 +249,7 @@ class AnalysisBlacklist:
         if self.change_site_status(s, 'online'):
           self.store_log('Site %s was set to online' % s, 'whitelisting')
           self.send_cloud_online_alert(s)
+          BlacklistEvent(event='whitelist', reason='', timestamp=datetime.datetime.now(), external=False, site=Site.objects.get(name=s)).save()
 
   def check_online_sites(self):
     self.sitesNeedingJobs = {}
@@ -281,6 +282,7 @@ class AnalysisBlacklist:
           self.store_log('Site %s will be set to brokeroff' % s, 'blacklisting')
           self.store_log('%s blacklisting reason is %s' % (s, self.reasons[s]), 'blacklisting')
           self.send_cloud_alert(s)
+          BlacklistEvent(event='blacklist', reason=self.reasons[s], timestamp=datetime.datetime.now(), external=False, site=Site.objects.get(name=s)).save()
 
   def change_site_status(self, site, new_status):
     if new_status not in ('brokeroff', 'online'):
@@ -292,21 +294,24 @@ class AnalysisBlacklist:
     now = int(time.time())
     if new_status == 'brokeroff':
       try:
-        last_exclusion = Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0].option_value
+        last_exclusion = int(Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0].option_value)
       except:
         last_exclusion = 0
       if now - last_exclusion < 21600:
         self.add_log('%s was recently auto-excluded. Skipping...' % site)
         return False
 
-      cmd = "curl -s -k --cert $X509_USER_PROXY 'https://panda.cern.ch:25943/server/controller/query?tpmes=setmanual&queue=%s&moduser=HammerCloud&comment=HC.Blacklist.set.manual'" % site
-      self.add_log('> ' + cmd)
-      if not self.debug:
-        self.add_log(commands.getoutput(cmd))
-      cmd = "curl -s -k --cert $X509_USER_PROXY 'https://panda.cern.ch:25943/server/controller/query?tpmes=set%s&queue=%s&moduser=HammerCloud&comment=HC.Blacklist.set.%s'" % (new_status, site, new_status)
-      self.add_log('> ' + cmd)
-      if not self.debug:
-        self.add_log(commands.getoutput(cmd))
+    cmd = "curl -s -k --cert $X509_USER_PROXY 'https://panda.cern.ch:25943/server/controller/query?tpmes=setmanual&queue=%s&moduser=HammerCloud&comment=HC.Blacklist.set.manual'" % site
+    self.add_log('> ' + cmd)
+    if not self.debug:
+      o = commands.getoutput(cmd)
+      self.add_log(o)
+    cmd = "curl -s -k --cert $X509_USER_PROXY 'https://panda.cern.ch:25943/server/controller/query?tpmes=set%s&queue=%s&moduser=HammerCloud&comment=HC.Blacklist.set.%s'" % (new_status, site, new_status)
+    self.add_log('> ' + cmd)
+    if not self.debug:
+      o = commands.getoutput(cmd)
+      self.add_log(o)
+    if new_status == 'brokeroff':
       try:
         option = Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0]
         option.option_value = now
@@ -317,11 +322,12 @@ class AnalysisBlacklist:
         option.site = Site.objects.get(name=site)
       option.save()
 
-      Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
-      if not self.debug and Client.PandaSites[site]['status'] != new_status:
-        self.store_log('Error setting %s to %s' % (site, new_status), 'error')
-        return False
-      return True
+    Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
+    if not self.debug and Client.PandaSites[site]['status'] != new_status:
+      self.store_log('Error setting %s to %s' % (site, new_status), 'error')
+      return False
+    
+    return True
 
   def check_in_templates(self, sites):
     result = ([], [])
@@ -354,9 +360,9 @@ class AnalysisBlacklist:
     self.add_log("Checking last %d tests %s in templates %s"%(len(self.runningTests), ','.join([str(x.id) for x in self.runningTests]), repr(self.templates)))
 
   def add_log(self, msg):
-    self.log += '\n' + msg
-    if self.debug:
-      print self.log
+    self.log += '\n' + msg + '\n'
+    #if self.debug:
+    print '\n' + msg + '\n'
 
   def store_log(self, msg, category='other'):
     self.add_log(msg)
