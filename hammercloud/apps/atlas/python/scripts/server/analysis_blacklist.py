@@ -343,7 +343,7 @@ class AnalysisBlacklist:
     os = []
     ignore_sites = map(lambda x: x.site.name, SiteOption.objects.filter(option_name='autoexclusion').filter(option_value='disable'))
     if not self.once:
-      self.store_log("Sites disabled from autoexclusion: %s"%(','.join(ignore_sites),))
+      self.store_log("Sites disabled from autoexclusion: %s"%(', '.join(ignore_sites),))
       self.once = True
     for s in Client.PandaSites.keys():
       if Client.PandaSites[s]['status'] == status and not re.search('test', s, re.I) and not re.search('local', s, re.I) and s not in ignore_sites:
