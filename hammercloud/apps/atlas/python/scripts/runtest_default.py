@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
+from random import shuffle
 
 from django.db.models import Count
 from hc.atlas.models import Test, TestState, Site, Result, SummaryTest, SummaryTestSite, Metric, TestMetric, SiteMetric, MetricType, TestLog, SummaryEvolution
+from lib.summary import summary
 
 from hc.core.utils.hc.stats import Stats
 from numpy import *
@@ -29,13 +31,13 @@ except IndexError:
 ##
 
 try:
-  test = Test.objects.get(pk=testid)
+  test = Test.objects.get(pk=testid) #select_related('template', 'metricperm__index', 'metricperm__summary', 'metricperm__pertab').get(pk=testid)
   if test.pause:
     logger.info('Un-pausing test.')
     test.pause = 0
     test.save()
     comment = 'Test modifications: pause -> False,'
-    testlog = TestLog(test=test, comment=comment, user='gangarbt')
+    testlog = TestLog(test=test, comment=comment, user='gangarbt', severity='testinfo')
     testlog.save()
 except:
   print ' ERROR! Could not extract Test %s from DB' % (testid)
@@ -106,11 +108,14 @@ def updateDatasets(site, num):
     # get DDM name from site
     location = Site.objects.filter(name=site)[0].ddm
     locations = location.split(',')
+    # hack for CERN
+    if 'CERN-PROD_LOCALGROUPDISK' in locations:
+        locations.remove('CERN-PROD_LOCALGROUPDISK')
 
     # Dataset patterns
     datasetpatterns = []
 
-    patterns = [ td.dspattern.pattern for td in test.getTestDspatterns_for_test.all() ]
+    patterns = [ td.dspattern.pattern for td in test.getTestDspatterns_for_test.all() ] #select_related('dspattern').all() ]
 
     for pattern in patterns:
       if pattern.startswith('/'):
@@ -118,6 +123,16 @@ def updateDatasets(site, num):
         for l in file:
           datasetpatterns.append(l.strip())
         file.close()
+      elif pattern.startswith('http'):
+        import urllib2
+        url = pattern
+        try:
+          tmp_patterns = urllib2.urlopen(url).read().split()
+          for p in tmp_patterns:
+            if p not in datasetpatterns:
+              datasetpatterns.append(p)
+        except:
+          logger.error('failed to download url pattern'%url)
       else:
         datasetpatterns.append(pattern)
 
@@ -137,7 +152,6 @@ def updateDatasets(site, num):
     #TODO: checl that you got some datasets
 
 
-  from random import shuffle
   shuffle(datasets)
 
   gooddatasets = []
@@ -308,7 +322,7 @@ def copyJob(job):
 
   test_site = test.getTestSites_for_test.filter(site__name=site)
   if not test_site:
-    print 'Failed to get TestSite with Test: %s and Site: %s' % (test.id, site)
+    logger.warning('Failed to get TestSite with Test: %s and Site: %s' % (test.id, site))
     return
   else:
     test_site = test_site[0]
@@ -322,7 +336,7 @@ def copyJob(job):
     return
 
   if not test_site.resubmit_enabled:
-    #logger.info('Not copying job %d: test_site.resubmit_enabled is False for test %d at %s'%(job.id,testid,site))
+    logger.debug('Not copying job %d: test_site.resubmit_enabled is False for test %d at %s'%(job.id,testid,site))
     return
 
   test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
@@ -334,16 +348,18 @@ def copyJob(job):
 
   # submitted
   submitted = test.getResults_for_test.filter(ganga_status='s').filter(site__name=site).exclude(ganga_subjobid=1000000).count()
+  #submitted = Result.objects.filter(test=test).filter(ganga_status='s').filter(site__name=site).exclude(ganga_subjobid=1000000).count()
 
   # running
   running = test.getResults_for_test.filter(ganga_status='r').filter(site__name=site).exclude(ganga_subjobid=1000000).count()
+  #running = Result.objects.filter(test=test).filter(ganga_status='r').filter(site__name=site).exclude(ganga_subjobid=1000000).count()
 
   if submitted > test_site.min_queue_depth:
-    #logger.info('Not copying job %d: %d submitted > q.d %d'%(job.id,submitted,test_site.min_queue_depth))
+    logger.debug('Not copying job %d: %d submitted > q.d %d'%(job.id,submitted,test_site.min_queue_depth))
     return
 
   if running > test_site.max_running_jobs:
-    #logger.info('Not copying job %d: %d running > %d max'%(job.id,running,test_site.max_running_jobs))
+    logger.debug('Not copying job %d: %d running > %d max'%(job.id,running,test_site.max_running_jobs))
     return
 
 #  if len(job.subjobs) < 1:
@@ -361,9 +377,11 @@ def copyJob(job):
 
   # total last 1 hours
   total = test.getResults_for_test.filter(site__name=site).filter(ganga_status__in=['c', 'f']).filter(mtime__gt=datetime.now() - timedelta(hours=1)).exclude(ganga_subjobid=1000000).count()
+  #total = Result.objects.filter(test=test).filter(site__name=site).filter(ganga_status__in=['c', 'f']).filter(mtime__gt=datetime.now() - timedelta(hours=1)).exclude(ganga_subjobid=1000000).count()
 
   # failed last 1 hours
   failed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).exclude(ganga_subjobid=1000000).count()
+  #failed = Result.objects.filter(test=test).filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).exclude(ganga_subjobid=1000000).count()
 
   if category == 'stress' and total > 20 and float(failed) / float(total) > 0.7:
     logger.warning('Not copying job %d: %d failed from %d finished (copy when <= 0.7)' % (job.id, failed, total))
@@ -373,10 +391,11 @@ def copyJob(job):
     return
 
   # Check if build job failed due to missing CMTCONFIG
-  bfailed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2=1109)
+  bfailed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).count()
+  #bfailed = Result.objects.filter(test=test).filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).count()
   
   if bfailed > 0:
-    logger.warning('Not copying job %d: build job failed with pilot error code 1109 (missing CMTCONFIG)' % job.id)
+    logger.warning('Not copying job %d: build job failed with pilot error code 1109 or 1211' % job.id)
     logger.warning('Disabling site %s: test_site.resubmit_enabled <- 0' % site)
     test_site.resubmit_enabled = 0
     test_site.save()
@@ -468,7 +487,8 @@ def process_job(job):
     try:
       stats = job._impl.backend.get_stats()
     except:
-      logger.warning('Ganga application stats for job not available')
+      #logger.warning('Ganga application stats for job not available')
+      pass
 
   metrics = ['percentcpu', 'systemtime', 'usertime', 'site', 'totalevents', 'wallclock', 'stoptime', 'outse', 'starttime', 'exitstatus', 'numfiles3', 'gangatime1', 'gangatime2', 'gangatime3', 'gangatime4', 'gangatime5', 'jdltime', 'NET_ETH_RX_PREATHENA', 'NET_ETH_RX_AFTERATHENA', 'pandatime1', 'pandatime2', 'pandatime3', 'pandatime4', 'pandatime5', 'arch', 'submittime']
   for m in metrics:
@@ -516,7 +536,7 @@ def process_job(job):
              'arch'                  :stats['arch'],
              'percent_cpu'           :stats['percentcpu'],
              'numevents'             :stats['totalevents'],
-             'net_eth_rx_preathena'  :stats['NET_ETH_RX_PREATHENA'],
+             'NET_ETH_RX_PREATHENA'  :stats['NET_ETH_RX_PREATHENA'],
              'NET_ETH_RX_AFTERATHENA' :stats['NET_ETH_RX_AFTERATHENA'],
              'inds'                  :inds,
              'outds'                 :outds,
@@ -566,6 +586,27 @@ def process_job(job):
 
   elif job.backend._impl._name == 'Panda':
     try:
+      results['pandatime1'] = int(stats['pandatime1'])
+    except:
+      pass
+    try:
+      results['pandatime2'] = int(stats['pandatime2'])
+    except:
+      pass
+    try:
+      results['pandatime3'] = int(stats['pandatime3'])
+    except:
+      pass
+    try:
+      results['pandatime4'] = int(stats['pandatime4'])
+    except:
+      pass
+    try:
+      results['pandatime5'] = int(stats['pandatime5'])
+    except:
+      pass
+    
+    try:
       results['exit_status_2'] = int(job.backend.buildjobs[0].jobSpec['pilotErrorCode'])
       results['reason'] = job.backend.buildjobs[0].jobSpec['pilotErrorDiag']
     except:
@@ -592,10 +633,12 @@ def process_job(job):
   #EVENTRATE
   if results['numevents'] != 'NULL' and results['wallclock'] != 'NULL':
     try:
-      eventrate = results['numevents'] / results['wallclock']
+      eventrate = float(results['numevents']) / float(results['wallclock'])
       results['eventrate'] = eventrate
     except:
       pass
+      #logger.warning('Bug during pj eventrate')
+
 
   #EVENTS/ATHENA
   if results['numevents'] != 'NULL':
@@ -607,10 +650,11 @@ def process_job(job):
 
     if time:
       try:
-        events_athena = results['numevents'] / time
+        events_athena = float(results['numevents']) / float(time)
         results['events_athena'] = events_athena
       except:
         pass
+        #logger.warning('Bug during pj event_athena')
 
   try:
     results['site'] = Site.objects.filter(name=results['site'])[0]
@@ -641,7 +685,7 @@ def process_job(job):
 #    elif v == 'NULL':
 #      logger.info([k,v])
 
-  if job.status in ('completed', 'failed'):
+  if result.ganga_status in ('c', 'f'):
     logger.warning('Job is in final state, marking row as fixed')
     result.fixed = 1
 
@@ -673,7 +717,7 @@ def process_subjob(job, subjob):
   if (subjob.status == 'completed' and not stats) or subjob.status == 'failed':
     logger.warning('Forced postprocess')
     try:
-      subob.application.postprocess()
+      subjob.application.postprocess()
     except:
       logger.warning('Error in postprocess')
       logger.warning(sys.exc_info()[0])
@@ -686,14 +730,15 @@ def process_subjob(job, subjob):
     try:
       stats = subjob._impl.backend.get_stats()
     except:
-      logger.warning('Ganga application stats not avaible')
+      #logger.warning('Ganga application stats not avaible')
+      pass
 
   metrics = ['percentcpu', 'systemtime', 'usertime', 'site', 'totalevents', 'wallclock', 'stoptime', 'outse', 'starttime', 'exitstatus', 'numfiles3', 'gangatime1', 'gangatime2', 'gangatime3', 'gangatime4', 'gangatime5', 'jdltime', 'NET_ETH_RX_PREATHENA', 'NET_ETH_RX_AFTERATHENA', 'pandatime1', 'pandatime2', 'pandatime3', 'pandatime4', 'pandatime5', 'arch', 'submittime']
   for m in metrics:
     try:
       x = stats[m]
     except KeyError:
-      logger.warning('Metric "%s" not available in Ganga application stats' % m)
+      #logger.warning('Metric "%s" not available in Ganga application stats' % m)
       stats[m] = None
 
   outds = None
@@ -735,7 +780,7 @@ def process_subjob(job, subjob):
              'arch'                  :stats['arch'],
              'percent_cpu'           :stats['percentcpu'],
              'numevents'             :stats['totalevents'],
-             'net_eth_rx_preathena'  :stats['NET_ETH_RX_PREATHENA'],
+             'NET_ETH_RX_PREATHENA'  :stats['NET_ETH_RX_PREATHENA'],
              'NET_ETH_RX_AFTERATHENA' :stats['NET_ETH_RX_AFTERATHENA'],
              'inds'                  :inds,
              'outds'                 :outds,
@@ -784,6 +829,26 @@ def process_subjob(job, subjob):
       results['ganga_status'] = 'n'
 
   elif subjob.backend._impl._name == 'Panda':
+    try:
+      results['pandatime1'] = int(stats['pandatime1'])
+    except:
+      pass
+    try:
+      results['pandatime2'] = int(stats['pandatime2'])
+    except:
+      pass
+    try:
+      results['pandatime3'] = int(stats['pandatime3'])
+    except:
+      pass
+    try:
+      results['pandatime4'] = int(stats['pandatime4'])
+    except:
+      pass
+    try:
+      results['pandatime5'] = int(stats['pandatime5'])
+    except:
+      pass
 
     results['site'] = jobToSite(subjob)
     results['exit_status_1'] = subjob.backend.exitcode
@@ -818,10 +883,12 @@ def process_subjob(job, subjob):
   #EVENTRATE
   if results['numevents'] != 'NULL' and results['wallclock'] != 'NULL':
     try:
-      eventrate = results['numevents'] / results['wallclock']
+      eventrate = float(results['numevents']) / float(results['wallclock'])
       results['eventrate'] = eventrate
     except:
       pass
+      #logger.warning('Bug during sj eventrate')
+                
 
   #EVENTS/ATHENA
   if results['numevents'] != 'NULL':
@@ -834,10 +901,11 @@ def process_subjob(job, subjob):
 
     if time:
       try:
-        events_athena = results['numevents'] / time
+        events_athena = float(results['numevents']) / float(time)
         results['events_athena'] = events_athena
       except:
         pass
+        #logger.warning('Bug during sj event_athena')
 
 
   logger.debug('Writing to DB')
@@ -877,7 +945,7 @@ def process_subjob(job, subjob):
 #    elif v == 'NULL':
 #      logger.info([k,v])
 
-  if subjob.status in ('completed', 'failed'):
+  if result.ganga_status in ('c', 'f'):
     logger.warning('SubJob is in final state, marking row as fixed')
     result.fixed = 1
 
@@ -888,86 +956,8 @@ def process_subjob(job, subjob):
 ##
 
 def summarize():
-
-  logger.info('Summarize')
-
-  s_t = test.getSummaryTests_for_test.all()[0]
-  s_t_s = test.getSummaryTestSites_for_test.all()
-
-  stats = Stats()
-
-  Qobjects = {}
-  Qobjects['test'] = [test]
-  #small hack to remove duplicated in the list
-  Qobjects['metric_type'] = list(set(list(test.metricperm.index.all()) + list(test.metricperm.pertab.all()) + list(test.metricperm.summary.all())))
-  Qobjects['site'] = [ ts.site for ts in test.getTestSites_for_test.all() ]
-
-  commands = {'sort_by':'test', 'type':'raw_value', 'completed':False}
-
-  try:
-    title, values = stats.process(Qobjects, commands)[0]
-  except:
-    logger.warning('Bug during summary')
-    return
-  values = dict(values)
-
-  s_t.submitted = float(test.getResults_for_test.filter(ganga_status='s').exclude(ganga_subjobid=1000000).count())
-  s_t.running = float(test.getResults_for_test.filter(ganga_status='r').exclude(ganga_subjobid=1000000).count())
-  s_t.completed = float(test.getResults_for_test.filter(ganga_status='c').exclude(ganga_subjobid=1000000).count())
-  s_t.failed = float(test.getResults_for_test.filter(ganga_status='f').exclude(ganga_subjobid=1000000).count())
-  s_t.total = float(test.getResults_for_test.exclude(ganga_subjobid=1000000).count())
-
-  if s_t.total:
-    s_t.c_t = s_t.completed / s_t.total
-    s_t.f_t = s_t.failed / s_t.total
-
-  if s_t.completed or s_t.failed:
-    s_t.c_cf = s_t.completed / (s_t.completed + s_t.failed)
-
-  if values.has_key('Overall.'):
-    for metric in test.metricperm.summary.all():
-      rate = [float(dic[metric.name]) for dic in values['Overall.'] if (metric.name != 'c_cf' and dic[metric.name] != None)]
-      if rate:
-        mean = round(numpy.mean(rate), 3)
-        setattr(s_t, metric.name, mean)
-
-  s_t.save()
-
-  frozen_time = datetime.now()
-  evol_lock = SummaryEvolution.objects.filter(test=test).filter(time__gt=frozen_time - timedelta(minutes=5))
-
-  for sts in s_t_s:
-    sts.submitted = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='s').exclude(ganga_subjobid=1000000).count())
-    sts.running = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='r').exclude(ganga_subjobid=1000000).count())
-    sts.completed = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='c').exclude(ganga_subjobid=1000000).count())
-    sts.failed = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='f').exclude(ganga_subjobid=1000000).count())
-    sts.total = float(test.getResults_for_test.filter(site=sts.test_site.site).exclude(ganga_subjobid=1000000).count())
-
-    if not evol_lock:
-      #Save to Summary Evolution
-      se = SummaryEvolution(test=test, site=sts.test_site.site, time=frozen_time)
-      se.submitted = sts.submitted
-      se.running = sts.running
-      se.completed = sts.completed
-      se.failed = sts.failed
-      se.total = sts.total
-      se.save()
-
-    if sts.total:
-      sts.c_t = sts.completed / sts.total
-      sts.f_t = sts.failed / sts.total
-
-    if sts.completed or sts.failed:
-      sts.c_cf = sts.completed / (sts.completed + sts.failed)
-
-    if values.has_key(sts.test_site.site.name):
-      for metric in test.metricperm.summary.all():
-        rate = [float(dic[metric.name]) for dic in values[sts.test_site.site.name] if (metric.name != 'c_cf' and dic[metric.name] != None)]
-        if rate:
-          mean = round(numpy.mean(rate), 3)
-          setattr(sts, metric.name, mean)
-
-    sts.save()
+  logger.info('Summarize (using lib)')
+  summary.summarize('atlas',test,completed=False)
   logger.info('Summarize ended')
 
 ##
@@ -975,77 +965,8 @@ def summarize():
 ##
 
 def plot(completed=False):
-
-  logger.info('Plot')
-
-  s_t = test.getSummaryTests_for_test.all()[0]
-  s_t_s = test.getSummaryTestSites_for_test.all()
-
-  stats = Stats()
-
-  Qobjects = {}
-  Qobjects['test'] = [test]
-  #small hack to remove duplicated in the list
-  Qobjects['metric_type'] = list(set(list(test.metricperm.index.all()) + list(test.metricperm.pertab.all())))
-  Qobjects['site'] = [ ts.site for ts in test.getTestSites_for_test.all() ]
-
-  commands = {'sort_by':'test', 'type':'plot', 'completed':completed}
-
-  try:
-    test_title, values = stats.process(Qobjects, commands)[0][0]
-  except:
-    return
-
-  for metric_title, urls in values:
-
-    mt = MetricType.objects.filter(title=metric_title)
-    if mt:
-
-      for plot_title, url in urls:
-
-        if plot_title == 'Overall.' and url:
-          # then, it goes to TestMetric
-
-          test_metric = test.getTestMetrics_for_test.filter(metric__metric_type__title=metric_title)
-
-          if test_metric:
-            test_metric = test_metric[0]
-            metric = test_metric.metric
-            metric.url = url
-            metric.save()
-          else:
-            m = Metric(url=url, metric_type=mt[0])
-            m.save()
-            tm = TestMetric(metric=m, test=test)
-            tm.save()
-
-        elif url:
-          # then, it goes to SiteMetric
-
-          site = Site.objects.filter(name=plot_title)
-          if site:
-
-            site_metric = test.getSiteMetrics_for_test.filter(site=site[0]).filter(metric__metric_type__title=metric_title)
-
-            if site_metric:
-              site_metric = site_metric[0]
-              metric = site_metric.metric
-              metric.url = url
-              metric.save()
-            else:
-              m = Metric(url=url, metric_type=mt[0])
-              m.save()
-              sm = SiteMetric(metric=m, test=test, site=site[0])
-              sm.save()
-          else:
-            logger.info("Wow, I don't know this site: %s" % (plot_title))
-
-        else:
-          logger.info('No url')
-
-    else:
-      logger.info('No metric type recognised with this name: %s' % (metric_title))
-
+  logger.info('Plot (using lib)')
+  summary.plot('atlas',test,completed=completed)
   logger.info('Plot ended')
     #logger.info(value[0])    
 
@@ -1071,7 +992,7 @@ def hc_copy_thread():
   while (test_active() and not test_paused() and not ct.should_stop()):
     logger.info('HC Copy Thread: TOP OF MAIN LOOP')
     for job in jobs:
-      if test_paused() or ct.should_stop():
+      if not test_active() or test_paused() or ct.should_stop():
          break
       copyJob(job)
     test_sleep(10)
@@ -1094,7 +1015,7 @@ if hasSubjobs:
   while (test_active() and not test_paused()):
 
     #We need to refresh the test object
-    test = Test.objects.get(pk=testid)
+    test = Test.objects.get(pk=testid) #select_related('template', 'metricperm__index', 'metricperm__summary', 'metricperm__pertab').get(pk=testid)
 
     try:
       print_summary()

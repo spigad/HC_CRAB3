@@ -3,7 +3,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 
 def get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTemplatePath, type, app, *args):
-
+  querySet.select_related('test_site', 'test_site__site')
   dic = {}
   if "testlist" in type:
     dic = {'id':'test__id','status':'test__state','host':'test__host__name','cloud':'clouds','template':'test__template__description','inputtype':'test__inputtype__type','starttime':'test__starttime','endtime':'test__endtime','sites':'nr_sites','jobs':'total'}

@@ -54,9 +54,9 @@ urlpatterns += patterns('hc.core.base.views.dispatcher',
   url(r'^app/(?P<app>[a-z]+)/ajax/testalarms/(?P<test_id>\d+)/$'               , 'dispatcher', name='ajaxtestalarms-view' , kwargs={'func':'ajaxtestalarms'}),
   url(r'^app/(?P<app>[a-z]+)/ajax/testmetrics/(?P<test_id>\d+)/$'   , 'dispatcher', name='ajaxtestmetrics-view', kwargs={'func':'ajaxtestmetrics'}),
   url(r'^app/(?P<app>[a-z]+)/ajax/testsites/(?P<test_id>\d+)/$'     , 'dispatcher', name='ajaxtestsites-view'  , kwargs={'func':'ajaxtestsites'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/testjobs/(?P<test_id>\d+)/$'      , 'dispatcher', name='ajaxtestjobs-view'  , kwargs={'func':'ajaxtestjobs'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/testjobs/(?P<test_id>\d+)(?:/(?P<site_id>\d+))?/$'      , 'dispatcher', name='ajaxtestjobs-view'  , kwargs={'func':'ajaxtestjobs'}),
   url(r'^app/(?P<app>[a-z]+)/ajax/testevolution/(?P<test_id>\d+)/$' , 'dispatcher', name='ajaxtestevolution-view', kwargs={'func':'ajaxtestevolution'}),
-  url(r'^app/(?P<app>[a-z]+)/ajax/(?P<type>[a-z]+)/get_list/(?P<id>\d+)/$'     , 'dispatcher', name='get_list-view'     , kwargs={'func':'get_list'}),
+  url(r'^app/(?P<app>[a-z]+)/ajax/(?P<type>[a-z]+)/get_list/(?P<id>\d+)(?:/(?P<filter>\d+))?/$'     , 'dispatcher', name='get_list-view'     , kwargs={'func':'get_list'}),
 
 
   #ROBOT
@@ -66,12 +66,17 @@ urlpatterns += patterns('hc.core.base.views.dispatcher',
   url(r'^app/(?P<app>[a-z]+)/robot/stats/$'                   , 'dispatcher', name='robotstats-view'   , kwargs={'func':'robotstats'}),
   url(r'^app/(?P<app>[a-z]+)/robot/jobs/$'                    , 'dispatcher', name='robotjobs-view'    , kwargs={'func':'robotjobs'}),
   url(r'^app/(?P<app>[a-z]+)/robot/historical/$'              , 'dispatcher', name='historical-view'   , kwargs={'func':'historical'}),
+  url(r'^app/(?P<app>[a-z]+)/robot/incidents/$'               , 'dispatcher', name='incidents-view'    , kwargs={'func':'incidents'}),
   url(r'^app/(?P<app>[a-z]+)/robot/autoexclusion/$'           , 'dispatcher', name='autoexclusion-view', kwargs={'func':'autoexclusion'}),
+  url(r'^app/(?P<app>[a-z]+)/autoexclusion/(?P<action>[a-z]+)/(?P<sitename>[A-Za-z0-9_-]+)$'           , 'dispatcher', name='autoexclusion_set-view', kwargs={'func':'autoexclusion_set'}),
 
   #STATS
   url(r'^app/(?P<app>[a-z]+)/stats/$'                         , 'dispatcher', name='stats-view'      , kwargs={'func':'stats'}),
   url(r'^app/(?P<app>[a-z]+)/evolution/$'                     , 'dispatcher', name='evolution-view'  , kwargs={'func':'evolution'}),
   url(r'^app/(?P<app>[a-z]+)/statistics/$'                    , 'dispatcher', name='statistics-view' , kwargs={'func':'statistics'}),
+  url(r'^app/(?P<app>[a-z]+)/joberrors/$'                    , 'dispatcher', name='joberrors-view' , kwargs={'func':'joberrors'}),
+  url(r'^app/(?P<app>[a-z]+)/abortedjobs/$'                    , 'dispatcher', name='abortedjobs-view' , kwargs={'func':'abortedjobs'}),
+  url(r'^app/(?P<app>[a-z]+)/failedjobs/$'                    , 'dispatcher', name='failedjobs-view' , kwargs={'func':'failedjobs'}),
 
 
   #XHR

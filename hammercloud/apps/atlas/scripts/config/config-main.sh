@@ -29,7 +29,7 @@ then
     HC_MODE="default"
 fi
 
-if [ "$HC_MODE" != default -a "$HC_MODE" != t3 ]
+if [ "$HC_MODE" != default -a "$HC_MODE" != t3 -a "$HC_MODE" != prod -a "$HC_MODE" != experimental ]
 then
     echo '    _ Wrong mode, '$HC_MODE
     echo '    _ Using default HC_MODE=default'
@@ -39,6 +39,15 @@ fi
 export HC_MODE=$HC_MODE
 echo '  HC_MODE='$HC_MODE
 
+if [ "$HC_MODE" == prod ]
+then
+    #Set PROXY for Production testing
+    export X509_USER_PROXY=$HCAPP/config/x509prod
+else
+    export X509_USER_PROXY=$HCAPP/config/x509up
+fi
+echo '  X509_USER_PROXY='$X509_USER_PROXY
+
 HAMMERCLOUD_ORIGINAL_PYTHONPATH=$PYTHONPATH:$HCDIR/external/ganga/install/HEAD/python
 HAMMERCLOUD_ORIGINAL_PATH=$PATH
 
@@ -46,7 +55,8 @@ HAMMERCLOUD_ORIGINAL_PATH=$PATH
 #   creates testdirs/test_N/jobs
 source /afs/cern.ch/atlas/offline/external/GRID/DA/panda-client/latest/etc/panda/panda_setup.sh
 echo '  Sourced PanDA tools.'
-source /afs/cern.ch/atlas/offline/external/GRID/ddm/DQ2Clients/setup.sh
+#source /afs/cern.ch/atlas/offline/external/GRID/ddm/DQ2Clients/setup.sh
+source /afs/cern.ch/atlas/offline/external/GRID/ddm/DQ2Clients/slc5_setup.sh
 echo '  Sourced DQ2 Client.'
 
 #Dirty hack to use our own Ganga, but with our environment

@@ -218,3 +218,13 @@ class TemplateFeed(TemplateFeedBase):
 class TestFeed(TestFeedBase):
   pass
 
+
+##
+## BLACKLISTING CLASSES
+##
+## *BlacklistEvent
+##
+
+class BlacklistEvent(BlacklistEventBase):
+  pass
+

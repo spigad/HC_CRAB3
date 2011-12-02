@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<serviceupdate xmlns="http://sls.cern.ch/SLS/XML/update">
+  <id>HC.CMS</id>
+  <availability>###AVAILABILITY###</availability>
+  <timestamp>###TIMESTAMP###</timestamp>
+  <validityduration>PT30M</validityduration>
+  <refreshperiod>PT5M</refreshperiod>
+  <lemon>
+    <host>vocms38</host>
+    <host>vocms06</host>
+    <host>vocms57</host>
+  </lemon>
+</serviceupdate>

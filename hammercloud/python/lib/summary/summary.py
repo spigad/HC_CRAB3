@@ -7,7 +7,7 @@ from hc.core.utils.plots.charts import hist,pie,line
 
 import numpy
 
-def summarize(app,test):
+def summarize(app,test,completed=False):
 
   now = datetime.now()
 
@@ -22,16 +22,16 @@ def summarize(app,test):
   Qobjects['metric_type'] = list(set(list(test.metricperm.index.all()) + list(test.metricperm.pertab.all()) + list(test.metricperm.summary.all())))
   Qobjects['site']        = [ ts.site for ts in test.getTestSites_for_test.all() ]
 
-  commands = {'sort_by':'test','type':'raw_value','completed':False}
+  commands = {'sort_by':'test','type':'raw_value','completed':completed}
 
   title,values = stats.process(Qobjects,commands)[0]
   values = dict(values)
 
-  s_t.submitted = float(test.getResults_for_test.filter(ganga_status='s').count())
-  s_t.running   = float(test.getResults_for_test.filter(ganga_status='r').count())
-  s_t.completed = float(test.getResults_for_test.filter(ganga_status='c').count())
-  s_t.failed    = float(test.getResults_for_test.filter(ganga_status='f').count())
-  s_t.total     = float(test.getResults_for_test.count())
+  s_t.submitted = float(test.getResults_for_test.filter(ganga_status='s').exclude(ganga_subjobid=1000000).count())
+  s_t.running   = float(test.getResults_for_test.filter(ganga_status='r').exclude(ganga_subjobid=1000000).count())
+  s_t.completed = float(test.getResults_for_test.filter(ganga_status='c').exclude(ganga_subjobid=1000000).count())
+  s_t.failed    = float(test.getResults_for_test.filter(ganga_status='f').exclude(ganga_subjobid=1000000).count())
+  s_t.total     = float(test.getResults_for_test.exclude(ganga_subjobid=1000000).count())
 
   if s_t.total:
     s_t.c_t = s_t.completed / s_t.total
@@ -64,11 +64,11 @@ def summarize(app,test):
   evol_lock   = SummaryEvolution.objects.filter(test=test).filter(time__gt=frozen_time-timedelta(minutes=5))
 
   for sts in s_t_s:
-    sts.submitted = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='s').count())
-    sts.running   = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='r').count())
-    sts.completed = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='c').count())
-    sts.failed    = float(test.getResults_for_test.filter(site=sts.test_site.site).filter(ganga_status='f').count())
-    sts.total     = float(test.getResults_for_test.filter(site=sts.test_site.site).count())
+    sts.submitted = float(test.getResults_for_test.filter(site=sts.test_site.site).exclude(ganga_subjobid=1000000).filter(ganga_status='s').count())
+    sts.running   = float(test.getResults_for_test.filter(site=sts.test_site.site).exclude(ganga_subjobid=1000000).filter(ganga_status='r').count())
+    sts.completed = float(test.getResults_for_test.filter(site=sts.test_site.site).exclude(ganga_subjobid=1000000).filter(ganga_status='c').count())
+    sts.failed    = float(test.getResults_for_test.filter(site=sts.test_site.site).exclude(ganga_subjobid=1000000).filter(ganga_status='f').count())
+    sts.total     = float(test.getResults_for_test.filter(site=sts.test_site.site).exclude(ganga_subjobid=1000000).count())
 
     if not evol_lock:
       #Save to Summary Evolution

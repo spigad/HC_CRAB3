@@ -1,10 +1,72 @@
-{% extends 'core/app/base.html' %}
+{% extends config.base_template %}
 
 {% block title %}{{block.super}} | AutoExclusion{% endblock %}
 
+{% block javascript %}
+  {{block.super}}
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/AC_OETags.js" language="javascript"></script>
+  <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+  <script type="text/javascript">
+  
+    // Major version of Flash required
+    var requiredMajorVersion = 8;
+    // Minor version of Flash required
+    var requiredMinorVersion = 0;
+    // Minor version of Flash required
+    var requiredRevision = 0;
+    // Version check based upon the values entered above in "Globals"
+    var hasRequestedVersion = DetectFlashVer(requiredMajorVersion, requiredMinorVersion, requiredRevision);
+
+    // TODO(rmedrano): Improve Flash detection and show a static graph if not available.
+    if (!hasRequestedVersion)
+      document.write('This site needs Flash to work properly');
+    
+    google.load('visualization', '1', {'packages':['annotatedtimeline']});
+
+    google.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('datetime', 'Date');
+      data.addColumn('number', 'Sites autoexcluded');
+      data.addColumn('string', 'title1');
+      data.addColumn('string', 'text1');
+
+      data.addRows([
+      {% for point in chart %}
+        [new Date({{ point.0.year }},{{ point.0.month|add:'-1' }},{{ point.0.day }},{{ point.0.hour }},{{ point.0.minute }},{{ point.0.second }}),
+         {{ point.1 }},
+         {% if point.2 %} '{{ point.0 }}' {% else %} undefined {% endif %},
+         {% if point.2 and point.3 %}
+           '{{ point.2|join:', ' }} blacklisted. {{ point.3|join:', ' }} went online. '
+         {% else %}
+           {% if point.2 %}
+             '{{ point.2|join:', ' }} blacklisted.'
+           {% else %}
+             {% if point.3 %}
+               '{{ point.3|join:', ' }} went online.'
+             {% else %}
+               undefined
+             {% endif %}
+           {% endif %}
+         {% endif %}],
+      {% endfor %}
+      ]);
+
+      chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div'));
+      google.visualization.events.addListener(chart, 'ready', selectRange);
+      chart.draw(data, {displayAnnotations:true, displayAnnotationsFilter:true, min:0, scaleType:'fixed', thickness: 2, fill: 30});
+    }
+
+    function selectRange(e) {
+      chart.setVisibleChartRange(new Date(chart.getVisibleChartRange().end - 259200000), chart.getVisibleChartRange().end);
+    }
+  </script>
+{% endblock %}
+
 {% block content %}
 
-  <div style="float: left;"><a href="javascript:history.go(-1)">&lt;&lt; Back</a></div>
+<div style="float: left;"><a href="javascript:history.go(-1)">&lt;&lt; Back</a></div>
 
   <h2>HC AutoExclusion Service Status</h2>
 
@@ -14,36 +76,82 @@
 
   {% else %}
 
-    {% if app == 'atlas'%}
+{% block app_notes %}{% endblock %}
 
-    <p>
-      HammerCloud will automatically set a site to brokeroff status if it fails FUNCTIONAL tests. See the policy 
-      <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud#10_HammerCloud_Automatic_Site_Ex">here</a>.
-    </p>
+<p>HammerCloud will automatically set a site to brokeroff status if it fails FUNCTIONAL tests. See the policy <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud#10_HammerCloud_Automatic_Site_Ex">here</a>.</p>
 
-    <p>
-      It is possible to disable this service on a site-by-site basis (see link above). 
-      The sites listed below have an explicit setting. Sites labelled "disable" will not be set to "brokeroff", 
-      even if they are failing test jobs. Site not listed are "enabled"; they will be auto-excluded in PanDA when necessary.
-    <p>
-
-    {% endif %}
-
-    <table cellspacing="10">
-
-    {% if site_options %}
-      {% for so in site_options %}
-        <tr>
-          <td>{{ so.site.name }}</td><td>{{ so.option_value }}</td>
-        </tr>
+<h3 style="clear:both">{{ main_title }}</h3>
+<form method="get" name="Form" action="">
+  <label>Select Cloud:
+    <select name="cloud" onchange="document.forms['Form'].submit()">
+      <option value="">Overall</option>
+      <option value="" selected="selected">---</option>
+      {% for c in clouds %}
+      <option value="{{ c.id }}">{{ c.code }}</option>
       {% endfor %}
-    {% else %}
-      No entries.
-    {% endif %}
+  </select></label>
+  <label>Select Site:
+    <select name="site" onchange="document.forms['Form'].submit()">
+      <option value="">Overall</option>
+      <option value="" selected="selected">---</option>
+      {% for s in sites %}
+      <option value="{{ s.id }}">{{ s.name }}</option>
+      {% endfor %}
+  </select></label>
+</form>
+<div id="chart_div" style="width: 980px; height: 420px; margin: 10px 5px 25px auto;"></div>
 
-    </table>
-
+<div style="float:left;font-size:smaller;">
+<h3>Top excluded sites in last 7 days</h3>
+<div style="float:left; margin:0px;">
+  {% if top_week %}
+  <table id="panda_report">
+    <tr><th>Site</th><th>Exclusions</th></tr>
+    {% for ta in top_week %}
+    <tr><td>{{ ta.0 }}</td><td>{{ ta.1 }}</td></tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p>No data available.</p>
   {% endif %}
+</div>
+{% block addtional_week %}{% endblock %}
+</div>
+
+<div style="float:right;font-size:smaller;">
+<h3>Top excluded sites in last 30 days</h3>
+<div style="float:left; margin:0px;">
+  {% if top_month %}
+  <table id="panda_report">
+    <tr><th>Site</th><th>Exclusions</th></tr>
+    {% for ta in top_month %}
+    <tr><td>{{ ta.0 }}</td><td>{{ ta.1 }}</td></tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p>No data available.</p>
+  {% endif %}
+</div>
+{% block addtional_month %}{% endblock %}
+</div>
+
+<div style="clear:both;font-size:smaller;padding-top:1em">
+  <h3>Autoexclusion service status</h3>
+  {% if site_options %}
+  <table cellspacing="10" style="margin-right:auto;margin-left:auto">
+    <tr><th>Site</th><th>Service status</th></tr>
+    {% for so in site_options %}
+    <tr><td>{{ so.site.name }}</td><td>{{ so.option_value }}</td></tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p>No data available.</p>
+  {% endif %}
+</div>
+
+<p style="clear:both;font-size:smaller">Note: It is possible to disable this service on a site-by-site basis (see <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud#10_HammerCloud_Automatic_Site_Ex">policy</a>). The sites listed above have an explicit setting. Sites labelled "disable" will not be set to "brokeroff", even if they are failing test jobs. Site not listed are "enabled"; they will be auto-excluded in PanDA when necessary.</p>
+
+{% endif %}
 
 {% endblock %}
 

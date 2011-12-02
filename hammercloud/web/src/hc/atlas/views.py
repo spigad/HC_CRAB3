@@ -1,6 +1,8 @@
 from hc.core.base.views.decorator import GenView_dec
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_page
 
+@cache_page(60 * 5)
 @GenView_dec(params={'on':True})
 def index(request):
   pass
@@ -84,7 +86,7 @@ def site(request,site_id):
 def templates(request):
   pass
 
-@login_required
+#@login_required
 @GenView_dec(params={'on':True})
 def template(request,template_id):
   pass
@@ -137,6 +139,10 @@ def ajaxtestjobs(request,test_id):
   pass
 
 @GenView_dec(params={'on':True})
+def ajaxtestjobsbysite(request,test_id,site_id):
+  pass
+
+@GenView_dec(params={'on':True})
 def ajaxtestevolution(request,test_id):
   pass
 
@@ -177,8 +183,21 @@ def robotstats(request):
 def robotjobs(request):
   pass
 
-@GenView_dec(params={'on':True,'autoexclusion':{'option_name':'autoexclusion','option_value':'disable','site__name__startswith':'ANALY'}})
+@GenView_dec(params={'on':True})
+def historical(request):
+  pass
+
+@GenView_dec(params={'on':True})
+def incidents(request):
+  pass
+
+@cache_page(60 * 30)
+@GenView_dec(params={'on':True,'autoexclusion':{'option_name':'autoexclusion','option_value':'disable','site__name__startswith':'ANALY'},'extra_report':'hc.atlas.models.blacklisting_panda_report'})
 def autoexclusion(request):
+  pass
+
+@GenView_dec(params={'on':True})
+def autoexclusion_set(request):
   pass
 
 #######################################################
@@ -186,9 +205,26 @@ def autoexclusion(request):
 #######################################################
 
 @GenView_dec(params={'on':True})
+def evolution(request):
+  pass
+
+@GenView_dec(params={'on':True})
 def stats(request):
   pass
 
 @GenView_dec(params={'on':True})
 def statistics(request):
+  pass
+
+@cache_page(60 * 60 * 2)
+@GenView_dec(params={'on':True})
+def joberrors(request):
+  pass
+
+@GenView_dec(params={'on':True,'field':'reason'})
+def abortedjobs(request):
+  pass
+
+@GenView_dec(params={'on':True,'field':'exit_status_2'})
+def failedjobs(request):
   pass

@@ -1,0 +1,230 @@
+#!/usr/bin/env python
+
+"""Module for updating and generating the SLS and accounting information for HammerCloud."""
+
+import datetime
+import getopt
+import os.path
+import sys
+import urllib2
+from django.db import connections
+
+APPS = ('atlas', 'cms', 'lhcb')
+
+URLs = {'portal': 'http://hammercloud.cern.ch/hc/',
+        'atlas': 'http://hammercloud.cern.ch/atlas/',
+        'cms': 'http://hammercloud.cern.ch/hc/app/cms/',
+        'lhcb': 'http://hammercloud.cern.ch/hc/app/lhcb/',
+        'voatlas159': 'http://voatlas159.cern.ch/'}
+
+INPUT_DIR = '/data/hc/sls/templates/'
+OUTPUT_DIR = '/data/hc/sls/output/'
+
+
+class Usage(Exception):
+    """Custom exception for main handler."""
+    def __init__(self, msg):
+        Exception.__init__(self)
+        self.msg = msg
+
+
+def check_db(db_alias):
+    """Checks the MySQL db is is up and responds to a dummy query."""
+    try:
+        c = connections[db_alias].cursor()
+        c.execute('SELECT NOW();')
+        r = c.fetchone()
+        c.close()
+        if r is None or len(r) != 1:
+            return False
+        return True
+    except:
+        return False
+
+
+def check_url(url):
+    """Checks the HTTP status code of a given URL."""
+    try:
+        page = urllib2.urlopen(url)
+        if page.code / 100 == 2:
+            return True
+        else:
+            return False
+    except:
+        return False
+
+
+def replace_in_file(input_path, output_path, subs):
+    """Replaces the subs pairs and writes to output."""
+    template = open(input_path)
+    output = open(output_path, 'w')
+    for l in template.xreadlines():
+        for k, v in subs.iteritems():
+            l = l.replace(k, str(v))
+        output.write(l)
+    output.close()
+    template.close()
+
+
+def get_autoexclusions():
+    """Gets the number of autoexclusion exvents for ATLAS for the last 24 hours."""
+    try:
+        curs = connections['atlas'].cursor()
+        curs.execute(r"""SELECT COUNT(*)
+                           FROM test_incidence
+                          WHERE comment LIKE '%will be set to brokeroff%'
+                                AND comment NOT LIKE '%by an external tool or user%'
+                                AND mtime >= DATE_SUB(NOW(), INTERVAL 1 DAY);""")
+        exclusions = curs.fetchone()[0]
+        curs.close()
+        return exclusions
+    except:
+        return 0
+
+
+def get_tests_running(app):
+    """Gets the number of tests running (in terms that finish today) for a given instance."""
+    try:
+        curs = connections[app].cursor()
+        curs.execute(r"SELECT COUNT(*) FROM test WHERE endtime >= DATE_SUB(NOW(), INTERVAL 1 DAY);")
+        total = curs.fetchone()[0]
+        query = r"""SELECT COUNT(*)
+                      FROM test AS t
+                           INNER JOIN template AS tt ON t.template = tt.id
+                     WHERE tt.category = %s
+                           AND t.endtime >= DATE_SUB(NOW(), INTERVAL 1 DAY);"""
+        curs.execute(query, ['functional'])
+        functional = curs.fetchone()[0]
+        curs.execute(query, ['stress'])
+        stress = curs.fetchone()[0]
+        curs.execute(r"SELECT COUNT(*) FROM test WHERE state = 'error' AND endtime >= DATE_SUB(NOW(), INTERVAL 1 DAY);")
+        error = curs.fetchone()[0]
+        curs.close()
+        return (total, functional, stress, error)
+    except:
+        return (0, 0, 0, 0)
+
+
+def get_website_statuses():
+    """Returns the list of sites and statuses."""
+    return [(service, check_url(url)) for service, url in URLs.iteritems()]
+
+
+def get_database_statuses():
+    """Returns the list of sites and web_stats."""
+    return [(alias, check_db(alias)) for alias in connections]
+
+
+def get_up(stats, instance=None):
+    """Returns the number of elements up."""
+    def count(x, y):
+        """Counts and filters."""
+        if y[1] and (instance is None or instance == y[0]):
+            return x+1
+        return x
+    return reduce(count, stats, 0)
+
+
+def get_availability(web_stats, db_stats, instance=None):
+    """Returns the availability value for the service."""
+    def count(x, y):
+        if instance is None or instance == y:
+            return x+1
+        return x
+    return (get_up(web_stats, instance) + get_up(db_stats, instance)) * 100 / reduce(count, URLs.keys() + list(connections), 0)
+
+
+def generate_instance_accounting(instance, web_stats, db_stats):
+    """Generates the XML file for the accounting ingotmation for a given instance."""
+    (total, functional, stress, error) = get_tests_running(instance)
+    subs = {'###DAY###': datetime.date.today().isoformat(),
+            '###WEBSITES_TARGET###': 1,
+            '###WEBSITES_UP###': get_up(web_stats, instance),
+            '###DBS_TARGET###': 1,
+            '###DBS_UP###': get_up(db_stats, instance),
+            '###TOTAL_RUNNING###': total,
+            '###FUNCTIONAL_RUNNING###': functional,
+            '###STRESS_RUNNING###': stress,
+            '###ERROR###': error}
+    if instance == 'atlas':
+        subs['###AUTOEXCLUSIONS###'] = get_autoexclusions()
+    replace_in_file(os.path.join(INPUT_DIR, 'accounting.%s.xml' % instance.lower()),
+                    os.path.join(OUTPUT_DIR, 'accounting.%s.xml' % instance.lower()),
+                    subs)
+
+
+def generate_accounting(web_stats, db_stats):
+    """Generates the XML file for the accounting information (KPIs)."""
+    subs = {'###DAY###': datetime.date.today().isoformat(),
+            '###WEBSITES_TARGET###': len(URLs),
+            '###WEBSITES_UP###': get_up(web_stats),
+            '###DBS_TARGET###': len(list(connections)),
+            '###DBS_UP###': get_up(db_stats)}
+    replace_in_file(os.path.join(INPUT_DIR, 'accounting.xml'),
+                    os.path.join(OUTPUT_DIR, 'accounting.xml'),
+                    subs)
+    for instance in APPS:
+        generate_instance_accounting(instance, web_stats, db_stats)
+
+
+def generate_instance_sls(instance, web_stats, db_stats):
+    """Generates the XML file for the SLS main update."""
+    subs = {'###AVAILABILITY###': get_availability(web_stats, db_stats, instance),
+            '###TIMESTAMP###': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}
+    replace_in_file(os.path.join(INPUT_DIR, 'sls.%s.xml' % instance.lower()),
+                    os.path.join(OUTPUT_DIR, 'sls.%s.xml' % instance.lower()),
+                    subs)
+
+
+def generate_sls(web_stats, db_stats):
+    """Generates the XML file for the SLS main update."""
+    subs = {'###AVAILABILITY###': get_availability(web_stats, db_stats),
+            '###TIMESTAMP###': datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S')}
+    replace_in_file(os.path.join(INPUT_DIR, 'sls.xml'),
+                    os.path.join(OUTPUT_DIR, 'sls.xml'),
+                    subs)
+    for instance in APPS:
+        generate_instance_sls(instance, web_stats, db_stats)
+
+
+def run(sls=True, kpi=False):
+    """Main runner for the script."""
+    print sls, kpi
+    if not sls and not kpi:
+        raise Usage('Invalid mode (neither SLS or KPIs generation)')
+    web_stats = get_website_statuses()
+    db_stats = get_database_statuses()
+    if sls:
+        generate_sls(web_stats, db_stats)
+    if kpi:
+        generate_accounting(web_stats, db_stats)
+
+
+def main(argv=None):
+    """Main function."""
+    if argv is None:
+        argv = sys.argv
+    try:
+        try:
+            sls = kpi = False
+            (opts, _) = getopt.getopt(argv[1:], 'm:', ['mode'])
+            for (option, value) in opts:
+                if option in ('-m', '--mode'):
+                    if value == 'sls':
+                        sls = True
+                    elif value == 'kpi':
+                        kpi = True
+                    else:
+                        raise Usage('Mode (%s) not valid. Please use sls or kpi.' % value)
+                else:
+                    assert False, 'Invalid option'
+            run(sls, kpi)
+        except getopt.error, msg:
+            raise Usage(msg)
+    except Usage, err:
+        print >>sys.stderr, err.msg
+        return 2
+
+
+if __name__ == '__main__':
+    sys.exit(main())

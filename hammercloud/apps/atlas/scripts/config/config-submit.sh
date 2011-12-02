@@ -19,6 +19,7 @@ for i
 do
   case "$i" in
         -m) shift;echo '    _ HC_MODE: '$1;HC_MODE=$1;shift;;
+        --) shift
   esac
 done
 
@@ -29,7 +30,7 @@ then
     HC_MODE="default"
 fi
 
-if [ "$HC_MODE" != default -a "$HC_MODE" != t3 ]
+if [ "$HC_MODE" != default -a "$HC_MODE" != t3 -a "$HC_MODE" != prod -a "$HC_MODE" != experimental ]
 then
     echo '    _ Wrong mode, '$HC_MODE
     echo '    _ Using default HC_MODE=default'
@@ -38,6 +39,15 @@ fi
 
 export HC_MODE=$HC_MODE
 echo '  HC_MODE='$HC_MODE
+
+if [ "$HC_MODE" == prod ]
+then
+    #Set PROXY for Production testing
+    export X509_USER_PROXY=$HCAPP/config/x509prod
+else
+    export X509_USER_PROXY=$HCAPP/config/x509up
+fi
+echo '  X509_USER_PROXY='$X509_USER_PROXY
 
 HAMMERCLOUD_ORIGINAL_PYTHONPATH=$PYTHONPATH:$HCDIR/external/ganga/install/HEAD/python
 HAMMERCLOUD_ORIGINAL_PATH=$PATH

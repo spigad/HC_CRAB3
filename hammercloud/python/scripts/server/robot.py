@@ -10,6 +10,19 @@ class Robot:
       print '[ERROR][%s][robot] not available at core app.'%(app)
       return 1
 
+    # Look for the app robot script and run it.
+    app_script = custom_import('%s.python.scripts.server.robot.Robot' % (app))
+
+    if app_script:
+      try:
+        app_script().run()
+        return 1
+      except:
+        print '[ERROR][%s][blacklist] app robot script failed.' % (app)
+        return 0
+    
+    # If there is no app script, run a general one.
+
     # IMPORTS
     result = custom_import('hc.%s.models.Result'%(app))
     site   = custom_import('hc.%s.models.Site'%(app))

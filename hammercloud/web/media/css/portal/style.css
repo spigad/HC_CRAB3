@@ -49,6 +49,18 @@ td#atlas{
   color: #20548e;
 }
 
+#atlas-popover td {
+  height: auto;
+  color: black;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+#atlas-popover td a {
+  text-decoration: none;
+  color: #20548E;
+}
+
 td#cms{
   color: #660000;#af4724;
 }

@@ -9,8 +9,10 @@ from hc.core.utils.hc.stats import Stats
 from hc.core.base.forms import forms
 
 from hc.core.base.views.json.records import get_records
-from django.db.models import Min,Max,Count
+from django.db.models import Min,Max,Count,Q
 from django.forms.models import modelformset_factory
+from django.core.cache import cache
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
@@ -22,7 +24,7 @@ from datetime import date,timedelta,datetime
 
 from hc.core.base.views import configuration
 
-import re,time
+import dateutil.parser,re,time
 
 #######################################################
 ## DEFAULT CONTEXT
@@ -620,14 +622,14 @@ class GenericView():
     help = True
 
     #Here there is no customization allowed.
-    return render_to_response('core/app/test/testlist.html', locals(), context_instance = RequestContext(request))
+    return render_to_response('core/app/test/testlist.html', locals(), context_instance = RequestContext(request, {}, [defaultContext]))
 
 
 #######################################################
 ## AJAX BLOCK
 #######################################################
 
-  def get_list(self,request,type,id,dic={'SummaryTest':None,'SummaryTestSite':None,'SummaryRobot':None,'Result':None},*args,**kwargs):
+  def get_list(self,request,type,id,filter,dic={'SummaryTest':None,'SummaryTestSite':None,'SummaryRobot':None,'Result':None},*args,**kwargs):
 
     summary_test = dic['SummaryTest']
     app          = summary_test.__module__.split('.')[1]
@@ -645,13 +647,13 @@ class GenericView():
       jsonTemplatePath += 'testsites.txt'
 
     elif type == 'testsummary':
-      querySet = summary_test_site.objects.filter(test__id=id)
-      metr = querySet[0].test.metricperm.summary.all() 
+      querySet = summary_test_site.objects.select_related('site', 'test_site', 'test_site__site', 'test__metricperm', 'test__metricperm__summary').filter(test__id=id)
+      metr = querySet[0].test.metricperm.summary.all()
       columnIndexNameMap = {0:'test_site__site__name'} 
       for i in xrange(0,len(metr)):
         metric = metr[i].name
         columnIndexNameMap[i+1] = metr[i].name
-        searchableColumns[metr[i].name] = metr[i].name        
+        searchableColumns[metr[i].name] = metr[i].name
 
       jsonTemplatePath = str(app)+'/json/'+str(querySet[0].test.metricperm.name)+'.txt'
 
@@ -687,6 +689,13 @@ class GenericView():
 
     elif type == 'testjobs':
       querySet = result.objects.filter(test__id=id).exclude(ganga_subjobid=1000000)
+      if filter is not None:
+        try:
+          site_id = int(filter)
+          if site_id > 0: 
+            querySet = querySet.filter(site__id=filter)
+        except:
+          pass
       columnIndexNameMap = {0:'ganga_status',1:'site__name',2:'ganga_jobid',3:'ganga_subjobid',4:'backendID',5:'submit_time',6:'start_time',7:'stop_time',8:'reason'}
       jsonTemplatePath += 'testjobs.txt'
 
@@ -754,16 +763,23 @@ class GenericView():
     c = Context({'plots':plots,'app':app,'test':test})
     return HttpResponse(t.render(c))
 
-  def ajaxtestjobs(self,request,test_id,dic={'Test':None},*args,**kwargs):
+  def ajaxtestjobs(self,request,test_id,site_id,dic={'Test':None,'Site':None},*args,**kwargs):
 
     test = dic['Test']
+    site = dic['Site']
     app  = test.__module__.split('.')[1]
 
     test = get_object_or_404(test,pk=test_id)
+    try:
+      site_id = int(site_id)
+      site = site.objects.get(id=site_id)
+    except:
+      site = None
+      site_id = 0
     type = 'testjobs'
 
     t = loader.select_template(['%s/test/testjobs.html'%(app),'core/app/test/testjobs.html'])
-    c = Context({'app':app,'test':test,'type':type, 'MEDIA_URL':settings.MEDIA_URL})
+    c = Context({'app':app,'test':test,'site':site_id,'type':type, 'MEDIA_URL':settings.MEDIA_URL})
     return HttpResponse(t.render(c))
 
   def ajaxtestevolution(self,request,test_id,dic={'Test':None},*args,**kwargs):
@@ -890,16 +906,17 @@ class GenericView():
 ## ROBOT BLOCK
 #######################################################
 
-  def robot(self,request,dic={'Site':None,'Cloud':None,'Backend':None},*args,**kwargs):
+  def robot(self,request,dic={'Site':None,'SiteOption':None,'Cloud':None,'Backend':None},*args,**kwargs):
 
     site = dic['Site']
+    siteoption = dic['SiteOption']
     app  = site.__module__.split('.')[1]
   
-    sites    = site.objects.order_by('cloud')
+    sites    = list(site.objects.filter(enabled=True).exclude(id__in=map(lambda x: x.site_id, siteoption.objects.filter(option_name='autoexclusion').filter(option_value='disable'))))
     cloud    = dic['Cloud']
-    clouds   = cloud.objects.all()
+    clouds   = list(cloud.objects.exclude(code__contains='ALL').exclude(name__contains='TEST'))
     backend  = dic['Backend']
-    backends = backend.objects.all()
+    backends = list(backend.objects.all())
 
     dh = Datahelper()
 
@@ -907,9 +924,12 @@ class GenericView():
     if not bool(re.compile(r'[^0-9-]').search(day)):
       day = datetime(*time.strptime(day, "%Y-%m-%d")[0:5])
     else:
-      day = date.today()-timedelta(1)
+      day = date.today()
+      #FIXME: This is not generic!
+      if app != 'atlas':
+        day = date.today()-timedelta(1)
 
-    sites = dh.annotateSitesEfficiency(sites,day)  
+    sites = dh.annotateSitesEfficiency(sites,day,app)
 
     t = loader.select_template(['%s/robot/robot.html'%(app),'core/app/robot/robot.html'])
     c = RequestContext(request,
@@ -1081,28 +1101,103 @@ class GenericView():
                     )
     return HttpResponse(t.render(c))
 
-  def autoexclusion(self,request,dic={'SiteOption':None},*args,**kwargs):
+  def incidents(self,request,dic={'TestLog':None,'Site':None},*args,**kwargs):
+
+    tl   = dic['TestLog']
+    si   = dic['Site']
+    app  = tl.__module__.split('.')[1]
+
+    q = request.GET.get('q', None)
+    try:
+        hours = int(request.GET.get('hours', ''))
+    except ValueError, TypeError:
+        hours = None
+    try:
+        page = int(request.GET.get('page', '1'))
+    except ValueError:
+        page = 1
+    try:
+        site_name = request.GET.get('site', None)
+    except ValueError, TypeError:
+        site_name = None
+    try:
+        severity = request.GET.get('severity', None)
+    except ValueError, TypeError:
+        severity = None
+    incidents = tl.objects.get_filtered_incidents(query=q,
+                                                  time=hours,
+                                                  site_name=site_name,
+                                                  severity=severity)
+    sites = si.objects.filter(enabled=True).exclude(name__contains='DISK')
+    severities = (u'white+blacklisting',)+zip(*tl.SEVERITY_CHOICES)[0]
+    paginator = Paginator(list(incidents), 25)
+    try:
+        incident_list = paginator.page(page)
+    except (EmptyPage, InvalidPage):
+        incident_list = paginator.page(paginator.num_pages)
+    t = loader.select_template(['%s/robot/incidents.html'%(app),'core/app/robot/incidents.html'])
+    c = RequestContext(request, locals(), [defaultContext])
+    return HttpResponse(t.render(c))
+
+  def autoexclusion(self,request,dic={'SiteOption':None, 'Cloud':None, 'Site':None, 'BlacklistEvent':None},*args,**kwargs):
 
     so   = dic['SiteOption']
+    cl   = dic['Cloud']
+    si   = dic['Site']
+    be   = dic['BlacklistEvent']
     app  = so.__module__.split('.')[1]
 
     params = {}
     if kwargs.has_key('params'):
-      params = kwargs['params']    
+      params = kwargs['params']
 
+    clouds       = []
+    sites        = []
     site_options = []
     message      = ''
+    ext          = ''
+    chart        = None
+    top_month    = None
+    top_week     = None
+    top_month_extra = None
+    top_week_extra = None
 
     #Autoexclusion enabled
-    if params.has_key('autoexclusion'):  
-      site_options = so.objects.filter(**params['autoexclusion']).order_by('site__name')
+    if params.has_key('autoexclusion'):
+      try:
+          cloud_id = int(request.GET.get('cloud', '0'))
+      except ValueError, IndexError:
+          cloud_id = None
+      try:
+          site_id = int(request.GET.get('site', '0'))
+      except ValueError, IndexError:
+          site_id = None
+      site_options = so.objects.select_related().filter(**params['autoexclusion']).order_by('site__name')
+      clouds = cl.objects.exclude(name__startswith='ALL')
+      sites = si.objects.exclude(enabled=False)
+      chart = be.objects.get_autoexclusion_chart(site=site_id, cloud=cloud_id)
+      top_month = be.objects.get_top_excluded_sites(time_limit=30)
+      top_week = be.objects.get_top_excluded_sites(time_limit=7)
+      
+      if params.has_key('extra_report'):
+        extra_report = custom_import(params['extra_report'])
+        if extra_report:
+          top_month_extra = cache.get('%s_top_month_extra'%app)
+          if not top_month_extra:
+            top_month_extra = extra_report(days=30)
+            cache.set('%s_top_month_extra'%app, top_month_extra, 7200)
+          top_week_extra = cache.get('%s_top_week_extra'%app)
+          if not top_week_extra:
+            top_week_extra = extra_report(days=7)
+            cache.set('%s_top_week_extra'%app, top_week_extra, 3600)
+        else:
+          raise RuntimeError('Could no import extra_report for %s: %s, %s' % (app, params['extra_report'], extra_report))
+      
     else:
       message = 'AutoExclussion not enabled for %s.'%(app)
 
     t = loader.select_template(['%s/robot/autoexclusion.html'%(app),'core/app/robot/autoexclusion.html'])
-    c = RequestContext(request,
-                       {'site_options': site_options,'message':message},
-                       [defaultContext])
+    c = RequestContext(request, locals(), [defaultContext])
 
     return HttpResponse(t.render(c))
 
@@ -1203,7 +1298,7 @@ class GenericView():
     else:
 
       statistics = {}
-      stats = Stats()
+      stats = Stats() 
 
       if commands['type'] == 'timeline':
 
@@ -1233,3 +1328,144 @@ class GenericView():
     t = loader.select_template(['%s/stats/statistics.html'%(app),'core/app/stats/statistics.html'])
     return HttpResponse(t.render(c))
 
+  def joberrors(self,request,dic={'Site':None,'Result':None, 'Cloud':None},*args,**kwargs):
+    site = dic['Site']
+    cloud = dic['Cloud']
+    result = dic['Result']
+    app = site.__module__.split('.')[1]
+
+    params = {}
+    if kwargs.has_key('params'):
+      params = kwargs['params']
+
+    site_filters = Q()
+    result_filters = Q()
+
+    # Get the GET parameters for the QuerySet
+    start_date = request.GET.get('start_date', None)
+    if start_date:
+      result_filters = result_filters & Q(mtime__gte=dateutil.parser.parse(start_date))
+    end_date = request.GET.get('end_date', None)
+    if end_date:
+      result_filters = result_filters & Q(mtime__lte=dateutil.parser.parse(end_date))
+    tests = filter(None, request.GET.getlist('test'))
+    if tests:
+      result_filters = result_filters & Q(test__in=tests)
+    sites = filter(None, request.GET.getlist('site'))
+    if sites:
+      site_filters = site_filters & Q(id__in=sites)
+    clouds = filter(None, request.GET.getlist('cloud'))
+    if clouds:
+      site_filters = site_filters & Q(cloud__id__in=clouds)
+    templates = filter(None, request.GET.getlist('template'))
+    if templates:
+      result_filters = result_filters & Q(test__template__id__in=templates)
+
+    sites_list = site.objects.exclude(enabled=False)
+    clouds_list = cloud.objects.all()
+
+    site_data = []
+    sites_filtered = site.objects.filter(site_filters)
+    results_filtered = result.objects.filter(result_filters)
+
+    for s in sites_filtered.filter(enabled=1):
+      r = results_filtered.filter(site=s)
+      q = Q(ganga_status='f')
+      if params.has_key('failed'):
+        q = q & Q(**params['failed'])
+      i = {'site': s,
+           'finished': r.count(),
+           'failed': r.filter(q).count(),
+           'aborted': 0,
+           'efficiency': 0.0}
+      total_failed = r.filter(ganga_status='f').count()
+      i['aborted'] = total_failed - i['failed']
+      if i['finished'] > 0:
+        i['efficiency'] = float(i['finished'] - total_failed) / float(i['finished'])
+      site_data.append(i)
+
+    #site_data.sort(key=lambda x: x['efficiency'], reverse=True)
+
+    # TODO(rmedrano): Avoid passing the request by creating a custom url_with_get tag.
+    get_params = request.GET.copy()
+    try:
+      del get_params['site']
+    except KeyError:
+      pass
+    c = RequestContext(request, locals(), [defaultContext])
+    t = loader.select_template(['%s/stats/joberrors.html'%(app),'core/app/stats/joberrors.html'])
+    return HttpResponse(t.render(c))
+
+  def abortedjobs(self,request,dic={'Site':None,'Result':None},*args,**kwargs):
+    site = dic['Site']
+    result = dic['Result']
+    app = site.__module__.split('.')[1]
+
+    params = {}
+    if kwargs.has_key('params'):
+      params = kwargs['params']
+
+    # Get the GET parameters for the QuerySet
+    result_filters = Q()
+    start_date = request.GET.get('start_date', None)
+    if start_date:
+      result_filters = result_filters & Q(mtime__gte=dateutil.parser.parse(start_date))
+    end_date = request.GET.get('end_date', None)
+    if end_date:
+      result_filters = result_filters & Q(mtime__lte=dateutil.parser.parse(end_date))
+    tests = filter(None, request.GET.getlist('test'))
+    if tests:
+      result_filters = result_filters & Q(test__in=tests)
+    templates = filter(None, request.GET.getlist('template'))
+    if templates:
+      result_filters = result_filters & Q(test__template__id__in=templates)
+
+    site = request.GET.get('site', None)
+    if not site:
+      raise Http404
+
+    site_data = []
+    results_filtered = result.objects.filter(result_filters)
+
+    site_data = results_filtered.values(params['field']).filter(site=site).annotate(jcount=Count(params['field']))
+
+    c = RequestContext(request, {'site_data': site_data}, [defaultContext])
+    t = loader.select_template(['%s/stats/abortedjobs.html'%(app),'core/app/stats/abortedjobs.html'])
+    return HttpResponse(t.render(c))
+
+  def failedjobs(self,request,dic={'Site':None,'Result':None},*args,**kwargs):
+    site = dic['Site']
+    result = dic['Result']
+    app = site.__module__.split('.')[1]
+
+    params = {}
+    if kwargs.has_key('params'):
+      params = kwargs['params']
+
+    # Get the GET parameters for the QuerySet
+    result_filters = Q()
+    start_date = request.GET.get('start_date', None)
+    if start_date:
+      result_filters = result_filters & Q(mtime__gte=dateutil.parser.parse(start_date))
+    end_date = request.GET.get('end_date', None)
+    if end_date:
+      result_filters = result_filters & Q(mtime__lte=dateutil.parser.parse(end_date))
+    tests = filter(None, request.GET.getlist('test'))
+    if tests:
+      result_filters = result_filters & Q(test__in=tests)
+    templates = filter(None, request.GET.getlist('template'))
+    if templates:
+      result_filters = result_filters & Q(test__template__id__in=templates)
+
+    site = request.GET.get('site', None)
+    if not site:
+      raise Http404
+
+    site_data = []
+    results_filtered = result.objects.filter(result_filters)
+
+    site_data = results_filtered.values(params['field']).filter(site=site).annotate(jcount=Count(params['field']))
+
+    c = RequestContext(request, {'site_data': site_data}, [defaultContext])
+    t = loader.select_template(['%s/stats/failedjobs.html'%(app),'core/app/stats/failedjobs.html'])
+    return HttpResponse(t.render(c))

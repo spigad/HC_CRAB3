@@ -30,12 +30,12 @@ minValidity = 00:15
 #EDG_SETUP = /data/hammercloud/atlas/config/grid_env_hc.sh
 #EDG_SETUP = /afs/cern.ch/sw/ganga/install/config/grid_env_31.sh
 #EDG_SETUP = /afs/cern.ch/project/gd/LCG-share/current_3.1/etc/profile.d/grid_env.sh
-EDG_SETUP = /opt/glite/etc/profile.d/grid-env.sh
+EDG_SETUP = /data/hc/apps/atlas/config/grid_env_atlas.sh
 GLITE_ENABLE = True
 #GLITE_SETUP = /data/hammercloud/atlas/config/grid_env_hc.sh
 #GLITE_SETUP = /afs/cern.ch/sw/ganga/install/config/grid_env_31.sh
 #GLITE_SETUP = /afs/cern.ch/project/gd/LCG-share/current_3.1/etc/profile.d/grid_env.sh
-GLITE_SETUP = /opt/glite/etc/profile.d/grid-env.sh
+GLITE_SETUP = /data/hc/apps/atlas/config/grid_env_atlas.sh
 VirtualOrganisation = atlas
 
 [defaults_LCG]

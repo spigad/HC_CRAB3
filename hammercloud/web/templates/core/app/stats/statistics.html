@@ -1,4 +1,4 @@
-{% extends 'core/app/base.html' %}
+{% extends config.base_template %}
 
 {% block css %}
 
@@ -166,7 +166,7 @@
   $("select.multi_cloud").multiselect({ noneSelectedText:'Filter by cloud', shadow:true, minWidth:300, selectedList: 3});
   $("select.multi_test").multiselect({ noneSelectedText:'Filter by test', shadow:true, minWidth:300, selectedList: 3});
   $("select.multi_template").multiselect({ noneSelectedText:'Filter by template',shadow:true, minWidth:300, selectedList: 3});
-  $("select.sort_by").multiselect({ noneSelectedText:'Sort by' ,multiple: false, showHeader: false,
+  $("select.sort_by").multiselect({ noneSelectedText:'Group by' ,multiple: false, showHeader: false,
     selectedText: function(numChecked, numTotal, checkedItem){return $(checkedItem).attr("title");},
     click: function(event, ui){
       if (ui.value == 'site') {

@@ -4,7 +4,7 @@
     $('#testjobs').dataTable({
       "sPaginationType": 'full_numbers',
       "bServerSide": true,
-      "sAjaxSource": "{% url get_list-view app,type,test.id %}",
+      "sAjaxSource": "{% url get_list-view app,type,test.id,site %}",
       "aaSorting" : [[ 2, "desc" ]],
 
       "aoColumns":[
@@ -23,6 +23,7 @@
         }else{
           $(nRow).addClass('grey');
         }
+        {% block custom_row_callback %}{% endblock %}
         return nRow;
       }
     });

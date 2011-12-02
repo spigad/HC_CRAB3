@@ -2,6 +2,8 @@ from django.db import models
 
 from hc.core.base.models.metacreator import MetaCreator
 from hc.core.base.models.managers.objects.test_om import TestManager
+from hc.core.base.models.managers.objects.blacklistevent_om import BlacklistEventManager
+from hc.core.base.models.managers.objects.testlog_om import TestLogManager
 from hc.core.base.models.managers.functions import test_fm
 from hc.core.utils.generic.class_func import custom_import
 
@@ -310,6 +312,7 @@ class SiteBase(models.Model):
   ddm            = models.CharField(max_length=511, blank=True)
   enabled        = models.BooleanField(blank=True)
   queue          = models.CharField(max_length=511, blank=True)
+  monitoring_link= models.CharField(max_length=2047, blank=True)
   mtime          = models.DateTimeField(auto_now=True)
 
   #cloud     -> hc.core.base.models.keys.fk.generator.generateFK('Cloud','Site','cloud',{})
@@ -610,9 +613,19 @@ class TestBase(models.Model):
 
   def save(self,*args,**kwargs):
 #    self.mtime = datetime.now()
+    self.starttime = self.starttime.replace(second=0)
+    self.endtime = self.endtime.replace(second=0)
+    # Set the test on draft status to prevent race condition when saving all the
+    # test takes more than 0.
+    if self.state == 'tobescheduled':
+        final_state = self.state
+        self.state = 'draft'
+    else:
+        final_state = self.state
 
     #If we want default behaviour:
-    if args and args[0].has_key('default') and args[0]['default']:  
+    if args and args[0].has_key('default') and args[0]['default']:
+      self.state = final_state  
       super(TestBase,self).save()
       return 1
 
@@ -629,7 +642,8 @@ class TestBase(models.Model):
     t    = test.objects.filter(id = self.id)
 
     dontsave = ['error','completed']
-    if self.state in dontsave:
+    if final_state in dontsave:
+      self.state = final_state
       super(TestBase, self).save()
       return 0
 
@@ -701,6 +715,7 @@ class TestBase(models.Model):
       self.extraargs      = extraargs
       self.metricperm     = metricperm
 
+      self.state = final_state
       super(TestBase, self).save()
 
     else:
@@ -729,14 +744,14 @@ class TestBase(models.Model):
 #        #We cannot create tests in error or completed states.
 #        return 0
 
-      if not clone:
-        #HOSTS (ONLY UPDATED ON CREATION)
-        test_host      = custom_import('hc.'+self._meta.app_label+'.models.TestHost')
-        template_hosts = self.template.getTemplateHosts_for_template.all()
-        for th in template_hosts:
-          th = test_host(host = th.host, test=self)
-          th.save()
+      #HOSTS (ALWAYS GOT FROM THE TEMPLATE)
+      test_host      = custom_import('hc.'+self._meta.app_label+'.models.TestHost')
+      template_hosts = self.template.getTemplateHosts_for_template.all()
+      for th in template_hosts:
+        th = test_host(host = th.host, test=self)
+        th.save()
 
+      if not clone:
         #SITES (ONLY UPDATED ON CREATION)
         test_site      = custom_import('hc.'+self._meta.app_label+'.models.TestSite')
         template_sites = self.template.getTemplateSites_for_template.all()
@@ -790,6 +805,10 @@ class TestBase(models.Model):
                             min_queue_depth=tb.min_queue_depth,
                             max_running_jobs=tb.max_running_job)
           tb.save()
+
+      # Storing the final state.
+      self.state = final_state
+      super(TestBase, self).save()
 
       return 1
 
@@ -967,15 +986,21 @@ class TestLogBase(models.Model):
   __metaclass__ = MetaCreator
 
   SEVERITY_CHOICES = (
-    (u'common', u'common'),
-    (u'maintenance', u'maintenance'),
+    (u'blacklisting', u'blacklisting'),
+    (u'whitelisting', u'whitelisting'),
+    (u'debug',u'debug'),
+    (u'warning',u'warning'),
     (u'error',u'error'),
-    (u'other',u'other')
+    (u'testinfo',u'testinfo'),
+    (u'queuecontrol',u'queuecontrol'),
+    (u'other',u'other'),
   )
+
+  objects = TestLogManager()
 
   id          = models.AutoField(primary_key=True)
   comment     = models.CharField(max_length=4097)
-  severity    = models.CharField(choices = SEVERITY_CHOICES, max_length = 15, default='common')
+  severity    = models.CharField(choices = SEVERITY_CHOICES, max_length = 15, default='other')
   user        = models.CharField(max_length = 31)
   mtime       = models.DateTimeField(auto_now=True)
 
@@ -1266,7 +1291,11 @@ class MetricTypeBase(models.Model):
   name        = models.CharField(unique=True, max_length=255)
   title       = models.CharField(max_length=255)
   type        = models.CharField(choices = PLOT_TYPE, max_length=15)
-  description = models.CharField(max_length=2047,blank=True) 
+  description = models.CharField(max_length=2047,blank=True)
+  rate        = models.BooleanField(default=False)
+  scale_max   = models.FloatField(blank=True,null=True)
+  scale_min   = models.FloatField(blank=True,null=True)
+  hist_bins   = models.IntegerField(blank=True,null=True)
   mtime       = models.DateTimeField(auto_now=True)
 
   def __unicode__(self):
@@ -1583,3 +1612,34 @@ class SummaryEvolutionBase(models.Model):
     db_table = u'summary_evolution'
     #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
 
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+##
+## BLACKLISTING BASE CLASSES
+##
+## *BlacklistEventBase
+##
+
+class BlacklistEventBase(models.Model):
+  __metaclass__ = MetaCreator
+
+  EVENT_CHOICES = (
+    (u'blacklist', u'blacklist'),
+    (u'whitelist', u'whitelist'),
+  )
+  
+  objects = BlacklistEventManager()
+
+  id          = models.AutoField(primary_key=True)
+  event       = models.CharField(choices = EVENT_CHOICES, max_length = 31)
+  reason      = models.CharField(max_length=4095)
+  timestamp   = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
+  external    = models.BooleanField()
+
+  #test        -> hc.core.base.models.keys.fk.generator.generateFK('Test','BlacklistEvent','test',{})
+  #site        -> hc.core.base.models.keys.fk.generator.generateFK('Site','BlacklistEvent','site',{})
+
+  class Meta:
+    abstract = True
+    db_table = u'blacklist_event'
+    #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC

@@ -21,7 +21,7 @@ class UnixTimestampField(models.DateTimeField):
         self.blank, self.isnull = blank, null
         self.null = True # To prevent the framework from shoving in "not null".
        
-    def db_type(self):
+    def db_type(self, connection=None):
         typ=['TIMESTAMP']
         # See above!
         if self.isnull:
@@ -33,7 +33,7 @@ class UnixTimestampField(models.DateTimeField):
     def to_python(self, value):
         return datetime.from_timestamp(value)
    
-    def get_db_prep_value(self, value):
+    def get_db_prep_value(self, value, connection=None, prepared=False):
         if value==None:
             return None
         return strftime('%Y%m%d%H%M%S',value.timetuple())

@@ -35,15 +35,17 @@ echo ''
 if [ "$1" == "cms" ]
 then
     echo 'Synch CMS'
-    echo '--------- vocms06 --------'
-    rsync -av /data/hc/apps/cms/ --exclude '*testdirs*' --delete vocms06:/data/hc/apps/cms/
+    echo '--------- vocms207 --------'
+    rsync -av /data/hc/ --exclude '*settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude '*.jdl' --exclude '*.log' --exclude 'glite_list_match_*' --exclude 'glite_*' vocms207:/data/hc/
 fi
 
 if [ "$1" == "atlas" ]
 then
     echo 'Synch ATLAS'
     echo '-------- voatlas65 -------'
-    rsync -av /data/hc/apps/atlas/ --exclude '*testdirs*' --delete voatlas65:/data/hc/apps/atlas/
+    rsync -av /data/hc/ --exclude '*settings.py*' --exclude '*testdirs*' --exclude '*logs*' voatlas65:/data/hc/
+    echo '-------- voatlas167 -------'
+    rsync -av /data/hc/ --exclude '*settings.py*' --exclude '*testdirs*' --exclude '*logs*' voatlas167:/data/hc/
 fi
 
 rm -f /tmp/synch-app_$1.running
@@ -52,5 +54,4 @@ echo '  Lock released: '/tmp/synch-app_$1.running
 echo ''
 echo '_ End Synch APP.'
 echo ''
-
 

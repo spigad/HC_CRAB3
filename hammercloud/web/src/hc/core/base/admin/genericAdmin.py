@@ -60,7 +60,7 @@ class ActionsAdminBase(admin.ModelAdmin):
 
   def clone(self, request, queryset):  
     clone.method(self, request, queryset)
-  clone.short_description = "Clone multiple objects."  
+  clone.short_description = "Clone one/more objects."  
 
   def delete_marked(self, request, queryset):
     delete_marked.method(self, request, queryset)

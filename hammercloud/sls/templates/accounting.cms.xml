@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<serviceaccountinginfo xmlns="http://sls.cern.ch/SLS/XML/accounting">
+  <id>HC.CMS</id>
+  <day>###DAY###</day>
+  <kpis>
+    <kpi id="websites_up" name="Websites running"
+         type="numeric" unit="# of websites running" goal="more">
+      <target>###WEBSITES_TARGET###</target>
+      <value>###WEBSITES_UP###</value>
+    </kpi>
+    <kpi id="databases_up" name="Databases running"
+         type="numeric" unit="# of databases running" goal="more">
+      <target>###DBS_TARGET###</target>
+      <value>###DBS_UP###</value>
+    </kpi>
+    <kpi id="running_tests" name="Total tests running"
+         type="numeric" unit="# of tests running" goal="more">
+      <target>1</target>
+      <value>###TOTAL_RUNNING###</value>
+    </kpi>
+    <kpi id="functional_tests" name="Total functional tests running"
+         type="numeric" unit="# of tests running" goal="more">
+      <target>1</target>
+      <value>###FUNCTIONAL_RUNNING###</value>
+    </kpi>
+    <kpi id="stress_tests" name="Total stress tests running"
+         type="numeric" unit="# of tests running" goal="more">
+      <target>1</target>
+      <value>###STRESS_RUNNING###</value>
+    </kpi>
+    <kpi id="failed" name="Total tests failed"
+         type="numeric" unit="# of tests failed" goal="less">
+      <target>0</target>
+      <value>###ERROR###</value>
+    </kpi>
+  </kpis>
+</serviceaccountinginfo>

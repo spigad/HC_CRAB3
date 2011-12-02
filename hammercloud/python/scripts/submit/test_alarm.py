@@ -16,8 +16,7 @@ class TestAlarm:
     #IMPORT
     test = custom_import('hc.%s.models.Test'%(app))
 
-    hostname='vocms57.cern.ch'  
-    tests = test.objects.filter(host__name=hostname).filter(state='running')   
+    tests = test.objects.filter(host__name=hostname).filter(state='running')
     return tests
 
   def log(self,result,log,matches):
@@ -69,7 +68,7 @@ class TestAlarm:
             comment = 'Active alarms: '
             for ta in tas:
               comment += '%s '%(ta.alarm.name) 
-            testlog = test_log(test=test,comment=comment,user='gangarbt',serverity='maintenance')
+            testlog = test_log(test=test,comment=comment,user='gangarbt',serverity='testinfo')
             testlog.save()
 
         raw  = {}

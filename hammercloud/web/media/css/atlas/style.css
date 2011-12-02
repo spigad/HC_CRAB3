@@ -1,3 +1,20 @@
 #section #sec_list #datebox input{
   color: #20548e;
 }
+#atlasrobot {
+  
+}
+
+.cloud_map {
+  text-align: left;
+  width: 120px;
+}
+
+.map {
+ margin: 0;
+ padding: 0;
+}
+
+.map tr {
+  font-size: smaller;
+}

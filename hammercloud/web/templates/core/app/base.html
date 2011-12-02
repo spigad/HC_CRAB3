@@ -94,6 +94,8 @@
                 <ul>
                   <li><a href='{% url historical-view app %}'>Historical</a></li>
                   <li><a href='{% url autoexclusion-view app %}'>AutoExclusion</a></li>
+                  <li><a href='{% url incidents-view app %}'>Incidents</a></li>
+                  <li><a href='{% url joberrors-view app %}'>Job errors</a></li>
                 </ul> 
               </li>
               <li><a href="{% url more-view app %}">More HC...</a>
@@ -128,10 +130,12 @@
             <a href="https://savannah.cern.ch/projects/hammercloud/" style="color: white;">Savannah</a>
           </div>
         </div>
-        <p style="text-align: center;">
-          {% block account %}Want to modify running tests? Contact dan or johannes to create an account.<br/>
-                             <i>(You might want to use Mozilla to view this website)</i>{% endblock %}
-        </p>
+        {% block account %}{% endblock %}
+        <div id="social-bar">
+          <div style="text-align: left;margin-top:1em;float:left;">
+            <div class="g-plusone" data-size="medium" data-href="http://hammercloud.cern.ch/"></div>
+          </div>
+        </div>
     	<p style="text-align: right;">
           <a href="http://validator.w3.org/check?uri=referer"><img
 	        src="http://www.w3.org/Icons/valid-xhtml10-blue"
@@ -140,6 +144,23 @@
       {% endblock %}
 
     </div>
+    <script type="text/javascript"> 
+    var _gaq = _gaq || []; 
+    _gaq.push(['_setAccount', 'UA-244374-10']); 
+    _gaq.push(['_trackPageview']); 
+    (function() { 
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; 
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; 
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); 
+        })(); 
+    </script>
+    <script type="text/javascript">
+	  (function() {
+	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+	    po.src = 'https://apis.google.com/js/plusone.js';
+	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+	  })();
+	</script>
   </body>
 
 </html>

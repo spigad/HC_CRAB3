@@ -375,8 +375,8 @@ def process_subjob(job,subjob,thread_dirac_server):
 
   #logger.info(results)
 
-  if subjob.status in ('completed','failed'):
-    if subjob.status == 'failed':
+  if result.ganga_status in ('c','f'):
+    if result.ganga_status == 'f':
       logger.info('%s %s'%(site,result.ganga_status))
 
     logger.debug('Subjob is in final state, marking row as fixed')

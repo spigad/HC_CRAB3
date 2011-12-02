@@ -1,6 +1,8 @@
 from hc.core.base.views.decorator import GenView_dec
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_page
 
+@cache_page(60 * 5)
 @GenView_dec(params={'on':True})
 def index(request):
   pass
@@ -137,6 +139,10 @@ def ajaxtestjobs(request,test_id):
   pass
 
 @GenView_dec(params={'on':True})
+def ajaxtestjobsbysite(request,test_id,site_id):
+  pass
+
+@GenView_dec(params={'on':True})
 def ajaxtestevolution(request,test_id):
   pass
 
@@ -181,6 +187,10 @@ def robotjobs(request):
 def historical(request):
   pass
 
+@GenView_dec(params={'on':True})
+def incidents(request):
+  pass
+
 @GenView_dec(params={'on':False})
 def autoexclusion(request):
   pass
@@ -199,4 +209,16 @@ def stats(request):
 
 @GenView_dec(params={'on':True})
 def statistics(request):
+  pass
+
+@GenView_dec(params={'on':False})
+def joberrors(request):
+  pass
+
+@GenView_dec(params={'on':False})
+def abortedjobs(request):
+  pass
+
+@GenView_dec(params={'on':False})
+def failedjobs(request):
   pass

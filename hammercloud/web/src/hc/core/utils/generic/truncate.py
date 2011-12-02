@@ -6,7 +6,7 @@ def truncateList(list,top):
     where x is the number of left elements.
     '''
 
-    string = ','.join(list[:top])
+    string = ', '.join(map(str, list[:top]))
     if len(list) > top:
       string += ', %d more...'%(len(list)-top)
     return string
@@ -14,5 +14,5 @@ def truncateList(list,top):
 def truncateString(string,max):
 
     if len(string) > max:
-      string = str(string[:max])+'...'
+      string = str(string[:max])+'....'
     return string
