@@ -665,3 +665,14 @@ class TestMetricAdminBase(admin.ModelAdmin):
 
   class Meta:
     abstract = True
+
+class BlacklistEventAdminBase(admin.ModelAdmin):
+
+  list_display = ('test','timestamp','event','user')
+  fieldsets = [
+    (None,     {'fields':['test','timestamp','event','site','external','user']}),
+    ('Reason',{'fields':['reason']})
+  ]
+
+  class Meta:
+    abstract = True

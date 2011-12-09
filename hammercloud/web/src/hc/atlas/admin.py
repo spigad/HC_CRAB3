@@ -206,6 +206,8 @@ class TestStateAdmin(TestStateAdminBase):
 class TestUserAdmin(TestUserAdminBase):
   form = TestUserForm
 
+class BlacklistEventAdmin(BlacklistEventAdminBase):
+  pass
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 ##
@@ -305,6 +307,7 @@ admin.site.register(TestSite,TestSiteAdmin)
 admin.site.register(TestSiteAlarm,TestSiteAlarmAdmin)
 admin.site.register(TestState,TestStateAdmin)
 admin.site.register(TestUser,TestUserAdmin)
+admin.site.register(BlacklistEvent,BlacklistEventAdmin)
 
 admin.site.register(MetricType,MetricTypeAdmin)
 admin.site.register(Metric,MetricAdmin)

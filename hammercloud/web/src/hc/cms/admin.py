@@ -205,6 +205,8 @@ class TestStateAdmin(TestStateAdminBase):
 class TestUserAdmin(TestUserAdminBase):
   form = TestUserForm
 
+class BlacklistEventAdmin(BlacklistEventAdminBase):
+  pass
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 ##
