@@ -315,3 +315,13 @@ def blacklisting_panda_report(days=30):
     return subprocess.Popen([command, '-t', str(days), '-w'], stdout=subprocess.PIPE).communicate()[0]
   except OSError:
     return 'Could not retrieve data from PanDA incidents database.'
+
+
+##
+## MESSAGE BUS CLASSES
+##
+## *MessageBusEvent
+##
+
+class MessageBusEvent(MessageBusEventBase):
+  pass

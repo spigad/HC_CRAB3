@@ -443,3 +443,13 @@ class TestFeed(TestFeedBase):
 
 class BlacklistEvent(BlacklistEventBase):
   pass
+
+
+##
+## MESSAGE BUS CLASSES
+##
+## *MessageBusEvent
+##
+
+class MessageBusEvent(MessageBusEventBase):
+  pass

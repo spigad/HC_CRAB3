@@ -39,6 +39,7 @@ class MetaCreator(ModelBase):
   Test, TestBackend, TestCloud, TestDspattern, TestHost, TestLog, TestSite, TestState, TestUser = None, None, None, None, None, None, None, None, None
   TestSiteAlarm = None
   UsgSite = None
+  MessageBusEvent = None
 
   #RSS
   CloudFeed,SiteFeed,TemplateFeed,TestFeed = None,None,None,None

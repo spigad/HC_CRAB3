@@ -1,5 +1,6 @@
 from django.db import models
 
+from hc.core.base.models.fields import PickledObjectField
 from hc.core.base.models.metacreator import MetaCreator
 from hc.core.base.models.managers.objects.test_om import TestManager
 from hc.core.base.models.managers.objects.blacklistevent_om import BlacklistEventManager
@@ -1643,3 +1644,35 @@ class BlacklistEventBase(models.Model):
     abstract = True
     db_table = u'blacklist_event'
     #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
+
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+##
+## MESSAGE BUS CLASSES
+##
+## *MessageBusEventBase
+##
+
+class MessageBusEventBase(models.Model):
+  __metaclass__ = MetaCreator
+
+  MBUS_TYPES = (
+    (u'error', u'error'),
+    (u'incident', u'incident'),
+    (u'blacklist', u'blacklist'),
+    (u'robot', u'robot'),
+    (u'alert', u'alert'),
+  )
+
+  id          = models.AutoField(primary_key=True)
+  type        = models.CharField(choices=MBUS_TYPES, max_length=31)
+  timestamp   = models.DateTimeField()
+  mtime       = models.DateTimeField(auto_now=True)
+  processed   = models.BooleanField(default=False)
+  extra       = PickledObjectField(null=True)
+
+  #test        -> hc.core.base.models.keys.fk.generator.generateFK('Test','MessageBusEvent','test',{})
+  #site        -> hc.core.base.models.keys.fk.generator.generateFK('Site','MessageBusEvent','site',{})
+
+  class Meta:
+    abstract = True
+    db_table = u'message_bus_event'
