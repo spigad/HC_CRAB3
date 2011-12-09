@@ -525,6 +525,26 @@ class TemplateSiteBase(models.Model):
     db_table = u'template_site'
     #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
 
+class TemplateSiteAlarmBase(models.Model):
+  __metaclass__ = MetaCreator
+
+  id                    = models.AutoField(primary_key=True)
+  active                = models.BooleanField(default=True)
+  actions               = models.CharField(max_length = 1023, blank=True, null=True)
+  mtime                 = models.DateTimeField(auto_now=True)
+
+  #alarm               -> hc.core.base.models.keys.fk.generator.generateFK('Alarm','TemplateSiteAlarm','alarm',{})
+  #site                -> hc.core.base.models.keys.fk.generator.generateFK('Site','TemplateSiteAlarm','site',{})
+  #test                -> hc.core.base.models.keys.fk.generator.generateFK('Template','TemplateSiteAlarm','template',{})
+
+  def __unicode__(self):
+    return '%s - %s'%(self.test,self.site)
+
+  class Meta:
+    abstract = True
+    db_table = u'template_site_alarm'
+    #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
+
 class TemplateUserBase(models.Model):
   __metaclass__ = MetaCreator
 
@@ -806,6 +826,18 @@ class TestBase(models.Model):
                             min_queue_depth=tb.min_queue_depth,
                             max_running_jobs=tb.max_running_job)
           tb.save()
+
+        #ALARMS (ONLY UPDATED ON CREATION)
+        test_site_alarm = custom_import('hc.'+self._meta.app_label+'.models.TestSiteAlarm')
+        template_site_alarms = self.template.getTemplateSiteAlarms_for_template.all()
+
+        for tsa in template_site_alarms:
+          tsa = test_site_alarm(site=tsa.site, 
+                                test=self,
+                                alarm=tsa.alarm,
+                                active=tsa.active,
+                                actions=tsa.actions)
+          tsa.save({'new':True})
 
       # Storing the final state.
       self.state = final_state
@@ -1149,6 +1181,46 @@ class TestSiteAlarmBase(models.Model):
 
   def __unicode__(self):
     return '%s - %s'%(self.test,self.site)
+
+  def save(self,*args,**kwargs):
+    # Clone or save the TestSiteAlarm object from the TemplateSiteAlarm...
+    default = False
+    if args and args[0].has_key('default') and args[0]['default']:
+      default = True
+
+    # Only copy data from enabled sites for functional tests. All on stress.
+    if self.site.enabled or self.test.template.category == 'stress' or default:
+
+      # Check if cloning
+      clone = False
+      if args and args[0].has_key('clone') and args[0]['default']:
+        clone = True
+
+      # Check if we are creating a new objects
+      new = False
+      if args and args[0].has_key('new') and args[0]['new']:
+        new = True
+
+      if not self.test.getTestSiteAlarms_for_test.filter(site=self.site,alarm=self.alarm):
+        new = True
+
+      ## IMPORTANT!
+      ## Check that this TestSiteAlarm was not previously added
+      overwrite = False
+      test_site_alarm = self.test.getTestSiteAlarms_for_test.filter(site=self.site,alarm=self.alarm)
+      if test_site_alarm:
+        # Actions to copy data to an *existing* test_site_alarm
+        test_site_alarm = test_site_alarm[0]
+        test_site_alarm.active = self.active
+        test_site_alarm.status = self.status
+        test_site_alarm.progress = self.progress
+        test_site_alarm.log = self.log
+        test_site_alarm.actions = self.actions
+        super(TestSiteAlarmBase, test_site_alarm).save()
+        overwrite = True
+
+      if (clone or new) and not overwrite:
+        super(TestSiteAlarmBase, self).save()
 
   class Meta:
     abstract = True

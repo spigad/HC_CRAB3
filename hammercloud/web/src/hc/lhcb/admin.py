@@ -130,6 +130,9 @@ class TemplateHostAdmin(TemplateHostAdminBase):
 class TemplateSiteAdmin(TemplateSiteAdminBase):
   pass
 
+class TemplateSiteAlarmAdmin(TemplateSiteAlarmAdminBase):
+  pass
+
 class TemplateUserAdmin(TemplateUserAdminBase):
   form = TemplateUserForm
 
@@ -289,6 +292,7 @@ admin.site.register(TemplateCloud,TemplateCloudAdmin)
 admin.site.register(TemplateDspattern,TemplateDspatternAdmin)
 admin.site.register(TemplateHost,TemplateHostAdmin)
 admin.site.register(TemplateSite,TemplateSiteAdmin)
+admin.site.register(TemplateSiteAlarm,TemplateSiteAlarmAdmin)
 admin.site.register(TemplateUser,TemplateUserAdmin)
 
 admin.site.register(Test,TestAdmin)

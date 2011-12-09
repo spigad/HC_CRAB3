@@ -328,6 +328,17 @@ class TemplateSiteAdminBase(ActionsAdminBase):
   class Meta:
     abstract = True 
 
+class TemplateSiteAlarmAdminBase(ActionsAdminBase):
+
+  list_display = ('template','site','alarm','active','actions')
+  fieldsets = [
+    (None, {'fields':['template','site','alarm','active','actions']})
+  ]
+
+  class Meta:
+    abstract = True 
+
+
 class TemplateUserAdminBase(admin.ModelAdmin):
 
   list_display = ('template','user')#template_user_am.getTemplateUserNameStringAdmin)

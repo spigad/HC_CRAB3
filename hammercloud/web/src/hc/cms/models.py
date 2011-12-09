@@ -84,6 +84,8 @@ class TemplateHost(TemplateHostBase):
   pass
 class TemplateSite(TemplateSiteBase):
   pass
+class TemplateSiteAlarm(TemplateSiteAlarmBase):
+  pass
 class TemplateUser(TemplateUserBase):
   pass
 

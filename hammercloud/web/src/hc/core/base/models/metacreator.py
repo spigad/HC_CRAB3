@@ -37,7 +37,7 @@ class MetaCreator(ModelBase):
   SummaryTest, SummaryTestSite, SummaryRobot, SummaryEvolution = None, None, None, None
   Template, TemplateBackend, TemplateCloud, TemplateDspattern, TemplateHost, TemplateSite, TemplateUser = None, None, None, None, None, None, None
   Test, TestBackend, TestCloud, TestDspattern, TestHost, TestLog, TestSite, TestState, TestUser = None, None, None, None, None, None, None, None, None
-  TestSiteAlarm = None
+  TemplateSiteAlarm, TestSiteAlarm = None, None
   UsgSite = None
   MessageBusEvent = None
 
