@@ -1,5 +1,6 @@
 from django import  template
 from hc.core.utils.generic.truncate import truncateList,truncateString
+import re
 
 register = template.Library()
 
@@ -20,6 +21,15 @@ def trunc(list,args):
 
 def chop(string,args):
   return truncateString(string,args)
+
+def jobid_linkify(input):
+  '''
+  Looks for PanDA IDs and changes them to HTML links to PanDAmon.
+  '''
+  try:
+    return re.compile(r'([0-9]{10})').sub(lambda m: '<a href="http://panda.cern.ch/server/pandamon/query?job=%s">%s</a>' % (m.group(1), m.group(1)), input)
+  except:
+    return input
 
 def cutcsv(value,arg):
 
@@ -44,3 +54,4 @@ register.filter('cutcsv',cutcsv)
 register.filter('hostEntity',hostEntity)
 register.filter('trunc',trunc)
 register.filter('chop',chop)
+register.filter('jobid',jobid_linkify)
