@@ -668,9 +668,9 @@ class TestMetricAdminBase(admin.ModelAdmin):
 
 class BlacklistEventAdminBase(admin.ModelAdmin):
 
-  list_display = ('test','timestamp','event','user')
+  list_display = ('test','timestamp','event')
   fieldsets = [
-    (None,     {'fields':['test','timestamp','event','site','external','user']}),
+    (None,     {'fields':['test','timestamp','event','site','external']}),
     ('Reason',{'fields':['reason']})
   ]
 
