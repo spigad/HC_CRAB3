@@ -22,14 +22,14 @@ def trunc(list,args):
 def chop(string,args):
   return truncateString(string,args)
 
-def jobid_linkify(input):
+def jobid_linkify(value):
   '''
   Looks for PanDA IDs and changes them to HTML links to PanDAmon.
   '''
   try:
-    return re.compile(r'([0-9]{10})').sub(lambda m: '<a href="http://panda.cern.ch/server/pandamon/query?job=%s">%s</a>' % (m.group(1), m.group(1)), input)
+    return re.compile(r'([0-9]{10})').sub(lambda m: '<a href="http://panda.cern.ch/server/pandamon/query?job=%s">%s</a>' % (m.group(1), m.group(1)), value)
   except:
-    return input
+    return value
 
 def cutcsv(value,arg):
 
