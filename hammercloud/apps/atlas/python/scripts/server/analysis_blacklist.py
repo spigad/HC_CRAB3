@@ -228,7 +228,7 @@ class AnalysisBlacklist:
     for x in self.templates:
       self.sitesNeedingJobs[x] = []
     bo_sites = self.get_sites(status='brokeroff')
-    self.add_log("Checking these sites currently brokeroff because of HC: %s"%bo_sites)
+    self.store_log("Checking these sites currently brokeroff because of HC: %s"%bo_sites, 'blacklisting')
     (_, newsites) = self.check_in_templates(bo_sites)
     if newsites:
       self.store_log('** New brokeroff sites not in templates: %s' % repr(newsites), 'warning')
@@ -366,14 +366,13 @@ class AnalysisBlacklist:
 
   def store_log(self, msg, category='other'):
     self.add_log(msg)
-    if not self.debug:
-      TestLog(test=self.runningTests[0], comment=msg, severity=category, user=1).save()
+    TestLog(test=self.runningTests[0], comment=msg, severity=category, user=1).save()
 
   def log_reasons(self, sites):
     for site in sites:
       s = '%s (%s):' % (site, Client.PandaSites[site]['status'])
       s += '\n    %s\n' % ('\n'.join(self.reasons.get(site, '')))
-      self.add_log(s)
+      self.store_log(s, 'warning')
 
   def site_has_no_jobs(self, site):
     for t in self.templates:
@@ -391,6 +390,7 @@ class AnalysisBlacklist:
       self.reasons[site].append(reason)
     else:
       self.reasons[site] = [reason]
+    TestLog(test=self.runningTests[0], comment='%s: %s' % (site, reason), severity='warning', user=1).save()
 
   def send_cloud_online_alert(self, site):
     try:

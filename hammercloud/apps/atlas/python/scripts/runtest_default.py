@@ -391,7 +391,7 @@ def copyJob(job):
     return
 
   # Check if build job failed due to missing CMTCONFIG
-  bfailed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).count()
+  bfailed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(ganga_subjobid=1000000).filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).count()
   #bfailed = Result.objects.filter(test=test).filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).count()
   
   if bfailed > 0:

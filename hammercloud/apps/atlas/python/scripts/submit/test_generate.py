@@ -3,10 +3,14 @@ from random import shuffle
 
 class TestGenerate:
 
-  def convertQueueNameToDQ2Names(self, queue):
+  def convertQueueNameToDQ2Names(self, queue, test):
     from pandatools import Client
     from dq2.info.TiersOfATLAS import ToACache
     sites = []
+
+    if 'PFT' in test.template.description:
+        Client.PandaSites = Client.getSiteSpecs('production')[1]
+
     for site in Client.PandaSites[queue]['setokens'].values():
       sites.append(Client.convSrmV2ID(site))
     allowed_sites = []
@@ -54,7 +58,7 @@ class TestGenerate:
           site_locs.append(loc)
 
       try:
-        extra_locs = self.convertQueueNameToDQ2Names(ts.site.name)
+        extra_locs = self.convertQueueNameToDQ2Names(ts.site.name, test)
       except:
         extra_locs = []
 
@@ -317,7 +321,17 @@ class TestGenerate:
             outFile_content = ff.read()
             ff.close()
 
-            outFile_content = outFile_content.replace('####USERAREA####', userarea)
+
+            # make unique userarea file for test
+            tmp_userarea = os.path.join('/tmp/', str(test.id) + '.' + os.path.split(userarea)[1])
+            print 'linking', tmp_userarea, 'to', userarea
+            try:
+                os.symlink(userarea, tmp_userarea)
+            except OSError: # file exists
+                print 'symlink already exists'
+                pass
+
+            outFile_content = outFile_content.replace('####USERAREA####', tmp_userarea)
             outFile_content = outFile_content.replace('####JOBOPTIONS####', joboptions)
             outFile_content = outFile_content.replace('####JOBOPTIONSFILENAME####', joboptionsfilename)
             outFile_content = outFile_content.replace('####SITES####', repr(str(site)))
