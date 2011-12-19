@@ -89,7 +89,7 @@ class TestGenerate:
     test_dspatterns = test.getTestDspatterns_for_test.all()
     for td in test_dspatterns:
       if td.dspattern.pattern.startswith('/'):
-        file = open(basePath + '/inputfiles/dspatterns' + td.dspattern.pattern)
+        file = open(td.dspattern.pattern)
         for l in file:
           datasetpatterns.append(l.strip())
         file.close()
@@ -104,6 +104,11 @@ class TestGenerate:
               datasetpatterns.append(p)
         except:
           print 'failed to download url pattern',url
+      elif td.dspattern.pattern.endswith('.txt'):
+        file = open(basePath + '/inputfiles/templates/' + td.dspattern.pattern)
+        for l in file:
+          datasetpatterns.append(l.strip())
+        file.close()
       else:
         datasetpatterns.append(td.dspattern.pattern)
 
