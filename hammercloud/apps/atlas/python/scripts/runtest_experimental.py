@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from random import shuffle
 
 from django.db.models import Count
 from hc.atlas.models import Test, TestState, Site, Result, SummaryTest, SummaryTestSite, Metric, TestMetric, SiteMetric, MetricType, TestLog, SummaryEvolution
@@ -36,7 +37,7 @@ try:
     test.pause = 0
     test.save()
     comment = 'Test modifications: pause -> False,'
-    testlog = TestLog(test=test, comment=comment, user='gangarbt')
+    testlog = TestLog(test=test, comment=comment, user='gangarbt', severity='testinfo')
     testlog.save()
 except:
   print ' ERROR! Could not extract Test %s from DB' % (testid)
@@ -107,6 +108,9 @@ def updateDatasets(site, num):
     # get DDM name from site
     location = Site.objects.filter(name=site)[0].ddm
     locations = location.split(',')
+    # hack for CERN
+    if 'CERN-PROD_LOCALGROUPDISK' in locations:
+        locations.remove('CERN-PROD_LOCALGROUPDISK')
 
     # Dataset patterns
     datasetpatterns = []
@@ -119,6 +123,16 @@ def updateDatasets(site, num):
         for l in file:
           datasetpatterns.append(l.strip())
         file.close()
+      elif pattern.startswith('http'):
+        import urllib2
+        url = pattern
+        try:
+          tmp_patterns = urllib2.urlopen(url).read().split()
+          for p in tmp_patterns:
+            if p not in datasetpatterns:
+              datasetpatterns.append(p)
+        except:
+          logger.error('failed to download url pattern'%url)
       else:
         datasetpatterns.append(pattern)
 
@@ -138,7 +152,6 @@ def updateDatasets(site, num):
     #TODO: checl that you got some datasets
 
 
-  from random import shuffle
   shuffle(datasets)
 
   gooddatasets = []
@@ -378,7 +391,7 @@ def copyJob(job):
     return
 
   # Check if build job failed due to missing CMTCONFIG
-  bfailed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).count()
+  bfailed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(ganga_subjobid=1000000).filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).count()
   #bfailed = Result.objects.filter(test=test).filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).count()
   
   if bfailed > 0:
@@ -672,7 +685,7 @@ def process_job(job):
 #    elif v == 'NULL':
 #      logger.info([k,v])
 
-  if job.status in ('completed', 'failed'):
+  if result.ganga_status in ('c', 'f'):
     logger.warning('Job is in final state, marking row as fixed')
     result.fixed = 1
 
@@ -932,7 +945,7 @@ def process_subjob(job, subjob):
 #    elif v == 'NULL':
 #      logger.info([k,v])
 
-  if subjob.status in ('completed', 'failed'):
+  if result.ganga_status in ('c', 'f'):
     logger.warning('SubJob is in final state, marking row as fixed')
     result.fixed = 1
 
