@@ -90,31 +90,35 @@ class TestGenerate:
 
     # Dataset patterns
     datasetpatterns = []
+    pfnlistfile = None
     test_dspatterns = test.getTestDspatterns_for_test.all()
-    for td in test_dspatterns:
-      if td.dspattern.pattern.startswith('/'):
-        file = open(td.dspattern.pattern)
-        for l in file:
-          datasetpatterns.append(l.strip())
-        file.close()
-      elif td.dspattern.pattern.startswith('http'):
-        import urllib2
-        url = td.dspattern.pattern
-        try:
-          patterns = urllib2.urlopen(url).read().split()
-          print "Downloaded dspatterns", url, patterns
-          for p in patterns:
-            if p not in datasetpatterns:
-              datasetpatterns.append(p)
-        except:
-          print 'failed to download url pattern',url
-      elif td.dspattern.pattern.endswith('.txt'):
-        file = open(basePath + '/inputfiles/templates/' + td.dspattern.pattern)
-        for l in file:
-          datasetpatterns.append(l.strip())
-        file.close()
-      else:
-        datasetpatterns.append(td.dspattern.pattern)
+    if mode == 't3':
+      pfnlistfile = test_dspatterns[0].dspattern.pattern
+    else:
+      for td in test_dspatterns:
+        if td.dspattern.pattern.startswith('/'):
+          file = open(td.dspattern.pattern)
+          for l in file:
+            datasetpatterns.append(l.strip())
+          file.close()
+        elif td.dspattern.pattern.startswith('http'):
+          import urllib2
+          url = td.dspattern.pattern
+          try:
+            patterns = urllib2.urlopen(url).read().split()
+            print "Downloaded dspatterns", url, patterns
+            for p in patterns:
+              if p not in datasetpatterns:
+                datasetpatterns.append(p)
+          except:
+            print 'failed to download url pattern',url
+        elif td.dspattern.pattern.endswith('.txt'):
+          file = open(basePath + '/inputfiles/templates/' + td.dspattern.pattern)
+          for l in file:
+            datasetpatterns.append(l.strip())
+          file.close()
+        else:
+          datasetpatterns.append(td.dspattern.pattern)
 
     if len(datasetpatterns) == 0:
       print 'No dspatterns found for this test!'
@@ -331,12 +335,17 @@ class TestGenerate:
                 print 'symlink already exists'
                 pass
 
+            if mode == 't3':
+              dataset_str = pfnlistfile
+            else:
+              dataset_str = repr(datasetAll)
+
             outFile_content = outFile_content.replace('####USERAREA####', tmp_userarea)
             outFile_content = outFile_content.replace('####JOBOPTIONS####', joboptions)
             outFile_content = outFile_content.replace('####JOBOPTIONSFILENAME####', joboptionsfilename)
             outFile_content = outFile_content.replace('####SITES####', repr(str(site)))
             outFile_content = outFile_content.replace('####OUTPUTDATASETNAME####', outputdatasetname+'.'+site+'.'+str(fid) )
-            outFile_content = outFile_content.replace('####DATASET####', repr(datasetAll))
+            outFile_content = outFile_content.replace('####DATASET####', dataset_str)
             outFile_content = outFile_content.replace('####INPUTTYPE####', inputtype)
             outFile_content = outFile_content.replace('####NUM####', repr((num-1)))
             outFile_content = outFile_content.replace('####TESTID####', str(test.id))
