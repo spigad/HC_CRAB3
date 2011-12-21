@@ -22,7 +22,7 @@ class TestGenerate:
     return allowed_sites
 
   def run(self,test,mode):
-
+    print 'RUNNING ATLAS TEST GENERATE WITH MODE "%s"' % mode
     try:
       sys.stderr = open("/dev/null", "w")
       import dq2.info.TiersOfATLAS as TiersOfATLAS
@@ -205,7 +205,7 @@ class TestGenerate:
             hasdata=True
         except KeyError:
           pass
-      if not hasdata:
+      if not hasdata and mode != 't3':
         print 'skipping site %s with no data'%site
         continue
 
@@ -230,7 +230,7 @@ class TestGenerate:
 
           print "%02d datasets with pattern %s at location %s " %(len(datasets),datasetpattern, location)
 
-          if len(datasets) < 1:
+          if len(datasets) < 1 and mode != 't3':
             print "skipping %s"%location
             useful_sites -= 1
             continue
@@ -318,10 +318,12 @@ class TestGenerate:
                 break
 
             # prevent infinite loop
-            if (num-1) < 1:
+            if (num-1) < 1 and mode != 't3':
               print 'No datasets: skipping site %s,%s'%(site,location)
               useful_sites -= 1
               continue
+            if mode == 't3':
+              useful_sites -= 1
 
             ff = open(jobtemplate,'r')
             outFile_content = ff.read()
@@ -337,12 +339,17 @@ class TestGenerate:
                 print 'symlink already exists'
                 pass
 
+            if mode == 't3':
+              dataset_str = repr(str(datasetpatterns[0]))
+            else:
+              dataset_str = repr(datasetAll)
+
             outFile_content = outFile_content.replace('####USERAREA####', tmp_userarea)
             outFile_content = outFile_content.replace('####JOBOPTIONS####', joboptions)
             outFile_content = outFile_content.replace('####JOBOPTIONSFILENAME####', joboptionsfilename)
             outFile_content = outFile_content.replace('####SITES####', repr(str(site)))
             outFile_content = outFile_content.replace('####OUTPUTDATASETNAME####', outputdatasetname+'.'+site+'.'+str(fid) )
-            outFile_content = outFile_content.replace('####DATASET####', repr(datasetAll))
+            outFile_content = outFile_content.replace('####DATASET####', dataset_str)
             outFile_content = outFile_content.replace('####INPUTTYPE####', inputtype)
             outFile_content = outFile_content.replace('####NUM####', repr((num-1)))
             outFile_content = outFile_content.replace('####TESTID####', str(test.id))
@@ -362,6 +369,10 @@ class TestGenerate:
             if (num-1) < sitenumjobs[site]:
               print '%s not done. generating more jobs'%site
             sitenumjobs[site]=sitenumjobs[site]-(num-1)
+
+            # For t3 we are done.
+            if mode == 't3':
+              sitenumjobs[site] = 0
 
     print '\n**** TOTAL %02d jobs generated' %(total)
     return 1
