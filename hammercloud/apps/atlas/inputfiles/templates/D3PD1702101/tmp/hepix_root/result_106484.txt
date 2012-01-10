@@ -1,0 +1,54 @@
+Final Cutflow for run 106484
+Cut 0 : 49954		  no cut
+Cut 1 : 49954		  GRL cut
+Cut 2 : 18538		  trigger cut ( EgammaStream && TrgEl) || (MuonsStream && TrgMu) || ( MC && (trgEl || trgMu))
+Cut 3 : 18473		  jet cleaning
+Cut 4 : 18468		  >= 1 vertex with > 4 tracks (No cut on vertex type!!)
+Cut 5 : 18208		  Event veto (crack + cosmic muons)
+Cut 6 : 787.659		  MUMU + EE + EMU
+Cut 7 : 298.421		  EE == (EgammaStream || MC) && trgEl && 2 electrons with pt > (20,10) GeV
+Cut 8 : 197.874		   && RobusterTight
+Cut 9 : 197.874		   && pt > (20,20) GeV
+Cut 10 : 180.029		   && IsoEle: etcone20/pt >= 0.15 (not applied)
+Cut 11 : 148.599		   && OS 
+Cut 12 : 85.2513		   && OS && MET cut > 100 GeV 
+Cut 13 : 66.4598		   && OS && MET cut > 125 GeV 
+Cut 14 : 53.5763		   && OS && MET cut > 150 GeV 
+Cut 15 : 39.4312		   && SS && MET cut > 60 GeV 
+Cut 16 : 34.5647		   && SS && MET cut > 80 GeV 
+Cut 17 : 30.6473		   && SS && MET cut > 100 GeV 
+Cut 18 : 135.67		   && OS && IsoEle
+Cut 19 : 79.3214		   && OS && IsoEle && MET cut > 100 GeV 
+Cut 20 : 61.5496		   && OS && IsoEle && MET cut > 125 GeV 
+Cut 21 : 51.6378		   && OS && IsoEle && MET cut > 150 GeV 
+Cut 22 : 35.4907		   && SS && IsoEle && MET cut > 60 GeV 
+Cut 23 : 30.6243		   && SS && IsoEle && MET cut > 80 GeV 
+Cut 24 : 28.6956		   && SS && IsoEle && MET cut > 100 GeV 
+Cut 25 : 402.928		  EMU == ((EgammaStream || MC) && TrgEl && pt(e) > 20 GeV) || ((MuonStream || MC) && TrgMu && pt(mu) > 20 GeV) 
+Cut 26 : 311.422		   && RobusterTight
+Cut 27 : 311.422		   && pt > (20,20) GeV
+Cut 28 : 311.422		   && ((pt(e) > pt(mu) && TrgEl) || (pt(mu) > pt(e) && TrgMu)) 
+Cut 29 : 288.63		   && IsoEle: etcone20/pt >= 0.15 (not applied)
+Cut 30 : 244.831		   && OS 
+Cut 31 : 150.344		   && OS && MET cut > 100 GeV 
+Cut 32 : 121.429		   && OS && MET cut > 125 GeV 
+Cut 33 : 92.49		   && OS && MET cut > 150 GeV 
+Cut 34 : 49.703		   && SS && MET cut > 60 GeV 
+Cut 35 : 46.742		   && SS && MET cut > 80 GeV 
+Cut 36 : 39.848		   && SS && MET cut > 100 GeV 
+Cut 37 : 228.966		   && OS && IsoEle
+Cut 38 : 139.423		   && OS && IsoEle && MET cut > 100 GeV 
+Cut 39 : 112.477		   && OS && IsoEle && MET cut > 125 GeV 
+Cut 40 : 86.513		   && OS && IsoEle && MET cut > 150 GeV 
+Cut 41 : 44.74		   && SS && IsoEle && MET cut > 60 GeV 
+Cut 42 : 41.779		   && SS && IsoEle && MET cut > 80 GeV 
+Cut 43 : 35.867		   && SS && IsoEle && MET cut > 100 GeV 
+Cut 44 : 319		  MUMU == (MuonsStream || MC) && trgMu && 2 muons with pt > (20,10) GeV
+Cut 45 : 319		   && pt > (20,20) GeV
+Cut 46 : 271		   && OS 
+Cut 47 : 147		   && OS && MET cut > 100 GeV 
+Cut 48 : 115		   && OS && MET cut > 125 GeV 
+Cut 49 : 85		   && OS && MET cut > 150 GeV 
+Cut 50 : 39		   && SS && MET cut > 60 GeV 
+Cut 51 : 35		   && SS && MET cut > 80 GeV 
+Cut 52 : 27		   && SS && MET cut > 100 GeV 
