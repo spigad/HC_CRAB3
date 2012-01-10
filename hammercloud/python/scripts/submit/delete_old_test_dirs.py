@@ -32,21 +32,24 @@ def main():
             print "going to rm -rf %s"%dir,
             if doit: 
                 os.system('rm -rf %s'%dir)
-                print "done",
+                print "done.",
             else:
-                print "need to --doit",
+                print "need to --doit.",
         else:
-            print "testdir already deleted",
-        f = '/data/hc/apps/%s/testdirs/run-test-%d.sh'%(app,test.id)
-        if os.path.exists(f):
-            print "going to rm %s"%f,
-            if doit: 
-                os.system('rm %s'%f)
-                print "done"
+            print "testdir already deleted.",
+        files = ['/data/hc/apps/%s/testdirs/run-test-%d.sh'%(app,test.id), 
+                '/tmp/%d.%s'%(test.id, str(test.usercode).split('/')[-1])]
+        for f in files:
+            if os.path.exists(f):
+                print "going to rm %s"%f,
+                if doit: 
+                    os.system('rm %s'%f)
+                    print "done.",
+                else:
+                    print "need to --doit.",
             else:
-                print "need to --doit"
-        else:
-            print "runscript already deleted"
+                print "no such file %s." % f,
+        print
 
 
 if __name__ == "__main__":

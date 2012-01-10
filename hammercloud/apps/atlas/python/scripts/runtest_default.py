@@ -545,7 +545,7 @@ def process_job(job):
              'NET_ETH_RX_AFTERATHENA' :stats['NET_ETH_RX_AFTERATHENA'],
              'inds'                  :inds,
              'outds'                 :outds,
-             'reason'                :job.backend.reason,
+             'reason'                :str(job.backend.reason).replace('\n',' '),
              'ganga_number_of_files' :innumfiles,
              }
 
@@ -613,7 +613,7 @@ def process_job(job):
     
     try:
       results['exit_status_2'] = int(job.backend.buildjobs[0].jobSpec['pilotErrorCode'])
-      results['reason'] = job.backend.buildjobs[0].jobSpec['pilotErrorDiag']
+      results['reason'] = str(job.backend.buildjobs[0].jobSpec['pilotErrorDiag']).replace('\n',' ')
     except:
       results['exit_status_2'] = job.backend.piloterrorcode
       results['reason'] = ''
@@ -765,7 +765,7 @@ def process_subjob(job, subjob):
     pass
 
   #Translate from stats to DB names
-  results = {'ganga_status'          :job.status[0],
+  results = {'ganga_status'          :subjob.status[0],
              'ganga_time_1'          :stats['gangatime1'],
              'ganga_time_2'          :stats['gangatime2'],
              'ganga_time_3'          :stats['gangatime3'],
@@ -786,10 +786,10 @@ def process_subjob(job, subjob):
              'percent_cpu'           :stats['percentcpu'],
              'numevents'             :stats['totalevents'],
              'NET_ETH_RX_PREATHENA'  :stats['NET_ETH_RX_PREATHENA'],
-             'NET_ETH_RX_AFTERATHENA' :stats['NET_ETH_RX_AFTERATHENA'],
+             'NET_ETH_RX_AFTERATHENA':stats['NET_ETH_RX_AFTERATHENA'],
              'inds'                  :inds,
              'outds'                 :outds,
-             'reason'                :job.backend.reason,
+             'reason'                :str(subjob.backend.reason).replace('\n',' '),
              'ganga_number_of_files' :innumfiles,
              }
 
