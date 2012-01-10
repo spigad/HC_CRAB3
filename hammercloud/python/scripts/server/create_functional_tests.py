@@ -24,6 +24,7 @@ class CreateFunctionalTests:
  
     for template in templates:
       tests = template.getTests_for_template.filter(state__in=['running','tobescheduled','submitting','scheduled','draft'])
+      #TODO: filter out tests that have endtime within 30 minutes for app=atlas
       if not tests:
         print '[INFO][%s][create_functional_tests] Inserting new test for template %s - %s'%(app,template.id,template.description)
         token = 1

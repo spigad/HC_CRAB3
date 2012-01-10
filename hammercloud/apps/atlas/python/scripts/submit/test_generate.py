@@ -1,7 +1,29 @@
 import sys, os, time
 from random import shuffle
+from cPickle import dump, load
+
+picklefile = '/data/hc/apps/atlas/python/scripts/submit/datasetCache.pickle'
 
 class TestGenerate:
+
+  def loadDatasetsDict(self, picklefile='datasetCache.pickle'):
+    _datasetsDict = {}
+    print 'Loading _datasetsDict from %s ...' %picklefile
+    retry = 0
+    while retry<3:
+      try:
+        inp=open(picklefile,'rb')
+        _datasetsDict=load(inp)
+        inp.close()
+        print '_datasetsDict loaded from %s' %picklefile
+        retry = 3
+      except:
+        _datasetsDict = {}
+      if not _datasetsDict:
+        print 'ERROR loading _datasetsDict from %s, Try %s ' %(picklefile, retry)
+        retry +=1
+        time.sleep(30)
+    return _datasetsDict
 
   def convertQueueNameToDQ2Names(self, queue, test):
     from pandatools import Client
@@ -153,6 +175,12 @@ class TestGenerate:
 
     # Find overlap datasets
     datasetList = {}
+
+    # load dataset/location pickle file
+    _datasetsDict = {}
+    if not _datasetsDict:
+      _datasetsDict = self.loadDatasetsDict(picklefile)
+
     for location in locations:
       print "Datasets by pattern available at",location
       datasets = []
@@ -161,8 +189,21 @@ class TestGenerate:
           print 'USING LFN %s' % datasetpattern
         else:
           print time.ctime()
-          print 'dq2.listDatasetsByNameInSite(site=%s, name=%s)'%(repr(location),repr(datasetpattern))
-          temp = dq2.listDatasetsByNameInSite(site=location, name=datasetpattern)
+          #print 'dq2.listDatasetsByNameInSite(site=%s, name=%s)'%(repr(location),repr(datasetpattern))
+          #temp = dq2.listDatasetsByNameInSite(site=location, name=datasetpattern)
+          if not _datasetsDict:
+            print 'dq2.listDatasetsByNameInSite(site=%s, complete=None, name=None, p=None, rpp=None, group=None)'%(repr(location))
+            temp1 = dq2.listDatasetsByNameInSite(site=location, complete=None, name=None, p=None, rpp=None, group=None )
+          else:
+            if not _datasetsDict.has_key(location):
+              print '_datasetsDict does not contain %s' %location
+              print 'dq2.listDatasetsByNameInSite(site=%s, complete=None, name=None, p=None, rpp=None, group=None)'%(repr(location))
+              temp1 = dq2.listDatasetsByNameInSite(site=location, complete=None, name=None, p=None, rpp=None, group=None )
+            else:
+              temp1 = _datasetsDict[location]
+
+          temp1 = list(temp1)
+          temp = fnmatch.filter(temp1, datasetpattern)
           temp = list(temp)
           datasets = datasets + temp
           print datasetpattern, location, len(temp)
