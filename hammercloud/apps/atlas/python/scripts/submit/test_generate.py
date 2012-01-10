@@ -1,4 +1,4 @@
-import sys, os, time
+import sys, os, time, fnmatch
 from random import shuffle
 from cPickle import dump, load
 
