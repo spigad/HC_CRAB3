@@ -11,6 +11,7 @@ from numpy import *
 import os, sys, time, random, commands
 import numpy
 import types
+import fnmatch
 
 from Ganga.Core.GangaThread import GangaThread
 from Ganga.Utility.logging import getLogger
@@ -140,7 +141,11 @@ def updateDatasets(site, num):
     for location in locations:
       for datasetpattern in datasetpatterns:
         try:
-          temp = list(dq2.listDatasetsByNameInSite(site=location, name=datasetpattern))
+          #temp = list(dq2.listDatasetsByNameInSite(site=location, name=datasetpattern))
+          temp1 = dq2.listDatasetsByNameInSite(site=location, complete=None, name=None, p=None, rpp=None, group=None )
+          temp1 = list(temp1)
+          temp = fnmatch.filter(temp1, datasetpattern)
+          temp = list(temp)
           datasets = datasets + temp
           for ds in temp:
             dsLocation[ds] = location
