@@ -58,8 +58,8 @@ class ExternalQueueUpdate:
           if not comment.startswith('HC'):
             if status == 'online':
               self.save_blacklistevent_for_site(site, 'whitelist', 'Set to online by an external tool or user.')
-            elif status == 'brokeroff':
-              self.save_blacklistevent_for_site(site, 'blacklist', 'Set to brokeroff by an external tool or user.')
+            elif status in ('brokeroff', 'test') and current_status.option_value not in ('brokeroff', 'test'):
+              self.save_blacklistevent_for_site(site, 'blacklist', 'Set to %s by an external tool or user.' % status)
             else:
               logging.info('Site %s is now in %s status set by an external tool or user.', site_name, status)
             TestLog(comment="%s was set to '%s' by an external agent."%(site.name,status), severity='queuecontrol', user=1).save()
