@@ -41,6 +41,7 @@
 </form>
 
 {% if site_data %}
+{% block resulttable %}
   <table class="testslist">
     <thead>
       <tr><th>Site</th><th>Total<br />jobs</th><th>Grid failed jobs<br />(aborted)</th><th>Application failed<br />jobs</th><th>Efficiency</th></tr>
@@ -52,6 +53,7 @@
       {% endfor %}
     </tbody>
   </table>
+{% endblock %}
 {% else %}
   <p>No data available.</p>
 {% endif %}

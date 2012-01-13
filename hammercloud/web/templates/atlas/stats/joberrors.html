@@ -2,13 +2,7 @@
 
 {% load humanize %}
 
-{% block content %}
-
-<div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
-
-<h2>Job errors summary</h2>
-
-{% if site_data %}
+{% block resulttable %}
   <table class="testslist">
     <thead>
       <tr><th>Site</th><th>Total<br />jobs</th><th>Failed<br />jobs</th><th>Efficiency</th></tr>
@@ -20,8 +14,4 @@
       {% endfor %}
     </tbody>
   </table>
-{% else %}
-  <p>No data available.</p>
-{% endif %}
-
 {% endblock %}
