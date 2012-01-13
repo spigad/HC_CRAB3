@@ -2,6 +2,12 @@ from django.db.models  import  Q
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 
+def escape_json_string(string):
+  """Returns the string JSONnized, if it is a string."""
+  if type(string) in (unicode, str):
+    return string.replace('\n', '\\n').replace('\t', '\\t').replace('\r', '\\r')
+  return string
+
 def get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTemplatePath, type, app, *args):
   querySet.select_related('test_site', 'test_site__site')
   dic = {}
@@ -119,5 +125,8 @@ def get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTe
     sEcho = '0' #default value
   else:
     sEcho = request.GET['sEcho'] #this is required by datatables
-  jstonString = render_to_string(jsonTemplatePath, locals())
+  escaped_locals = locals()
+  for k in escaped_locals:
+    escaped_locals[k] = escape_json_string(escaped_locals[k])
+  jstonString = render_to_string(jsonTemplatePath, escaped_locals)
   return HttpResponse(jstonString, mimetype="application/javascript")
