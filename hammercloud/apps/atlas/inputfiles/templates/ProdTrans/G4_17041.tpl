@@ -21,7 +21,7 @@ Job (
     input_type = 'Evgen' ,
     output_type = 'Hits' ,
     priority = 10000 ,
-    job_parameters = 'maxEvents=1 skipEvents=0 randomSeed=568 geometryVersion=ATLAS-GEO-18-01-00 conditionsTag=OFLCOND-SDR-BS7T-05-03 physicsList=QGSP_BERT --ignoreerrors=True'
+    job_parameters = 'maxEvents=2 skipEvents=0 randomSeed=568 geometryVersion=ATLAS-GEO-18-01-00 conditionsTag=OFLCOND-SDR-BS7T-05-03 physicsList=QGSP_BERT --ignoreerrors=True'
     ) ,
  outputdata = DQ2OutputDataset (
     datasetname = '####OUTPUTDATASETNAME####'

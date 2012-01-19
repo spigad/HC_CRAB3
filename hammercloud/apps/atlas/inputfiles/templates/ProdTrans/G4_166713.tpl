@@ -21,7 +21,7 @@ Job (
     input_type = 'Evgen' ,
     output_type = 'Hits' ,
     priority = 10000 ,
-    job_parameters = 'maxEvents=1 skipEvents=0 randomSeed=568 geometryVersion=ATLAS-GEO-11-00-00 conditionsTag=OFLCOND-SDR-BS7T-02 --ignoreerrors=True'
+    job_parameters = 'maxEvents=2 skipEvents=0 randomSeed=568 geometryVersion=ATLAS-GEO-11-00-00 conditionsTag=OFLCOND-SDR-BS7T-02 --ignoreerrors=True'
     ) ,
  outputdata = DQ2OutputDataset (
     datasetname = '####OUTPUTDATASETNAME####'
