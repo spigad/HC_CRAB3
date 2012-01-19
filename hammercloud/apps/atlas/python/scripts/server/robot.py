@@ -156,7 +156,7 @@ class Robot:
     hours_panda = 3
     hours_lcg = 12
     #   test_panda = (67,80,95,96)
-    test_panda = (432,433,434,436)
+    test_panda = (163,432,434,445) #(432,433,434,436)
     test_lcg = (140,)
     #get id of last 2 tests for each test template 
     # --> limit should always be #templates*2, to get the tests running in the last day

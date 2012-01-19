@@ -162,6 +162,10 @@ def updateDatasets(site, num):
   gooddatasets = []
   for dataset in datasets:
     try:
+      # Remove bad dataset patterns
+      if dataset.find('singlepart')>=0 or dataset.find('pile')>=0 or (dataset.find('test')>=0 and not 'HCtest' in dataset) or dataset.find('atlfast')>=0 or dataset.find('users')>=0 or dataset.find('higgswg')>=0 or dataset.find('_sub')>=0 or dataset.find('DAOD')>=0 or dataset.find('D2AOD')>=0:
+        print 'Skipping %s' %dataset
+        continue
       # check if frozen and complete
       location = dsLocation[dataset]
       datasetsiteinfo = dq2.listFileReplicas(location, dataset)

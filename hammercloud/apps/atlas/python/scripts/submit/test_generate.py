@@ -305,7 +305,7 @@ class TestGenerate:
                 continue
               # remove certain dataset pattern
               #if dataset.find('singlepart')>=0 or dataset.find('pile')>=0 or dataset.find('test')>=0 or dataset.find('atlfast')>=0 or dataset.find('user')>=0 or dataset.find('users')>=0 or dataset.find('higgswg')>=0 or dataset.find('_sub')>=0:
-              if dataset.find('singlepart')>=0 or dataset.find('pile')>=0 or (dataset.find('test')>=0 and not 'HCtest' in dataset) or dataset.find('atlfast')>=0 or dataset.find('users')>=0 or dataset.find('higgswg')>=0 or dataset.find('_sub')>=0:
+              if dataset.find('singlepart')>=0 or dataset.find('pile')>=0 or (dataset.find('test')>=0 and not 'HCtest' in dataset) or dataset.find('atlfast')>=0 or dataset.find('users')>=0 or dataset.find('higgswg')>=0 or dataset.find('_sub')>=0 or dataset.find('DAOD')>=0 or dataset.find('D2AOD')>=0:
                 print 'Skipping %s' %dataset
                 continue
 

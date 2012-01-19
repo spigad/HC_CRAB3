@@ -182,7 +182,7 @@ class AnalysisBlacklist:
 
   def __init__(self, templates=None):
     if not templates:
-      self.templates = (432,433,434,436)
+      self.templates = (163,432,434,445)
     else:
       self.templates = templates
     self.policies_for_brokeroff = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,

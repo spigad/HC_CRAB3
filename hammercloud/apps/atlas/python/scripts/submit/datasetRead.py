@@ -68,4 +68,3 @@ if __name__ == '__main__':
     tend = time.time()
     print 'End: %s' %( time.ctime() )
     print 'Duration: %5.2f s' %(tend - tstart )
-    
