@@ -260,25 +260,27 @@ def _copyJob(job, site):
     t = int(time.time())
     j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, t, uuid)
     j.outputdata.location = ''
-    previous_datasets = j.inputdata.dataset
-    logger.info('Previous input datasets = %s' % previous_datasets)
-    try:
-      test_site = test.getTestSites_for_test.filter(site__name=site)
-      num = test_site[0].num_datasets_per_bulk
-    except:
-      num = len(j.inputdata.dataset)
+    if j.inputdata._impl._name == 'DQ2Dataset':
+      previous_datasets = j.inputdata.dataset
+      logger.info('Previous input datasets = %s' % previous_datasets)
+      try:
+        test_site = test.getTestSites_for_test.filter(site__name=site)
+        num = test_site[0].num_datasets_per_bulk
+      except:
+        num = len(j.inputdata.dataset)
 
-    try:
-      j.inputdata.dataset = updateDatasets(site, num)
-      if not j.inputdata.dataset:
+      try:
+        j.inputdata.dataset = updateDatasets(site, num)
+        if not j.inputdata.dataset:
+          j.inputdata.dataset = previous_datasets[0:num]
+      except:
+        logger.warning('Failed to get new datasets from DQ2. Using previous datasets.')
+        logger.warning(sys.exc_info()[0])
+        logger.warning(sys.exc_info()[1])
         j.inputdata.dataset = previous_datasets[0:num]
-    except:
-      logger.warning('Failed to get new datasets from DQ2. Using previous datasets.')
-      logger.warning(sys.exc_info()[0])
-      logger.warning(sys.exc_info()[1])
-      j.inputdata.dataset = previous_datasets[0:num]
 
-    logger.info('New input datasets = %s' % j.inputdata.dataset)
+      logger.info('New input datasets = %s' % j.inputdata.dataset)
+
     j.submit()
     logger.info('Finished copying job %d' % job.id)
     test_sleep(2)
