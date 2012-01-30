@@ -128,7 +128,7 @@ class CreateAtJob:
 
     return 1
 
-  def scheduleJob(self,app,test,host):
+  def scheduleJob(self,app,test,host=None):
 
     HCAPP = self.getHCAPP(app)
     if not HCAPP:
@@ -136,7 +136,9 @@ class CreateAtJob:
 
     time=test.starttime.strftime('%H:%M %m%d%y')
     test.state   = 'scheduled'
-    test.host    = host
+    if host:
+      print '[INFO][%s][create_at_job] Redefining host for test %s: %s\n'%(app,test.id,host)
+      test.host  = host
     test.save(commit=True)
     atjobid = commands.getoutput('at -f %s/testdirs/run-test-%d.sh %s'%(HCAPP,test.id,time)).rstrip()
     test.atjobid = int(atjobid.split()[1])
@@ -171,31 +173,25 @@ class CreateAtJob:
     
     hostname = commands.getoutput('hostname')
 
-    tests = test.objects.filter(state='tobescheduled')
+    tests = test.objects.filter(state='tobescheduled').exclude(host=None)
     if not tests:
       print '[INFO][%s][create_at_job] No tests found on state: tobescheduled'%(app)      
 
     for t in tests:
-      test_hosts = sorted(t.getTestHosts_for_test.all().filter(host__active=1),
-                          key=lambda x: x.host.loadavg1m + test.objects.filter(starttime__gte=(datetime.now() - timedelta(seconds=300))).filter(host=x.host).count()*3.0)
-
-      if not test_hosts:
-        print '[ERROR][%s][create_at_job] Test %s without active test_hosts.'%(app,t.id)
+      if not t.host:
+        test_log(test=t, comment='Test %d had no host at the moment of running.'%(t.id), user='gangarbt', severity='error').save()
+        print '[ERROR][%s][create_at_job] Test %s without host set.'%(app,t.id)
 
       else:
-        if test_hosts[0].host.name == hostname:
-          test_log(test=t, comment='Test %d was assigned to %s.'%(t.id,hostname), user='gangarbt', severity='testinfo').save()
+        if t.host == hostname:
           print '[INFO][%s][create_at_job] Test %s assigned to %s'%(app,t.id,hostname)
-        
+
           if self.createScript(app,t):
-           if self.scheduleJob(app,t,test_hosts[0].host):
+           if self.scheduleJob(app,t):
              time.sleep(10)  
 
         else:
           print '[INFO][%s][create_at_job] Test %s NOT assigned to %s.'%(app,t.id,hostname) 
-          print '[INFO][create_at_job][%s] Registered loads.'%(app)
-          for thl in test_hosts:
-            print '%s: %3f'%(thl.host.name,thl.host.loadavg1m)
     
     #test = custom_import('hc.%s.models.Test'%(app))
     tests = test.objects.filter(state='running').filter(host__name=hostname)
