@@ -47,7 +47,7 @@ class CreateFunctionalTests:
         for thl in test_hosts:
           print '%s: %3f'%(thl.host.name,thl.host.loadavg1m)
 
-    for stress_test in test.objects.filter(host=None).filter(category='stress').filter(state='tobescheduled').filter(starttime__lte=(datetime.now() + timedelta(seconds=300))):
+    for stress_test in test.objects.filter(host=None).filter(template__category='stress').filter(state='tobescheduled').filter(starttime__lte=(datetime.now() + timedelta(seconds=300))):
       # Assign the host to stress tests that will start in 5 minutes from now.
       test_hosts = sorted(stress_test.getTestHosts_for_test.all().filter(host__active=1),
                           key=lambda x: x.host.loadavg1m + test.objects.filter(starttime__gte=(datetime.now() - timedelta(seconds=300))).filter(host=x.host).count()*3.0)
