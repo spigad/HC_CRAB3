@@ -375,6 +375,7 @@ class TemplateBase(models.Model):
   output_dataset     = models.CharField(max_length = 1023, default='')
   extraargs          = models.CharField(max_length=1023, blank=True)
   mtime              = models.DateTimeField(auto_now=True)
+  is_golden          = models.BooleanField(default=0,blank=True)
 
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Template','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Template','usercode',{})
@@ -615,6 +616,7 @@ class TestBase(models.Model):
   extraargs          = models.CharField(max_length=1023, blank=True, help_text="Add extra instructions to the ganga command.")
   cloned             = models.IntegerField(default = 0, blank=True)
   mtime              = models.DateTimeField(auto_now=True)
+  is_golden          = models.BooleanField(default=0,blank=True)
 
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Test','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Test','usercode',{})
@@ -721,6 +723,11 @@ class TestBase(models.Model):
         extraargs = t[0].extraargs
 
       try:
+        is_golden = self.is_golden
+      except:
+        is_golden = t[0].is_golden
+
+      try:
         metricperm = self.metricperm
       except:
         metricperm = t[0].metricperm
@@ -734,6 +741,7 @@ class TestBase(models.Model):
       self.template       = template
       self.gangabin       = gangabin
       self.extraargs      = extraargs
+      self.is_golden      = is_golden
       self.metricperm     = metricperm
 
       self.state = final_state
@@ -752,6 +760,7 @@ class TestBase(models.Model):
       self.testoption       = obj.testoption
       self.gangabin         = obj.gangabin
       self.extraargs        = obj.extraargs
+      self.is_golden        = obj.is_golden
 
       super(TestBase, self).save()
 
