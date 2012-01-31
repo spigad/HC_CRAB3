@@ -91,6 +91,7 @@ class GenericView():
     dh         = Datahelper()
     stress     = dh.annotateTests(stress)
     functional = dh.annotateTests(functional)
+    golden     = dh.annotateTests(golden)
 
     tests = {'golden':golden,'stress':stress,'functional':functional}
 
