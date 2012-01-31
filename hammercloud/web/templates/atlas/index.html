@@ -1,16 +1,9 @@
-{% extends config.base_template %}
+{% extends 'core/app/index.html' %}
 
-{% block content %}
-
-  <p>Welcome to HammerCloud-{{app|upper}}.</p>
-
-  {% block runningjobs_extra %}{% endblock %}
-
-  {% for key,list in tests.items %}
-     {% if key == "functional" or key == "stress" %}
-     <div class="runningjobs">
-        <h3>Running and Scheduled {{key|capfirst}} Tests</h3>
-        {% if list %}
+{% block runningjobs_extra %}
+      <div class="runningjobs">
+        <h3>Running and Scheduled AFT Tests</h3>
+        {% if tests.golden %}
           <table class="testslist">
             <thead>
               <tr>
@@ -24,7 +17,7 @@
            </thead>
            <tbody>
              {% load hc_tags %}
-             {% for test in list %}
+             {% for test in tests.golden %}
                <tr onmouseover="ChangeColor(this, true); this.style.cursor='pointer';"
                    onmouseout="ChangeColor(this, false); this.style.cursor='default';"
                    onclick="DoNav('{% url test-view app test.id %}');">
@@ -48,13 +41,4 @@
       {% endif %}
     </div>
     <br/>
-    {% endif %}
-  {% endfor %}
-
-
-  {{stress}}
-  
-  {{functional}}
-
-
 {% endblock %}
