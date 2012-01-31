@@ -183,7 +183,7 @@ class CreateAtJob:
         print '[ERROR][%s][create_at_job] Test %s without host set.'%(app,t.id)
 
       else:
-        if t.host == hostname:
+        if str(t.host) == hostname:
           print '[INFO][%s][create_at_job] Test %s assigned to %s'%(app,t.id,hostname)
 
           if self.createScript(app,t):
