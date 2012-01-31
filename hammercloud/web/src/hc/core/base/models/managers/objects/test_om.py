@@ -40,10 +40,10 @@ class TestManager(models.Manager):
     '''
     return super(TestManager, self).get_query_set().filter(state='completed')
 
-  def jobs(self,type,category,active):
+  def jobs(self,type,category,active,golden=False):
 
-    return super(TestManager, self).get_query_set().filter(state=type).filter(template__category=category).filter(template__active=active)
-       
+    return super(TestManager, self).get_query_set().filter(is_golden=golden).filter(state=type).filter(template__category=category).filter(template__active=active)
+
 #  def runningS(self):
 #    '''
 #    Method that return the Queryset with the Running Test

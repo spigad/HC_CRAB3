@@ -67,7 +67,7 @@ class GenericView():
     test = dic['Test']
     app  = test.__module__.split('.')[1]
 
-    stress, functional = [], []
+    stress, functional, golden = [], [], []
 
     stress +=  test.objects.jobs('running'    ,'stress'     ,1)
     stress +=  test.objects.jobs('running'    ,'stress'     ,0)
@@ -83,13 +83,16 @@ class GenericView():
     functional +=  test.objects.jobs('running'    ,'functional' ,1) 
     functional +=  test.objects.jobs('submitting' ,'functional' ,1) 
     functional +=  test.objects.jobs('scheduled'  ,'functional' ,1)
-                 
+
+    golden +=  test.objects.jobs('running'    ,'functional' ,1, golden=True) 
+    golden +=  test.objects.jobs('submitting' ,'functional' ,1, golden=True) 
+    golden +=  test.objects.jobs('scheduled'  ,'functional' ,1, golden=True)
 
     dh         = Datahelper()
     stress     = dh.annotateTests(stress)
     functional = dh.annotateTests(functional)
 
-    tests = {'stress':stress,'functional':functional}
+    tests = {'golden':golden,'stress':stress,'functional':functional}
 
     t = loader.select_template(['%s/index.html'%(app),'core/app/index.html'])
     c = RequestContext(request,
