@@ -151,7 +151,7 @@ class TemplateEntriesFeed(Feed):
     return "Updates, changes and additions to template %s at HammerCloud-%s "%(template_feed.name,plugin.upper())
 
   def link(self,obj):
-    plugin,template_id - obj
+    plugin,template_id = obj
     return "/hc/feed/app/%s/template/%s/"%(plugin,template_id)
 
   def items(self,obj):
