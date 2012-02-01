@@ -79,7 +79,7 @@ def fjr_errors(jobfjr):
     p.Parse(jobfjr, 1)
     fjr_errors = fjr_error[0:-1]
     return fjr_errors
-    
+
 # Extract exit codes
 def exit_codes(joboutput):
 
@@ -95,18 +95,18 @@ def exit_codes(joboutput):
 
     return int(exe_exitstatus), int(job_exitstatus)
 
-if __name__ == "__main__":
+def run(jobid=''):
 
     parser = argparse.ArgumentParser(description='Extract error information from job output.')
     parser.add_argument('jobdir')
     args = parser.parse_args()
 
-    stdouts = glob.glob(args.jobdir + '/*.stdout')
+    stdouts = glob.glob(args.jobdir + '/*%s.stdout' % jobid)
     if stdouts:
         stdout = stdouts[0]
     else:
         sys.exit(1)
-    fjrs = glob.glob(args.jobdir + '/*fjr*.xml')
+    fjrs = glob.glob(args.jobdir + '/*fjr*%s.xml' % jobid)
     fjr = ''
     if fjrs:
         fjr = fjrs[0]
@@ -129,6 +129,9 @@ if __name__ == "__main__":
         else:
             errors = wrapper_errors(output)
         print errors
+
+if __name__ == "__main__":
+    run()
 
 # Extract exit codes from stdout
 # EXECUTABLE_EXIT_STATUS = n or
