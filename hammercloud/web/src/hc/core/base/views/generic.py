@@ -1378,7 +1378,7 @@ class GenericView():
       if params.has_key('failed'):
         q = q & Q(**params['failed'])
       i = {'site': s,
-           'finished': r.count(),
+           'finished': r.filter(ganga_status__in=('c','f')).count(),
            'failed': r.filter(q).count(),
            'aborted': 0,
            'efficiency': 0.0}
