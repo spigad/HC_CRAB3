@@ -104,14 +104,14 @@ def run(jobdir=None, jobid=''):
         try:
           jobdir = args[0]
         except:
-          exit(0)
+          return None
 
     stdouts = glob.glob(jobdir + '/*%s.stdout' % str(jobid))
     if stdouts:
         stdout = stdouts[0]
     else:
         sys.exit(1)
-    fjrs = glob.glob(args.jobdir + '/*fjr*%s.xml' % str(jobid))
+    fjrs = glob.glob(jobdir + '/*fjr*%s.xml' % str(jobid))
     fjr = ''
     if fjrs:
         fjr = fjrs[0]
