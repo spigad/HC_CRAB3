@@ -2,7 +2,7 @@
 
 import sys
 import re
-import argparse
+import optparse
 import glob
 import xml.parsers.expat
 
@@ -15,27 +15,27 @@ def print_errors(errors):
 
     for line in errors:
         print line
-        
+
 # Function to find wrapper errors not coming from cmsRun
 # All lines between 'cmsRun started' and 'cmsRun ended' are ignored
 def wrapper_errors(joboutput):
-    
-        errors = []
-        p = re.compile('ERROR|Sandbox too big|eval')
-        p1 = re.compile('started at')
-        p2 = re.compile('ended at')
-        incms = False
-        for line in joboutput:
-            if p1.search(line):
-                incms = True
-            if p2.search(line):
-                incms = False
-            if incms:
-                continue
-            if p.search(line):
-                errors.append(line)
 
-        return ''.join(errors)
+    errors = []
+    p = re.compile('ERROR|Sandbox too big|eval')
+    p1 = re.compile('started at')
+    p2 = re.compile('ended at')
+    incms = False
+    for line in joboutput:
+        if p1.search(line):
+            incms = True
+        if p2.search(line):
+            incms = False
+        if incms:
+            continue
+        if p.search(line):
+            errors.append(line)
+
+    return ''.join(errors)
 
 def fjr_start(name, attr):
 
@@ -98,10 +98,13 @@ def exit_codes(joboutput):
 def run(jobdir=None, jobid=''):
 
     if jobdir is None:
-        parser = argparse.ArgumentParser(description='Extract error information from job output.')
-        parser.add_argument('jobdir')
-        args = parser.parse_args()
-        jobdir = args.jobdir
+        parser = optparse.OptionParser(description='Extract error information from job output.')
+        #parser.add_argument('jobdir')
+        (_, args) = parser.parse_args()
+        try:
+          jobdir = args[0]
+        except:
+          exit(0)
 
     stdouts = glob.glob(jobdir + '/*%s.stdout' % str(jobid))
     if stdouts:
