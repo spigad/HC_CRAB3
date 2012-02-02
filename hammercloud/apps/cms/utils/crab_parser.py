@@ -110,7 +110,7 @@ def run(jobdir=None, jobid=''):
     if stdouts:
         stdout = stdouts[0]
     else:
-        sys.exit(1)
+        return None
     fjrs = glob.glob(jobdir + '/*fjr*%s.xml' % str(jobid))
     fjr = ''
     if fjrs:
