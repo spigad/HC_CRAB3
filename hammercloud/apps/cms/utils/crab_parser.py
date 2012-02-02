@@ -126,7 +126,7 @@ def run(jobdir=None, jobid=''):
     errors = None
 
     if exe_code == 0 and job_code == 0:
-        sys.exit(0)
+        return None
     else:
         errors = ''
         if fjr:
@@ -137,10 +137,13 @@ def run(jobdir=None, jobid=''):
     return (exe_code, job_code, errors)
 
 if __name__ == "__main__":
-    (exe_code, job_code, errors) = run()
-    print exe_code, job_code
-    if errors:
-        print errors
+    try:
+        (exe_code, job_code, errors) = run()
+        print exe_code, job_code
+        if errors:
+            print errors
+    except:
+        pass
 
 # Extract exit codes from stdout
 # EXECUTABLE_EXIT_STATUS = n or
