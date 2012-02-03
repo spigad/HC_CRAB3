@@ -3,7 +3,7 @@
 {% block testlog %}
   <p class='testlog'>
     Input type: {{ test.inputtype }}<br />
-    Output DS: user.elmsheus.hc.{{ test.id }}.*<br />
+    Output DS: {{ test.output_dataset }}<br />
     Input DS Patterns: {% for td in patterns %}{{ td.dspattern.pattern }}{% if not forloop.last %}, {% endif %}{% endfor %}<br />
     Ganga Job Template: {{ test.jobtemplate }}<br />
     Athena User Area: {{ test.usercode }}<br />
