@@ -3,25 +3,30 @@ from datetime import date, timedelta
 from hc.core.utils.generic.class_func import custom_import
 
 def main():
+    days_to_keep = 3
     try:
-        opts, args = getopt.getopt(sys.argv[2:], "", ["doit"])
+        opts, _ = getopt.getopt(sys.argv[2:], "d:", ["doit"])
         app = str(sys.argv[1])
     except getopt.GetoptError, err:
         # print help information and exit:
         print str(err) # will print something like "option -a not recognized"
-        usage()
         sys.exit(2)
     doit = False
     for o, a in opts:
         if o in ("--doit"):
             doit=True
+        elif o in ('-d'):
+            try:
+                days_to_keep = int(a)
+            except:
+                pass
         else:
             assert False, "unhandled option"
    
     
 
     #cursor.execute ("select distinct id,endtime from test where date_add(endtime,interval 30 day)<now()")
-    days = timedelta(days=3)
+    days = timedelta(days=days_to_keep)
     begin = date.today() - days
     t = custom_import('hc.%s.models.Test'%(app))
     tests = t.objects.filter(endtime__lt=begin)
