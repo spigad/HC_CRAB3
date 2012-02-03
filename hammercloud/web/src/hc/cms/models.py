@@ -150,6 +150,11 @@ class Result(ResultBase):
   submission        = models.IntegerField(blank=True,null=True)
 #  submissionTime    = models.DateTimeField(blank=True,null=True)
   taskId            = models.IntegerField(blank=True,null=True)
+  grid_error_code   = models.CharField(max_length=16, blank=True,null=True)
+  grid_error_status = models.CharField(max_length=4095, blank=True,null=True)
+  app_exe_code      = models.IntegerField(blank=True, null=True)
+  app_job_code      = models.IntegerField(blank=True, null=True)
+  app_error_desc    = models.CharField(max_length=4095, blank=True,null=True)
 
   #[StorageParams]
   stats      = models.CharField(max_length=511, blank=True,null=True)
@@ -224,6 +229,14 @@ class Result(ResultBase):
   tstoragefile_read_actual_num_successful_operations    = models.FloatField(blank=True,null=True)
   tstoragefile_read_actual_total_megabytes              = models.FloatField(blank=True,null=True)
   file_prefetch_min_msecs                               = models.FloatField(blank=True,null=True)
+  tfile_read_total_megabytes                            = models.FloatField(blank=True,null=True)
+  rfio_read_max_msecs                                   = models.FloatField(blank=True,null=True)
+  rfio_read_min_msecs                                   = models.FloatField(blank=True,null=True)
+  rfio_read_num_operations                              = models.FloatField(blank=True,null=True)
+  rfio_read_num_successful_operations                   = models.FloatField(blank=True,null=True)
+  rfio_read_total_megabytes                             = models.FloatField(blank=True,null=True)
+  rfio_read_total_msecs                                 = models.FloatField(blank=True,null=True)
+  
 
 ##
 ## METRIC CLASSES
@@ -342,6 +355,13 @@ class SummaryTest(SummaryTestBase):
   tstoragefile_read_actual_num_successful_operations    = models.FloatField(blank=True,null=True)
   tstoragefile_read_actual_total_megabytes              = models.FloatField(blank=True,null=True)
   file_prefetch_min_msecs                               = models.FloatField(blank=True,null=True)
+  tfile_read_total_megabytes                            = models.FloatField(blank=True,null=True)
+  rfio_read_max_msecs                                   = models.FloatField(blank=True,null=True)
+  rfio_read_min_msecs                                   = models.FloatField(blank=True,null=True)
+  rfio_read_num_operations                              = models.FloatField(blank=True,null=True)
+  rfio_read_num_successful_operations                   = models.FloatField(blank=True,null=True)
+  rfio_read_total_megabytes                             = models.FloatField(blank=True,null=True)
+  rfio_read_total_msecs                                 = models.FloatField(blank=True,null=True)
 
 class SummaryTestSite(SummaryTestSiteBase):
   #[StorageParams]
@@ -417,7 +437,13 @@ class SummaryTestSite(SummaryTestSiteBase):
   tstoragefile_read_actual_num_successful_operations    = models.FloatField(blank=True,null=True)
   tstoragefile_read_actual_total_megabytes              = models.FloatField(blank=True,null=True)
   file_prefetch_min_msecs                               = models.FloatField(blank=True,null=True)
-
+  tfile_read_total_megabytes                            = models.FloatField(blank=True,null=True)
+  rfio_read_max_msecs                                   = models.FloatField(blank=True,null=True)
+  rfio_read_min_msecs                                   = models.FloatField(blank=True,null=True)
+  rfio_read_num_operations                              = models.FloatField(blank=True,null=True)
+  rfio_read_num_successful_operations                   = models.FloatField(blank=True,null=True)
+  rfio_read_total_megabytes                             = models.FloatField(blank=True,null=True)
+  rfio_read_total_msecs                                 = models.FloatField(blank=True,null=True)
 
 ##
 ## FEED CLASSES
