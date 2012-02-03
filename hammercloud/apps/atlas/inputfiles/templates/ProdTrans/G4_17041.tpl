@@ -27,6 +27,7 @@ Job (
     datasetname = '####OUTPUTDATASETNAME####'
    ) ,
  splitter = DQ2JobSplitter (
+    update_siteindex = False ,
     numfiles = 1 
     ) ,
  backend = Panda (
