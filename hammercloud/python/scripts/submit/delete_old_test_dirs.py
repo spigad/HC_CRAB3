@@ -5,7 +5,7 @@ from hc.core.utils.generic.class_func import custom_import
 def main():
     days_to_keep = 3
     try:
-        opts, _ = getopt.getopt(sys.argv[2:], "d:", ["doit"])
+        opts, _ = getopt.getopt(sys.argv[2:], "", ["days=","doit"])
         app = str(sys.argv[1])
     except getopt.GetoptError, err:
         # print help information and exit:
@@ -15,7 +15,7 @@ def main():
     for o, a in opts:
         if o in ("--doit"):
             doit=True
-        elif o in ('-d'):
+        elif o in ('-days'):
             try:
                 days_to_keep = int(a)
             except:
@@ -26,6 +26,7 @@ def main():
     
 
     #cursor.execute ("select distinct id,endtime from test where date_add(endtime,interval 30 day)<now()")
+    print 'Keeping tests for %d days.' % days_to_keep
     days = timedelta(days=days_to_keep)
     begin = date.today() - days
     t = custom_import('hc.%s.models.Test'%(app))
