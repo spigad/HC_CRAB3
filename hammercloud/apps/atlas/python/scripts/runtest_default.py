@@ -491,6 +491,14 @@ def process_job(job):
     logger.debug('subjob result is already fixed in database... skipping')
     return False
 
+  try:
+    if not test.output_dataset:
+      test.output_dataset = '.'.join(test.getResults_for_test.filter(ganga_status='c')[0].outds.split('.')[0:3])+'.*'
+      test.save()
+  except:
+    logger.warning('error setting test.output_dataset')
+    pass
+
   stats = {}
   try:
     stats = job.application.stats
