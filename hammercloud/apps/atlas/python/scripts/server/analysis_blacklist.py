@@ -185,7 +185,7 @@ class AnalysisBlacklist:
       self.templates = (163,432,434,445)
     else:
       self.templates = templates
-    self.policies_for_brokeroff = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,
+    self.policies_for_test = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,
                                    BlackListingPolicyLastThreeFromOne, WhiteListingPolicyLastTwoFromAll)
     self.policies_for_online = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,
                                 BlackListingPolicyLastThreeFromOne)
@@ -216,34 +216,34 @@ class AnalysisBlacklist:
       unittest.TextTestRunner(verbosity=2).run(suite)
       return True
     self.get_running_test()
-    self.check_brokeroff_sites()
+    self.check_test_sites()
     self.check_online_sites()
     self.send_alert()
     return True
 
-  def check_brokeroff_sites(self):
+  def check_test_sites(self):
     self.sitesNeedingJobs = {}
     sitesToAutoSetOnline = []
     limit = datetime.datetime.now() - datetime.timedelta(hours=3)
     for x in self.templates:
       self.sitesNeedingJobs[x] = []
-    bo_sites = self.get_sites(status='brokeroff')
-    self.store_log("Checking these sites currently brokeroff because of HC: %s"%bo_sites, 'blacklisting')
+    bo_sites = self.get_sites(status='test')
+    self.store_log("Checking these sites currently test because of HC: %s"%bo_sites, 'blacklisting')
     (_, newsites) = self.check_in_templates(bo_sites)
     if newsites:
-      self.store_log('** New brokeroff sites not in templates: %s' % repr(newsites), 'warning')
+      self.store_log('** New test sites not in templates: %s' % repr(newsites), 'warning')
     print self.runningTests
     for site in bo_sites:
       # The map() for the test ID is needed because MySQL 5.1 does not support nested IN
       # with ALL in a subquery (makes this QuerySet a little bit slower).
       res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).order_by('-mtime')
-      if reduce(lambda x, y: x and not y, map(lambda x: x().evaluate(res, site, self), self.policies_for_brokeroff), True) and not self.site_needs_jobs(site):
+      if reduce(lambda x, y: x and not y, map(lambda x: x().evaluate(res, site, self), self.policies_for_test), True) and not self.site_needs_jobs(site):
         sitesToAutoSetOnline.append(site)
       else:
         self.log_reasons((site,))
     if sitesToAutoSetOnline:
       self.add_log("")
-      self.add_log("AUTO-WHITELIST: The following brokeroff sites will be set to online:")
+      self.add_log("AUTO-WHITELIST: The following test sites will be set to online:")
       self.add_log("%s" % sitesToAutoSetOnline)
       for s in sitesToAutoSetOnline:
         if self.change_site_status(s, 'online'):
@@ -275,24 +275,24 @@ class AnalysisBlacklist:
 
     if sitesToSetBrokeroff:
       self.add_log("")
-      self.add_log("BLACKLIST: The following online sites will be set to brokeroff:")
+      self.add_log("BLACKLIST: The following online sites will be set to test:")
       self.add_log("%s" % sitesToSetBrokeroff)
       for s in sitesToSetBrokeroff:
-        if self.change_site_status(s, 'brokeroff'):
-          self.store_log('Site %s will be set to brokeroff' % s, 'blacklisting')
+        if self.change_site_status(s, 'test'):
+          self.store_log('Site %s will be set to test' % s, 'blacklisting')
           self.store_log('%s blacklisting reason is %s' % (s, self.reasons[s]), 'blacklisting')
           self.send_cloud_alert(s)
           BlacklistEvent(event='blacklist', reason=self.reasons[s], timestamp=datetime.datetime.now(), external=False, site=Site.objects.get(name=s)).save()
 
   def change_site_status(self, site, new_status):
-    if new_status not in ('brokeroff', 'online'):
+    if new_status not in ('test', 'online'):
       return False
     self.add_log('Changing %s status to %s:' % (site, new_status))
     if self.debug:
       self.add_log('DEBUG mode')
       return True
     now = int(time.time())
-    if new_status == 'brokeroff':
+    if new_status == 'test':
       try:
         last_exclusion = int(Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0].option_value)
       except:
@@ -311,7 +311,7 @@ class AnalysisBlacklist:
     if not self.debug:
       o = commands.getoutput(cmd)
       self.add_log(o)
-    if new_status == 'brokeroff':
+    if new_status == 'test':
       try:
         option = Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0]
         option.option_value = now
@@ -347,8 +347,8 @@ class AnalysisBlacklist:
       self.once = True
     for s in Client.PandaSites.keys():
       if Client.PandaSites[s]['status'] == status and not re.search('test', s, re.I) and not re.search('local', s, re.I) and s not in ignore_sites:
-        if status == 'brokeroff':
-          if Client.PandaSites[s]['comment'] in ('HC.Blacklist.set.brokeroff', 'HC.Blacklist.set.manual', 'HC.Test.Me'):
+        if status == 'test':
+          if Client.PandaSites[s]['comment'] in ('HC.Blacklist.set.test', 'HC.Blacklist.set.manual', 'HC.Test.Me'):
             os.append(s)
         else:
           os.append(s)
@@ -442,7 +442,7 @@ class AnalysisBlacklist:
     body += "All recent test jobs can be viewed here:\n\n"
     body += "http://panda.cern.ch/server/pandamon/query?job=*&site=%s&type=analysis&hours=12&processingType=gangarobot\n" % site
     body += "\n"
-    body += "The queue status of %s is currently brokeroff.\n" % site
+    body += "The queue status of %s is currently 'test'.\n" % site
     body += "\n"
     body += "Please coordinate the necessary fixes. HC will reset the queue online when the jobs are succeeding. "
     body += "\n"
