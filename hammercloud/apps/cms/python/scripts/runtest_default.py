@@ -4,6 +4,7 @@ from urllib2 import URLError,HTTPError,Request,urlopen
 from django.db.models import Count
 from hc.cms.models import Test,TestState,Site,Result,SummaryTest,SummaryTestSite,Metric,TestMetric,SiteMetric,MetricType,TestLog,SummaryEvolution
 from lib.summary import summary
+from cms.utils import utils_wrapper
 
 from hc.core.utils.hc.stats import Stats
 from numpy import *
@@ -428,6 +429,28 @@ def process_subjob(job,subjob):
   #logger.info(results)
 
   if result.ganga_status in ('c','f'):
+    if result.ganga_status == 'f':
+      logger.debug('Parsing the LoggingInfo and stdout of the job')
+      try:
+        grid_statuses = utils_wrapper.CMS_get_abort_code_from_CRAB(test.id, job.id, subjob.id)
+        if grid_statuses:
+          result.grid_error_code = grid_statuses[0]
+          result.grid_error_status = grid_statuses[1]
+        logger.debug('Parsing of LoggingInfo completed')
+      except:
+        logger.error('Error parsing the LoggingInfo')
+      try:
+        app_status = utils_wrapper.CMS_get_app_code_from_CRAB(test.id, job.id, subjob.id)
+        if app_status:
+          result.app_exe_code = app_status[0]
+          result.app_job_code = app_status[1]
+          result.app_error_desc = app_status[2]
+        logger.debug('Parsing of stdout completed')
+      except:
+        logger.error('Error parsing the stdout')
+    else:
+      logger.debug('Job completed succesufully, parsing of logs not needed.')
+    
     logger.debug('Subjob is in final state, marking row as fixed')
     result.fixed = 1
     result.save()    
