@@ -15,7 +15,7 @@ def main():
     for o, a in opts:
         if o in ("--doit"):
             doit=True
-        elif o in ('-days'):
+        elif o in ('--days'):
             try:
                 days_to_keep = int(a)
             except:
