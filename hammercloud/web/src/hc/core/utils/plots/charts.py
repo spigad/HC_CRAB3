@@ -96,12 +96,15 @@ class Histogram(VerticalBarGroup):
     for i in xrange(bins):
       val[i + 1] = 0
     for k in data:
-      bin_index = int(ceil(((k - x_range[0]) / bin_width)))
-      if bin_index > bins:
-          bin_index = bins
-      elif bin_index < 1:
-          bin_index = 1
-      val[bin_index] += 1
+      try:
+        bin_index = int(ceil(((k - x_range[0]) / bin_width)))
+        if bin_index > bins:
+            bin_index = bins
+        elif bin_index < 1:
+            bin_index = 1
+        val[bin_index] += 1
+      except:
+        pass
     self.max_value = max(val.values())
     self.bar('a', 1, 1)
     self.x_range = x_range
