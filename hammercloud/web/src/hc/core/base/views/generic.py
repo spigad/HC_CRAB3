@@ -1348,7 +1348,10 @@ class GenericView():
     # Get the GET parameters for the QuerySet
     start_date = request.GET.get('start_date', None)
     if start_date:
-      result_filters = result_filters & Q(mtime__gte=dateutil.parser.parse(start_date))
+      start_date = dateutil.parser.parse(start_date)
+    else:
+      start_date = datetime.now() - timedelta(days=7)
+    result_filters = result_filters & Q(mtime__gte=start_date)
     end_date = request.GET.get('end_date', None)
     if end_date:
       result_filters = result_filters & Q(mtime__lte=dateutil.parser.parse(end_date))
@@ -1413,7 +1416,10 @@ class GenericView():
     result_filters = Q()
     start_date = request.GET.get('start_date', None)
     if start_date:
-      result_filters = result_filters & Q(mtime__gte=dateutil.parser.parse(start_date))
+      start_date = dateutil.parser.parse(start_date)
+    else:
+      start_date = datetime.now() - timedelta(days=7)
+    result_filters = result_filters & Q(mtime__gte=start_date)
     end_date = request.GET.get('end_date', None)
     if end_date:
       result_filters = result_filters & Q(mtime__lte=dateutil.parser.parse(end_date))
@@ -1450,7 +1456,10 @@ class GenericView():
     result_filters = Q()
     start_date = request.GET.get('start_date', None)
     if start_date:
-      result_filters = result_filters & Q(mtime__gte=dateutil.parser.parse(start_date))
+      start_date = dateutil.parser.parse(start_date)
+    else:
+      start_date = datetime.now() - timedelta(days=7)
+    result_filters = result_filters & Q(mtime__gte=start_date)
     end_date = request.GET.get('end_date', None)
     if end_date:
       result_filters = result_filters & Q(mtime__lte=dateutil.parser.parse(end_date))
