@@ -434,8 +434,8 @@ def process_subjob(job,subjob):
       try:
         grid_statuses = utils_wrapper.CMS_get_abort_code_from_CRAB(test.id, job.id, subjob.id)
         if grid_statuses:
-          result.grid_error_code = grid_statuses[0]
-          result.grid_error_status = grid_statuses[1]
+          result.grid_error_code = grid_statuses[0][0]
+          result.grid_error_status = grid_statuses[0][1]
         logger.info('Parsing of LoggingInfo completed')
       except:
         logger.error('Error parsing the LoggingInfo')

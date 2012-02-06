@@ -216,10 +216,10 @@ def statistics(request):
 def joberrors(request):
   pass
 
-@GenView_dec(params={'on':True,'field':'reason'})
+@GenView_dec(params={'on':True,'field':'grid_error_code'})
 def abortedjobs(request):
   pass
 
-@GenView_dec(params={'on':True,'field':'reason'})
+@GenView_dec(params={'on':True,'field':'app_exe_code'})
 def failedjobs(request):
   pass

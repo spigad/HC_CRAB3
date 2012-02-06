@@ -1431,7 +1431,7 @@ class GenericView():
     site_data = []
     results_filtered = result.objects.filter(result_filters)
 
-    site_data = results_filtered.values(params['field']).filter(site=site).annotate(jcount=Count(params['field']))
+    site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
 
     c = RequestContext(request, {'site_data': site_data}, [defaultContext])
     t = loader.select_template(['%s/stats/abortedjobs.html'%(app),'core/app/stats/abortedjobs.html'])
@@ -1468,7 +1468,7 @@ class GenericView():
     site_data = []
     results_filtered = result.objects.filter(result_filters)
 
-    site_data = results_filtered.values(params['field']).filter(site=site).annotate(jcount=Count(params['field']))
+    site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
 
     c = RequestContext(request, {'site_data': site_data}, [defaultContext])
     t = loader.select_template(['%s/stats/failedjobs.html'%(app),'core/app/stats/failedjobs.html'])
