@@ -3,9 +3,10 @@ import datetime
 import re
 import time
 import unittest
+import sys
 
 from hc.core.utils.hc import cernmail
-from hc.atlas.models import Site, Result, SiteOption, Template, TemplateSite, Test, TestLog
+from hc.atlas.models import Site, Result, SiteOption, Template, TemplateSite, Test, TestLog, BlacklistEvent
 from pandatools import Client
 
 SITETYPE = 'production'
@@ -122,7 +123,7 @@ class BlacklistingTest(unittest.TestCase):
     return results
 
   def testBlacklistingPolicyLastOneFromAll(self):
-    b = Blacklist(templates=(67, 80, 95, 96), debug=True)
+    b = ProductionBlacklist(templates=(67, 80, 95, 96), debug=True)
 
     self.assertEqual(False, BlackListingPolicyLastOneFromAll().evaluate((), 'ANALY_TEST', b)) # base case
 
@@ -142,7 +143,7 @@ class BlacklistingTest(unittest.TestCase):
     self.assertEqual(False, BlackListingPolicyLastOneFromAll().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
 
   def testBlacklistingPolicyLastTwoFromTwo(self):
-    b = Blacklist(templates=(67, 80, 95, 96), debug=True)
+    b = ProductionBlacklist(templates=(67, 80, 95, 96), debug=True)
 
     self.assertEqual(False, BlackListingPolicyLastTwoFromTwo().evaluate((), 'ANALY_TEST', b)) # base case
 
@@ -159,7 +160,7 @@ class BlacklistingTest(unittest.TestCase):
     self.assertEqual(False, BlackListingPolicyLastTwoFromTwo().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
 
   def testBlacklistingPolicyLastFourFromOne(self):
-    b = Blacklist(templates=(67, 80, 95, 96), debug=True)
+    b = ProductionBlacklist(templates=(67, 80, 95, 96), debug=True)
 
     self.assertEqual(False, BlackListingPolicyLastFourFromOne().evaluate((), 'ANALY_TEST', b)) # base case
 
@@ -179,7 +180,7 @@ class ProductionBlacklist:
 
   def __init__(self, templates=None):
     if not templates:
-      self.templates = (439,440,441)
+      self.templates = (164,439,440,441)
     else:
       self.templates = templates
     self.policies_for_test = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,
@@ -195,6 +196,7 @@ class ProductionBlacklist:
     self.once = None
     self.reasons = {}
     self.log = ''
+    self.once = False
 
   def run(self, test=False):
     """Main runner of the blacklisting script."""
@@ -202,6 +204,7 @@ class ProductionBlacklist:
     self.log = ''
     self.debug = DEBUG
     self.test = test
+    self.once = False
     if self.debug:
       self.daops = self.daexp = self.dan
     if self.test:
@@ -223,9 +226,9 @@ class ProductionBlacklist:
     for x in self.templates:
       self.sitesNeedingJobs[x] = []
     bo_sites = self.get_sites(status='test')
+    self.store_log("Checking these sites currently test because of HC: %s"%bo_sites, 'blacklisting')
     (_, newsites) = self.check_in_templates(bo_sites)
     if newsites:
-      self.add_log('** New test sites not in templates: %s' % repr(newsites))
       self.store_log('** New test sites not in templates: %s' % repr(newsites), 'warning')
     print self.runningTests
     for site in bo_sites:
@@ -244,6 +247,7 @@ class ProductionBlacklist:
         if self.change_site_status(s, 'online'):
           self.store_log('Site %s was set to online' % s, 'whitelisting')
           self.send_cloud_online_alert(s)
+          BlacklistEvent(event='whitelist', reason='', timestamp=datetime.datetime.now(), external=False, site=Site.objects.get(name=s)).save()
 
   def check_online_sites(self):
     self.sitesNeedingJobs = {}
@@ -254,7 +258,6 @@ class ProductionBlacklist:
     online_sites = self.get_sites(status='online')
     (_, newsites) = self.check_in_templates(online_sites)
     if newsites:
-      self.add_log('** New online sites not in templates: %s' % repr(newsites))
       self.store_log('** New online sites not in templates: %s' % repr(newsites), 'warning')
     for site in online_sites:
       res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).order_by('-mtime')
@@ -264,8 +267,8 @@ class ProductionBlacklist:
     for t in self.templates:
       if self.sitesNeedingJobs[t]:
         self.sitesNeedingJobs[t] = sorted(list(set(self.sitesNeedingJobs[t])))
-        self.add_log("The following online sites need more test jobs for template %d:" % t)
-        self.add_log("%s" % ', '.join(self.sitesNeedingJobs[t]))
+        #self.add_log("The following online sites need more test jobs for template %d:" % t)
+        #self.add_log("%s" % ', '.join(self.sitesNeedingJobs[t]))
         self.store_log("The following online sites need more test jobs for template %d: %s" % (t, ', '.join(self.sitesNeedingJobs[t])), 'warning')
 
     if sitesToSetBrokeroff:
@@ -277,6 +280,7 @@ class ProductionBlacklist:
           self.store_log('Site %s will be set to test' % s, 'blacklisting')
           self.store_log('%s blacklisting reason is %s' % (s, self.reasons[s]), 'blacklisting')
           self.send_cloud_alert(s)
+          BlacklistEvent(event='blacklist', reason=self.reasons[s], timestamp=datetime.datetime.now(), external=False, site=Site.objects.get(name=s)).save()
 
   def change_site_status(self, site, new_status):
     if new_status not in ('test', 'online'):
@@ -303,19 +307,19 @@ class ProductionBlacklist:
       self.add_log('> ' + cmd)
       if not self.debug:
         self.add_log(commands.getoutput(cmd))
-      try:
-        option = Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0]
-        option.option_value = now
-      except:
-        option = SiteOption()
-        option.option_name = 'last_exclusion'
-        option.option_value = now
-        option.site = Site.objects.get(name=site)
-      option.save()
+      if new_status == 'test':
+        try:
+          option = Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0]
+          option.option_value = now
+        except:
+          option = SiteOption()
+          option.option_name = 'last_exclusion'
+          option.option_value = now
+          option.site = Site.objects.get(name=site)
+        option.save()
 
       Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
       if not self.debug and Client.PandaSites[site]['status'] != new_status:
-        self.add_log('Error setting %s to %s' % (site, new_status))
         self.store_log('Error setting %s to %s' % (site, new_status), 'error')
         return False
       return True
@@ -332,9 +336,12 @@ class ProductionBlacklist:
 
   def get_sites(self, status='online'):
     os = []
-    to_exclude = map(lambda x: x.site.name, SiteOption.objects.filter(option_name='autoexclusion').filter(option_value='disable'))
+    ignore_sites = map(lambda x: x.site.name, SiteOption.objects.filter(option_name='autoexclusion').filter(option_value='disable'))
+    if not self.once:
+      self.store_log("Sites disabled from autoexclusion: %s"%(', '.join(ignore_sites),))
+      self.once = True
     for s in Client.PandaSites.keys():
-      if Client.PandaSites[s]['status'] == status and not re.search('test', s, re.I) and not re.search('local', s, re.I) and s not in to_exclude:
+      if Client.PandaSites[s]['status'] == status and not re.search('test', s, re.I) and not re.search('local', s, re.I) and s not in ignore_sites:
         if status == 'test':
           if Client.PandaSites[s]['comment'] in ('HC.Blacklist.set.test', 'HC.Blacklist.set.manual', 'HC.Test.Me'):
             os.append(s)
@@ -347,21 +354,19 @@ class ProductionBlacklist:
     self.runningTests = Test.objects.filter(template__in=self.templates).exclude(state='error').order_by('-id').only('id')[:len(self.templates) * 2]
 
   def add_log(self, msg):
-    self.log += '\n' + msg
-    if self.debug:
-      print self.log
+    self.log += '\n' + msg + '\n'
+    #if self.debug:
+    print '\n' + msg + '\n'
 
   def store_log(self, msg, category='other'):
-    if not self.debug:
-      TestLog(test=self.runningTests[0], comment=msg, severity=category, user=1).save()
-    else:
-      TestLog(test=self.runningTests[0], comment=msg, severity='debug', user=1).save()
+    self.add_log(msg)
+    TestLog(test=self.runningTests[0], comment=msg, severity=category, user=1).save()
 
   def log_reasons(self, sites):
     for site in sites:
       s = '%s (%s):' % (site, Client.PandaSites[site]['status'])
       s += '\n    %s\n' % ('\n'.join(self.reasons.get(site, '')))
-      self.add_log(s)
+      self.store_log(s, 'warning')
 
   def site_has_no_jobs(self, site):
     for t in self.templates:
@@ -379,6 +384,7 @@ class ProductionBlacklist:
       self.reasons[site].append(reason)
     else:
       self.reasons[site] = [reason]
+    TestLog(test=self.runningTests[0], comment='%s: %s' % (site, reason), severity='warning', user=1).save()
 
   def send_cloud_online_alert(self, site):
     try:
@@ -392,7 +398,7 @@ class ProductionBlacklist:
     to = cloud_support + ',' + self.daops
     if self.debug:
         to = self.dan
-    subject = "[HCv4] %s reset online at %s CET" % (site, time.ctime())
+    subject = "[HammerCloud] %s reset online at %s CET" % (site, time.ctime())
     if self.debug:
         subject += ' DEBUG'
     body = "Dear %s,\n\n" % cloud_support
@@ -416,7 +422,7 @@ class ProductionBlacklist:
     to = cloud_support + ',' + self.daops
     if self.debug:
         to = self.dan
-    subject = "[HCv4] %s Auto-Excluded at %s CET" % (site, time.ctime())
+    subject = "[HammerCloud] %s Auto-Excluded at %s CET" % (site, time.ctime())
     if self.debug:
         subject += ' DEBUG'
     body = "Dear %s,\n\n" % cloud_support
@@ -455,4 +461,4 @@ class ProductionBlacklist:
 
 
 if __name__ == '__main__':
-  Blacklist().run(debug=True, test=False)
+  ProductionBlacklist().run(debug=True, test=False)
