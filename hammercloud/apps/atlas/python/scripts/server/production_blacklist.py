@@ -452,7 +452,7 @@ class ProductionBlacklist:
     if not self.log:
         return
     to = self.daexp
-    subject = "[HCv4] Production Blacklisting Report at %s CET" % time.ctime()
+    subject = "[HammerCloud] Production Blacklisting Report at %s CET" % time.ctime()
     if self.debug:
         to = self.dan
         subject += ' DEBUG'
