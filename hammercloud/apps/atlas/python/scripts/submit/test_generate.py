@@ -140,7 +140,7 @@ class TestGenerate:
       else:
         datasetpatterns.append(td.dspattern.pattern)
 
-    if len(datasetpatterns) == 0:
+    if len(datasetpatterns) == 0 and mode != 'prod':
       print 'No dspatterns found for this test!'
       return 0
     print 'Dataset patterns to be used: %s' % datasetpatterns
@@ -246,7 +246,7 @@ class TestGenerate:
             hasdata=True
         except KeyError:
           pass
-      if not hasdata and mode != 't3':
+      if not hasdata and mode != 't3' and len(datasetpatterns) > 0:
         print 'skipping site %s with no data'%site
         continue
 
@@ -271,7 +271,7 @@ class TestGenerate:
 
           print "%02d datasets with pattern %s at location %s " %(len(datasets),datasetpattern, location)
 
-          if len(datasets) < 1 and mode != 't3':
+          if len(datasets) < 1 and mode != 't3' and len(datasetpatterns) > 0:
             print "skipping %s"%location
             useful_sites -= 1
             continue
@@ -309,7 +309,7 @@ class TestGenerate:
                 print 'Skipping %s' %dataset
                 continue
 
-              if mode != 't3':
+              if mode != 't3' and len(datasetpatterns) > 0:
                 # Get dataset info
                 try:
                   print time.ctime()
@@ -359,11 +359,11 @@ class TestGenerate:
                 break
 
             # prevent infinite loop
-            if (num-1) < 1 and mode != 't3':
+            if (num-1) < 1 and mode != 't3' and len(datasetpatterns) > 0:
               print 'No datasets: skipping site %s,%s'%(site,location)
               useful_sites -= 1
               continue
-            if mode == 't3':
+            if mode in ('prod','t3') or len(datasetpatterns) == 0:
               useful_sites -= 1
 
             ff = open(jobtemplate,'r')
@@ -382,6 +382,8 @@ class TestGenerate:
 
             if mode == 't3':
               dataset_str = repr(str(datasetpatterns[0]))
+            elif mode == 'prod' and len(datasetpatterns) == 0:
+              dataset_str = ''
             else:
               dataset_str = repr(datasetAll)
 
