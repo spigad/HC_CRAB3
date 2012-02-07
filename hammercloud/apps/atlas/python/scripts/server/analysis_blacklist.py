@@ -125,7 +125,7 @@ class BlacklistingTest(unittest.TestCase):
     return results
 
   def testBlacklistingPolicyLastOneFromAll(self):
-    b = Blacklist(templates=(67, 80, 95, 96), debug=True)
+    b = AnalysisBlacklist(templates=(67, 80, 95, 96), debug=True)
 
     self.assertEqual(False, BlackListingPolicyLastOneFromAll().evaluate((), 'ANALY_TEST', b)) # base case
 
@@ -145,7 +145,7 @@ class BlacklistingTest(unittest.TestCase):
     self.assertEqual(False, BlackListingPolicyLastOneFromAll().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
 
   def testBlacklistingPolicyLastTwoFromTwo(self):
-    b = Blacklist(templates=(67, 80, 95, 96), debug=True)
+    b = AnalysisBlacklist(templates=(67, 80, 95, 96), debug=True)
 
     self.assertEqual(False, BlackListingPolicyLastTwoFromTwo().evaluate((), 'ANALY_TEST', b)) # base case
 
@@ -162,7 +162,7 @@ class BlacklistingTest(unittest.TestCase):
     self.assertEqual(False, BlackListingPolicyLastTwoFromTwo().evaluate(self.create_result_list_from_tuples(notall), 'ANALY_TEST', b))
 
   def testBlacklistingPolicyLastFourFromOne(self):
-    b = Blacklist(templates=(67, 80, 95, 96), debug=True)
+    b = AnalysisBlacklist(templates=(67, 80, 95, 96), debug=True)
 
     self.assertEqual(False, BlackListingPolicyLastFourFromOne().evaluate((), 'ANALY_TEST', b)) # base case
 
@@ -469,4 +469,4 @@ class AnalysisBlacklist:
 
 
 if __name__ == '__main__':
-  Blacklist().run(debug=True, test=False)
+  AnalysisBlacklist().run(debug=True, test=False)
