@@ -260,7 +260,7 @@ def _copyJob(job, site):
     t = int(time.time())
     j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, t, uuid)
     j.outputdata.location = ''
-    if j.inputdata._impl._name == 'DQ2Dataset':
+    if j.inputdata and j.inputdata._impl._name == 'DQ2Dataset':
       previous_datasets = j.inputdata.dataset
       logger.info('Previous input datasets = %s' % previous_datasets)
       try:
