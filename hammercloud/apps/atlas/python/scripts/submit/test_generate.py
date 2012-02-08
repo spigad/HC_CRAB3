@@ -269,7 +269,12 @@ class TestGenerate:
             useful_sites -= 1
             continue
 
-          print "%02d datasets with pattern %s at location %s " %(len(datasets),datasetpattern, location)
+          try:
+            print "%02d datasets with pattern %s at location %s " %(len(datasets),datasetpattern, location)
+          except:
+            # datasetpattern can be undefined if not using any dspattern
+            assert mode == 'prod'
+            print "%02d datasets at location %s (not using dspatterns) " %(len(datasets),location)
 
           if len(datasets) < 1 and mode != 't3' and len(datasetpatterns) > 0:
             print "skipping %s"%location
