@@ -1,4 +1,5 @@
 from django.db import models
+from django.db import IntegrityError
 
 from hc.core.base.models.fields import PickledObjectField
 from hc.core.base.models.metacreator import MetaCreator
@@ -1109,7 +1110,10 @@ class TestSiteBase(models.Model):
         test_site.min_queue_depth       = self.min_queue_depth
         test_site.max_running_jobs      = self.max_running_jobs
 #        test_site.save()
-        super(TestSiteBase, test_site).save()
+        try:
+          super(TestSiteBase, test_site).save()
+        except IntegrityError:
+          pass
         overwrite = True    
 
       if (clone or new) and not overwrite:
