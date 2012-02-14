@@ -1111,10 +1111,11 @@ class TestSiteBase(models.Model):
         test_site.max_running_jobs      = self.max_running_jobs
 #        test_site.save()
         try:
-          super(TestSiteBase, test_site).save()
+          #super(TestSiteBase, test_site).save()
+          test_site.save()
+          overwrite = True
         except IntegrityError:
           pass
-        overwrite = True    
 
       if (clone or new) and not overwrite:
 
@@ -1122,7 +1123,10 @@ class TestSiteBase(models.Model):
 
         summary_test_site = custom_import('hc.'+self._meta.app_label+'.models.SummaryTestSite')
         sts = summary_test_site(test=self.test,test_site=self)
-        sts.save()
+        try:
+          sts.save()
+        except IntegrityError:
+          pass
 
         summary_test = custom_import('hc.'+self._meta.app_label+'.models.SummaryTest')
 
@@ -1142,8 +1146,11 @@ class TestSiteBase(models.Model):
         else:
           summary_test.clouds = self.site.cloud.code
           summary_test.nr_clouds = 1
- 
-        summary_test.save()
+
+        try:
+          summary_test.save()
+        except IntegrityError:
+          pass
 
   def delete(self):
 
