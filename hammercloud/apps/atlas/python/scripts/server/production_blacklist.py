@@ -180,7 +180,7 @@ class ProductionBlacklist:
 
   def __init__(self, templates=None):
     if not templates:
-      self.templates = (164,439,440,441)
+      self.templates = (439,440,441)
     else:
       self.templates = templates
     self.policies_for_test = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,
@@ -222,7 +222,7 @@ class ProductionBlacklist:
   def check_test_sites(self):
     self.sitesNeedingJobs = {}
     sitesToAutoSetOnline = []
-    limit = datetime.datetime.now() - datetime.timedelta(hours=3)
+    limit = datetime.datetime.now() - datetime.timedelta(hours=4)
     for x in self.templates:
       self.sitesNeedingJobs[x] = []
     bo_sites = self.get_sites(status='test')
@@ -252,7 +252,7 @@ class ProductionBlacklist:
   def check_online_sites(self):
     self.sitesNeedingJobs = {}
     sitesToSetBrokeroff = []
-    limit = datetime.datetime.now() - datetime.timedelta(hours=3)
+    limit = datetime.datetime.now() - datetime.timedelta(hours=4)
     for x in self.templates:
       self.sitesNeedingJobs[x] = []
     online_sites = self.get_sites(status='online')
