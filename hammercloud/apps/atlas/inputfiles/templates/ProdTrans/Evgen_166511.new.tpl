@@ -8,7 +8,7 @@ Job (
  inputsandbox = [ ] ,
  application = ProdTrans (
     atlas_release = '16.6.5' ,
-    home_package = 'AtlasPhysics/16.6.5.5.1' ,
+    home_package = 'AtlasProduction/16.6.5.1' ,
     transformation = 'Evgen_trf.py' ,
     atlas_cmtconfig = 'i686-slc5-gcc43-opt' ,
     dbrelease = '' ,

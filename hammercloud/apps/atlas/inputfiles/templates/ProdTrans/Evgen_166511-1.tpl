@@ -3,10 +3,6 @@ Job (
  outputsandbox = [] ,
  info = JobInfo (
     ) ,
- inputdata = DQ2Dataset (
-    dataset = ####DATASET#### ,
-    number_of_files = 1 
-    ) ,
  merger = None ,
  inputsandbox = [ ] ,
  application = ProdTrans (
