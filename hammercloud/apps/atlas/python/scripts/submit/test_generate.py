@@ -418,8 +418,8 @@ class TestGenerate:
               print '%s not done. generating more jobs'%site
             sitenumjobs[site]=sitenumjobs[site]-(num-1)
 
-            # For t3 we are done.
-            if mode == 't3':
+            # For t3 we are done. Also in production when no dspatterns are loaded.
+            if mode == 't3' or len(datasetpatterns) == 0:
               sitenumjobs[site] = 0
 
     print '\n**** TOTAL %02d jobs generated' %(total)
