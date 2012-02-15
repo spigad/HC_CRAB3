@@ -377,6 +377,7 @@ class TemplateBase(models.Model):
   extraargs          = models.CharField(max_length=1023, blank=True)
   mtime              = models.DateTimeField(auto_now=True)
   is_golden          = models.BooleanField(default=0,blank=True)
+  obsolete           = models.BooleanField(default=0,blank=True)
 
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Template','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Template','usercode',{})
