@@ -1111,11 +1111,10 @@ class TestSiteBase(models.Model):
         test_site.max_running_jobs      = self.max_running_jobs
 #        test_site.save()
         try:
-          #super(TestSiteBase, test_site).save()
-          test_site.save()
-          overwrite = True
+          super(TestSiteBase, test_site).save()
         except IntegrityError:
           pass
+        overwrite = True
 
       if (clone or new) and not overwrite:
 
