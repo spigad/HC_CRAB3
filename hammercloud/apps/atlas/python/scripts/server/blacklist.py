@@ -10,6 +10,7 @@ class Blacklist:
     # Look for the app blacklisting script and run it.
     blacklist_modules = ('atlas.python.scripts.server.analysis_blacklist.AnalysisBlacklist',
                          'atlas.python.scripts.server.production_blacklist.ProductionBlacklist',
+                         'atlas.python.scripts.server.fake_production_blacklist.ProductionBlacklist',
                          )
 
     for module_name in blacklist_modules:
