@@ -11,10 +11,13 @@ from numpy import *
 import os, sys, time, random, commands
 import numpy
 import types
+import fnmatch
 
 from Ganga.Core.GangaThread import GangaThread
 from Ganga.Utility.logging import getLogger
 logger = getLogger()
+
+from atlas.python.lib.publishers.nagios_publisher import NagiosPublisher
 
 ##
 ## CHECK IF WE HAVE RECEIVED TESTID
@@ -140,7 +143,11 @@ def updateDatasets(site, num):
     for location in locations:
       for datasetpattern in datasetpatterns:
         try:
-          temp = list(dq2.listDatasetsByNameInSite(site=location, name=datasetpattern))
+          #temp = list(dq2.listDatasetsByNameInSite(site=location, name=datasetpattern))
+          temp1 = dq2.listDatasetsByNameInSite(site=location, complete=None, name=None, p=None, rpp=None, group=None )
+          temp1 = list(temp1)
+          temp = fnmatch.filter(temp1, datasetpattern)
+          temp = list(temp)
           datasets = datasets + temp
           for ds in temp:
             dsLocation[ds] = location
@@ -157,6 +164,10 @@ def updateDatasets(site, num):
   gooddatasets = []
   for dataset in datasets:
     try:
+      # Remove bad dataset patterns
+      if dataset.find('singlepart')>=0 or dataset.find('pile')>=0 or (dataset.find('test')>=0 and not 'HCtest' in dataset) or dataset.find('atlfast')>=0 or dataset.find('users')>=0 or dataset.find('higgswg')>=0 or dataset.find('_sub')>=0 or dataset.find('DAOD')>=0 or dataset.find('D2AOD')>=0:
+        print 'Skipping %s' %dataset
+        continue
       # check if frozen and complete
       location = dsLocation[dataset]
       datasetsiteinfo = dq2.listFileReplicas(location, dataset)
@@ -251,25 +262,27 @@ def _copyJob(job, site):
     t = int(time.time())
     j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, t, uuid)
     j.outputdata.location = ''
-    previous_datasets = j.inputdata.dataset
-    logger.info('Previous input datasets = %s' % previous_datasets)
-    try:
-      test_site = test.getTestSites_for_test.filter(site__name=site)
-      num = test_site[0].num_datasets_per_bulk
-    except:
-      num = len(j.inputdata.dataset)
+    if j.inputdata and j.inputdata._impl._name == 'DQ2Dataset':
+      previous_datasets = j.inputdata.dataset
+      logger.info('Previous input datasets = %s' % previous_datasets)
+      try:
+        test_site = test.getTestSites_for_test.filter(site__name=site)
+        num = test_site[0].num_datasets_per_bulk
+      except:
+        num = len(j.inputdata.dataset)
 
-    try:
-      j.inputdata.dataset = updateDatasets(site, num)
-      if not j.inputdata.dataset:
+      try:
+        j.inputdata.dataset = updateDatasets(site, num)
+        if not j.inputdata.dataset:
+          j.inputdata.dataset = previous_datasets[0:num]
+      except:
+        logger.warning('Failed to get new datasets from DQ2. Using previous datasets.')
+        logger.warning(sys.exc_info()[0])
+        logger.warning(sys.exc_info()[1])
         j.inputdata.dataset = previous_datasets[0:num]
-    except:
-      logger.warning('Failed to get new datasets from DQ2. Using previous datasets.')
-      logger.warning(sys.exc_info()[0])
-      logger.warning(sys.exc_info()[1])
-      j.inputdata.dataset = previous_datasets[0:num]
 
-    logger.info('New input datasets = %s' % j.inputdata.dataset)
+      logger.info('New input datasets = %s' % j.inputdata.dataset)
+
     j.submit()
     logger.info('Finished copying job %d' % job.id)
     test_sleep(2)
@@ -391,8 +404,7 @@ def copyJob(job):
     return
 
   # Check if build job failed due to missing CMTCONFIG
-  bfailed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(ganga_subjobid=1000000).filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).count()
-  #bfailed = Result.objects.filter(test=test).filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).count()
+  bfailed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(ganga_subjobid=1000000).filter(mtime__gt=datetime.now() - timedelta(hours=1)).filter(exit_status_2__in=[1109,1211]).exclude(reason__contains='cvmfs').count()
   
   if bfailed > 0:
     logger.warning('Not copying job %d: build job failed with pilot error code 1109 or 1211' % job.id)
@@ -480,6 +492,14 @@ def process_job(job):
     logger.debug('subjob result is already fixed in database... skipping')
     return False
 
+  try:
+    if not test.output_dataset:
+      test.output_dataset = '.'.join(test.getResults_for_test.filter(ganga_status='c')[0].outds.split('.')[0:3])+'.*'
+      test.save()
+  except:
+    logger.warning('error setting test.output_dataset')
+    pass
+
   stats = {}
   try:
     stats = job.application.stats
@@ -540,7 +560,7 @@ def process_job(job):
              'NET_ETH_RX_AFTERATHENA' :stats['NET_ETH_RX_AFTERATHENA'],
              'inds'                  :inds,
              'outds'                 :outds,
-             'reason'                :job.backend.reason,
+             'reason'                :str(job.backend.reason).replace('\n',' '),
              'ganga_number_of_files' :innumfiles,
              }
 
@@ -608,7 +628,7 @@ def process_job(job):
     
     try:
       results['exit_status_2'] = int(job.backend.buildjobs[0].jobSpec['pilotErrorCode'])
-      results['reason'] = job.backend.buildjobs[0].jobSpec['pilotErrorDiag']
+      results['reason'] = str(job.backend.buildjobs[0].jobSpec['pilotErrorDiag']).replace('\n',' ')
     except:
       results['exit_status_2'] = job.backend.piloterrorcode
       results['reason'] = ''
@@ -760,7 +780,7 @@ def process_subjob(job, subjob):
     pass
 
   #Translate from stats to DB names
-  results = {'ganga_status'          :job.status[0],
+  results = {'ganga_status'          :subjob.status[0],
              'ganga_time_1'          :stats['gangatime1'],
              'ganga_time_2'          :stats['gangatime2'],
              'ganga_time_3'          :stats['gangatime3'],
@@ -781,10 +801,10 @@ def process_subjob(job, subjob):
              'percent_cpu'           :stats['percentcpu'],
              'numevents'             :stats['totalevents'],
              'NET_ETH_RX_PREATHENA'  :stats['NET_ETH_RX_PREATHENA'],
-             'NET_ETH_RX_AFTERATHENA' :stats['NET_ETH_RX_AFTERATHENA'],
+             'NET_ETH_RX_AFTERATHENA':stats['NET_ETH_RX_AFTERATHENA'],
              'inds'                  :inds,
              'outds'                 :outds,
-             'reason'                :job.backend.reason,
+             'reason'                :str(subjob.backend.reason).replace('\n',' '),
              'ganga_number_of_files' :innumfiles,
              }
 
