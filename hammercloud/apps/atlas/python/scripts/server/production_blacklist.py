@@ -11,7 +11,7 @@ from pandatools import Client
 
 SITETYPE = 'production'
 Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
-DEBUG = True
+DEBUG = False
 
 class Policy:
   """Base class for blacklisting policies."""
@@ -174,9 +174,9 @@ class BlacklistingTest(unittest.TestCase):
 class ProductionBlacklist:
   """ATLAS Blacklisting script for production queues."""
 
-  dan = 'daniel.colin.vanderster@cern.ch,ramon.medrano.llamas@cern.ch,gianfranco.sciacca@lhep.unibe.ch'
-  daops = 'atlas-project-adc-operations-analysis-shifts@cern.ch,atlasdast@gmail.com,dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
-  daexp = 'dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch'
+  dan = 'daniel.colin.vanderster@cern.ch,ramon.medrano.llamas@cern.ch,gianfranco.sciacca@lhep.unibe.ch,johannes.elmsheuser@cern.ch'
+  daops = 'atlas-adc-adcos-automatic-notifications@cern.ch,dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch,gianfranco.sciacca@lhep.unibe.ch,I.Ueda@cern.ch,Stephane.Jezequel@cern.ch'
+  daexp = 'dvanders@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de,ramon.medrano.llamas@cern.ch,jaroslava.schovancova@cern.ch,alessandro.di.girolamo@cern.ch,gianfranco.sciacca@lhep.unibe.ch'
 
   def __init__(self, templates=None):
     if not templates:
@@ -426,13 +426,13 @@ class ProductionBlacklist:
     if self.debug:
         subject += ' DEBUG'
     body = "Dear %s,\n\n" % cloud_support
-    body += "%s has been automatically excluded from PanDA distributed analysis because it " % site
+    body += "%s has been automatically excluded from PanDA distributed production because it " % site
     body += "has failed the recent HC test jobs. You can see the exclusion policy at [1].\n\nEXCLUSION REASON:\n"
     body += "    "
     body += '\n'.join(self.reasons[site])
     body += "\n\n"
     body += "All recent test jobs can be viewed here:\n\n"
-    body += "http://panda.cern.ch/server/pandamon/query?job=*&site=%s&type=analysis&hours=12&processingType=gangarobot\n" % site
+    body += "http://panda.cern.ch/server/pandamon/query?job=*&site=%s&type=ptest&hours=4&processingType=gangarobot-pft\n" % site
     body += "\n"
     body += "The queue status of %s is currently test.\n" % site
     body += "\n"
@@ -444,7 +444,7 @@ class ProductionBlacklist:
     body += "\n"
     body += "[1] https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud#APPENDIX_2_ATLAS_Automatic_Site\n"
     body += "\n\n"
-    body += "Report generated on voatlas49 by /data/hammercloud/atlas/cronjobs/hc-blacklist.sh\n"
+    body += "Report generated on voatlas49 by /data/hc/apps/atlas/python/scripts/server/production_blacklist.py\n"
 
     cernmail.send(to, subject, body)
 
