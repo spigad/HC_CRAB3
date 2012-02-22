@@ -292,37 +292,40 @@ class ProductionBlacklist:
     now = int(time.time())
     if new_status == 'test':
       try:
-        last_exclusion = Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0].option_value
+        last_exclusion = int(Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0].option_value)
       except:
         last_exclusion = 0
       if now - last_exclusion < 21600:
         self.add_log('%s was recently auto-excluded. Skipping...' % site)
         return False
 
-      cmd = "curl -s -k --cert $X509_USER_PROXY 'https://panda.cern.ch:25943/server/controller/query?tpmes=setmanual&queue=%s&moduser=HammerCloud&comment=HC.Blacklist.set.manual'" % site
-      self.add_log('> ' + cmd)
-      if not self.debug:
-        self.add_log(commands.getoutput(cmd))
-      cmd = "curl -s -k --cert $X509_USER_PROXY 'https://panda.cern.ch:25943/server/controller/query?tpmes=set%s&queue=%s&moduser=HammerCloud&comment=HC.Blacklist.set.%s'" % (new_status, site, new_status)
-      self.add_log('> ' + cmd)
-      if not self.debug:
-        self.add_log(commands.getoutput(cmd))
-      if new_status == 'test':
-        try:
-          option = Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0]
-          option.option_value = now
-        except:
-          option = SiteOption()
-          option.option_name = 'last_exclusion'
-          option.option_value = now
-          option.site = Site.objects.get(name=site)
-        option.save()
+    cmd = "curl -s -k --cert $X509_USER_PROXY 'https://panda.cern.ch:25943/server/controller/query?tpmes=setmanual&queue=%s&moduser=HammerCloud&comment=HC.Blacklist.set.manual'" % site
+    self.add_log('> ' + cmd)
+    if not self.debug:
+      o = commands.getoutput(cmd)
+      self.add_log(o)
+    cmd = "curl -s -k --cert $X509_USER_PROXY 'https://panda.cern.ch:25943/server/controller/query?tpmes=set%s&queue=%s&moduser=HammerCloud&comment=HC.Blacklist.set.%s'" % (new_status, site, new_status)
+    self.add_log('> ' + cmd)
+    if not self.debug:
+      o = commands.getoutput(cmd)
+      self.add_log(o)
+    if new_status == 'test':
+      try:
+        option = Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0]
+        option.option_value = now
+      except:
+        option = SiteOption()
+        option.option_name = 'last_exclusion'
+        option.option_value = now
+        option.site = Site.objects.get(name=site)
+      option.save()
 
-      Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
-      if not self.debug and Client.PandaSites[site]['status'] != new_status:
-        self.store_log('Error setting %s to %s' % (site, new_status), 'error')
-        return False
-      return True
+    Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
+    if not self.debug and Client.PandaSites[site]['status'] != new_status:
+      self.store_log('Error setting %s to %s' % (site, new_status), 'error')
+      return False
+     
+    return True
 
   def check_in_templates(self, sites):
     result = ([], [])
@@ -352,6 +355,7 @@ class ProductionBlacklist:
   def get_running_test(self):
     """Sets the list of tests to process."""
     self.runningTests = Test.objects.filter(template__in=self.templates).exclude(state='error').order_by('-id').only('id')[:len(self.templates) * 2]
+    self.add_log("Checking last %d tests %s in templates %s"%(len(self.runningTests), ','.join([str(x.id) for x in self.runningTests]), repr(self.templates)))
 
   def add_log(self, msg):
     self.log += '\n' + msg + '\n'
@@ -390,6 +394,7 @@ class ProductionBlacklist:
     try:
       cloud_support = Site.objects.filter(name=site)[0].cloud.getCloudOptions_for_cloud.only('option_value').filter(option_name='contact')[0].option_value
     except:
+      print sys.exc_info()
       self.add_reason(site, 'WARNING: could no get CloudOptions for site %s' % site)
       cloud_support = self.dan
 
@@ -414,6 +419,7 @@ class ProductionBlacklist:
     try:
       cloud_support = Site.objects.filter(name=site)[0].cloud.getCloudOptions_for_cloud.only('option_value').filter(option_name='contact')[0].option_value
     except:
+      print sys.exc_info()
       self.add_reason(site, 'WARNING: could no get CloudOptions for site %s' % site)
       cloud_support = self.dan
 

@@ -326,7 +326,7 @@ class AnalysisBlacklist:
     if not self.debug and Client.PandaSites[site]['status'] != new_status:
       self.store_log('Error setting %s to %s' % (site, new_status), 'error')
       return False
-    
+     
     return True
 
   def check_in_templates(self, sites):
@@ -440,7 +440,7 @@ class AnalysisBlacklist:
     body += '\n'.join(self.reasons[site])
     body += "\n\n"
     body += "All recent test jobs can be viewed here:\n\n"
-    body += "http://panda.cern.ch/server/pandamon/query?job=*&site=%s&type=analysis&hours=12&processingType=gangarobot\n" % site
+    body += "http://panda.cern.ch/server/pandamon/query?job=*&site=%s&type=analysis&hours=3&processingType=gangarobot\n" % site
     body += "\n"
     body += "The queue status of %s is currently 'test'.\n" % site
     body += "\n"
