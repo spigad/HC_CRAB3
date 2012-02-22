@@ -175,7 +175,9 @@ class Robot:
     lcgIDString = list(Test.objects.filter(template__id__in=test_lcg).order_by('-id')[:len(test_lcg)*2])
     #print lcgID, pandaID
     #print lcgIDString, pandaIDString
-    productionIDString = list(Test.objects.filter(template__id__in=test_production).order_by('-id')[:len(test_production)*2])
+    productionIDString = [list(Test.objects.filter(template__id=test_template).order_by('-id')[:2]) for test_template in test_production]
+    print 'Checking the following Production tests '
+    print productionIDString
     # getting sites
     sites = Site.objects.filter(enabled=True).exclude(id__in=map(lambda x: x.site_id, SiteOption.objects.filter(option_name='autoexclusion').filter(option_value='disable')))
     if not sites:
@@ -183,17 +185,27 @@ class Robot:
     else:  
       for site in sites:
         # PANDA Blaclisting policy
-        if site.name.startswith('ANALY'):
+        if site.name.startswith('ANALY') or site.cloud.name.endswith('PROD'):
           completed_total = 0
           failed_total = 0
           notEnough = 0
-          for tests in pandaIDString: #check efficiency for every test
-            samreport, completed, failed = self.getEfficiency(site, num_required_failures_panda, hours_panda, tests) 
+          if site.name.startswith('ANALY'):
+              num_failures = num_required_failures_panda
+              hours = hours_panda
+              testsID = pandaIDString
+          elif site.cloud.name.endswith('PROD'):
+              num_failures = num_required_failures_production
+              hours = hours_production
+              testsID = productionIDString
+          else:
+              raise RuntimeError('site not valid!')
+          for tests in testsID: #check efficiency for every test
+            samreport, completed, failed = self.getEfficiency(site, num_failures, hours, tests)
             completed_total = completed_total + completed
             failed_total = failed_total + failed
             if (failed > 0): 
               print str(site.name) + ' '+str(failed) + ' failed tests in test '+str(tests)
-            if ((failed+completed) < num_required_failures_panda): #not enough jobs in one template, mark site in gray
+            if ((failed+completed) < num_failures): #not enough jobs in one template, mark site in gray
               print str(site.name) + ' only '+str(failed+completed) + ' completed tests in test '+str(tests) 
               notEnough = 1
           total = float(completed_total + failed_total)
@@ -203,21 +215,13 @@ class Robot:
           if (total > 0):  # at least 1 test, no test with not enough jobs 
             efficiency = float(completed_total)/total       
           print str(site.name)+' efficiency '+str(efficiency)+' on '+str(total) + ' tests' 
-          pandablacklist[site.name] = failed_total -  num_required_failures_panda  # >= 0 if total = num_required_failures, otherwise negative        
+          pandablacklist[site.name] = failed_total -  num_failures  # >= 0 if total = num_required_failures, otherwise negative        
           if (failed_total > 0):
             print str(site.name)+' blacklisting '+str(pandablacklist[site.name])+' on '+str(failed_total) + ' failed tests'
             efficiency = 0. #overwrite efficiency for Gangarobot webpage  
           elif (notEnough):
             print str(site.name)+' WARNING '+str(pandablacklist[site.name])+' not enough completed tests'
             efficiency = -1. #overwrite efficiency for Gangarobot webpage                    
-        elif site.cloud.name.endswith('PROD'): # Production blacklisting policy
-          samreport, completed, failed = self.getEfficiency(site, num_required_failures_production, hours_production, productionIDString)        
-          total = float(completed + failed)
-          efficiency = -1.
-          if (total > 0):  # at least 1 test 
-            efficiency = float(completed)/total       
-          print str(site.name)+' efficiency '+str(efficiency)+' on '+str(total) + ' tests'        
-          pandablacklist[site.name] = total -  num_required_failures_production  # = 0 if total = num_required_failures, otherwise negative
         else:      # LCG Blaclisting policy
           samreport, completed, failed = self.getEfficiency(site, num_required_failures_lcg, hours_lcg, lcgIDString)        
           total = float(completed + failed)
