@@ -248,6 +248,8 @@ class ProductionBlacklist:
           self.store_log('Site %s was set to online' % s, 'whitelisting')
           self.send_cloud_online_alert(s)
           BlacklistEvent(event='whitelist', reason='', timestamp=datetime.datetime.now(), external=False, site=Site.objects.get(name=s)).save()
+        else:
+          self.store_log('failed to set %s to online' % s, 'warning')
 
   def check_online_sites(self):
     self.sitesNeedingJobs = {}
@@ -281,6 +283,8 @@ class ProductionBlacklist:
           self.store_log('%s blacklisting reason is %s' % (s, self.reasons[s]), 'blacklisting')
           self.send_cloud_alert(s)
           BlacklistEvent(event='blacklist', reason=self.reasons[s], timestamp=datetime.datetime.now(), external=False, site=Site.objects.get(name=s)).save()
+        else:
+          self.store_log('failed to set %s to online' % s, 'warning')
 
   def change_site_status(self, site, new_status):
     if new_status not in ('test', 'online'):
@@ -295,7 +299,7 @@ class ProductionBlacklist:
         last_exclusion = int(Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0].option_value)
       except:
         last_exclusion = 0
-      if now - last_exclusion < 21600:
+      if now - last_exclusion < 10000:
         self.add_log('%s was recently auto-excluded. Skipping...' % site)
         return False
 
