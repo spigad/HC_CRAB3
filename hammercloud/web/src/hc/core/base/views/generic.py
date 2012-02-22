@@ -1214,8 +1214,6 @@ class GenericView():
     # ATLAS specific
     if action not in ('enable','disable'):
       raise Http404
-    if not sitename.startswith('ANALY_'):
-      raise Http404
 
     s=site.objects.filter(name=sitename)
     if not s:
