@@ -8,7 +8,7 @@ from lib.summary import summary
 from hc.core.utils.hc.stats import Stats
 from numpy import *
 
-import os, sys, time, random, commands
+import os, sys, time, random, commands, gc
 import numpy
 import types
 import fnmatch
@@ -421,6 +421,9 @@ def copyJob(job):
 
 lastsummary = 0
 def print_summary():
+
+  x = gc.collect()
+  logger.info("GC Collected %d things" % x)
 
   global lastsummary
   if time.time() < lastsummary + 300:
