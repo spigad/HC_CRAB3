@@ -341,7 +341,7 @@ class AnalysisBlacklist:
 
   def get_sites(self, status='online'):
     os = []
-    ignore_sites = map(lambda x: x.site.name, SiteOption.objects.filter(option_name='autoexclusion').filter(option_value='disable'))
+    ignore_sites = filter(lambda name: name.startswith('ANALY'), map(lambda x: x.site.name, SiteOption.objects.filter(option_name='autoexclusion').filter(option_value='disable')))
     if not self.once:
       self.store_log("Sites disabled from autoexclusion: %s"%(', '.join(ignore_sites),))
       self.once = True
