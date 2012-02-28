@@ -290,11 +290,29 @@ class ProductionBlacklist:
     if new_status not in ('test', 'online'):
       return False
     self.add_log('Changing %s status to %s:' % (site, new_status))
+
+    try:
+      from schedconfig import SchedConfig
+      sc = SchedConfig()
+      queues_online = sc.get_queues_from_siteid(site, 'online')
+      old_comments = ('HC.Blacklist.set.test','HC.Test.Me','HC.Blacklist.set.manual')
+      queues_test = sc.get_queues_from_siteid(site, 'test', old_comments)
+      self.add_log('DEBUG: related online queues are %s' % repr(queues_online))
+      self.add_log('DEBUG: related test queues are %s' % repr(queues_test))
+      queues_to_change = queues_online + queues_test
+    except:
+      import sys
+      x = repr(sys.exc_info())
+      self.add_log('error getting list of queues, %s' % x)
+      return False
+
+    self.add_log('queues_to_change = %s' % repr(queues_to_change))
+
     if self.debug:
       self.add_log('DEBUG mode')
-      return True
+      #return True
     now = int(time.time())
-    if new_status == 'test':
+    if new_status == 'test' and not self.debug:
       try:
         last_exclusion = int(Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0].option_value)
       except:
@@ -303,17 +321,19 @@ class ProductionBlacklist:
         self.add_log('%s was recently auto-excluded. Skipping...' % site)
         return False
 
-    cmd = "curl -s -k --cert $X509_USER_PROXY 'https://panda.cern.ch:25943/server/controller/query?tpmes=setmanual&queue=%s&moduser=HammerCloud&comment=HC.Blacklist.set.manual'" % site
-    self.add_log('> ' + cmd)
-    if not self.debug:
-      o = commands.getoutput(cmd)
-      self.add_log(o)
-    cmd = "curl -s -k --cert $X509_USER_PROXY 'https://panda.cern.ch:25943/server/controller/query?tpmes=set%s&queue=%s&moduser=HammerCloud&comment=HC.Blacklist.set.%s'" % (new_status, site, new_status)
-    self.add_log('> ' + cmd)
-    if not self.debug:
-      o = commands.getoutput(cmd)
-      self.add_log(o)
-    if new_status == 'test':
+    for queue in queues_to_change:
+      cmd = "curl -s -k --cert $X509_USER_PROXY 'https://panda.cern.ch:25943/server/controller/query?tpmes=setmanual&queue=%s&moduser=HammerCloud&comment=HC.Blacklist.set.manual'" % queue
+      self.add_log('> ' + cmd)
+      if not self.debug:
+        o = commands.getoutput(cmd)
+        self.add_log(o)
+      cmd = "curl -s -k --cert $X509_USER_PROXY 'https://panda.cern.ch:25943/server/controller/query?tpmes=set%s&queue=%s&moduser=HammerCloud&comment=HC.Blacklist.set.%s'" % (new_status, queue, new_status)
+      self.add_log('> ' + cmd)
+      if not self.debug:
+        o = commands.getoutput(cmd)
+        self.add_log(o)
+
+    if new_status == 'test' and not self.debug:
       try:
         option = Site.objects.filter(name=site)[0].getSiteOptions_for_site.filter(option_name='last_exclusion')[0]
         option.option_value = now
@@ -323,6 +343,9 @@ class ProductionBlacklist:
         option.option_value = now
         option.site = Site.objects.get(name=site)
       option.save()
+
+    if self.debug:
+      return True
 
     Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
     if not self.debug and Client.PandaSites[site]['status'] != new_status:
