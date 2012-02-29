@@ -7,7 +7,7 @@ of CE hostnames and meta information for a PanDA queue.
 """
 
 import getopt
-import json
+import simplejson
 import sys
 import unittest
 import urllib
@@ -88,7 +88,7 @@ class ATLASTopology(object):
 def setattr_from_remote_json(obj, attr, url):
     """Loads a remote JSON file and sets an attrbute to an object from it."""
     try:
-        setattr(obj, attr, json.load(urllib.urlopen(url)))
+        setattr(obj, attr, simplejson.load(urllib.urlopen(url)))
     except IOError, (_, msg):
         raise ATLASTopologyException(msg)
     except ValueError, ve:
