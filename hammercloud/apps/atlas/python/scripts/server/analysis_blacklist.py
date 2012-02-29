@@ -483,11 +483,13 @@ class AnalysisBlacklist:
     cernmail.send(to, subject, body)
 
   def publish_to_nagios(self, site_name, metric_status, description='', report=''):
-      self.nagios_publisher.publish_event(site=site_name,
-                                          metric_name='HammerCloud Analysis Functional Testing (AFT)',
-                                          metric_status=metric_status,
-                                          subject=description,
-                                          description=report)
+    print 'Publising to Nagios....'
+    self.nagios_publisher.publish_event(site=site_name,
+                                        metric_name='HammerCloud Analysis Functional Testing (AFT)',
+                                        metric_status=metric_status,
+                                        subject=description,
+                                        description=report)
+    print 'Done.'
 
 if __name__ == '__main__':
   AnalysisBlacklist().run(debug=True, test=False)
