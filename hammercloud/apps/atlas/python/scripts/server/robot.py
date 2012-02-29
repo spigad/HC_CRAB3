@@ -123,6 +123,7 @@ class Robot:
           testresult["description"] = description
           testresult["siteid"]   = site.id 
           testresult["agis"]   = site.alternate_name 
+          testresult["cloud"] = site.cloud.name
           samreport[string] = testresult
           #calculate efficiency for summary_gangarobot table (gangarobot web page) and Ganga Blacklist
           if gangastatus in ['c']:
@@ -298,7 +299,8 @@ class Robot:
       description = result['description']
       inds        = result['inds']            
       starttime   = result['starttime']
-      endtime     = result['endtime'] 
+      endtime     = result['endtime']
+      cloud       = result['cloud']
       #siteid      = result['siteid']    
       #agis        = result['agis']    
       cebackend = ''
@@ -316,6 +318,8 @@ class Robot:
           alternatename = alternatename.replace("_USERDISK", "_MCDISK")
         if (alternatename.find("_MCDISK")<0):
           print "ERROR alternate name does not contain _MCDISK "+alternatename
+      elif cloud.endswit('PROD'):
+        cebackend = '@panda-prod'
       else:
         cebackend = '@wms'
         try:
