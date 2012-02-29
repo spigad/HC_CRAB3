@@ -9,6 +9,9 @@ from hc.core.utils.hc import cernmail
 from hc.atlas.models import Site, Result, SiteOption, Template, TemplateSite, Test, TestLog, BlacklistEvent
 from pandatools import Client
 
+# Nagios publisher.
+from atlas.python.lib.publishers.nagios_publisher import NagiosPublisher
+
 SITETYPE = 'analysis'
 Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
 DEBUG = False
@@ -199,6 +202,12 @@ class AnalysisBlacklist:
     self.reasons = {}
     self.log = ''
     self.once = False
+    # Nagios publishing stuff.
+    try:
+        self.nagios_publisher = NagiosPublisher()
+    except:
+        print 'WARNING: Could not load the the Nagios publisher'
+        self.nagios_publisher = None
 
   def run(self, test=False):
     """Main runner of the blacklisting script."""
@@ -239,8 +248,10 @@ class AnalysisBlacklist:
       res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).exclude(exit_status_2=1192).order_by('-mtime')
       if reduce(lambda x, y: x and not y, map(lambda x: x().evaluate(res, site, self), self.policies_for_test), True) and not self.site_needs_jobs(site):
         sitesToAutoSetOnline.append(site)
+        self.publish_to_nagios(site, 'OK', description='%s has fulfilled the policies and will be set online.' % site)
       else:
         self.log_reasons((site,))
+        self.publish_to_nagios(site, 'CRITICAL', description='%s is not passing the policies and cannot be set online.' % site)
     if sitesToAutoSetOnline:
       self.add_log("")
       self.add_log("AUTO-WHITELIST: The following test sites will be set to online:")
@@ -265,6 +276,7 @@ class AnalysisBlacklist:
       res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).exclude(exit_status_2=1192).order_by('-mtime')
       if reduce(lambda x, y: x or y, map(lambda x: x().evaluate(res, site, self), self.policies_for_online), False):
         sitesToSetBrokeroff.append(site)
+        self.publish_to_nagios(site, 'CRITICAL', description='%s has failed the policies and will be set to test.' % site)
 
     for t in self.templates:
       if self.sitesNeedingJobs[t]:
@@ -272,6 +284,8 @@ class AnalysisBlacklist:
         #self.add_log("The following online sites need more test jobs for template %d:" % t)
         #self.add_log("%s" % ', '.join(self.sitesNeedingJobs[t]))
         self.store_log("The following online sites need more test jobs for template %d: %s" % (t, ', '.join(self.sitesNeedingJobs[t])), 'warning')
+        for site in self.sitesNeedingJobs[t]:
+            self.publish_to_nagios(site, 'WARNING', description='%s needs more jobs on template %d.' % (site, t))
 
     if sitesToSetBrokeroff:
       self.add_log("")
@@ -336,6 +350,7 @@ class AnalysisBlacklist:
         result[0].append(site)
       else:
         self.add_reason(site, 'Missing from some templates.')
+        self.publish_to_nagios(site, 'WARNING', description='%s is missing from the AFT templates. Contact HammerCloud team.' % site)
         result[1].append(site)
     return result
 
@@ -467,6 +482,12 @@ class AnalysisBlacklist:
     body = "%s\n\n\nReport generated on voatlas49 by HammerCloud ATLAS blacklisting service." % self.log
     cernmail.send(to, subject, body)
 
+  def publish_to_nagios(self, site_name, metric_status, description='', report=''):
+      self.nagios_publisher.publish_event(site=site_name,
+                                          metric_name='HammerCloud Analysis Functional Testing (AFT)',
+                                          metric_status=metric_status,
+                                          subject=description,
+                                          description=report)
 
 if __name__ == '__main__':
   AnalysisBlacklist().run(debug=True, test=False)
