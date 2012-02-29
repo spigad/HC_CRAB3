@@ -469,11 +469,11 @@ class Robot:
         lcgBlacklistSSB.append(lineSSB)
     # add sites that are in AGIS but not tested
     for site in siteAGISLCG:
-      lcgBlacklistSSB.append(time +' '+site+' no-test green http://hammercloud.cern.ch/atlas/ \n') 
-      lcgSSB.append(time +' '+site+' no-test green http://hammercloud.cern.ch/atlas/ \n')
+      lcgBlacklistSSB.append(time +' '+site+' no-test green http://hammercloud.cern.ch/hc/app/atlas/ \n') 
+      lcgSSB.append(time +' '+site+' no-test green http://hammercloud.cern.ch/hc/app/atlas/ \n')
     for site in siteAGISPanda:
-      pandaBlacklistSSB.append(time +' '+site+' no-test green http://hammercloud.cern.ch/atlas/ \n') 
-      pandaSSB.append(time +' '+site+' no-test green http://hammercloud.cern.ch/atlas/ \n')
+      pandaBlacklistSSB.append(time +' '+site+' no-test green http://hammercloud.cern.ch/hc/app/atlas/ \n') 
+      pandaSSB.append(time +' '+site+' no-test green http://hammercloud.cern.ch/hc/app/atlas/ \n')
     # Write summary
     outeffLCG = sorted(outeffLCG, key=str.lower)
     outeffPanda = sorted(outeffPanda, key=str.lower)
