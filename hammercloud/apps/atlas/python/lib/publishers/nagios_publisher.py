@@ -5,7 +5,9 @@ import ConfigParser
 import logging
 import stomp
 import datetime
+import time
 from hc.core.base.publisher.publish_service import ServicePublisher
+from atlas.utils.atlas_topology import ATLASTopology
 
 CONFIG_FILE = '/data/hc/apps/atlas/config/neet.cfg'
 LOGGER = logging.getLogger(__name__)
@@ -21,6 +23,7 @@ class NagiosPublisher(ServicePublisher):
         self.host = config.get('Connection', 'HOST')
         self.port = int(config.get('Connection', 'PORT'))
         self.queue =  config.get('Connection', 'QUEUE')
+        self.atlas_topology = ATLASTopology()
 
     def publish_event(self, **event):
         '''Publish an event to Nagios. Be careful to provide the extra dict'''
@@ -28,10 +31,12 @@ class NagiosPublisher(ServicePublisher):
             conn = stomp.Connection([(self.host, self.port)])
             conn.start()
             conn.connect()
-            conn.send(self._format_message(timestamp=datetime.datetime.now(),
-                                           **event),
-                      destination=self.queue,
-                      ack='auto')
+            for ce in self.atlas_topology.get_ces_for_panda_queue(event['site']):
+                conn.send(self._format_message(host_name=ce,
+                                               timestamp=datetime.datetime.now(),
+                                               **event),
+                          destination=self.queue,
+                          ack='auto')
             conn.disconnect()
         except:
             LOGGER.error('Could not send the message to Nagios! Skipping.')
@@ -47,6 +52,7 @@ class NagiosPublisher(ServicePublisher):
                'summaryData: %(subject)s\n'
                'detailsData: %(description)s EOT\n')
         try:
+            event['timestamp'] = event['timestamp'].strftime("%Y-%m-%dT%H:%M:%SZ")
             return msg % event
         except:
             raise RuntimeError('extra dict not provided with the event')
