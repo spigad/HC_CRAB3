@@ -1,6 +1,7 @@
 import sys, os, re, time, commands, urllib, imp, gzip
 from datetime import datetime, date, timedelta
 from hc.atlas.models import *
+from atlas.python.scripts.server.schedconfig import SchedConfig
 from pandatools import Client
 
 # This script is generating txt files for SAM reporting
@@ -28,6 +29,9 @@ ng_ces = [ 'grid.uio.no',
 
 
 class Robot:
+
+  def __init__(self):
+      self.schedconfig = SchedConfig()
 
   def getTiersOfATLASCache(self):
     """Download TiersOfATLASCache.py"""
@@ -134,8 +138,6 @@ class Robot:
     #        for key,value in result.items():     
     #    #     if not((key=='summary')or(key=='SAM')):
     #            print str(key) +' '+str(value)
-    if site.cloud.name.endswith('PROD'):
-        samreport = {}
     return samreport, completed, failed
 
 
