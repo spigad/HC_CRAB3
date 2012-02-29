@@ -236,7 +236,7 @@ class AnalysisBlacklist:
     for site in bo_sites:
       # The map() for the test ID is needed because MySQL 5.1 does not support nested IN
       # with ALL in a subquery (makes this QuerySet a little bit slower).
-      res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).order_by('-mtime')
+      res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).exclude(exit_status_2=1192).order_by('-mtime')
       if reduce(lambda x, y: x and not y, map(lambda x: x().evaluate(res, site, self), self.policies_for_test), True) and not self.site_needs_jobs(site):
         sitesToAutoSetOnline.append(site)
       else:
@@ -262,7 +262,7 @@ class AnalysisBlacklist:
     if newsites:
       self.store_log('** New online sites not in templates: %s' % repr(newsites), 'warning')
     for site in online_sites:
-      res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).order_by('-mtime')
+      res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).exclude(exit_status_2=1192).order_by('-mtime')
       if reduce(lambda x, y: x or y, map(lambda x: x().evaluate(res, site, self), self.policies_for_online), False):
         sitesToSetBrokeroff.append(site)
 
@@ -405,7 +405,7 @@ class AnalysisBlacklist:
     to = cloud_support + ',' + self.daops
     if self.debug:
         to = self.dan
-    subject = "[HammerCloud] %s reset online at %s CET" % (site, time.ctime())
+    subject = "[HammerCloud][ANALYSIS] %s reset online at %s CET" % (site, time.ctime())
     if self.debug:
         subject += ' DEBUG'
     body = "Dear %s,\n\n" % cloud_support
@@ -430,7 +430,7 @@ class AnalysisBlacklist:
     to = cloud_support + ',' + self.daops
     if self.debug:
         to = self.dan
-    subject = "[HammerCloud] %s Auto-Excluded at %s CET" % (site, time.ctime())
+    subject = "[HammerCloud][ANALYSIS] %s Auto-Excluded at %s CET" % (site, time.ctime())
     if self.debug:
         subject += ' DEBUG'
     body = "Dear %s,\n\n" % cloud_support
@@ -460,7 +460,7 @@ class AnalysisBlacklist:
     if not self.log:
         return
     to = self.daexp
-    subject = "[HammerCloud] Analysis Blacklisting Report at %s CET" % time.ctime()
+    subject = "[HammerCloud][ANALYSIS] Analysis Blacklisting Report at %s CET" % time.ctime()
     if self.debug:
         to = self.dan
         subject += ' DEBUG'
