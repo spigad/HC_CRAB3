@@ -8,7 +8,7 @@ from lib.summary import summary
 from hc.core.utils.hc.stats import Stats
 from numpy import *
 
-import os, sys, time, random, commands
+import os, sys, time, random, commands, gc
 import numpy
 import types
 import fnmatch
@@ -16,8 +16,6 @@ import fnmatch
 from Ganga.Core.GangaThread import GangaThread
 from Ganga.Utility.logging import getLogger
 logger = getLogger()
-
-from atlas.python.lib.publishers.nagios_publisher import NagiosPublisher
 
 ##
 ## CHECK IF WE HAVE RECEIVED TESTID
@@ -1059,7 +1057,29 @@ if hasSubjobs:
           logger.warning(sys.exc_info()[1])
         if test_paused():
           break
-    test_sleep(20)
+
+    #remove fixed jobs
+    logger.info('removing old fixed jobs')
+    for j in jobs:
+      logger.info("checking to remove job %d" % j.id)
+
+      # check if this job has been copied
+      copied = False
+      test_state = test.getTestStates_for_test.filter(ganga_jobid=j.id)
+      if not test_state or not test_state[0].copied:
+        logger.info("%d not yet copied, skipping" % j.id)
+        continue
+
+      # check if all subjobs are fixed
+      num_fixed = test.getResults_for_test.filter(ganga_jobid=j.id).filter(fixed=True)
+      if num_fixed < len(j.subjobs) + 1:
+        logger.info("%d/%d subjobs fixed for job %d, skipping" % (num_fixed,len(j.subjobs)+1,j.id))
+        continue
+
+      logger.info("DEBUG removing job %d" % j.id)
+      #j.remove()
+
+    test_sleep(10)
 else:
   noJobs = True
   logger.warning('No jobs to monitor. Exiting now.')
