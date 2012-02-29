@@ -494,7 +494,7 @@ def process_job(job):
     return False
 
   try:
-    if not test.output_dataset:
+    if not test.output_dataset and test.getResults_for_test.filter(ganga_status='c'):
       test.output_dataset = '.'.join(test.getResults_for_test.filter(ganga_status='c')[0].outds.split('.')[0:3])+'.*'
       test.save()
   except:
@@ -1060,7 +1060,33 @@ if hasSubjobs:
           logger.warning(sys.exc_info()[1])
         if test_paused():
           break
-    test_sleep(20)
+   
+    try: 
+      #TRIM fixed jobs
+      logger.info('TRIM: removing old fixed jobs')
+      for j in jobs:
+        logger.info("TRIM: checking to remove job %d" % j.id)
+
+        # check if this job has been copied
+        copied = False
+        test_state = test.getTestStates_for_test.filter(ganga_jobid=j.id)
+        if not test_state or not test_state[0].copied:
+          logger.info("TRIM: %d not yet copied, skipping" % j.id)
+          continue
+
+        # check if master and all subjobs are fixed
+        num_fixed = test.getResults_for_test.filter(ganga_jobid=j.id).filter(fixed=True)
+        if num_fixed < len(j.subjobs) + 1:
+          logger.info("TRIM: %d/%d subjobs fixed for job %d, skipping" % (num_fixed,len(j.subjobs)+1,j.id))
+          continue
+
+        logger.info("TRIM: removing job %d" % j.id)
+        #j.remove()
+    except:
+      logger.warning("TRIM: %s" % repr(sys.exc_info()))
+      pass
+
+    test_sleep(10)
 else:
   noJobs = True
   logger.warning('No jobs to monitor. Exiting now.')
