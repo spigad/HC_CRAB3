@@ -431,8 +431,6 @@ def print_summary():
     #TRIM fixed jobs
     logger.info('TRIM: removing old fixed jobs')
     for j in jobs:
-      logger.info("TRIM: checking to remove job %d" % j.id)
-
       # check if this job has been copied
       copied = False
       test_state = test.getTestStates_for_test.filter(ganga_jobid=j.id)
@@ -447,7 +445,10 @@ def print_summary():
         continue
 
       logger.info("TRIM: removing job %d" % j.id)
-      #j.remove()
+      if test.is_golden:
+        logger.info("TRIM: remove disabled for golden tests")
+      else:
+        j.remove()
   except:
     logger.warning("TRIM: %s" % repr(sys.exc_info()))
     pass
@@ -733,7 +734,7 @@ def process_job(job):
 #      logger.info([k,v])
 
   if result.ganga_status in ('c', 'f'):
-    logger.warning('Job is in final state, marking row as fixed')
+    #logger.warning('Job is in final state, marking row as fixed')
     result.fixed = 1
 
   result.save()
@@ -993,7 +994,7 @@ def process_subjob(job, subjob):
 #      logger.info([k,v])
 
   if result.ganga_status in ('c', 'f'):
-    logger.warning('SubJob is in final state, marking row as fixed')
+    #logger.warning('SubJob is in final state, marking row as fixed')
     result.fixed = 1
 
   result.save()
