@@ -318,7 +318,15 @@ class Robot:
           alternatename = alternatename.replace("_USERDISK", "_MCDISK")
         if (alternatename.find("_MCDISK")<0):
           print "ERROR alternate name does not contain _MCDISK "+alternatename
-      elif cloud.endswit('PROD'):
+      elif cloud.endswith('PROD'):
+        try:
+          cename = Client.PandaSites[cequeue]['queue'].split('/')[0]
+        except:
+          cename = 'panda@unknown-ce'
+        try:
+          alternatename = Client.PandaSites[cequeue]['ddm']
+        except:
+          alternatename = cequeue
         cebackend = '@panda-prod'
       else:
         cebackend = '@wms'
