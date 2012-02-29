@@ -422,13 +422,39 @@ def copyJob(job):
 lastsummary = 0
 def print_summary():
 
-  x = gc.collect()
-  logger.info("GC Collected %d things" % x)
-
   global lastsummary
   if time.time() < lastsummary + 300:
     return
   lastsummary = time.time()
+
+  try: 
+    #TRIM fixed jobs
+    logger.info('TRIM: removing old fixed jobs')
+    for j in jobs:
+      logger.info("TRIM: checking to remove job %d" % j.id)
+
+      # check if this job has been copied
+      copied = False
+      test_state = test.getTestStates_for_test.filter(ganga_jobid=j.id)
+      if not test_state or not test_state[0].copied:
+        logger.info("TRIM: %d not yet copied, skipping" % j.id)
+        continue
+
+      # check if master and all subjobs are fixed
+      num_fixed = test.getResults_for_test.filter(ganga_jobid=j.id).filter(fixed=True).count()
+      if num_fixed < len(j.subjobs) + 1:
+        logger.info("TRIM: %d/%d subjobs fixed for job %d, skipping" % (num_fixed,len(j.subjobs)+1,j.id))
+        continue
+
+      logger.info("TRIM: removing job %d" % j.id)
+      #j.remove()
+  except:
+    logger.warning("TRIM: %s" % repr(sys.exc_info()))
+    pass
+
+  x = gc.collect()
+  logger.info("GC Collected %d things" % x)
+
   logger.info('JOB SUMMARY:')
 
   active = 0
@@ -1061,32 +1087,7 @@ if hasSubjobs:
         if test_paused():
           break
    
-    try: 
-      #TRIM fixed jobs
-      logger.info('TRIM: removing old fixed jobs')
-      for j in jobs:
-        logger.info("TRIM: checking to remove job %d" % j.id)
-
-        # check if this job has been copied
-        copied = False
-        test_state = test.getTestStates_for_test.filter(ganga_jobid=j.id)
-        if not test_state or not test_state[0].copied:
-          logger.info("TRIM: %d not yet copied, skipping" % j.id)
-          continue
-
-        # check if master and all subjobs are fixed
-        num_fixed = test.getResults_for_test.filter(ganga_jobid=j.id).filter(fixed=True)
-        if num_fixed < len(j.subjobs) + 1:
-          logger.info("TRIM: %d/%d subjobs fixed for job %d, skipping" % (num_fixed,len(j.subjobs)+1,j.id))
-          continue
-
-        logger.info("TRIM: removing job %d" % j.id)
-        #j.remove()
-    except:
-      logger.warning("TRIM: %s" % repr(sys.exc_info()))
-      pass
-
-    test_sleep(10)
+    test_sleep(20)
 else:
   noJobs = True
   logger.warning('No jobs to monitor. Exiting now.')
