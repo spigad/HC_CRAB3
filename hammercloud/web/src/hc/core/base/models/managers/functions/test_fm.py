@@ -42,7 +42,8 @@ def getTestBackendNames(test):
 
 def getTestCloudCodes(test):
 #  return [tc.cloud.code for tc in test.getTestClouds_for_test.all()]
-  return [dic['site__cloud__code'] for dic in test.getTestSites_for_test.all().values('site__cloud__code').distinct()]
+  #return [dic['site__cloud__code'] for dic in test.getTestSites_for_test.all().values('site__cloud__code').distinct()]
+  return test.getSummaryTests_for_test.all()[0].clouds.split(',')
 
 def getTestNumClouds(test):
   return len(test.getTestSites_for_test.all().values('site__cloud__code').distinct())
@@ -81,7 +82,8 @@ def getTestHostNames(test):
 #########################################################################
 
 def getTestSiteNames(test):
-  return [ts.site.name for ts in test.getTestSites_for_test.all().select_related('site')]
+  #return [ts.site.name for ts in test.getTestSites_for_test.all().select_related('site')]
+  return test.getSummaryTests_for_test.all()[0].sites.split(',')
 
 def getTestNumSites(test):
   return test.getTestSites_for_test.count()   
@@ -96,7 +98,8 @@ def getTestTotalJobs(test):
 #  '''
 #  result = ContentType.objects.get(app_label=test._meta.app_label, model="result").model_class()
 #  return result.objects.filter(test=test.id).count()
-  return test.getResults_for_test.exclude(ganga_subjobid=1000000).count()
+  #return test.getResults_for_test.exclude(ganga_subjobid=1000000).count()
+  return test.getSummaryTests_for_test.all()[0].total
 
 def getTestSubmittedJobs(test):
 #  '''
@@ -104,7 +107,8 @@ def getTestSubmittedJobs(test):
 #  '''
 #  result = ContentType.objects.get(app_label=test._meta.app_label, model="result").model_class()
 #  return result.objects.filter(test=test.id).filter(ganga_status='s').count()
-  return test.getResults_for_test.filter(ganga_status='s').exclude(ganga_subjobid=1000000).count()
+  #return test.getResults_for_test.filter(ganga_status='s').exclude(ganga_subjobid=1000000).count()
+  return test.getSummaryTests_for_test.all()[0].submitted
 
 def getTestRunningJobs(test):
 #  '''
@@ -112,7 +116,8 @@ def getTestRunningJobs(test):
 #  '''
 #  result = ContentType.objects.get(app_label=test._meta.app_label, model="result").model_class()
 #  return result.objects.filter(test=test.id).filter(ganga_status='r').count()
-  return test.getResults_for_test.filter(ganga_status='r').exclude(ganga_subjobid=1000000).count()
+  #return test.getResults_for_test.filter(ganga_status='r').exclude(ganga_subjobid=1000000).count()
+  return test.getSummaryTests_for_test.all()[0].running
 
 def getTestCompletedJobs(test):
 #  '''
@@ -120,7 +125,8 @@ def getTestCompletedJobs(test):
 #  '''
 #  result = ContentType.objects.get(app_label=test._meta.app_label, model="result").model_class()
 #  return result.objects.filter(test=test.id).filter(ganga_status='c').count()
-  return test.getResults_for_test.filter(ganga_status='c').exclude(ganga_subjobid=1000000).count()
+  #return test.getResults_for_test.filter(ganga_status='c').exclude(ganga_subjobid=1000000).count()
+  return test.getSummaryTests_for_test.all()[0].completed
 
 def getTestFailedJobs(test):
 #  '''
@@ -128,7 +134,8 @@ def getTestFailedJobs(test):
 #  '''
 #  result = ContentType.objects.get(app_label=test._meta.app_label, model="result").model_class()
 #  return result.objects.filter(test=test.id).filter(ganga_status='f').count()
-  return test.getResults_for_test.filter(ganga_status='f').exclude(ganga_subjobid=1000000).count()
+  #return test.getResults_for_test.filter(ganga_status='f').exclude(ganga_subjobid=1000000).count()
+  return test.getSummaryTests_for_test.all()[0].failed
 
 def getTestOtherJobs(test):
 #  '''

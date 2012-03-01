@@ -7,15 +7,16 @@ from datetime import date,timedelta
 class Datahelper:
 
   def annotateTest(self,test):
-    test.sites     = test_fm.getTestSiteNames(test)
-    test.clouds    = test_fm.getTestCloudCodes(test)
-    test.numsites  = test_fm.getTestNumSites(test)
-    test.total     = test_fm.getTestTotalJobs(test)
-    test.submitted = test_fm.getTestSubmittedJobs(test)
-    test.failed    = test_fm.getTestFailedJobs(test)
-    test.completed = test_fm.getTestCompletedJobs(test)
-    test.running   = test_fm.getTestRunningJobs(test)
-    test.other     = test_fm.getTestOtherJobs(test)
+    sts = test.getSummaryTests_for_test.all()[0]
+    test.sites     = sts.sites.split(',')
+    test.clouds    = sts.clouds.split(',')
+    test.numsites  = len(test.sites)
+    test.total     = sts.total
+    test.submitted = sts.submitted
+    test.failed    = sts.failed
+    test.completed = sts.completed
+    test.running   = sts.running
+    test.other     = test.total - (test.submitted + test.running + test.completed + test.failed)
     return test
 
   def annotateTests(self,tests):
