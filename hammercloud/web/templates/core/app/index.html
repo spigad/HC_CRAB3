@@ -18,7 +18,7 @@
                 <th>Start (CET)</th><th>End (CET)</th>
                 <th>{{config.cloud}}</th><th>Sites</th><th>subm<br />jobs</th>
                 <th>run<br />jobs</th><th>comp<br />jobs</th>
-                <th>fail<br />jobs</th><th>oth<br />jobs</th>
+                <th>fail<br />jobs</th>
                 <th>tot<br />jobs</th>
               </tr>
            </thead>
@@ -38,7 +38,7 @@
                  <td style="font-size: 0.8em; padding: 1px; margin: 0;">{{ test.sites|trunc:3|safe }}</td>
                  <td>{{ test.submitted }}</td><td>{{ test.running }}</td>
                  <td>{{ test.completed }}</td><td>{{ test.failed }}</td>
-                 <td>{{ test.other }}</td><td>{{ test.total }}</td>
+                 <td>{{ test.total }}</td>
                </tr>
              {% endfor %}
           </tbody>
