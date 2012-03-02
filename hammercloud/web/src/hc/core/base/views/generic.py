@@ -1437,8 +1437,14 @@ class GenericView():
 
     site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
 
-    c = RequestContext(request, {'site_data': site_data}, [defaultContext])
-    t = loader.select_template(['%s/stats/abortedjobs.html'%(app),'core/app/stats/abortedjobs.html'])
+    for s in site_data:
+      s['code'] = s[params['field']]
+      del s[params['field']]
+      if params.has_key('extra'):
+        s['details'] = [x[0] for x in result.objects.filter(result_filters).filter(site=site).filter(**{params['field']:s['code']}).distinct().values_list(params['extra'])]
+
+    c = RequestContext(request, {'site_data': site_data,'kind':'grid','type':'aborted'}, [defaultContext])
+    t = loader.select_template(['%s/stats/failedjobs.html'%(app),'core/app/stats/failedjobs.html'])
     return HttpResponse(t.render(c))
 
   def failedjobs(self,request,dic={'Site':None,'Result':None},*args,**kwargs):
@@ -1477,6 +1483,12 @@ class GenericView():
 
     site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
 
-    c = RequestContext(request, {'site_data': site_data}, [defaultContext])
+    for s in site_data:
+      s['code'] = s[params['field']]
+      del s[params['field']]
+      if params.has_key('extra'):
+        s['details'] = [x[0] for x in result.objects.filter(result_filters).filter(site=site).filter(**{params['field']:s['code']}).distinct().values_list(params['extra'])] 
+
+    c = RequestContext(request, {'site_data': site_data, 'kind':'application','type':'failed'}, [defaultContext])
     t = loader.select_template(['%s/stats/failedjobs.html'%(app),'core/app/stats/failedjobs.html'])
     return HttpResponse(t.render(c))

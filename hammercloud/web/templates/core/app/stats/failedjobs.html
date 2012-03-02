@@ -2,25 +2,42 @@
 
 {% load humanize %}
 
+{% block javascript %}
+  {{ block.super }}
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script>
+{% endblock %}
+
+{% block docready %}
+  {{ block.super }}
+  $(".dialog").each(function() {$(this).dialog({width:800,
+                                                autoOpen:false}); });
+{% endblock %}
+
 {% block content %}
 
 <div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
 
-<h2>Application failed jobs summary</h2>
+<h2>{{ kind|capfirst }} {{ type }} jobs summary</h2>
 
 {% if site_data %}
   <table class="testslist">
     <thead>
-      <tr><th>Failed job<br />count</th><th>Application exit code</th></tr>
+      <tr><th>{{ type|capfirst }} job<br />count</th><th>{{ kind|capfirst }} exit code</th><th>{{ kind|capfirst }} error logs</th></tr>
     </thead>
     <tbody>
       {% for s in site_data %}
-        <tr>
-        {%for i in s.values %}<td>{{ i }}</td>{% endfor %}
-        </tr>
+        <tr><td>{{ s.jcount }}</td><td>{{ s.code }}</td><td onclick="$('#d{{s.code}}').dialog('open');">{{ s.details|length }} log items &raquo;</td></tr>
       {% endfor %}
     </tbody>
   </table>
+  {% for s in site_data %}
+    <div class="dialog" id="d{{s.code}}" title="Log details">
+      {% for l in s.details %}
+        <p>{{ l }}</p>
+        <hr />
+      {% endfor %}
+    </div>
+  {% endfor %}
 {% else %}
   <p>No data available.</p>
 {% endif %}
