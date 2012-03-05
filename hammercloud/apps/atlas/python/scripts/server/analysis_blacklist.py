@@ -10,7 +10,7 @@ from hc.atlas.models import Site, Result, SiteOption, Template, TemplateSite, Te
 from pandatools import Client
 
 # Nagios publisher.
-from atlas.python.lib.publishers.nagios_publisher import NagiosPublisher
+from hc.core.base.publisher.event_processor import EventPublisher
 
 SITETYPE = 'analysis'
 Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
@@ -204,10 +204,10 @@ class AnalysisBlacklist:
     self.once = False
     # Nagios publishing stuff.
     try:
-        self.nagios_publisher = NagiosPublisher()
+        self.publisher = EventPublisher('atlas')
     except:
-        print 'WARNING: Could not load the the Nagios publisher'
-        self.nagios_publisher = None
+        print 'WARNING: Could not load the the Event publisher'
+        self.publisher = None
 
   def run(self, test=False):
     """Main runner of the blacklisting script."""
@@ -484,11 +484,13 @@ class AnalysisBlacklist:
 
   def publish_to_nagios(self, site_name, metric_status, description='', report=''):
     print 'Publising to Nagios....'
-    self.nagios_publisher.publish_event(site=site_name,
-                                        metric_name='HammerCloud Analysis Functional Testing (AFT)',
-                                        metric_status=metric_status,
-                                        subject=description,
-                                        description=report)
+    self.publisher.process_event(severity='aft-metrics',
+                                 rel_site=Site.objects.get(name=site_name),
+                                 site=site_name,
+                                 metric_name='HammerCloud Analysis Functional Testing (AFT)',
+                                 metric_status=metric_status,
+                                 subject=description,
+                                 description=report)
     print 'Done.'
 
 if __name__ == '__main__':
