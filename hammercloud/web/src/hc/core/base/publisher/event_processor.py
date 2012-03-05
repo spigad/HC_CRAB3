@@ -51,6 +51,10 @@ class EventConsumer(object):
             del sys.path[0]
         self.publishers = custom_import('%s.python.lib.publishers.app_publishers.AppPublishers' % app)
         self.message_bus = custom_import('hc.%s.models.MessageBusEvent' % app)
+        print self.publishers
+        print self.message_bus
+        for i,p in enumerate(sys.path):
+            print i,p
         if self.publishers is None or self.message_bus is None:
             raise ValueError('No App Publishers or Event Bus for %s' % app)
         self.publishers = self.publishers(app)
