@@ -32,6 +32,8 @@ class NagiosPublisher(ServicePublisher):
             conn.start()
             conn.connect()
             for ce in self.atlas_topology.get_ces_for_panda_queue(event['site']):
+                #TODO(rmedrano): remove this log.
+                print 'Sending event to Nagios'
                 conn.send(self._format_message(host_name=ce,
                                                timestamp=datetime.datetime.now(),
                                                **event),

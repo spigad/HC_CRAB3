@@ -34,9 +34,7 @@ class AppPublishers(DefaultPublishers):
         #self.subscribe_publisher('robot',        NagiosPublisher())
         #self.subscribe_publisher('robot',        SSBPublisher())
 
-        self.subscribe_publisher('aft-metrics',    EmailAlert('ramon.medrano.llamas@cern.ch',
-                                                            prefix='[HC-ATLAS][AFT-METRICS] '))
-        #self.subscribe_publisher('aft-metrics',    NagiosPublisher())
+        self.subscribe_publisher('aft-metrics',    NagiosPublisher())
 
         self.subscribe_publisher('alert',        EmailAlert(ATLAS_PEOPLE,
                                                             prefix='[HC-ATLAS][ALERT] '))
