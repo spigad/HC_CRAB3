@@ -5,7 +5,7 @@
 from lib.publishers.default_publishers import DefaultPublishers
 from hc.core.base.publisher.publish_service import EmailAlert, RobotPublisher
 from atlas.python.lib.publishers.nagios_publisher import NagiosPublisher
-from atlas.python.lib.publishers.ssb_publisher import SSBPublisher
+#from atlas.python.lib.publishers.ssb_publisher import SSBPublisher
 
 #ATLAS_PEOPLE = 'daniel.colin.vanderster@cern.ch,ramon.medrano.llamas@cern.ch,johannes.elmsheuser@cern.ch,federica.legger@physik.uni-muenchen.de'
 ATLAS_PEOPLE = 'ramon.medrano.llamas@cern.ch'
