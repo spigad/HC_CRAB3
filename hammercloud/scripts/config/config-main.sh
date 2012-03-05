@@ -61,11 +61,11 @@ export PYTHONPATH=$PYTHONPATH:$HCDIR/external/lib/python2.5/site-packages:$HCDIR
 #Export hammercloud python zone.
 export PYTHONPATH=$PYTHONPATH:$HCDIR/python
 
-#Export Django & HammerCloud.
-export PYTHONPATH=$PYTHONPATH:$HCDIR/external/django/$version:$HCDIR/web/src
-
 #Export apps zones
 export PYTHONPATH=$PYTHONPATH:$HCDIR/apps
+
+#Export Django & HammerCloud.
+export PYTHONPATH=$PYTHONPATH:$HCDIR/external/django/$version:$HCDIR/web/src
 
 #Export local site-packages for Python 2.5
 #export PYTHONPATH=$PYTHONPATH:/usr/lib/python2.5/site-packages
