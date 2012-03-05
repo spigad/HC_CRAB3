@@ -18,6 +18,10 @@ class EventPublisher(object):
 
     def __init__(self, app):
         super(EventPublisher, self).__init__()
+        # TODO: hack to avoid the Django manage Python path.
+        import sys
+        if sys.path[0] == '/data/hc/web/src/hc':
+            del sys.path[0]
         self.message_bus = custom_import('hc.%s.models.MessageBusEvent' % app)
         if self.message_bus is None:
             raise ValueError('No App Publishers or Event Bus for %s' % app)
