@@ -430,7 +430,10 @@ class AnalysisBlacklist:
     body += "\n\n"
     body += "Report generated on voatlas49 by /data/hammercloud/atlas/cronjobs/hc-blacklist.sh\n"
 
-    cernmail.send(to, subject, body)
+    try:
+        cernmail.send(to, subject, body)
+    except:
+        self.add_log('Failed to send mail "%s" to %s. %s',(to,subject,repr(sys.exc_info())))
 
   def send_cloud_alert(self, site):
     try:
@@ -469,7 +472,10 @@ class AnalysisBlacklist:
     body += "\n\n"
     body += "Report generated on voatlas49 by /data/hammercloud/atlas/cronjobs/hc-blacklist.sh\n"
 
-    cernmail.send(to, subject, body)
+    try:
+        cernmail.send(to, subject, body)
+    except:
+        self.add_log('Failed to send mail "%s" to %s. %s',(to,subject,repr(sys.exc_info())))
 
   def send_alert(self):
     if not self.log:
@@ -480,12 +486,20 @@ class AnalysisBlacklist:
         to = self.dan
         subject += ' DEBUG'
     body = "%s\n\n\nReport generated on voatlas49 by HammerCloud ATLAS blacklisting service." % self.log
-    cernmail.send(to, subject, body)
+    try:
+        cernmail.send(to, subject, body)
+    except:
+        self.add_log('Failed to send mail "%s" to %s. %s',(to,subject,repr(sys.exc_info())))
 
   def publish_to_nagios(self, site_name, metric_status, description='', report=''):
     print 'Publising to Nagios....'
+    try:
+      s = Site.objects.get(name=site_name)
+    except:
+      print 'Site %s not found. Skipping.' % site_name
+      return
     self.publisher.process_event(severity='aft-metrics',
-                                 rel_site=Site.objects.get(name=site_name),
+                                 rel_site=s,
                                  site=site_name,
                                  metric_name='HammerCloud Analysis Functional Testing (AFT)',
                                  metric_status=metric_status,
