@@ -440,7 +440,10 @@ class ProductionBlacklist:
     body += "\n\n"
     body += "Report generated on voatlas49 by /data/hammercloud/atlas/cronjobs/hc-blacklist.sh\n"
 
-    cernmail.send(to, subject, body)
+    try:
+        cernmail.send(to, subject, body)
+    except:
+        self.add_log('Failed to send mail "%s" to %s. %s',(to,subject,repr(sys.exc_info())))
 
   def send_cloud_alert(self, site):
     try:
@@ -479,7 +482,10 @@ class ProductionBlacklist:
     body += "\n\n"
     body += "Report generated on voatlas49 by /data/hc/apps/atlas/python/scripts/server/production_blacklist.py\n"
 
-    cernmail.send(to, subject, body)
+    try:
+        cernmail.send(to, subject, body)
+    except:
+        self.add_log('Failed to send mail "%s" to %s. %s',(to,subject,repr(sys.exc_info())))
 
   def send_alert(self):
     if not self.log:
@@ -490,7 +496,10 @@ class ProductionBlacklist:
         to = self.dan
         subject += ' DEBUG'
     body = "%s\n\n\nReport generated on voatlas49 by HammerCloud ATLAS blacklisting service." % self.log
-    cernmail.send(to, subject, body)
+    try:
+        cernmail.send(to, subject, body)
+    except:
+        self.add_log('Failed to send mail "%s" to %s. %s',(to,subject,repr(sys.exc_info())))
 
 
 if __name__ == '__main__':
