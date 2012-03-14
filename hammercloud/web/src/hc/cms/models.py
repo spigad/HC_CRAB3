@@ -236,7 +236,23 @@ class Result(ResultBase):
   rfio_read_num_successful_operations                   = models.FloatField(blank=True,null=True)
   rfio_read_total_megabytes                             = models.FloatField(blank=True,null=True)
   rfio_read_total_msecs                                 = models.FloatField(blank=True,null=True)
-  
+  tfile_write_total_megabytes                           = models.FloatField(blank=True,null=True)
+  tstoragefile_readactual_num_operations                = models.FloatField(blank=True,null=True)
+  tstoragefile_readactual_num_successful_operations     = models.FloatField(blank=True,null=True)
+  tstoragefile_readactual_total_megabytes               = models.FloatField(blank=True,null=True)
+  tstoragefile_readactual_total_msecs                   = models.FloatField(blank=True,null=True)
+  tstoragefile_readasync_num_operations                 = models.FloatField(blank=True,null=True)
+  tstoragefile_readasync_num_successful_operations      = models.FloatField(blank=True,null=True)
+  tstoragefile_readasync_total_megabytes                = models.FloatField(blank=True,null=True)
+  tstoragefile_readasync_total_msecs                    = models.FloatField(blank=True,null=True)
+  tstoragefile_readprefetchtocache_num_operations       = models.FloatField(blank=True,null=True)
+  tstoragefile_readprefetchtocache_num_successful_operations = models.FloatField(blank=True,null=True)
+  tstoragefile_readprefetchtocache_total_megabytes      = models.FloatField(blank=True,null=True)
+  tstoragefile_readprefetchtocache_total_msecs          = models.FloatField(blank=True,null=True)
+  tstoragefile_readviacache_num_operations              = models.FloatField(blank=True,null=True)
+  tstoragefile_readviacache_num_successful_operations   = models.FloatField(blank=True,null=True)
+  tstoragefile_readviacache_total_megabytes             = models.FloatField(blank=True,null=True)
+  tstoragefile_readviacache_total_msecs                 = models.FloatField(blank=True,null=True)
 
 ##
 ## METRIC CLASSES
@@ -362,6 +378,23 @@ class SummaryTest(SummaryTestBase):
   rfio_read_num_successful_operations                   = models.FloatField(blank=True,null=True)
   rfio_read_total_megabytes                             = models.FloatField(blank=True,null=True)
   rfio_read_total_msecs                                 = models.FloatField(blank=True,null=True)
+  tfile_write_total_megabytes                           = models.FloatField(blank=True,null=True)
+  tstoragefile_readactual_num_operations                = models.FloatField(blank=True,null=True)
+  tstoragefile_readactual_num_successful_operations     = models.FloatField(blank=True,null=True)
+  tstoragefile_readactual_total_megabytes               = models.FloatField(blank=True,null=True)
+  tstoragefile_readactual_total_msecs                   = models.FloatField(blank=True,null=True)
+  tstoragefile_readasync_num_operations                 = models.FloatField(blank=True,null=True)
+  tstoragefile_readasync_num_successful_operations      = models.FloatField(blank=True,null=True)
+  tstoragefile_readasync_total_megabytes                = models.FloatField(blank=True,null=True)
+  tstoragefile_readasync_total_msecs                    = models.FloatField(blank=True,null=True)
+  tstoragefile_readprefetchtocache_num_operations       = models.FloatField(blank=True,null=True)
+  tstoragefile_readprefetchtocache_num_successful_operations = models.FloatField(blank=True,null=True)
+  tstoragefile_readprefetchtocache_total_megabytes      = models.FloatField(blank=True,null=True)
+  tstoragefile_readprefetchtocache_total_msecs          = models.FloatField(blank=True,null=True)
+  tstoragefile_readviacache_num_operations              = models.FloatField(blank=True,null=True)
+  tstoragefile_readviacache_num_successful_operations   = models.FloatField(blank=True,null=True)
+  tstoragefile_readviacache_total_megabytes             = models.FloatField(blank=True,null=True)
+  tstoragefile_readviacache_total_msecs                 = models.FloatField(blank=True,null=True)
 
 class SummaryTestSite(SummaryTestSiteBase):
   #[StorageParams]
@@ -444,7 +477,24 @@ class SummaryTestSite(SummaryTestSiteBase):
   rfio_read_num_successful_operations                   = models.FloatField(blank=True,null=True)
   rfio_read_total_megabytes                             = models.FloatField(blank=True,null=True)
   rfio_read_total_msecs                                 = models.FloatField(blank=True,null=True)
-
+  tfile_write_total_megabytes                           = models.FloatField(blank=True,null=True)
+  tstoragefile_readactual_num_operations                = models.FloatField(blank=True,null=True)
+  tstoragefile_readactual_num_successful_operations     = models.FloatField(blank=True,null=True)
+  tstoragefile_readactual_total_megabytes               = models.FloatField(blank=True,null=True)
+  tstoragefile_readactual_total_msecs                   = models.FloatField(blank=True,null=True)
+  tstoragefile_readasync_num_operations                 = models.FloatField(blank=True,null=True)
+  tstoragefile_readasync_num_successful_operations      = models.FloatField(blank=True,null=True)
+  tstoragefile_readasync_total_megabytes                = models.FloatField(blank=True,null=True)
+  tstoragefile_readasync_total_msecs                    = models.FloatField(blank=True,null=True)
+  tstoragefile_readprefetchtocache_num_operations       = models.FloatField(blank=True,null=True)
+  tstoragefile_readprefetchtocache_num_successful_operations = models.FloatField(blank=True,null=True)
+  tstoragefile_readprefetchtocache_total_megabytes      = models.FloatField(blank=True,null=True)
+  tstoragefile_readprefetchtocache_total_msecs          = models.FloatField(blank=True,null=True)
+  tstoragefile_readviacache_num_operations              = models.FloatField(blank=True,null=True)
+  tstoragefile_readviacache_num_successful_operations   = models.FloatField(blank=True,null=True)
+  tstoragefile_readviacache_total_megabytes             = models.FloatField(blank=True,null=True)
+  tstoragefile_readviacache_total_msecs                 = models.FloatField(blank=True,null=True)
+  
 ##
 ## FEED CLASSES
 ##
