@@ -33,6 +33,10 @@ except IndexError:
 
 try:
   test = Test.objects.get(pk=testid) #select_related('template', 'metricperm__index', 'metricperm__summary', 'metricperm__pertab').get(pk=testid)
+  if test and not test.is_golden:
+    import guppy
+    from guppy.heapy import Remote
+    Remote.on()
   if test.pause:
     logger.info('Un-pausing test.')
     test.pause = 0
@@ -258,7 +262,7 @@ def _copyJob(job, site):
 
     uuid = commands.getoutput('uuidgen')[0:3]
     t = int(time.time())
-    j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, t, uuid)
+    j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, uuid, t)
     j.outputdata.location = ''
     if j.inputdata and j.inputdata._impl._name == 'DQ2Dataset':
       previous_datasets = j.inputdata.dataset
@@ -293,7 +297,7 @@ def _copyJob(job, site):
       try:
         uuid = commands.getoutput('uuidgen')[0:3]
         t = int(time.time())
-        j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, t, uuid)
+        j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, uuid, t)
         test_sleep((i + 1) * 2)
         j.submit()
         test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
