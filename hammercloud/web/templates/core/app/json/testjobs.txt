@@ -9,8 +9,8 @@
     [   
         "{{job.ganga_status}}",
         "{{job.site.name}}",
-        {% if app == "cms" %} "<a href=http://vocms38.cern.ch/test_{{job.test}}/gangadir/workspace/gangarbt/LocalXML/{{job.ganga_jobid}}/output/>{{job.ganga_jobid}}</a>" {% else %} "{{job.ganga_jobid}}" {% endif %},
-        {% if app == "cms" %} "<a href=http://vocms38.cern.ch/test_{{job.test}}/gangadir/workspace/gangarbt/LocalXML/{{job.ganga_jobid}}/output/res/CMSSW_{{job.ganga_subjobid|add:"1"}}.stdout>{{job.ganga_subjobid}}</a>" {% else %} "{{job.ganga_subjobid}}" {% endif %},
+        {% if app == "cms" %} "<a href=http://{{ job.test.host.name }}/test_{{ job.test.id }}/gangadir/workspace/gangarbt/LocalXML/{{job.ganga_jobid}}/output/>{{job.ganga_jobid}}</a>" {% else %} "{{job.ganga_jobid}}" {% endif %},
+        {% if app == "cms" %} "<a href=http://{{ job.test.host.name }}/test_{{ job.test.id }}/gangadir/workspace/gangarbt/LocalXML/{{job.ganga_jobid}}/output/res/CMSSW_{{job.ganga_subjobid|add:"1"}}.stdout>{{job.ganga_subjobid}}</a>" {% else %} "{{job.ganga_subjobid}}" {% endif %},
         {% if job.backendID %}"{{job.backendID}}"{% else %}""{% endif %},
         {% if job.submit_time %}"{{job.submit_time|date:'d/M'}},{{job.submit_time|time:'P'}}"{% else %}""{% endif %},
         {% if job.start_time %}"{{job.start_time|date:'d/M'}},{{job.start_time|time:'P'}}"{% else %}""{% endif %},
