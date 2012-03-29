@@ -18,3 +18,8 @@
 .map tr {
   font-size: smaller;
 }
+
+.incidencelist th{
+    color: #FFFFFF;
+    background-color: #20548E;
+}

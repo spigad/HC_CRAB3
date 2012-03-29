@@ -7,7 +7,7 @@
 {% block content %}
 <div style="float: left;"><a href="javascript:history.go(-1)">&lt;&lt; Back</a></div>
 
-<h2>PanDA Incidents history</h2>
+<h2>{% block incidents_title %}Incidents history{% endblock %}</h2>
 <p>The following table summarizes the incidents happened in HammerCloud tests. You can filter the results using the form below and clicking in 'Refresh'.</p>
 
 <form method="get" name="Form" action="">
@@ -34,7 +34,7 @@
   <input type="submit" value="Refresh" />
 </form>
 
-<h3>PanDA incidents for last {{ hours|default:"72" }} hours</h3>
+<h3>Incidents for last {{ hours|default:"72" }} hours</h3>
 {% if q %}
 <p>Using the following string as filter: {{ q }}</p>
 {% endif %}
