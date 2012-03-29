@@ -352,6 +352,9 @@ def process_subjob(job,subjob):
     site = job.inputdata.CE_white_list
     if site is None:
       site = job.inputdata.target_site
+    if site is None:
+      logger.error('The site cannot be read from the Ganga CRABDataset (process_subjob)')
+      return
   except:
     logger.error('The site cannot be read from the Ganga CRABDataset (process_subjob)')
     return
@@ -414,8 +417,16 @@ def process_subjob(job,subjob):
   if result:
     result = result[0]
   else:
-    site = Site.objects.filter(name=site)[0]
-    result = Result(test=test,site=site,ganga_jobid=job.id,ganga_subjobid=subjob.id,ganga_status=subjob.status[0])
+    try:
+      site = Site.objects.filter(name=site)[0]
+    except:
+      logger.error('The site "%s" cannot be get from DB (process_subjob)' % site)
+      return
+    try:
+      result = Result(test=test,site=site,ganga_jobid=job.id,ganga_subjobid=subjob.id,ganga_status=subjob.status[0])
+    except:
+      logger.error('The result for site "%s" and ganga IDs (%d,%d) cannot be get from DB (process_subjob)' % (site, job.id, subjob.id))
+      return
 
   for k,v in results.items():
     if k in value_types['DateTimeField'] and type(v) == types.StringType:
