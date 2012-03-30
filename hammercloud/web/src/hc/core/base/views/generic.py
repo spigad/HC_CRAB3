@@ -1348,7 +1348,7 @@ class GenericView():
     if start_date:
       start_date = dateutil.parser.parse(start_date)
     else:
-      start_date = datetime.now() - timedelta(days=7)
+      start_date = datetime.now() - timedelta(days=1)
     result_filters = result_filters & Q(mtime__gte=start_date)
     end_date = request.GET.get('end_date', None)
     if end_date:
@@ -1416,7 +1416,7 @@ class GenericView():
     if start_date:
       start_date = dateutil.parser.parse(start_date)
     else:
-      start_date = datetime.now() - timedelta(days=7)
+      start_date = datetime.now() - timedelta(days=1)
     result_filters = result_filters & Q(mtime__gte=start_date)
     end_date = request.GET.get('end_date', None)
     if end_date:
@@ -1435,7 +1435,8 @@ class GenericView():
     site_data = []
     results_filtered = result.objects.filter(result_filters)
 
-    site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
+    #site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
+    site_data = results_filtered.filter(site=site).values(params['field']).annotate(jcount=Count(params['field'])).order_by('-jcount')
 
     for s in site_data:
       s['code'] = s[params['field']]
@@ -1462,7 +1463,7 @@ class GenericView():
     if start_date:
       start_date = dateutil.parser.parse(start_date)
     else:
-      start_date = datetime.now() - timedelta(days=7)
+      start_date = datetime.now() - timedelta(days=1)
     result_filters = result_filters & Q(mtime__gte=start_date)
     end_date = request.GET.get('end_date', None)
     if end_date:
@@ -1481,7 +1482,8 @@ class GenericView():
     site_data = []
     results_filtered = result.objects.filter(result_filters)
 
-    site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
+    #site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
+    site_data = results_filtered.values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
 
     for s in site_data:
       s['code'] = s[params['field']]

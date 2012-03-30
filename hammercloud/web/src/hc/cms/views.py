@@ -211,7 +211,6 @@ def stats(request):
 def statistics(request):
   pass
 
-@cache_page(60 * 60 * 2)
 @GenView_dec(params={'on':True,'failed':{'status':'SD'}})
 def joberrors(request):
   pass
