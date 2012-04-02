@@ -18,8 +18,7 @@ def CMS_get_abort_code_from_CRAB(test_id, ganga_jobid, ganga_subjobid):
   for line in iter(output.splitlines()):
     try:
       event, result, status_code = line.split('&')
-      if event == 'Abort':
-        results.append((result, status_code))
+      results.append((result, status_code))
     except:
       continue
   return results
