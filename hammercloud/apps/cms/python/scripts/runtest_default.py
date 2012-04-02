@@ -445,8 +445,13 @@ def process_subjob(job,subjob):
       try:
         grid_statuses = utils_wrapper.CMS_get_abort_code_from_CRAB(test.id, job.id, subjob.id)
         if grid_statuses:
+          if len(grid_statuses) > 1:
+            logger.warning('The LoggingInfo parser found %d grid error records.' % len(grid_statuses))
           result.grid_error_code = grid_statuses[0][0]
           result.grid_error_status = grid_statuses[0][1]
+          logger.info('Storing Grid error %s for this job.' % str(result.grid_error_code))
+        else:
+          logger.info('Grid error code not found for this job.')
         logger.info('Parsing of LoggingInfo completed')
       except:
         logger.error('Error parsing the LoggingInfo')
@@ -456,6 +461,9 @@ def process_subjob(job,subjob):
           result.app_exe_code = app_status[0]
           result.app_job_code = app_status[1]
           result.app_error_desc = app_status[2]
+          logger.info('Storing App exe code %s for this job.' % str(result.app_exe_code))
+        else:
+          logger.info('App exe code not found for this job.')
         logger.info('Parsing of stdout completed')
       except:
         logger.error('Error parsing the stdout')
