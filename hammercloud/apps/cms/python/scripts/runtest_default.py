@@ -519,7 +519,7 @@ def hc_copy_thread():
       if test_paused() or ct.should_stop():
         break
       copyJob(job)
-    test_sleep(10)
+    test_sleep(30)
 
   logger.info('HC Copy Thread: Disconnected from DB')
 
@@ -553,7 +553,7 @@ if len(jobs):
           logger.warning(sys.exc_info()[1])
       if test_paused():
         break
-    test_sleep(10)
+    test_sleep(30)
 else:
   logger.warning('No jobs to monitor. Exiting now.')
 
