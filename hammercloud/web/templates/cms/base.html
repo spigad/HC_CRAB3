@@ -1,0 +1,60 @@
+{% extends 'core/app/base.html' %}
+
+{% block menu %}
+<li><a href="{% url index-view app %}">Home</a></li>
+<li><a href="{% url testlist-view app,'all' %}">Tests</a>
+<ul>
+  <li><a href="{% url testlist-view app,'functional' %}">All functional</a></li>
+  <li><a href="{% url testlist-view app,'stress' %}">All stress</a></li>
+  <li><a href="{% url testlist-view app,'all' %}">All</a></li>
+</ul>
+</li>
+<li><a href="{% url statistics-view app %}">Statistics</a>
+<ul>
+  <li><a href="{% url statistics-view app %}?type=plot">Plots</a></li>
+  <li><a href='{% url statistics-view app %}?type=rank'>Ranks</a></li>
+  <li><a href='{% url statistics-view app %}?type=timeline'>Timelines</a></li>
+</ul>
+</li>
+<li><a href="{% url robot-view app %}">Robot</a>
+<ul>
+  <li><a href='{% url historical-view app %}'>Historical</a></li>
+  <li><a href='{% url incidents-view app %}'>Incidents</a></li>
+  <li><a href='{% url joberrors-view app %}'>Job errors</a></li>
+</ul> 
+</li>
+<li><a href="{% url more-view app %}">More HC...</a>
+<ul>
+  <li><a href="{% url evolution-view app %}">Evolution</a></li>
+  <li><a href="{% url stats-view app %}">Stats</a></li>
+</ul>
+<li><a href="#">Help</a>
+    <ul>
+      <li><a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud" target="_blank">Documentation</a></li>
+      <li><a href="https://twiki.cern.ch/twiki/bin/view/CMS/CMSHammerCloud" target="_blank">CMS specifics</a></li>
+      <li><a href="https://groups.cern.ch/group/hammercloud-support/default.aspx" target="_blank">Support E-Group</a></li>
+      <li><a href="https://savannah.cern.ch/projects/hammercloud/" target="_blank">Report Bug</a></li>
+    </ul>
+  </li>
+</li>
+{% endblock %}
+
+      {% block bottom %}
+        <div id="bottom-bar">
+          <div style="text-align: right; color: white; font-size: 0.7em;">
+            <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud" target="_blank" style="color: white;">Help</a> |
+            <a href="https://savannah.cern.ch/projects/hammercloud/" target="_blank" style="color: white;">Savannah</a>
+          </div>
+        </div>
+        {% block account %}{% endblock %}
+        <div id="social-bar">
+          <div style="text-align: left;margin-top:1em;float:left;">
+            <div class="g-plusone" data-size="medium" data-href="http://hammercloud.cern.ch/"></div>
+          </div>
+        </div>
+    	<p style="text-align: right;">
+          <iframe src="http://cern.ch/sls/service-inline.php?id={{config.sls}}&layout=bar" 
+            frameborder="0" height="16" width="100" scrolling="no"></iframe>
+        </p>
+      {% endblock %}
+
