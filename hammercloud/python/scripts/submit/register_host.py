@@ -21,7 +21,7 @@ class RegisterHost:
       host = host[0]
       host.loadavg1m = host.loadavg1m * (1.0 - alpha) + load * alpha
       host.save()
-      print '[INFO][%s][register_host] Inserted new load:%s at %s.'%(app,load,hostname)
+      print '[INFO][%s][register_host] Inserted new load:%s at %s.'%(app,host.loadavg1m,hostname)
     else:
       print '[ERROR][%s][register_host] Unknown host %s'%(app,hostname)
       return 0
