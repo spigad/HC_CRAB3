@@ -7,7 +7,7 @@ class RegisterHost:
   def run(self,app,dic):
 
     # Exponential smoothing control.
-    alpha = 0.4
+    alpha = 0.2
 
     #IMPORTS
     host = custom_import('hc.%s.models.Host'%(app))
