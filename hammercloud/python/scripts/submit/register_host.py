@@ -6,6 +6,9 @@ class RegisterHost:
 
   def run(self,app,dic):
 
+    # Exponential smoothing control.
+    alpha = 0.4
+
     #IMPORTS
     host = custom_import('hc.%s.models.Host'%(app))
 
@@ -16,7 +19,7 @@ class RegisterHost:
     host = host.objects.filter(name=hostname)
     if host:
       host = host[0]
-      host.loadavg1m = load
+      host.loadavg1m = host.loadavg1m * (1.0 - alpha) + load * alpha
       host.save()
       print '[INFO][%s][register_host] Inserted new load:%s at %s.'%(app,load,hostname)
     else:
