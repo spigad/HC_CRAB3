@@ -56,8 +56,9 @@ class UserCode(UserCodeBase):
 ## *SiteOption
 ##
 
+ATLAS_TOPOLOGY = ATLASTopology()
+
 class Site(SiteBase):
-  atlas_topology = None
 
   def site_type(self):
     if self.cloud.name.endswith('PROD'):
@@ -65,11 +66,10 @@ class Site(SiteBase):
     return 'analysis'
 
   def ssb_name(self):
-    # Load ATLAS topolgy once.
-    if self.atlas_topology is None:
-      from atlas.utils.atlas_topology import ATLASTopology
-      self.atlas_topology = ATLASTopology()
-    site_name = self.atlas_topology.get_site_of_panda_queue(self.name)
+    try:
+      site_name = ATLAS_TOPOLOGY.get_site_of_panda_queue(self.name)
+    except:
+      return None
     if site_name is not None:
       return site_name
     else:
