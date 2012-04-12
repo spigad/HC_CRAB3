@@ -2,7 +2,10 @@ from django.db import models
 from hc.core.base.models.abstract import *
 from hc.core.base.rss.abstract import *
 
-from atlas.utils.atlas_topology import ATLASTopology
+try:
+  from atlas.utils.atlas_topology import ATLASTopology
+except:
+  print "Warning, could not load ATLAS topology."
 
 import subprocess
 
@@ -56,7 +59,12 @@ class UserCode(UserCodeBase):
 ## *SiteOption
 ##
 
-ATLAS_TOPOLOGY = ATLASTopology()
+
+ATLAS_TOPOLOGY = None
+try:
+  ATLAS_TOPOLOGY = ATLASTopology()
+except:
+  print "Could not create ATLAS topology object."
 
 class Site(SiteBase):
 
@@ -69,7 +77,7 @@ class Site(SiteBase):
     try:
       site_name = ATLAS_TOPOLOGY.get_site_of_panda_queue(self.name)
     except:
-      return None
+      return 'Toplogy not loaded'
     if site_name is not None:
       return site_name
     else:
