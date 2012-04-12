@@ -2,7 +2,7 @@ from django.db import models
 from hc.core.base.models.abstract import *
 from hc.core.base.rss.abstract import *
 
-
+from atlas.utils.atlas_topology import ATLASTopology
 
 import subprocess
 
