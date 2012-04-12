@@ -16,6 +16,8 @@ urlpatterns = patterns('',
   (r'', include('hc.core.base.xmlrpc.urls')),
 
   url(r'^admin/', include(admin.site.urls) , kwargs={'SSL':True}),
+  
+  (r'^admin/varnish/', include('varnishapp.urls')),
 
 #  (r'^accounts/login/$',  'django.contrib.auth.views.login', {'template_name': 'core/app/login.html'}),
 
