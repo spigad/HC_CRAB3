@@ -21,6 +21,7 @@ from hc.core.utils.generic.dic_config import DicConfig
 from hc.core.base.models.managers.functions import test_fm
 
 from datetime import date,timedelta,datetime
+from pytz import timezone
 
 from hc.core.base.views import configuration
 
@@ -1494,3 +1495,36 @@ class GenericView():
     c = RequestContext(request, {'site_data': site_data, 'kind':'application','type':'failed'}, [defaultContext])
     t = loader.select_template(['%s/stats/failedjobs.html'%(app),'core/app/stats/failedjobs.html'])
     return HttpResponse(t.render(c))
+
+  def robot_ssb(self,request,list_type,dic={'Site':None,'SummaryRobot':None},*args,**kwargs):
+    site = dic['Site']
+    summary_robot = dic['SummaryRobot']
+    app = site.__module__.split('.')[1]
+
+    if not list_type in ('analysis', 'prod'):
+      raise Http404
+
+    sites = filter(lambda x: x.site_type() == list_type, site.objects.filter(enabled=1).select_related('cloud').all())
+    dh = Datahelper()
+    sites = dh.annotateSitesEfficiency(sites,date.today(),app)
+
+    now = datetime.utcnow().strftime("%Y-%m-%d %H-%M-%S")
+
+    site_data = []
+    for s in sites:
+      eff = str(int(s.eff * 100.0))
+      if s.eff < 0.0:
+        color = 'grey'
+        eff = 'no-test'
+      elif s.eff == 0.0:
+        color = 'red'
+      elif s.eff < 0.5:
+        color = 'yellow'
+      else:
+         color = 'green'
+      url = 'http://hammercloud.cern.ch/hc/app/atlas/robot/incidents/?site=%s' % s.name
+      site_data.append((now, s.ssb_name(), eff, color, url))
+    
+    c = RequestContext(request, {'site_data': site_data}, [defaultContext])
+    t = loader.select_template(['%s/robot/ssb.html'%(app),'core/app/robot/ssb.html'])
+    return HttpResponse(t.render(c), content_type='text/plain')

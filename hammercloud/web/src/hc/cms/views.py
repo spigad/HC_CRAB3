@@ -195,6 +195,10 @@ def incidents(request):
 def autoexclusion(request):
   pass
 
+@GenView_dec(params={'on':False})
+def robot_ssb(request):
+  pass
+
 #######################################################
 ## STATS BLOCK
 #######################################################

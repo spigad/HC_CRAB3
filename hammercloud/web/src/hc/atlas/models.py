@@ -2,6 +2,8 @@ from django.db import models
 from hc.core.base.models.abstract import *
 from hc.core.base.rss.abstract import *
 
+
+
 import subprocess
 
 ##
@@ -55,7 +57,25 @@ class UserCode(UserCodeBase):
 ##
 
 class Site(SiteBase):
-  pass
+  atlas_topology = None
+
+  def site_type(self):
+    if self.cloud.name.endswith('PROD'):
+	return 'prod'
+    return 'analysis'
+
+  def ssb_name(self):
+    # Load ATLAS topolgy once.
+    if self.atlas_topology is None:
+      from atlas.utils.atlas_topology import ATLASTopology
+      self.atlas_topology = ATLASTopology()
+    site_name = self.atlas_topology.get_site_of_panda_queue(self.name)
+    if site_name is not None:
+      return site_name
+    else:
+      return self.name
+    
+
 class SiteOption(SiteOptionBase):
   pass
 

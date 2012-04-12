@@ -325,6 +325,14 @@ class SiteBase(models.Model):
   def __unicode__(self):
     return '%s'%self.name
 
+  def site_type(self):
+    # By default, say analysis. Apps should redefine if not.
+    return 'analysis'
+
+  def ssb_name(self):
+    # By default, say the site name. Apps should redefine if not.
+    return self.name
+
   class Meta:
     abstract = True
     db_table = u'site'
