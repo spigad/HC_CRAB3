@@ -37,7 +37,7 @@ def run():
     if not os.environ.has_key('APP'):
       print '[ERROR] Application env variable APP not found.'
       help()
-    elif not os.environ['APP'] in [app.split('.')[1] for app in settings.INSTALLED_APPS if not app.startswith('django')]:
+    elif not os.environ['APP'] in [app.split('.')[1] for app in settings.INSTALLED_APPS if app.startswith('hc')]:
       print '[ERROR] Please, check your parameters. Wrong application name.'
       help()      
     else:
