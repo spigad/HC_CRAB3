@@ -69,13 +69,15 @@ except:
 class Site(SiteBase):
 
   def site_type(self):
-    if self.cloud.name.endswith('PROD'):
-	return 'prod'
-    return 'analysis'
+    if self.name.startswith('ANALY'):
+      return 'analysis'
+    elif self.cloud.name.endswith('PROD'):
+      return 'production'
+    return 'other'
 
   def ssb_name(self):
     try:
-      site_name = ATLAS_TOPOLOGY.get_site_of_panda_queue(self.name)
+      site_name = ATLAS_TOPOLOGY.get_site_id_of_panda_queue(self.name, site_type=self.site_type())
     except:
       return 'Toplogy not loaded'
     if site_name is not None:
