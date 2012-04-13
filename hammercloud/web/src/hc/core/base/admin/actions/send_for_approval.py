@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 def method(self, request, queryset):
 
   CLONED_THRESHOLD = 2
-  ALLOWED_USERS = ('gangarbt', 'dozerov', 'desilva')
+  ALLOWED_USERS = ('gangarbt', 'dozerov', 'desilva','jwhuang')
 
   app  = self.__module__.split('.')[1]
   url = 'http://'+request.META['HTTP_HOST']+request.META['SCRIPT_NAME']
