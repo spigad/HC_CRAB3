@@ -1504,6 +1504,9 @@ class GenericView():
     if not list_type in ('analysis', 'prod'):
       raise Http404
 
+    if list_type == 'prod':
+      list_type = 'production'
+
     sites = filter(lambda x: x.site_type() == list_type, site.objects.filter(enabled=1).select_related('cloud').all())
     dh = Datahelper()
     sites = dh.annotateSitesEfficiency(sites,date.today(),app)

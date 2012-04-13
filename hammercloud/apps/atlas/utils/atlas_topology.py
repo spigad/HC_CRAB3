@@ -65,6 +65,17 @@ class ATLASTopology(object):
                     return site_name
         return None
 
+    def get_site_id_of_panda_queue(self, panda_queue, site_type='analysis'):
+        """Returns the SiteID name of a PanDA queue."""
+        # This can be done with nested map() / filter() but is more readable
+        # like this (and slower, if perfomance is not enough, should be changed
+        # to the native map() / filter()).
+        for (_, site_data) in self.__atlas_sites__.iteritems():
+            for (site_id, resources) in site_data['processing_resources'].iteritems():
+                if panda_queue in resources[site_type].keys():
+                    return site_id
+        return None
+
     def get_services_for_site(self, site):
         """Returns a list of services for a site, including CEs, SRMs..."""
         try:
