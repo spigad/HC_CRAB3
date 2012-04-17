@@ -443,7 +443,7 @@ class ProductionBlacklist:
     try:
         cernmail.send(to, subject, body)
     except:
-        self.add_log('Failed to send mail "%s" to %s. %s',(to,subject,repr(sys.exc_info())))
+        self.add_log('Failed to send mail "%s" to %s. %s'%(to,subject,repr(sys.exc_info())))
 
     try:
         site_support = Site.objects.filter(name=site)[0].getSiteOptions_for_site.only('option_value').filter(option_name='contact')[0].option_value
@@ -451,7 +451,7 @@ class ProductionBlacklist:
             cernmail.send(site_support, subject, body)
     except:
         print sys.exc_info()
-        self.add_log('Failed to send site mail to %s. %s',(subject,repr(sys.exc_info())))
+        self.add_log('Failed to send site mail to %s. %s'%(subject,repr(sys.exc_info())))
 
   def send_cloud_alert(self, site):
     try:
@@ -493,7 +493,7 @@ class ProductionBlacklist:
     try:
         cernmail.send(to, subject, body)
     except:
-        self.add_log('Failed to send mail "%s" to %s. %s',(to,subject,repr(sys.exc_info())))
+        self.add_log('Failed to send mail "%s" to %s. %s'%(to,subject,repr(sys.exc_info())))
 
     try:
         site_support = Site.objects.filter(name=site)[0].getSiteOptions_for_site.only('option_value').filter(option_name='contact')[0].option_value
@@ -501,7 +501,7 @@ class ProductionBlacklist:
             cernmail.send(site_support, subject, body)
     except:
         print sys.exc_info()
-        self.add_log('Failed to send site mail to %s. %s',(subject,repr(sys.exc_info())))
+        self.add_log('Failed to send site mail to %s. %s'%(subject,repr(sys.exc_info())))
 
   def send_alert(self):
     if not self.log:
