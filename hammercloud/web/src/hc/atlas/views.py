@@ -201,6 +201,10 @@ def autoexclusion_set(request):
   pass
 
 @GenView_dec(params={'on':True})
+def contact_set(request):
+  pass
+
+@GenView_dec(params={'on':True})
 def robot_ssb(request):
   pass
 

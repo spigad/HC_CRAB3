@@ -1230,6 +1230,26 @@ class GenericView():
 
     return HttpResponse('Site %s autoexclusion %s'%(sitename,action))
 
+  def contact_set(self,request,email,sitename,dic={'Site':None,'SiteOption':None},*args,**kwargs):
+
+    so   = dic['SiteOption']
+    site = dic['Site']
+    app  = so.__module__.split('.')[1]
+
+    s=site.objects.filter(name=sitename)
+    if not s:
+      raise Http404
+
+    site_option = so.objects.filter(option_name='contact').filter(site__name=sitename)
+    if not site_option:
+      so = so(site=s[0],option_name='contact',option_value=email)
+    else:
+        so = site_option[0]
+        so.option_value=email
+    so.save()
+
+    return HttpResponse('The email notifications for "%s" will be sent to "%s"'%(sitename,email))
+
 #######################################################
 ## STATS BLOCK
 #######################################################
