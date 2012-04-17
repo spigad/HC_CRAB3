@@ -1101,7 +1101,7 @@ class GenericView():
 
     t = loader.select_template(['%s/robot/historical.html'%(app),'core/app/robot/historical.html'])
     c = RequestContext(request,
-                      {'to':day_to,'from':day_from,'hists':hists,'length':LENGTH,'help':True},
+                      {'to':day_to,'from':day_from,'hists':sorted(hists.iteritems()),'length':LENGTH,'help':True},
                       [defaultContext]
                     )
     return HttpResponse(t.render(c))
