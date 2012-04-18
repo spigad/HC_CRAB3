@@ -1251,7 +1251,7 @@ class GenericView():
     except:
       raise Http404
 
-    return HttpResponse('The email notifications for "%s" will be sent to "%s"'%(sitename,email))
+    return HttpResponse('The email notifications for "%s" will be sent to "%s"'%(sitename,so.option_value))
 
 #######################################################
 ## STATS BLOCK
