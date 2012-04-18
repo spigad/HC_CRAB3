@@ -1253,6 +1253,26 @@ class GenericView():
 
     return HttpResponse('The email notifications for "%s" will be sent to "%s"'%(sitename,so.option_value))
 
+  def contact_unset(self,request,sitename,dic={'Site':None,'SiteOption':None},*args,**kwargs):
+
+    so   = dic['SiteOption']
+    site = dic['Site']
+    app  = so.__module__.split('.')[1]
+
+    s=site.objects.filter(name=sitename)
+    if not s:
+      raise Http404
+
+    site_option = so.objects.filter(option_name='contact').filter(site__name=sitename)
+    if site_option:
+      try:
+        site_option[0].delete()
+      except:
+        raise Http404
+
+    return HttpResponse('The email notifications for "%s" will not be sent to sites.' % sitename)
+
+
 #######################################################
 ## STATS BLOCK
 #######################################################
