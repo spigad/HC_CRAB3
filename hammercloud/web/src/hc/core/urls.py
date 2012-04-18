@@ -69,7 +69,7 @@ urlpatterns += patterns('hc.core.base.views.dispatcher',
   url(r'^app/(?P<app>[a-z]+)/robot/incidents/$'               , 'dispatcher', name='incidents-view'    , kwargs={'func':'incidents'}),
   url(r'^app/(?P<app>[a-z]+)/robot/autoexclusion/$'           , 'dispatcher', name='autoexclusion-view', kwargs={'func':'autoexclusion'}),
   url(r'^app/(?P<app>[a-z]+)/autoexclusion/(?P<action>[a-z]+)/(?P<sitename>[A-Za-z0-9_-]+)$'           , 'dispatcher', name='autoexclusion_set-view', kwargs={'func':'autoexclusion_set'}),
-  url(r'^app/(?P<app>[a-z]+)/contact/(?P<sitename>[A-Za-z0-9_-]+)/(?P<email>[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._]+.[a-zA-Z]{2,4})$' , 'dispatcher', name='contact_set-view', kwargs={'func':'contact_set'}),
+  url(r'^app/(?P<app>[a-z]+)/contact/(?P<sitename>[A-Za-z0-9_-]+)/(?P<email>[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.]+\.[a-zA-Z]{2,4}(,[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.]+\.[a-zA-Z]{2,4})*)$' , 'dispatcher', name='contact_set-view', kwargs={'func':'contact_set'}),
   url(r'^app/(?P<app>[a-z]+)/ssb/(?P<list_type>[a-z]+)/$'     , 'dispatcher', name='robot_ssb-view'    , kwargs={'func':'robot_ssb'}),
 
   #STATS
