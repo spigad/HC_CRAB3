@@ -1246,7 +1246,10 @@ class GenericView():
     else:
         so = site_option[0]
         so.option_value=email
-    so.save()
+    try:
+      so.save()
+    except:
+      raise Http404
 
     return HttpResponse('The email notifications for "%s" will be sent to "%s"'%(sitename,email))
 
