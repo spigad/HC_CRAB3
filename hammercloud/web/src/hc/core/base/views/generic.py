@@ -1479,8 +1479,8 @@ class GenericView():
     site_data = []
     results_filtered = result.objects.filter(result_filters)
 
-    #site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
-    site_data = results_filtered.filter(site=site).values(params['field']).annotate(jcount=Count(params['field'])).order_by('-jcount')
+    site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
+    #site_data = results_filtered.filter(site=site).values(params['field']).annotate(jcount=Count(params['field'])).order_by('-jcount')
 
     for s in site_data:
       s['code'] = s[params['field']]
@@ -1526,8 +1526,8 @@ class GenericView():
     site_data = []
     results_filtered = result.objects.filter(result_filters)
 
-    #site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
-    site_data = results_filtered.values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
+    site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
+    #site_data = results_filtered.values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
 
     for s in site_data:
       s['code'] = s[params['field']]
