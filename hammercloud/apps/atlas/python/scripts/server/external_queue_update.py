@@ -1,3 +1,6 @@
+from pandatools import Client
+from hc.atlas.models import *
+from django.core.exceptions import ObjectDoesNotExist
 import commands
 import datetime
 import logging
@@ -5,8 +8,6 @@ import re
 import time
 import unittest
 
-from hc.atlas.models import SiteOption, BlacklistEvent, TestLog, Site
-from pandatools import Client
 
 STATUS_OPTION = 'panda_status'
 COMMENT_OPTION = 'panda_comment'
@@ -63,13 +64,13 @@ class ExternalQueueUpdate:
             else:
               logging.info('Site %s is now in %s status set by an external tool or user.', site_name, status)
             TestLog(comment="%s was set to '%s' by an external agent."%(site.name,status), severity='queuecontrol', user=1).save()
-        except DoesNotExist, MultipleObjectsReturned:
+        except ObjectDoesNotExist, MultipleObjectsReturned:
           logging.error("PanDA options for site '%s' are inconsistent", site.name)
           TestLog(comment="QueueControl detected that PanDA options for site %s ('%s') are inconsistent."%(site.name,status), severity='warning', user=1).save()
           return
       else:
         logging.info("Site '%s' not needed to be updated (status='%s')", site.name, status)
-    except DoesNotExist:
+    except ObjectDoesNotExist:
       # First time we see this site.
       SiteOption(site=site, option_name=STATUS_OPTION, option_value=status).save()
       SiteOption(site=site, option_name=COMMENT_OPTION, option_value=comment).save()
