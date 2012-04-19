@@ -442,19 +442,7 @@ def process_subjob(job,subjob):
   if result.ganga_status in ('c','f'):
     if result.ganga_status == 'f':
       logger.info('Parsing the LoggingInfo and stdout of the job')
-      try:
-        grid_statuses = utils_wrapper.CMS_get_abort_code_from_CRAB(test.id, job.id, subjob.id)
-        if grid_statuses:
-          if len(grid_statuses) > 1:
-            logger.warning('The LoggingInfo parser found %d grid error records.' % len(grid_statuses))
-          result.grid_error_code = grid_statuses[0][0]
-          result.grid_error_status = grid_statuses[0][1]
-          logger.info('Storing Grid error %s for this job.' % str(result.grid_error_code))
-        else:
-          logger.info('Grid error code not found for this job.')
-        logger.info('Parsing of LoggingInfo completed')
-      except:
-        logger.error('Error parsing the LoggingInfo')
+
       try:
         app_status = utils_wrapper.CMS_get_app_code_from_CRAB(test.id, job.id, subjob.id)
         if app_status:
@@ -467,6 +455,39 @@ def process_subjob(job,subjob):
         logger.info('Parsing of stdout completed')
       except:
         logger.error('Error parsing the stdout')
+
+
+      if result.app_exit_code is None:
+        try:
+          grid_statuses = utils_wrapper.CMS_get_abort_code_from_CRAB(test.id, job.id, subjob.id)
+          if grid_statuses is not None:
+            if len(grid_statuses) == 0:
+              try:
+                no_output = (result.reason.find('output') != -1)
+              except:
+                no_output = False
+              if no_output:
+                result.grid_error_code = 'NO_OUTPUT'
+                result.grid_error_status = 'Could not get the job output from the WMS.'
+              else:
+                result.grid_error_code = 'UNDEFINED'
+                result.grid_error_status = 'No errors found in the logging info.'
+            elif len(grid_statuses) == 1:
+              result.grid_error_code = grid_statuses[0][0]
+              result.grid_error_status = grid_statuses[0][1]
+              logger.info('Storing Grid error %s for this job.' % str(result.grid_error_code))
+            elif len(grid_statuses) > 1:
+              result.grid_error_code = grid_statuses[-1][0]
+              result.grid_error_status = grid_statuses[-1][1]
+              logger.warning('The LoggingInfo parser found %d grid error records.' % len(grid_statuses))
+          else:
+            result.grid_error_code = 'PARSE_FAIL'
+            result.grid_error_status = 'The LoggingInfo does not exist or could not be parsed.'
+            logger.info('Parsing for the LoggingInfo failed or non existent.')
+          logger.info('Parsing of LoggingInfo completed')
+        except:
+          logger.error('Error parsing the LoggingInfo')
+
     else:
       logger.debug('Job completed succesufully, parsing of logs not needed.')
     
