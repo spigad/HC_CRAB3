@@ -9,7 +9,7 @@ from cms.utils import utils_wrapper
 from hc.core.utils.hc.stats import Stats
 from numpy import *
 
-import sys,time,random
+import sys,time,random,gc
 import numpy
 import types
 
@@ -288,6 +288,35 @@ def print_summary():
   if time.time()<lastsummary+300:
     return
   lastsummary=time.time()
+
+  try: 
+    #TRIM fixed jobs
+    logger.debug('TRIM: removing old fixed jobs')
+    for j in jobs:
+      # check if this job has been copied
+      copied = False
+      test_state = test.getTestStates_for_test.filter(ganga_jobid=j.id)
+      if not test_state or not test_state[0].copied:
+        logger.debug("TRIM: %d not yet copied, skipping" % j.id)
+        continue
+      
+      # check if master and all subjobs are fixed
+      num_fixed = test.getResults_for_test.filter(ganga_jobid=j.id).filter(fixed=True).count()
+      if num_fixed < len(j.subjobs) + 1:
+        logger.debug("TRIM: %d/%d subjobs fixed for job %d, skipping" % (num_fixed,len(j.subjobs)+1,j.id))
+        continue
+      
+      logger.info("TRIM: removing job %d" % j.id)
+      j.remove()
+  except:
+    logger.warning("TRIM: %s" % repr(sys.exc_info()))
+    pass
+
+  x = gc.collect()
+  logger.debug("GC Collected %d things" % x)
+
+
+
   logger.info('JOB SUMMARY:')
 
   active = 0
