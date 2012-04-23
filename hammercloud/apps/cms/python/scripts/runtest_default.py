@@ -486,7 +486,7 @@ def process_subjob(job,subjob):
         logger.error('Error parsing the stdout')
 
 
-      if result.app_exit_code is None:
+      if result.app_exe_code is None:
         try:
           grid_statuses = utils_wrapper.CMS_get_abort_code_from_CRAB(test.id, job.id, subjob.id)
           if grid_statuses is not None:
