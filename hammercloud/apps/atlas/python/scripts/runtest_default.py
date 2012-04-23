@@ -433,24 +433,24 @@ def print_summary():
 
   try: 
     #TRIM fixed jobs
-    logger.info('TRIM: removing old fixed jobs')
+    logger.debug('TRIM: removing old fixed jobs')
     for j in jobs:
       # check if this job has been copied
       copied = False
       test_state = test.getTestStates_for_test.filter(ganga_jobid=j.id)
       if not test_state or not test_state[0].copied:
-        logger.info("TRIM: %d not yet copied, skipping" % j.id)
+        logger.debug("TRIM: %d not yet copied, skipping" % j.id)
         continue
 
       # check if master and all subjobs are fixed
       num_fixed = test.getResults_for_test.filter(ganga_jobid=j.id).filter(fixed=True).count()
       if num_fixed < len(j.subjobs) + 1:
-        logger.info("TRIM: %d/%d subjobs fixed for job %d, skipping" % (num_fixed,len(j.subjobs)+1,j.id))
+        logger.debug("TRIM: %d/%d subjobs fixed for job %d, skipping" % (num_fixed,len(j.subjobs)+1,j.id))
         continue
 
       logger.info("TRIM: removing job %d" % j.id)
       if test.is_golden:
-        logger.info("TRIM: remove disabled for golden tests")
+        logger.debug("TRIM: remove disabled for golden tests")
       else:
         j.remove()
   except:
@@ -458,7 +458,7 @@ def print_summary():
     pass
 
   x = gc.collect()
-  logger.info("GC Collected %d things" % x)
+  logger.debug("GC Collected %d things" % x)
 
   logger.info('JOB SUMMARY:')
 
