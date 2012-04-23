@@ -449,10 +449,7 @@ def print_summary():
         continue
 
       logger.info("TRIM: removing job %d" % j.id)
-      if test.is_golden:
-        logger.debug("TRIM: remove disabled for golden tests")
-      else:
-        j.remove()
+      j.remove()
   except:
     logger.warning("TRIM: %s" % repr(sys.exc_info()))
     pass
