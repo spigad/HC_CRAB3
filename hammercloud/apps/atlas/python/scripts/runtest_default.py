@@ -13,6 +13,9 @@ import numpy
 import types
 import fnmatch
 
+from Ganga.Utility.Config import getConfig
+configPanda = getConfig('Panda')
+
 from Ganga.Core.GangaThread import GangaThread
 from Ganga.Utility.logging import getLogger
 logger = getLogger()
@@ -262,7 +265,8 @@ def _copyJob(job, site):
 
     uuid = commands.getoutput('uuidgen')[0:3]
     t = int(time.time())
-    j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, uuid, t)
+    if configPanda['processingType'] != 'gangarobot-rctest':
+        j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, uuid, t)
     j.outputdata.location = ''
     if j.inputdata and j.inputdata._impl._name == 'DQ2Dataset':
       previous_datasets = j.inputdata.dataset
@@ -297,7 +301,8 @@ def _copyJob(job, site):
       try:
         uuid = commands.getoutput('uuidgen')[0:3]
         t = int(time.time())
-        j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, uuid, t)
+        if configPanda['processingType'] != 'gangarobot-rctest':
+            j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, uuid, t)
         test_sleep((i + 1) * 2)
         j.submit()
         test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)

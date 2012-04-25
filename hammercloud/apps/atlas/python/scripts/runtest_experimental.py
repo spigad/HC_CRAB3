@@ -13,6 +13,9 @@ import numpy
 import types
 import fnmatch
 
+from Ganga.Utility.Config import getConfig
+configPanda = getConfig('Panda')
+
 from Ganga.Core.GangaThread import GangaThread
 from Ganga.Utility.logging import getLogger
 logger = getLogger()
@@ -33,6 +36,10 @@ except IndexError:
 
 try:
   test = Test.objects.get(pk=testid) #select_related('template', 'metricperm__index', 'metricperm__summary', 'metricperm__pertab').get(pk=testid)
+  if test and not test.is_golden:
+    import guppy
+    from guppy.heapy import Remote
+    Remote.on()
   if test.pause:
     logger.info('Un-pausing test.')
     test.pause = 0
@@ -258,7 +265,8 @@ def _copyJob(job, site):
 
     uuid = commands.getoutput('uuidgen')[0:3]
     t = int(time.time())
-    j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, t, uuid)
+    if configPanda['processingType'] != 'gangarobot-rctest':
+        j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, uuid, t)
     j.outputdata.location = ''
     if j.inputdata and j.inputdata._impl._name == 'DQ2Dataset':
       previous_datasets = j.inputdata.dataset
@@ -293,7 +301,8 @@ def _copyJob(job, site):
       try:
         uuid = commands.getoutput('uuidgen')[0:3]
         t = int(time.time())
-        j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, t, uuid)
+        if configPanda['processingType'] != 'gangarobot-rctest':
+            j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, uuid, t)
         test_sleep((i + 1) * 2)
         j.submit()
         test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
@@ -426,6 +435,33 @@ def print_summary():
   if time.time() < lastsummary + 300:
     return
   lastsummary = time.time()
+
+  try: 
+    #TRIM fixed jobs
+    logger.debug('TRIM: removing old fixed jobs')
+    for j in jobs:
+      # check if this job has been copied
+      copied = False
+      test_state = test.getTestStates_for_test.filter(ganga_jobid=j.id)
+      if not test_state or not test_state[0].copied:
+        logger.debug("TRIM: %d not yet copied, skipping" % j.id)
+        continue
+
+      # check if master and all subjobs are fixed
+      num_fixed = test.getResults_for_test.filter(ganga_jobid=j.id).filter(fixed=True).count()
+      if num_fixed < len(j.subjobs) + 1:
+        logger.debug("TRIM: %d/%d subjobs fixed for job %d, skipping" % (num_fixed,len(j.subjobs)+1,j.id))
+        continue
+
+      logger.info("TRIM: removing job %d" % j.id)
+      j.remove()
+  except:
+    logger.warning("TRIM: %s" % repr(sys.exc_info()))
+    pass
+
+  x = gc.collect()
+  logger.debug("GC Collected %d things" % x)
+
   logger.info('JOB SUMMARY:')
 
   active = 0
@@ -491,7 +527,7 @@ def process_job(job):
     return False
 
   try:
-    if not test.output_dataset:
+    if not test.output_dataset and test.getResults_for_test.filter(ganga_status='c'):
       test.output_dataset = '.'.join(test.getResults_for_test.filter(ganga_status='c')[0].outds.split('.')[0:3])+'.*'
       test.save()
   except:
@@ -704,7 +740,7 @@ def process_job(job):
 #      logger.info([k,v])
 
   if result.ganga_status in ('c', 'f'):
-    logger.warning('Job is in final state, marking row as fixed')
+    #logger.warning('Job is in final state, marking row as fixed')
     result.fixed = 1
 
   result.save()
@@ -964,7 +1000,7 @@ def process_subjob(job, subjob):
 #      logger.info([k,v])
 
   if result.ganga_status in ('c', 'f'):
-    logger.warning('SubJob is in final state, marking row as fixed')
+    #logger.warning('SubJob is in final state, marking row as fixed')
     result.fixed = 1
 
   result.save()
@@ -1057,29 +1093,8 @@ if hasSubjobs:
           logger.warning(sys.exc_info()[1])
         if test_paused():
           break
-
-    #remove fixed jobs
-    logger.info('removing old fixed jobs')
-    for j in jobs:
-      logger.info("checking to remove job %d" % j.id)
-
-      # check if this job has been copied
-      copied = False
-      test_state = test.getTestStates_for_test.filter(ganga_jobid=j.id)
-      if not test_state or not test_state[0].copied:
-        logger.info("%d not yet copied, skipping" % j.id)
-        continue
-
-      # check if all subjobs are fixed
-      num_fixed = test.getResults_for_test.filter(ganga_jobid=j.id).filter(fixed=True)
-      if num_fixed < len(j.subjobs) + 1:
-        logger.info("%d/%d subjobs fixed for job %d, skipping" % (num_fixed,len(j.subjobs)+1,j.id))
-        continue
-
-      logger.info("DEBUG removing job %d" % j.id)
-      #j.remove()
-
-    test_sleep(10)
+   
+    test_sleep(20)
 else:
   noJobs = True
   logger.warning('No jobs to monitor. Exiting now.')
