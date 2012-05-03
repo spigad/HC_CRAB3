@@ -91,6 +91,16 @@ def test_paused():
     return True
   return False
 
+t_last_job_submitted = datetime.now()
+t_max_age = timedelta(hours=3)
+t_now = datetime.now()
+def test_healthy():
+  t_now = datetime.now()
+  if t_last_job_submitted + t_max_age < t_now:
+    logger.error('Last job submitted at %s more than 3 hours ago. Exiting Test.' % t_last_job_submitted)
+    return False
+  return True
+
 def test_sleep(t):
   #logger.debug('Sleeping %d seconds'%t)
   time.sleep(t)
@@ -235,6 +245,7 @@ newJobLastAttempt = {}
 def _copyJob(job, site):
   global category
   global newJobLastAttempt
+  global t_last_job_submitted
 
   logger.info('Copying job %d' % job.id)
   if category == 'stress':
@@ -290,6 +301,7 @@ def _copyJob(job, site):
       logger.info('New input datasets = %s' % j.inputdata.dataset)
 
     j.submit()
+    t_last_job_submitted = j.time.timestamps['submitted']
     logger.info('Finished copying job %d' % job.id)
     test_sleep(2)
     return
@@ -305,6 +317,7 @@ def _copyJob(job, site):
         #    j.outputdata.datasetname = 'hc%d.%s.%s.%s' % (testid, site, uuid, t)
         test_sleep((i + 1) * 2)
         j.submit()
+        t_last_job_submitted = j.time.timestamps['submitted']
         test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
         if test_state:
           test_state = test_state[0]
@@ -1043,10 +1056,10 @@ def hc_plot_summarize():
 def hc_copy_thread():
   test_sleep(30)
   logger.info('HC Copy Thread: Connected to DB')
-  while (test_active() and not test_paused() and not ct.should_stop()):
+  while (test_active() and not test_paused() and not ct.should_stop() and test_healthy()):
     logger.info('HC Copy Thread: TOP OF MAIN LOOP')
     for job in jobs:
-      if not test_active() or test_paused() or ct.should_stop():
+      if not test_active() or test_paused() or ct.should_stop() or not test_healthy():
          break
       copyJob(job)
     test_sleep(10)
@@ -1066,7 +1079,7 @@ for j in jobs:
 if hasSubjobs:
   ct.start()
   pt.start()
-  while (test_active() and not test_paused()):
+  while (test_active() and not test_paused() and test_healthy()):
 
     #We need to refresh the test object
     test = Test.objects.get(pk=testid) #select_related('template', 'metricperm__index', 'metricperm__summary', 'metricperm__pertab').get(pk=testid)

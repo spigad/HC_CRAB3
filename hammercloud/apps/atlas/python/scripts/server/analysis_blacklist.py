@@ -227,6 +227,7 @@ class AnalysisBlacklist:
     self.get_running_test()
     self.check_test_sites()
     self.check_online_sites()
+    self.check_online_sites_any_failed()
     self.send_alert()
     return True
 
@@ -297,6 +298,20 @@ class AnalysisBlacklist:
           self.store_log('%s blacklisting reason is %s' % (s, self.reasons[s]), 'blacklisting')
           self.send_cloud_alert(s)
           BlacklistEvent(event='blacklist', reason=self.reasons[s], timestamp=datetime.datetime.now(), external=False, site=Site.objects.get(name=s)).save()
+
+  def check_online_sites_any_failed(self):
+    sitesToEmail = []
+    limit = datetime.datetime.now() - datetime.timedelta(minutes=30)
+    online_sites = self.get_sites(status='online')
+    online_sites = ['ANALY_LRZ'] # this should filter online sites to those that requested this feature
+    for site in online_sites:
+      res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).exclude(exit_status_2=1192).filter(ganga_status='f').order_by('-mtime')
+      if res:
+        sitesToEmail.append(site)
+
+    for site in sitesToEmail:
+       self.add_log("")
+       self.add_log("Site %s has failed jobs in the past 30 minutes" % s)
 
   def change_site_status(self, site, new_status):
     if new_status not in ('test', 'online'):
