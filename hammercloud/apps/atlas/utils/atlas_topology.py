@@ -61,8 +61,9 @@ class ATLASTopology(object):
         # to the native map() / filter()).
         for (site_name, site_data) in self.__atlas_sites__.iteritems():
             for (_, resources) in site_data['processing_resources'].iteritems():
-                if panda_queue in resources['analysis'].keys():
-                    return site_name
+                for queue_type in ('analysis', 'production', 'special'):
+                    if panda_queue in resources[queue_type].keys():
+                        return site_name
         return None
 
     def get_site_id_of_panda_queue(self, panda_queue, site_type='analysis'):
