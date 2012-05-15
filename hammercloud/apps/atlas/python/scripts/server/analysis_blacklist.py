@@ -305,7 +305,7 @@ class AnalysisBlacklist:
     online_sites = self.get_sites(status='online')
     online_sites = ['ANALY_LRZ'] # this should filter online sites to those that requested this feature
     for site in online_sites:
-      res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).exclude(exit_status_2=1192).filter(ganga_status='f').order_by('-mtime')
+      res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).exclude(exit_status_2=1192).filter(ganga_status='f')
       if res:
         sitesToEmail.append(site)
 

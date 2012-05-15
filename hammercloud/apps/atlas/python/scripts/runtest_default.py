@@ -92,10 +92,11 @@ def test_paused():
   return False
 
 t_last_job_submitted = datetime.now()
-t_max_age = timedelta(hours=3)
-t_now = datetime.now()
 def test_healthy():
+  t_max_age = timedelta(hours=3)
   t_now = datetime.now()
+  if category == 'stress':
+    return True
   if t_last_job_submitted + t_max_age < t_now:
     logger.error('Last job submitted at %s more than 3 hours ago. Exiting Test.' % t_last_job_submitted)
     return False
