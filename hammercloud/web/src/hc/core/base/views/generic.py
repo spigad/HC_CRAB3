@@ -1569,7 +1569,8 @@ class GenericView():
       else:
          color = 'green'
       url = 'http://hammercloud.cern.ch/hc/app/atlas/robot/incidents/?site=%s' % s.name
-      site_data.append((now, s.ssb_name(), eff, color, url))
+      #site_data.append((now, s.ssb_name(), eff, color, url))
+      site_data.append((now, s.name, eff, color, url))
     
     c = RequestContext(request, {'site_data': site_data}, [defaultContext])
     t = loader.select_template(['%s/robot/ssb.html'%(app),'core/app/robot/ssb.html'])
