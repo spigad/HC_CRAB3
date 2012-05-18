@@ -16,6 +16,9 @@ SITETYPE = 'analysis'
 Client.PandaSites = Client.getSiteSpecs(SITETYPE)[1]
 DEBUG = False
 
+def to_pandamon_links(jobs):
+  return map(lambda x: 'http://panda.cern.ch/server/pandamon/query?job=%s' % x, jobs)
+
 class Policy:
   """Base class for blacklisting policies."""
 
@@ -40,7 +43,7 @@ class Policy:
         ids.extend(map(lambda x: x.backendID, template_jobs[:num_jobs_per_template]))
     if failed_templates < failed_templates_target:
       return False
-    blacklist.add_reason(site, 'BlackListing policy %s True. See jobs %s' % (self.__class__.__name__, repr(ids)))
+    blacklist.add_reason(site, 'BlackListing policy %s True. See jobs %s' % (self.__class__.__name__, repr(to_pandamon_links(ids))))
     return True
 
 
@@ -89,7 +92,7 @@ class BlackListingPolicyLastTwoPlusOne(Policy):
         failed_one_templates += 1
         ids.append(template_jobs[0].backendID)
     if failed_two_templates >= 2 or (failed_two_templates >= 1 and failed_one_templates >= 1):
-      blacklist.add_reason(site, 'BlackListing policy Last-Two-Plus-One True. See jobs %s' % repr(ids))
+      blacklist.add_reason(site, 'BlackListing policy Last-Two-Plus-One True. See jobs %s' % repr(to_pandamon_links(ids)))
       return True
     return False
 
@@ -115,7 +118,7 @@ class WhiteListingPolicyLastTwoFromAll(Policy):
         if template_jobs[0].ganga_status != 'c': ids.append(template_jobs[0].backendID)
         if template_jobs[1].ganga_status != 'c': ids.append(template_jobs[1].backendID)
     if ok_templates < len(blacklist.templates):
-      blacklist.add_reason(site, 'WhiteListing policy Last-Two-From-All not passed. See jobs %s' % repr(ids))
+      blacklist.add_reason(site, 'WhiteListing policy Last-Two-From-All not passed. See jobs %s' % repr(to_pandamon_links(ids)))
       return True
     return False
 
