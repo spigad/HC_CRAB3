@@ -428,7 +428,7 @@ class TestAdminBase(ReadOnlyAdminFields,ModelLinkAdminFields,ActionsAdminBase):
     return super(TestAdminBase, self).add_view(request,*args, **kwargs)
 
   def change_view(self,request, *args, **kwargs):
-    self.modellink = ('template','metricperm','testoption','jobtemplate','usercode','optionfile')  
+    self.modellink = ('template','metricperm','jobtemplate','usercode','optionfile')  
     self.readonly  = ('inputtype',)
 
     self.fieldsets = [
