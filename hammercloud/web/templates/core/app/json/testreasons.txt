@@ -4,17 +4,14 @@
     "iTotalDisplayRecords": {{iTotalDisplayRecords}},
     "aaData":[
     {% for dic  in querySet %}
-    [   
-        {% for k,v in dic.items %}
-          "{{v}}"{% if not forloop.last %},{% endif %}         
-        {% endfor %}
-
+    [
+    {% for k,v in dic.items %}
+        "{{v|escapejs}}"{% if not forloop.last %},{% endif %}
+    {% endfor %}
     ]
-
     {% if not forloop.last %}
     ,
     {% endif %}
     {% endfor %}
     ]
 }
-
