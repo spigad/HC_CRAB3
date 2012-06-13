@@ -27,11 +27,14 @@ echo '  Lock written: '/tmp/setonline_$1.running
 
 #Get HCDIR from current installation.
 HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
+#FIXME JE 08/06/2012
+HCDIR=/data/hc/apps/atlas/
 
 echo ''
 source $HCDIR/scripts/config/config-main.sh atlas $HCDIR
 echo ''
 
+export X509_USER_PROXY=/data/hc/apps/atlas/config/x509rprod
 echo $X509_USER_PROXY
 
 cat $1 | while read sites
