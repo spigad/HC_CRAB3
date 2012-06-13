@@ -45,7 +45,7 @@ class TestManager(models.Manager):
     #return super(TestManager, self).get_query_set().filter(is_golden=golden).filter(state=type).filter(template__category=category).filter(template__active=active)
     return (super(TestManager, self)
             .get_query_set()
-            .select_related('host')
+            .select_related('host', 'template')
             .filter(is_golden=golden,
                     state=type,
                     template__category=category,
