@@ -167,7 +167,7 @@ class Robot:
     #   test_panda = (67,80,95,96)
     test_panda = (163,432,434,445) #(432,433,434,436)
     test_lcg = (140,)
-    test_production = (439,440,441)
+    test_production = (439,441,456)
     #get id of last 2 tests for each test template 
     # --> limit should always be #templates*2, to get the tests running in the last day
     pandaIDString = [list(Test.objects.filter(template__id=test_template).order_by('-id')[:2]) for test_template in test_panda]
