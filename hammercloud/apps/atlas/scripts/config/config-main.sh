@@ -42,9 +42,9 @@ echo '  HC_MODE='$HC_MODE
 if [ "$HC_MODE" == prod ]
 then
     #Set PROXY for Production testing
-    export X509_USER_PROXY=$HCAPP/config/x509prod
+    export X509_USER_PROXY=$HCAPP/config/x509rprod
 else
-    export X509_USER_PROXY=$HCAPP/config/x509up
+    export X509_USER_PROXY=$HCAPP/config/x509rp
 fi
 echo '  X509_USER_PROXY='$X509_USER_PROXY
 
@@ -56,7 +56,11 @@ HAMMERCLOUD_ORIGINAL_PATH=$PATH
 source /afs/cern.ch/atlas/offline/external/GRID/DA/panda-client/latest/etc/panda/panda_setup.sh
 echo '  Sourced PanDA tools.'
 #source /afs/cern.ch/atlas/offline/external/GRID/ddm/DQ2Clients/setup.sh
-source /afs/cern.ch/atlas/offline/external/GRID/ddm/DQ2Clients/slc5_setup.sh
+#source /afs/cern.ch/atlas/offline/external/GRID/ddm/DQ2Clients/slc5_setup.sh
+source /opt/dq2/profile.d/dq2_common_env.sh
+export DQ2_ENDUSER_SETUP=True
+export RUCIO_ACCOUNT=gangarbt
+export PYTHONPATH=/opt/dq2/lib:$PYTHONPATH
 echo '  Sourced DQ2 Client.'
 
 #Dirty hack to use our own Ganga, but with our environment
