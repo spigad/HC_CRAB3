@@ -42,7 +42,14 @@ class TestManager(models.Manager):
 
   def jobs(self,type,category,active,golden=False):
 
-    return super(TestManager, self).get_query_set().filter(is_golden=golden).filter(state=type).filter(template__category=category).filter(template__active=active)
+    #return super(TestManager, self).get_query_set().filter(is_golden=golden).filter(state=type).filter(template__category=category).filter(template__active=active)
+    return (super(TestManager, self)
+            .get_query_set()
+            .select_related('host')
+            .filter(is_golden=golden,
+                    state=type,
+                    template__category=category,
+                    template__active=active))
 
 #  def runningS(self):
 #    '''
