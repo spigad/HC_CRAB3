@@ -40,14 +40,14 @@ class TestManager(models.Manager):
     '''
     return super(TestManager, self).get_query_set().filter(state='completed')
 
-  def jobs(self,type,category,active,golden=False):
+  def jobs(self,state,category,active,golden=False):
 
     #return super(TestManager, self).get_query_set().filter(is_golden=golden).filter(state=type).filter(template__category=category).filter(template__active=active)
     return (super(TestManager, self)
             .get_query_set()
-            .select_related('host', 'template')
+            .select_related('host', 'template', 'getSummaryTests_for_test')
             .filter(is_golden=golden,
-                    state=type,
+                    state=state,
                     template__category=category,
                     template__active=active))
 
