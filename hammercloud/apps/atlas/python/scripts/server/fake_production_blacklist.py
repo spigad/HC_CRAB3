@@ -361,7 +361,7 @@ class ProductionBlacklist:
 
   def store_log(self, msg, category='other'):
     self.add_log(msg)
-    TestLog(test=self.runningTests[0], comment=msg, severity=category, user=1).save()
+    #TestLog(test=self.runningTests[0], comment=msg, severity='debug', user=1).save()
 
   def log_reasons(self, sites):
     for site in sites:
@@ -385,7 +385,7 @@ class ProductionBlacklist:
       self.reasons[site].append(reason)
     else:
       self.reasons[site] = [reason]
-    TestLog(test=self.runningTests[0], comment='%s: %s' % (site, reason), severity='warning', user=1).save()
+    #TestLog(test=self.runningTests[0], comment='%s: %s' % (site, reason), severity='debug', user=1).save()
 
   def send_cloud_online_alert(self, site):
     try:
