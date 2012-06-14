@@ -58,12 +58,14 @@ def defaultContext(request):
 #    raise Http404
 
 class GenericView():
+  """Class with all the generic views. It is not a Django GCBV."""
 
 #######################################################
 ## INDEX BLOCK
 #######################################################
 
-  def index(self,request,dic={'Test':None},*args,**kwargs):
+  def index(self, request, dic={'Test': None}, *args, **kwargs):
+    """Homepage view for an app. Shows the test summaries."""
 
     test = dic['Test']
     app  = test.__module__.split('.')[1]
