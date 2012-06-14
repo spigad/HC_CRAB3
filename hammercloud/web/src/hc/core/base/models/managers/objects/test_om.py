@@ -40,16 +40,16 @@ class TestManager(models.Manager):
     '''
     return super(TestManager, self).get_query_set().filter(state='completed')
 
-  def jobs(self,state,category,active,golden=False):
-
-    #return super(TestManager, self).get_query_set().filter(is_golden=golden).filter(state=type).filter(template__category=category).filter(template__active=active)
+  def jobs(self, state, category, active, golden=False):
+    """Smaller QuerySet depending filtered by paramters of Test and Template."""
     return (super(TestManager, self)
-            .get_query_set()
-            .select_related('host', 'template', 'getSummaryTests_for_test')
-            .filter(is_golden=golden,
-                    state=state,
-                    template__category=category,
-                    template__active=active))
+              .get_query_set()
+              .select_related('host', 'template')
+              .prefetch_related('getSummaryTests_for_test')
+              .filter(is_golden=golden,
+                      state=state,
+                      template__category=category,
+                      template__active=active))
 
 #  def runningS(self):
 #    '''
