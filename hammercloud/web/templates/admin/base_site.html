@@ -1,14 +1,19 @@
 {% extends "admin/base.html" %}
 {% load i18n %}
 
-{% block title %}{{ title }} | {% trans 'Hammercloud site admin' %}{% endblock %}
+{% block title %}{{ title }} | {% trans 'HammerCloud administration' %}{% endblock %}
 
-{% block branding %}
-<h1 id="site-name"><a href="{% url portal-view %}admin/">{% trans 'Hammercloud administration' %}</a></h1>
-<h3> &nbsp;&nbsp;&nbsp;<a href="{% url portal-view %}">{% trans '&lt;- Back to Hammercloud' %}</a> | <a href="{% url portal-view %}app/atlas">{% trans 'ATLAS' %}</a> | <a href="{% url portal-view %}app/cms">{% trans 'CMS' %}</a> | <a href="{% url portal-view %}app/lhcb">{% trans 'LHCb' %}</a></h3>
-<p>Note 1: All times listed are CET. </p>
-<p>Note 2: All remote users should edit only the "Tests" table. Test-sites, Test-users, and Test-dspatterns are for admin usage only.</p>
+{% block extrastyle %}
+<style>
+#header{ background-color: #333940; border-bottom: solid 3px #999; }
+#branding h1{ color: #fff; }
+.module h2, .module caption, .inline-group h2 { background:#ccc url(/admin_media/img/admin/nav-bg.gif) bottom left repeat-x; color: #333940; }
+a.section:link, a.section:visited { color: #666666; }
+</style>
 {% endblock %}
 
-{% block nav-global %} {% endblock %}
+{% block branding %}
+<h1 id="site-name">{% trans 'HammerCloud administration' %}</h1>
+{% endblock %}
 
+{% block nav-global %}{% endblock %}
