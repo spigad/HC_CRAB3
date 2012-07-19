@@ -1,5 +1,10 @@
 import os
 import sys
+import resource
+
+# Set resource limits to prevent machine crashes
+resource.setrlimit(resource.RLIMIT_CPU, (10, 60)) # Seconds
+resource.setrlimit(resource.RLIMIT_AS, (2147483648, 4294967296)) # Bytes
 
 # This list of paths ends reversed and prepended to the PYTHONPATH
 sys.path.insert(0, '/data/hc/external/lib/python2.6/site-packages/memcache_toolbar')
