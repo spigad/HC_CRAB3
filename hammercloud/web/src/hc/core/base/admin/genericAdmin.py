@@ -377,7 +377,7 @@ class TemplateInlineBase(admin.TabularInline):
   #model -> customized at plugin level
   extra = 3
   fk_name = 'template'
-  exclude = ['mtime',]
+  #exclude = ['mtime',]
 
   class Meta:
     abstract = True
@@ -579,7 +579,7 @@ class TestInlineBase(admin.TabularInline):
   #model -> customized at plugin level
   extra = 3
   fk_name = 'test'
-  exclude = ['mtime',]
+  #exclude = ['mtime',]
 
   class Meta:
     abstract = True
