@@ -10,7 +10,7 @@
 
 from SimpleXMLRPCServer import SimpleXMLRPCDispatcher
 from django.http import HttpResponse
-from django.contrib.csrf.middleware import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt
 
 from hc.core.utils.generic.class_func import custom_import
 from django.conf import settings
