@@ -1,14 +1,15 @@
 {% extends config.base_template %}
 
 {% block css %}
-  <link type="text/css" href="{{ MEDIA_URL }}css/datatables.css" rel="stylesheet"/>
-  <link type="text/css" href="{{ MEDIA_URL }}css/TableTools.css" rel="stylesheet"/>
-  {{block.super}}
+  {{ block.super }}
+  <link type="text/css" href="{{ MEDIA_URL }}css/datatables.css" rel="stylesheet" />
+  <link type="text/css" href="{{ MEDIA_URL }}css/TableTools.css" rel="stylesheet" />
+  <link type="text/css" href="{{ MEDIA_URL }}css/ui-lightness/jquery-ui.css" rel="stylesheet" />
 {% endblock %}
 
 {% block javascript %}
   {{block.super}}
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script> 
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui.js"></script>
   <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.dataTables.js"></script>
   <script type="text/javascript" src="{{ MEDIA_URL }}js/TableTools.min.js"></script>
   <script type="text/javascript" src="{{ MEDIA_URL }}js/ZeroClipboard.js"></script>
@@ -20,7 +21,7 @@
   $("#accordionoverall").accordion({ autoHeight:false,active:false,collapsible:true});
   $('#accordionoverall').tabs('option', 'spinner', 'Retrieving data...');
   $('#accordionoverall> h3').click(function() {
-    $('#'+String(this.id)+'_div').load("{% url index-view app %}ajax/test/{{test.id}}/"+String(this.id));
+    $('#'+String(this.id)+'_div').load("{% url index-view app %}ajax/test/{{test.id}}/"+String(this.id)+"/");
   });
 {% endblock %}
 
@@ -108,7 +109,7 @@
           <h3 id="testreasons">Backend reasons</h3><div id="testreasons_div" class="test-accordion"></div>
           <h3 id="testsummary">Summary</h3><div id="testsummary_div" class="test-accordion"></div>
           {% endblock %}
-        </div>        
+        </div>
 
     </div>
   </div>

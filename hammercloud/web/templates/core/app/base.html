@@ -2,16 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" itemscope itemtype="http://schema.org/Product">
 
   <head>
+    <title>{% block title %}HammerCloud-{{app|upper}}{% endblock %}</title>
 
     {% block meta %}
       <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-      <meta itemprop="name" content="HammerCloud">
-      <meta itemprop="description" content="HammerCloud is the testing engine for the Grid">
-      <meta itemprop="image" content="http://hammercloud.cern.ch/media2/images/logo.jpg">
+      <meta itemprop="name" content="HammerCloud" />
+      <meta itemprop="description" content="HammerCloud is the testing engine for the Grid" />
     {% endblock %}
 
     {% block css %}
-      <link type="text/css" href="{{ MEDIA_URL }}css/{{app}}/jquery-ui-1.8.5.custom.css" rel="stylesheet" />
       <link type="text/css" href="{{ MEDIA_URL }}css/style.css" rel="stylesheet" />
       {% if app %}
         <link type="text/css" href="{{ MEDIA_URL }}css/{{app}}/style.css" rel="stylesheet" />
@@ -19,63 +18,57 @@
     {% endblock %}
 
     {% block javascript %}
-      <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-1.4.4.js"></script>
+      <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
       <script type="text/javascript" src="{{ MEDIA_URL }}js/hm.js"></script>
     {% endblock %}
+
     {% if help %}
-    <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-      $(function() {
-        $('#usage').dialog({
-          autoOpen: false,
-          resizable: false
-	});
-	$('#help img').click(function() {
-          $('#usage').dialog('open');
-          return false;
-	});
-      })
+      <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui.js"></script>
+      <link type="text/css" href="{{ MEDIA_URL }}css/ui-lightness/jquery-ui.css" rel="stylesheet" />
+      <script type="text/javascript" charset="utf-8">
+	$(function() {
+          $('#usage').dialog({
+            autoOpen: false,
+            resizable: false
+          });
+          $('#help img').click(function() {
+            $('#usage').dialog('open');
+            return false;
+          });
+        })
       </script>
-      {% endif %}
+    {% endif %}
     <script type="text/javascript">
-      $(document).ready(function()
-        {  
-          {% block docready %}
-            $('#jsddm > li').bind('mouseover', jsddm_open);
-            $('#jsddm > li').bind('mouseout',  jsddm_timer);
-	  {% endblock %} 
-        }
-        );	
-        document.onclick = jsddm_close;
+      $(document).ready(function(){
+        {% block docready %}
+          $('#jsddm > li').bind('mouseover', jsddm_open);
+          $('#jsddm > li').bind('mouseout',  jsddm_timer);
+        {% endblock %}
+      });
+      document.onclick = jsddm_close;
     </script>
-
-    <title>{% block title %}HammerCloud-{{app|upper}}{% endblock %}</title>
-    <link href="https://plus.google.com/106669042267876924123" rel="publisher" />
-
   </head>
 
   <body {% block tag_body %}{% endblock %} >
-
     <div id="content">
-
       {% block top %}
         {% if user.is_authenticated %}
-    	  <div style="float: right;">
-            You are connected as {{ user.username }}, 
+          <div style="float: right;">
+            You are connected as {{ user.username }},
             <a style="text-decoration: underline;" href="{% url logout-view %}?next=/hc/app/{{ app }}">click here to Logout!</a>
           </div>
-    	{% endif %}
+        {% endif %}
 
-    	<h1 style="margin-bottom: 20px;	text-align: left;">
+        <h1 style="margin-bottom: 20px;	text-align: left;">
           <a href="{% url portal-view %}">HammerCloud</a> | <a href="{% url index-view app %}">{{app|upper}}</a>
           <a href="{% url portal-view %}feed/app/{{app}}/"><img src="{{ MEDIA_URL }}images/rss_{{app}}.ico" border="0" alt="rss"/></a>
         </h1>
 
-    	<div style="float: right; color: #ffffff; margin: 7px 10px auto auto;">
+        <div style="float: right; color: #ffffff; margin: 7px 10px auto auto;">
           <a style="color: #ffffff;" href="{% url portal-view %}admin/{{ app }}/">Administration</a>
         </div>
 
-    	<div id="menu-top">
+        <div id="menu-top">
           <ul id="jsddm">
 
             {% block menu %}
@@ -100,12 +93,11 @@
                   <li><a href='{% url autoexclusion-view app %}'>AutoExclusion</a></li>
                   <li><a href='{% url incidents-view app %}'>Incidents</a></li>
                   <li><a href='{% url joberrors-view app %}'>Job errors</a></li>
-                </ul> 
+                </ul>
               </li>
               <li><a href="{% url more-view app %}">More HC...</a>
                 <ul>
                   <li><a href="{% url evolution-view app %}">Evolution</a></li>
-                  <li><a href="{% url stats-view app %}">Stats</a></li>
                 </ul>
               </li>
             {% endblock %}
@@ -115,55 +107,39 @@
       {% endblock %}
       {% if help %}
       <div id='help' style="float: right">
-	<img src='{{ MEDIA_URL }}images/help.png' />
+        <img src='{{ MEDIA_URL }}images/help.png' />
       </div>
       <div id='usage'>
-	<h3>{% block help_title %}{% endblock %}</h3>
-	{% block help_text %}{% endblock %}
+        <h3>{% block help_title %}{% endblock %}</h3>
+        {% block help_text %}{% endblock %}
       </div>
       {% endif %}
 
       {% block content %}
-    	{{app}} content 
+        {{app}} content
       {% endblock %}
-    
+
       {% block bottom %}
         <div id="bottom-bar">
           <div style="text-align: right; color: white; font-size: 0.7em;">
-            <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud" style="color: white;">Help</a> |
-            <a href="https://savannah.cern.ch/projects/hammercloud/" style="color: white;">Savannah</a>
+            <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud" target="_blank" style="color: white;">Help</a> |
+            <a href="https://savannah.cern.ch/projects/hammercloud/" target="_blank" style="color: white;">Savannah</a>
           </div>
         </div>
         {% block account %}{% endblock %}
-        <div id="social-bar">
-          <div style="text-align: left;margin-top:1em;float:left;">
-            <div class="g-plusone" data-size="medium" data-href="http://hammercloud.cern.ch/"></div>
-          </div>
-        </div>
-    	<p style="text-align: right;">
-          <iframe src="http://cern.ch/sls/service-inline.php?id={{config.sls}}&layout=bar" 
-            frameborder="0" height="16" width="100" scrolling="no"></iframe>
-        </p>
       {% endblock %}
 
     </div>
-    <script type="text/javascript"> 
-    var _gaq = _gaq || []; 
-    _gaq.push(['_setAccount', 'UA-244374-10']); 
-    _gaq.push(['_trackPageview']); 
-    (function() { 
-        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true; 
-        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js'; 
-        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s); 
-        })(); 
-    </script>
     <script type="text/javascript">
-	  (function() {
-	    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-	    po.src = 'https://apis.google.com/js/plusone.js';
-	    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-	  })();
-	</script>
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-244374-10']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
   </body>
 
 </html>

@@ -70,39 +70,29 @@ class GenericView():
     test = dic['Test']
     app  = test.__module__.split('.')[1]
 
-    stress, functional, golden = [], [], []
+    # Prefetch everything to minimize queries. This lookup does only
+    # 2 queries for this view -- O(1)
+    tests = (test.objects
+                 .select_related('host','template')
+                 .prefetch_related('getSummaryTests_for_test')
+                 .filter(state__in=('running','submitting','scheduled'))
+                 .order_by())
 
-    stress +=  test.objects.jobs('running'    ,'stress'     ,1)
-    stress +=  test.objects.jobs('running'    ,'stress'     ,0)
-    stress +=  test.objects.jobs('running'    ,'functional' ,0)
-    stress +=  test.objects.jobs('submitting' ,'stress'     ,1)
-    stress +=  test.objects.jobs('submitting' ,'stress'     ,0)
-    stress +=  test.objects.jobs('submitting' ,'functional' ,0)
-    stress +=  test.objects.jobs('scheduled'  ,'stress'     ,1)
-    stress +=  test.objects.jobs('scheduled'  ,'stress'     ,0)
-    stress +=  test.objects.jobs('scheduled'  ,'functional' ,0)
-             
-    
-    functional +=  test.objects.jobs('running'    ,'functional' ,1) 
-    functional +=  test.objects.jobs('submitting' ,'functional' ,1) 
-    functional +=  test.objects.jobs('scheduled'  ,'functional' ,1)
-
-    golden +=  test.objects.jobs('running'    ,'functional' ,1, golden=True) 
-    golden +=  test.objects.jobs('submitting' ,'functional' ,1, golden=True) 
-    golden +=  test.objects.jobs('scheduled'  ,'functional' ,1, golden=True)
+    stress = filter(lambda x: x.template.category == 'stress' and not x.is_golden, tests)
+    functional = filter(lambda x: x.template.category == 'functional' and not x.is_golden, tests)
+    golden = filter(lambda x: x.is_golden, tests)
 
     dh         = Datahelper()
     stress     = dh.annotateTests(stress)
     functional = dh.annotateTests(functional)
     golden     = dh.annotateTests(golden)
 
-    tests = {'golden':golden,'stress':stress,'functional':functional}
-
     t = loader.select_template(['%s/index.html'%(app),'core/app/index.html'])
     c = RequestContext(request,
-                       {'tests':tests},
-                       [defaultContext]
-                       )
+                       {'tests': {'golden': golden,
+                                  'stress': stress,
+                                  'functional': functional}},
+                       [defaultContext])
     return HttpResponse(t.render(c))
 
 
@@ -479,33 +469,47 @@ class GenericView():
 #######################################################
 
 
-  def test(self,request,test_id,dic={'Test':None},*args,**kwargs):
+  def test(self, request, test_id, dic={'Test': None}, *args, **kwargs):
+    """Base view for the test display. The details are coming by AJAX."""
 
     test = dic['Test']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
-    test = get_object_or_404(test,pk=test_id)
-    dh         = Datahelper()
+    qs = (test.objects
+              .select_related('host',
+                              'inputtype',
+                              'usercode',
+                              'jobtemplate',
+                              'optionfile',
+                              'template',
+                              'metricperm')
+              .prefetch_related('getSummaryTests_for_test'))
+    test = get_object_or_404(qs, pk=test_id)
+    dh = Datahelper()
     test = dh.annotateTest(test)
 
     metricperms = test.metricperm.index.all()
 
     summary = ''
     if test.getSummaryTests_for_test.count():
-      summary = test.getSummaryTests_for_test.all()[0]  
+      summary = test.getSummaryTests_for_test.all()[0]
 
     #Independently of the number of metrics selected on the MetricPerm.index,
     #for the test main page only the 3 first ones are selected.
 
-    test_metrics = test.getTestMetrics_for_test.filter(metric__metric_type__in=metricperms)[:3]
+    test_metrics = (test.getTestMetrics_for_test
+                        .select_related('metric')
+                        .filter(metric__metric_type__in=metricperms))[:3]
 
-    patterns = test.getTestDspatterns_for_test.all()
+    patterns = test.getTestDspatterns_for_test.select_related('dspattern').all()
 
-    t = loader.select_template(['%s/test/test.html'%(app),'core/app/test/test.html'])
+    t = loader.select_template(['%s/test/test.html'%(app), 'core/app/test/test.html'])
     c = RequestContext(request,
-                      {'test': test,'test_metrics':test_metrics,'summary':summary,'patterns':patterns},
-                      [defaultContext] 
-                    )
+                       {'test': test,
+                        'test_metrics': test_metrics,
+                        'summary': summary,
+                        'patterns': patterns},
+                       [defaultContext])
     return HttpResponse(t.render(c))
 
   def testclone(self,request,test_id,dic={'Test':None},*args,**kwargs):
@@ -636,47 +640,77 @@ class GenericView():
 ## AJAX BLOCK
 #######################################################
 
-  def get_list(self,request,type,id,filter,dic={'SummaryTest':None,'SummaryTestSite':None,'SummaryRobot':None,'Result':None},*args,**kwargs):
-
+  def get_list(self, request, type, id, filter, dic={'SummaryTest': None, 'SummaryTestSite': None, 'SummaryRobot': None, 'Result': None}, *args, **kwargs):
+    """Generic function to obtain list of elements to fill AJAX forms."""
     summary_test = dic['SummaryTest']
-    app          = summary_test.__module__.split('.')[1]
-
     summary_test_site = dic['SummaryTestSite']
-    summary_robot     = dic['SummaryRobot']
-    result            = dic['Result']
+    summary_robot = dic['SummaryRobot']
+    result = dic['Result']
+    app = summary_test.__module__.split('.')[1]
 
     searchableColumns = {}
     jsonTemplatePath = 'core/app/json/'
 
     if type == 'testsites':
       querySet = summary_test_site.objects.filter(test__id=id)
-      columnIndexNameMap = {0:'test_site__site__name',1:'submitted',2:'running',3:'completed',4:'failed',5:'c_cf',6:'total',7:'test_site__num_datasets_per_bulk',8:'test_site__min_queue_depth',9:'test_site__max_running_jobs',10:'test_site__resubmit_enabled',11:'test_site__resubmit_force',12:'test_site__site__name'}
+      columnIndexNameMap = {0: 'test_site__site__name',
+                            1: 'submitted',
+                            2: 'running',
+                            3: 'completed',
+                            4: 'failed',
+                            5: 'c_cf',
+                            6: 'total',
+                            7: 'test_site__num_datasets_per_bulk',
+                            8: 'test_site__min_queue_depth',
+                            9: 'test_site__max_running_jobs',
+                            10: 'test_site__resubmit_enabled',
+                            11: 'test_site__resubmit_force',
+                            12: 'test_site__site__name'
+                            }
       jsonTemplatePath += 'testsites.txt'
 
     elif type == 'testsummary':
-      querySet = summary_test_site.objects.select_related('site', 'test_site', 'test_site__site', 'test__metricperm', 'test__metricperm__summary').filter(test__id=id)
-      metr = querySet[0].test.metricperm.summary.all()
+      querySet = (summary_test_site.objects
+                                   .select_related('test__metricperm__summary',
+                                                   'test_site',
+                                                   'test_site__site')
+                                   .filter(test__id=id))
+      qs0 = querySet[0]
+      metr = qs0.test.metricperm.summary.all()
       columnIndexNameMap = {0:'test_site__site__name'} 
-      for i in xrange(0,len(metr)):
+      for i in xrange(0, len(metr)):
         metric = metr[i].name
         columnIndexNameMap[i+1] = metr[i].name
         searchableColumns[metr[i].name] = metr[i].name
 
-      jsonTemplatePath = str(app)+'/json/'+str(querySet[0].test.metricperm.name)+'.txt'
+      jsonTemplatePath = str(app)+'/json/'+str(qs0.test.metricperm.name)+'.txt'
 
     elif type.startswith('testlist'):
-
-      mode = type.replace('testlist','')
+      mode = type.replace('testlist', '')
       if mode == 'all':
         querySet = summary_test.objects.all()
-      elif mode in ['functional','stress']:
-        querySet = summary_test.objects.filter(test__template__category=mode)
-      elif mode in ['scheduled','submitting','error','running','completed']:
-        querySet = summary_test.objects.filter(test__state=mode)
+      elif mode in ['functional', 'stress']:
+        querySet = (summary_test.objects
+                                .select_related('test__template')
+                                .filter(test__template__category=mode))
+      elif mode in ['scheduled', 'submitting', 'error', 'running', 'completed']:
+        querySet = (summary_test.objects
+                                .select_related('test')
+                                .filter(test__state=mode))
       else:
         raise Http404
 
-      columnIndexNameMap = {0:'test__id',1:'test__state',2:'test__host__name',3:'clouds',4:'test__template__id',5:'test__inputtype',6:'test__starttime',7:'test__endtime',8:'nr_sites',9:'total',10:'test__id'}
+      columnIndexNameMap = {0: 'test__id',
+                            1: 'test__state',
+                            2: 'test__host__name',
+                            3: 'clouds',
+                            4: 'test__template__id',
+                            5: 'test__inputtype',
+                            6: 'test__starttime',
+                            7: 'test__endtime',
+                            8: 'nr_sites',
+                            9: 'total',
+                            10: 'test__id'}
 
       jsonTemplatePath += 'testlist.txt'
 
@@ -695,15 +729,25 @@ class GenericView():
       jsonTemplatePath += 'robotlist.txt'
 
     elif type == 'testjobs':
-      querySet = result.objects.filter(test__id=id).exclude(ganga_subjobid=1000000)
+      querySet = (result.objects
+                        .filter(test__id=id)
+                        .exclude(ganga_subjobid=1000000))
       if filter is not None:
         try:
           site_id = int(filter)
-          if site_id > 0: 
+          if site_id > 0:
             querySet = querySet.filter(site__id=filter)
         except:
           pass
-      columnIndexNameMap = {0:'ganga_status',1:'site__name',2:'ganga_jobid',3:'ganga_subjobid',4:'backendID',5:'submit_time',6:'start_time',7:'stop_time',8:'reason'}
+      columnIndexNameMap = {0: 'ganga_status',
+                            1: 'site__name',
+                            2: 'ganga_jobid',
+                            3: 'ganga_subjobid',
+                            4: 'backendID',
+                            5: 'submit_time',
+                            6: 'start_time',
+                            7: 'stop_time',
+                            8: 'reason'}
       jsonTemplatePath += 'testjobs.txt'
 
     elif type == 'robotjobs':
@@ -721,8 +765,12 @@ class GenericView():
       jsonTemplatePath += 'robotjobs.txt'
 
     elif type == 'testreasons':
-      querySet = result.objects.filter(test__id=id).filter(ganga_status='f').exclude(ganga_subjobid=1000000)
-      columnIndexNameMap = {0:'reason',1:'site__name'}
+      querySet = (result.objects.filter(test__id=id)
+                                .filter(ganga_status='f')
+                                .exclude(ganga_subjobid=1000000))
+      columnIndexNameMap = {0: 'reason',
+                            1: 'site__name'
+                            }
       jsonTemplatePath += 'testreasons.txt'
 
     else:
@@ -730,30 +778,40 @@ class GenericView():
 
     return get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTemplatePath, type, app)
 
-
-  def testaccordion(self,request,test_id,type,dic={'Test':None},*args,**kwargs):
-
+  def testaccordion(self, request, test_id, type, dic={'Test': None}, *args, **kwargs):
+    """AJAX view for the test accordion details in the main test view."""
     test = dic['Test']
     app  = test.__module__.split('.')[1]
 
-    ACCORDION = ['testsites','testsummary','testbackend','testapplication','testreasons','testcompleted','teststdouterr']
+    ACCORDION = ['testsites',
+                 'testsummary',
+                 'testbackend',
+                 'testapplication',
+                 'testreasons',
+                 'testcompleted',
+                 'teststdouterr']
     list = False
 
     if not type in ACCORDION:
       raise Http404
 
-    test = get_object_or_404(test,pk=test_id)
     page = type
-
     items = []
     if type == 'testsummary':
+      test = get_object_or_404(test.objects.select_related('metricperm'), pk=test_id)
       page = test.metricperm.name
+    else:
+      test = get_object_or_404(test.objects, pk=test_id)
+      if type == 'testreasons':
+        page = 'testreasons'
 
-    elif type == 'testreasons':
-      page = 'testreasons'
-
-    t = loader.select_template(['%s/ajax/%s.html'%(app,page),'core/app/ajax/%s.html'%(page)])
-    c = Context({'test_id': test_id,'list':list,'type':type,'items':items,'app':app,'MEDIA_URL':settings.MEDIA_URL})
+    t = loader.select_template(['%s/ajax/%s.html' % (app, page), 'core/app/ajax/%s.html' % (page)])
+    c = Context({'test_id': test_id,
+                 'list': list,
+                 'type': type,
+                 'items': items,
+                 'app': app,
+                 'MEDIA_URL': settings.MEDIA_URL})
     return HttpResponse(t.render(c))
 
   def ajaxtestmetricsbysite(self,request,test_id,dic={'Test':None},*args,**kwargs):
@@ -770,72 +828,80 @@ class GenericView():
     c = Context({'plots':plots,'app':app,'test':test})
     return HttpResponse(t.render(c))
 
-  def ajaxtestjobs(self,request,test_id,site_id,dic={'Test':None,'Site':None},*args,**kwargs):
-
+  def ajaxtestjobs(self, request, test_id, site_id, dic={'Test': None, 'Site': None}, *args, **kwargs):
+    """AJAX view for the accordion in the test main view (jobs)."""
     test = dic['Test']
     site = dic['Site']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
-    test = get_object_or_404(test,pk=test_id)
+    test = get_object_or_404(test.objects, pk=test_id)
+    # Get the related site, to filter jobs for a single site.
     try:
-      site_id = int(site_id)
-      site = site.objects.get(id=site_id)
+      site = site.objects.get(id=int(site_id))
     except:
-      site = None
-      site_id = 0
-    type = 'testjobs'
+      # If not, or error, silently show all.
+      # TODO(rmedrano): improve this error handling.
+      site = 0
 
-    t = loader.select_template(['%s/test/testjobs.html'%(app),'core/app/test/testjobs.html'])
-    c = Context({'app':app,'test':test,'site':site_id,'type':type, 'MEDIA_URL':settings.MEDIA_URL})
+    t = loader.select_template(['%s/test/testjobs.html'%(app), 'core/app/test/testjobs.html'])
+    c = RequestContext(request,
+                       {'app': app, 'test': test, 'site': site, 'type': 'testjobs'},
+                       [defaultContext])
     return HttpResponse(t.render(c))
 
-  def ajaxtestevolution(self,request,test_id,dic={'Test':None},*args,**kwargs):
-
+  def ajaxtestevolution(self, request, test_id, dic={'Test': None}, *args, **kwargs):
+    """AJAX view for the accordion in the test main view (evolution)."""
     test = dic['Test']
     app  = test.__module__.split('.')[1]
 
-    test  = get_object_or_404(test,pk=test_id)
+    test  = get_object_or_404(test.objects, pk=test_id)
 
     evolution = {}
-    evolution['Overall'] = test.getTestMetrics_for_test.filter(metric__metric_type__name__in=['evol_sr','evol_cf'])
-    for ts in test.getTestSites_for_test.all():
-      evolution[ts.site.name] = ts.site.getSiteMetrics_for_site.filter(test=ts.test).filter(metric__metric_type__name__in=['evol_sr','evol_cf'])
+    def filter_metrics(queryset):
+      return (queryset.select_related('site', 'test', 'metric', 'metric__metric_type')
+                      .filter(metric__metric_type__name__in=['evol_sr', 'evol_cf']))
+    evolution['Overall'] = filter_metrics(test.getTestMetrics_for_test)
+    metrics = filter_metrics(test.getSiteMetrics_for_test)
+    sites = set(map(lambda x: x.site, metrics))
+    for site in sites:
+      evolution[site.name] = [y for y in metrics if y.site_id == site.id]
 
     for k,v in evolution.items():
       if not v:
         del evolution[k]
 
-    t = loader.select_template(['%s/test/testevolution.html'%(app),'core/app/test/testevolution.html'])
-    c = Context({'app':app,'test':test,'evolution':evolution})
+    t = loader.select_template(['%s/test/testevolution.html' % (app), 'core/app/test/testevolution.html'])
+    c = Context({'app':app, 'test': test, 'evolution': evolution})
     return HttpResponse(t.render(c))
 
-  def ajaxtestalarms(self,request,test_id,dic={'Test':None},*args,**kwargs):
-
+  def ajaxtestalarms(self, request, test_id, dic={'Test': None}, *args, **kwargs):
+    """AJAX view for the accordion in the test main view (alarms)."""
     test = dic['Test']
     app  = test.__module__.split('.')[1]
 
-    test = get_object_or_404(test,pk=test_id)
+    test = get_object_or_404(test.objects, pk=test_id)
     alarms = test.getTestSiteAlarms_for_test.all()
     for ta in alarms:
       logs = []
       if ta.log:
+        # TODO(rmedrano): This is insecure.
         logs = eval(ta.log)
       ta.log = logs
 
-    t = loader.select_template(['%s/test/testalarms.html'%(app),'core/app/test/testalarms.html'])
-    c = Context({'tas':alarms,'app':app,'test':test,'MEDIA_URL':settings.MEDIA_URL})
+    t = loader.select_template(['%s/test/testalarms.html' % (app), 'core/app/test/testalarms.html'])
+    c = Context({'tas': alarms, 'app': app, 'test': test, 'MEDIA_URL': settings.MEDIA_URL})
     return HttpResponse(t.render(c))
 
-  def ajaxtestlogs(self,request,test_id,dic={'Test':None},*args,**kwargs):
-
+  def ajaxtestlogs(self, request, test_id, dic={'Test': None}, *args, **kwargs):
+    """AJAX view for the accordion in the test main view (jobs)."""
     test = dic['Test']
     app  = test.__module__.split('.')[1]
 
-    test = get_object_or_404(test,pk=test_id)
-    logs = test.getTestLogs_for_test.all().order_by('-mtime')
+    test = get_object_or_404(test.objects, pk=test_id)
+    logs = test.getTestLogs_for_test.order_by('-mtime')
     
-    t = loader.select_template(['%s/test/testlogs.html'%(app),'core/app/test/testlogs.html'])
-    c = Context({'logs':logs,'app':app,'test':test})
+    t = loader.select_template(['%s/test/testlogs.html' % (app), 'core/app/test/testlogs.html'])
+    c = Context({'logs':logs, 'app': app, 'test': test})
     return HttpResponse(t.render(c))
 
   def ajaxtestlogreport(self,request,test_id,dic={'Test':None,'TestLog':None},*args,**kwargs):
@@ -880,31 +946,29 @@ class GenericView():
                        [defaultContext])
     return HttpResponse(t.render(c))
 
-  def ajaxtestsites(self,request,test_id,dic={'Test':None},*args,**kwargs):
-
+  def ajaxtestsites(self, request, test_id, dic={'Test': None}, *args, **kwargs):
+    """AJAX view for the accordion in the test main view (sites)."""
     test = dic['Test']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
-    test = get_object_or_404(test,pk=test_id)
-
-    dh   = Datahelper()
+    test = get_object_or_404(test.objects, pk=test_id)
+    dh = Datahelper()
     test = dh.annotateTestPerSite(test)
 
-    t = loader.select_template(['%s/test/testsites.html'%(app),'core/app/test/testsites.html'])
+    t = loader.select_template(['%s/test/testsites.html'%(app), 'core/app/test/testsites.html'])
     c = Context({'test': test})
     return HttpResponse(t.render(c))
 
-  def ajaxtestmetrics(self,request,test_id,dic={'Test':None},*args,**kwargs):
-
+  def ajaxtestmetrics(self, request, test_id, dic={'Test': None}, *args, **kwargs):
+    """AJAX view for the accordion in the test main view (metrics)."""
     test = dic['Test']
-    app  = test.__module__.split('.')[1]
-    
-    test = get_object_or_404(test,pk=test_id)
+    app = test.__module__.split('.')[1]
 
-    dh   = Datahelper()
+    test = get_object_or_404(test.objects, pk=test_id)
+    dh = Datahelper()
     test = dh.annotateTestPerMetric(test)
 
-    t = loader.select_template(['%s/test/testmetrics.html'%(app),'core/app/test/testmetrics.html'])
+    t = loader.select_template(['%s/test/testmetrics.html'%(app), 'core/app/test/testmetrics.html'])
     c = Context({'test': test})
     return HttpResponse(t.render(c))
 
@@ -1376,7 +1440,8 @@ class GenericView():
     t = loader.select_template(['%s/stats/statistics.html'%(app),'core/app/stats/statistics.html'])
     return HttpResponse(t.render(c))
 
-  def joberrors(self,request,dic={'Site':None,'Result':None, 'Cloud':None},*args,**kwargs):
+  def joberrors(self, request, dic={'Site': None, 'Result': None, 'Cloud': None}, *args, **kwargs):
+    """Report to show job errors by site to help debugging ()."""
     site = dic['Site']
     cloud = dic['Cloud']
     result = dic['Result']
@@ -1386,6 +1451,7 @@ class GenericView():
     if kwargs.has_key('params'):
       params = kwargs['params']
 
+    # Build the query by Q objects.
     site_filters = Q()
     result_filters = Q()
 

@@ -4,12 +4,9 @@
     $('#testjobs').dataTable({
       "sPaginationType": 'full_numbers',
       "bServerSide": true,
-      "sAjaxSource": "{% url get_list-view app,type,test.id,site %}",
+      "sAjaxSource": "{% url get_list-view app,type,test.id,site.id|default:"0" %}",
       "aaSorting" : [[ 2, "desc" ]],
-
-      "aoColumns":[
-        null,null,null,null,null,null,null,null,null,
-      ],
+      "aoColumns":[null,null,null,null,null,null,null,null,null],
       "sDom": 'T<"clear">lfrtip',
       "fnRowCallback": function( nRow, aData, iDisplayIndex ) {
         if (aData[0] == 'f'){
@@ -23,45 +20,43 @@
         }else{
           $(nRow).addClass('grey');
         }
-        {% block custom_row_callback %}{% endblock %}
-        return nRow;
-      }
+      {% block custom_row_callback %}{% endblock %}
+       return nRow;
+     }
     });
   });
 </script>
 
-<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-      $(function() {
-        $('#usage').dialog({
-          autoOpen: false,
-          resizable: false
-	});
-	$('#help img').click(function() {
-          $('#usage').dialog('open');
-          return false;
-	});
-      })
-      </script>
-      
-      <div id='help' style="float: right">
-	<img src='{{ MEDIA_URL }}images/help.png' />
-      </div>
-      <div id='usage'>
-	<h3>USAGE of the SEARCH field</h3>
-	<p>
+<script type="text/javascript" charset="utf-8">
+  $(function() {
+    $('#usage').dialog({
+      autoOpen: false,
+      resizable: false
+    });
+  $('#help img').click(function() {
+    $('#usage').dialog('open');
+      return false;
+    });
+  })
+</script>
+
+<div id='help' style="float: right">
+  <img src='{{ MEDIA_URL }}images/help.png' />
+</div>
+<div id='usage'>
+  <h3>USAGE of the SEARCH field</h3>
+  <p>
     1.- Put your mouse over the table column title. It a ballon appears with a code, you can search that field.<br>
     2.- Remember the code.<br>
     3.- Also the type of value to be introduced.<br>
     4.- Actions allowed are ':', '>', '<'. Use '&' to join actions.<br>
-    &nbsp;&nbsp;&nbsp;':' &raquo; codeX:value_desiredX<br>
-    &nbsp;&nbsp;&nbsp;'>' &raquo; codeY>value_desiredY<br>
-    &nbsp;&nbsp;&nbsp;'&lt;' &raquo; codeZ&lt;value_desiredZ<br>
-    &nbsp;&nbsp;&nbsp;'&' &raquo; codeX:value_desiredX&codeY&lt;value_desiredY<br>
-    </p>
-
-    <h3>TABLE HINTS</h3>
-    <p>
+                                           &nbsp;&nbsp;&nbsp;':' &raquo; codeX:value_desiredX<br>
+                                           &nbsp;&nbsp;&nbsp;'>' &raquo; codeY>value_desiredY<br>
+      &nbsp;&nbsp;&nbsp;'&lt;' &raquo; codeZ&lt;value_desiredZ<br>
+      &nbsp;&nbsp;&nbsp;'&' &raquo; codeX:value_desiredX&codeY&lt;value_desiredY<br>
+  </p>
+  <h3>TABLE HINTS</h3>
+  <p>
     1.- S(atus): s(ubmitted),n(ew),f(ailed),c(ompleted),k(illed),o(ther).<br>
     2.- J: Ganga Job ID.<br>
     3.- Sj: Ganga SubJob ID.<br>
@@ -70,12 +65,10 @@
     6.- Submit: Job submission time (retrieved from backend).<br>
     7.- Start: Job running time (retrieved from backend).<br>
     8.- End: Job finishing time (retrieved from backend).<br>
-    </p>	
-      </div>
-
+  </p>
+</div>
 
 <div id="testjobs_div">
-
   <table cellpadding="0" cellspacing="0" border="0" class="display" id='testjobs'>
     <thead>
       <tr>
@@ -105,6 +98,4 @@
       </tr>
     </tfoot>
   </table>
-
 </div>
-

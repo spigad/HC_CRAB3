@@ -174,6 +174,23 @@ def getTestOtherJobs(test):
 #  '''
 #  return ['status','cpu','eventrate']
 #  
-   
-def getTestSitesMetrics(test,metric_type):
-  return test.getSiteMetrics_for_test.filter(metric__metric_type=metric_type)
+
+def getTestSitesMetrics(test, metric_type):
+  return (test.getSiteMetrics_for_test
+              .filter(metric__metric_type=metric_type)
+              .order_by())
+
+def getTestMetrics(test):
+  """Returns the set of metrics of the test grouped by metric."""
+  # Does the same as above, but with just two queries.
+  def filter_metrics(queryset):
+    return (queryset.select_related('metric', 'metric__metric_type', 'site')
+                    .exclude(metric__metric_type__name__startswith='evol'))
+  test.perMetric = []
+  # Auxiliary structures.
+  metrics = filter_metrics(test.getSiteMetrics_for_test)
+  metric_types = set(map(lambda x: x.metric.metric_type, metrics))
+  for metric_type in metric_types:
+    metric_type.sites = [y for y in metrics if y.metric.metric_type_id == metric_type.id]
+    test.perMetric.append(metric_type)
+  return test

@@ -6,8 +6,13 @@ from datetime import date,timedelta
 
 class Datahelper:
 
-  def annotateTest(self,test):
+  def annotateTest(self, test):
+    """Adds information to the test object from the SummaryTest."""
+
+    # This lookup should be already chached in test. We're calling to
+    # ensure that the data is there.
     sts = test.getSummaryTests_for_test.all()[0]
+
     test.sites     = sts.sites.split(',')
     test.clouds    = sts.clouds.split(',')
     test.numsites  = len(test.sites)
@@ -16,7 +21,10 @@ class Datahelper:
     test.failed    = sts.failed
     test.completed = sts.completed
     test.running   = sts.running
-    test.other     = test.total - (test.submitted + test.running + test.completed + test.failed)
+    test.other     = test.total - (test.submitted +
+                                   test.running +
+                                   test.completed +
+                                   test.failed)
     return test
 
   def annotateTests(self,tests):
@@ -27,39 +35,12 @@ class Datahelper:
     return tests
 
   def annotateTestPerMetric(self,test):
+    """Adds information to the test grouped by metric."""
+    return test_fm.getTestMetrics(test)
 
-    test.metricTypes = test.metricperm.pertab.all()     
-    test.perMetric = []
-
-    for metric_type in test.metricTypes:
-      metric_type.sites = list(test.getTestMetrics_for_test.filter(metric__metric_type=metric_type)) + list(test_fm.getTestSitesMetrics(test,metric_type))
-      test.perMetric.append(metric_type)
-    return test
-
-  def annotateTestPerSite(self,test):
-
-    test_sites = test.getTestSites_for_test.all()
-    test.metricTypes = test.metricperm.pertab.all()
-
-    test.perSite = []
-  
-    test.overall = list(test.getTestMetrics_for_test.exclude(metric__metric_type__name__startswith='evol_'))
-
-    for test_site in test_sites:
-
-      site = test_site.site
-           
-      site.metrics = list(site_fm.getSiteTestMetrics(site,test))
-           
-#      site.backend_exitcodes = site.getBackendExitCodes(test)
-#      site.app_exitcodes = site.getAppExitCodes(test)
-#      site.backend_reasons = site.getBackendReasons(test)
-#      site.numevents = site.getNumEvents(test)
-#      (site.numfiles,site.numfiles_details) = site.getTestNumfiles(test)
-#      site.out = site.getTestOutput(test)
-           
-      test.perSite.append(site)
-    return test
+  def annotateTestPerSite(self, test):
+    """Adds information to the test grouped by site."""
+    return site_fm.getTestMetrics(test)
 
   def annotateSitesEfficiency(self,sites,day,app):
 

@@ -3,16 +3,16 @@
   <h3><a href="#">Overall.</a></h3>
     <div class="test-accordion">
       {% for tm in test.overall %}
-        {% if tm.metric.url %}<img src="{{ tm.metric.url }}" alt="{{ tm.metric.metric_type.type }} at ALL" width="270px" />{% endif %}  
+	{% if tm.metric.url %}<img src="{{ tm.metric.url }}" alt="{{ tm.metric.metric_type.type }} at ALL" width="270px" />{% endif %}
       {% endfor %}
-    </div> 
+    </div>
 
   {% for site in test.perSite %}
     <h3><a href="#">{{ site.name }}</a></h3>
       <div class="test-accordion">
-        {% for sm in site.metrics %}
-          {% if sm.metric.url %}<img src="{{ sm.metric.url }}" alt="{{ sm.metric.metric_type.type }} at {{ site.name }}" width="270px" />{% endif %}
-        {% endfor %}
+	{% for sm in site.metrics %}
+	  {% if sm.metric.url %}<img src="{{ sm.metric.url }}" alt="{{ sm.metric.metric_type.type }} at {{ site.name }}" width="270px" />{% endif %}
+	{% endfor %}
       </div>
   {% endfor %}
 
