@@ -1,51 +1,48 @@
 <script type="text/javascript">
   TableToolsInit.sSwfPath="{{MEDIA_URL}}swf/ZeroClipboard.swf";
   $(document).ready(function() {
-    $('#{{type}}_table').dataTable({
-      "sPaginationType": 'full_numbers',
-      "bServerSide": true,
-      "sAjaxSource": "{% url get_list-view app,type,test_id %}",          
-      "aaSorting" : [[ 0, "desc" ]],
-      "sDom": 'T<"clear">lfrtip',
-      "aoColumns":[
-        null,null,{ "bSortable": false },
-      ],
+  $('#{{type}}_table').dataTable({
+  "sPaginationType": 'full_numbers',
+  "bServerSide": true,
+  "sAjaxSource": "{% url get_list-view app,type,test_id %}",          
+  "aaSorting" : [[ 0, "desc" ]],
+  "sDom": 'T<"clear">lfrtip',
+    "aoColumns":[
+    null,null,{ "bSortable": false },
+    ],
     });
-  });
+    });
 </script>
 
+<script type="text/javascript" charset="utf-8">
+  $(function() {
+  $('#usage').dialog({
+  autoOpen: false,
+  resizable: false
+  });
+  $('#help img').click(function() {
+  $('#usage').dialog('open');
+  return false;
+  });
+  })
+</script>
 
-
-<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-      $(function() {
-        $('#usage').dialog({
-          autoOpen: false,
-          resizable: false
-	});
-	$('#help img').click(function() {
-          $('#usage').dialog('open');
-          return false;
-	});
-      })
-      </script>
-      
-      <div id='help' style="float: right">
-	<img src='{{ MEDIA_URL }}images/help.png' />
-      </div>
-      <div id='usage'>
-	<h3>USAGE of the SEARCH field</h3>
-	<p>
-  1.- Put your mouse over the table column title. It a ballon appears with a code, you can search that field.<br>
-  2.- Remember the code.<br>
-  3.- Also the type of value to be introduced.<br>
-  4.- Actions allowed are ':', '>', '<'. Use '&' to join actions.<br>
-  &nbsp;&nbsp;&nbsp;':' &raquo; codeX:value_desiredX<br>
-  &nbsp;&nbsp;&nbsp;'>' &raquo; codeY>value_desiredY<br>
-  &nbsp;&nbsp;&nbsp;'&lt;' &raquo; codeZ&lt;value_desiredZ<br>
-  &nbsp;&nbsp;&nbsp;'&' &raquo; codeX:value_desiredX&codeY&lt;value_desiredY<br>
+<div id='help' style="float: right">
+  <img src='{{ MEDIA_URL }}images/help.png' />
+</div>
+<div id='usage'>
+  <h3>USAGE of the SEARCH field</h3>
+  <p>
+    1.- Put your mouse over the table column title. It a ballon appears with a code, you can search that field.<br>
+    2.- Remember the code.<br>
+    3.- Also the type of value to be introduced.<br>
+    4.- Actions allowed are ':', '>', '<'. Use '&' to join actions.<br>
+					   &nbsp;&nbsp;&nbsp;':' &raquo; codeX:value_desiredX<br>
+					   &nbsp;&nbsp;&nbsp;'>' &raquo; codeY>value_desiredY<br>
+      &nbsp;&nbsp;&nbsp;'&lt;' &raquo; codeZ&lt;value_desiredZ<br>
+      &nbsp;&nbsp;&nbsp;'&' &raquo; codeX:value_desiredX&codeY&lt;value_desiredY<br>
   </p>
-      </div>
+</div>
 
 <table cellpadding="0" cellspacing="0" border="0" class="display" id="testreasons_table">
   <thead>
@@ -64,4 +61,4 @@
     </tr>
   </tfoot>
 </table>
- 
+
