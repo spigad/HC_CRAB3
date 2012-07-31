@@ -266,7 +266,16 @@ class SiteOptionAdminBase(ActionsAdminBase):
 class TemplateAdminBase(ActionsAdminBase):
 
   #inlines -> customized at plugin level
-  list_display = ('id', 'category', 'active', 'description','lifetime','inputtype',template_am.getTemplateBackendNamesStringAdmin,template_am.getTemplateCloudCodesStringAdmin,template_am.getTemplateSiteNamesStringAdmin,template_am.getTemplateHostNamesStringAdmin)
+  list_display = ('id',
+                  'category',
+                  'active',
+                  'description',
+                  'lifetime',
+                  'inputtype',
+                  template_am.getTemplateBackendNamesStringAdmin,
+                  template_am.getTemplateCloudCodesStringAdmin,
+                  template_am.getTemplateSiteNamesStringAdmin,
+                  template_am.getTemplateHostNamesStringAdmin)
   save_on_top = True
   fieldsets = [
     ('Type information', {'fields': ['category','description']                                }),
