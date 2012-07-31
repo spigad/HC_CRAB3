@@ -25,8 +25,8 @@
                  <td>{{ test.id }}</td>
                  <td>{{ test.host|hostEntity }}</td>
                  <td>{{ test.template.id }}: {{ test.template.description }}</td>
-                 <td>{{ test.starttime|date:"d/M"}}, {{test.starttime|time:"P"}}</td>
-                 <td>{{ test.endtime|date:"d/M"}}, {{test.endtime|time:"P"}}</td>
+                 <td>{{ test.starttime|date:"d/M"}}, {{test.starttime|time:"G:i"}}</td>
+                 <td>{{ test.endtime|date:"d/M"}}, {{test.endtime|time:"G:i"}}</td>
                  <td>{{ test.clouds|trunc:3|safe }}</td>
                  <td style="font-size: 0.8em; padding: 1px; margin: 0;">{{ test.sites|trunc:3|safe }}</td>
                  <td>{{ test.submitted }}</td><td>{{ test.running }}</td>
