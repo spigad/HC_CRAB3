@@ -22,7 +22,7 @@ source $HCDIR/scripts/config/config-main.sh $HC_SHELL_APP
 
 cd $HCDIR/web/src/hc
 
-python2.5 manage.py shell
+python manage.py debugsqlshell
 
 echo ''
 echo '_ End  HC  Django Shell.'
