@@ -1,90 +1,88 @@
-<script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script>
-    <script type="text/javascript" charset="utf-8">
-      $(function() {
-        $('#usage').dialog({
-          autoOpen: false,
-          resizable: false
-	});
-	$('#help img').click(function() {
-          $('#usage').dialog('open');
-          return false;
-	});
-      })
-      </script>
-      
-      <div id='help' style="float: right">
-	<img src='{{ MEDIA_URL }}images/help.png' />
-      </div>
-      <div id='usage'>
-	<h3>Hints</h3>
-		<ul>
-  <li>1.- Alarms: agents periodically testing conditions against any parameter of the test, e.g. : trigger alarm if CPU < 5%</li>
-  <li>2.- If you want to set up alarms against the test results, please contact admins.</li>
-  <li>3.- Alarm is considered failed if any sub-alarm did not succeed.</li>
-  <li>4.- Progress is: number_subalarms_passed/nr_subalarms_passed+failed.</li>
-  <li>5.- If you want to stop (active=0) any alarm, please contact admins.</li>
+<script type="text/javascript" charset="utf-8">
+  $(function() {
+  $('#usage').dialog({
+  autoOpen: false,
+  resizable: false
+  });
+  $('#help img').click(function() {
+  $('#usage').dialog('open');
+  return false;
+  });
+  })
+</script>
+
+<div id='help' style="float: right">
+  <img src='{{ MEDIA_URL }}images/help.png' />
+</div>
+<div id='usage'>
+  <h3>Hints</h3>
+  <ul>
+    <li>1.- Alarms: agents periodically testing conditions against any parameter of the test, e.g. : trigger alarm if CPU < 5%</li>
+                                                                                                                            <li>2.- If you want to set up alarms against the test results, please contact admins.</li>
+    <li>3.- Alarm is considered failed if any sub-alarm did not succeed.</li>
+    <li>4.- Progress is: number_subalarms_passed/nr_subalarms_passed+failed.</li>
+    <li>5.- If you want to stop (active=0) any alarm, please contact admins.</li>
   </ul>
-      </div>
+</div>
 
 <div id="testalarms">
 
   <h2>Test Alarms</h2>
-  
-  </div>
-
-  <script type="text/javascript">
-    function togglelogs(className){
-      $("."+className).each(function(x,object){
-        if (object.style.display.indexOf('none') > -1){
-          object.style.display = 'table-row';
-        }else{
-          object.style.display = 'none';
-        };
-      });
-    };
-  </script>
-
-  {% if tas %}
-    <table>
-    <tr><th>Status</th><th>Site</th><th>Alarm</th><th>Active</th><th>Progress</th><th>Since</th><th>Details</th></tr>
-    {% for ta in tas %}
-      <tr class="{{ta.status}}">
-        <td>
-          {% if ta.status == 'passed' %}
-            <img src="{{ MEDIA_URL }}images/icon-yes.gif"/>
-          {% else %}
-            {% if ta.status == 'failed' %}
-              <img src="{{ MEDIA_URL }}images/icon-no.gif"/>
-            {% else %}
-              <img src="{{ MEDIA_URL }}images/icon-unknown.gif"/>
-            {% endif %}
-          {% endif %}
-        </td>
-        <td>{{ta.site.name}}</td>
-        <td>{{ta.alarm.name}}</td>
-        <td>{% if ta.active %}<img src="{{ MEDIA_URL }}images/icon-yes.gif">{% else %}<img src="{{ MEDIA_URL }}images/icon-no.gif">{% endif %}</td>
-        <td>{{ ta.progress }}</td>
-        <td>{{ ta.mtime|date:"d/M"}}, {{ta.mtime|time:"P"}}</td>
-        <td onClick="togglelogs('{{ta.site.name}}-{{ta.alarm.name}}');">&raquo;</td>
-      </tr>
-      {% for s,l in ta.log %}
-        <tr class="{% if s %}failed{% else %}passed{% endif %} {{ta.site.name}}-{{ta.alarm.name}}" style="display:none;">
-          <td>
-            {% if s %}
-              <img src="{{ MEDIA_URL }}images/icon-no.gif"/>
-            {% else %}
-              <img src="{{ MEDIA_URL }}images/icon-yes.gif"/>
-            {% endif %}
-          </td>
-          <td colspan="6">{{l}}</td>
-        </tr>
-      {% endfor %}
-    {% endfor %}
-    </table>    
-    
-  {% else %}
-    <p>No alarms found for this test.</p>
-  {% endif%}
 
 </div>
 
+<script type="text/javascript">
+  function togglelogs(className){
+  $("."+className).each(function(x,object){
+  if (object.style.display.indexOf('none') > -1){
+        object.style.display = 'table-row';
+        }else{
+        object.style.display = 'none';
+        };
+        });
+        };
+</script>
+
+{% if tas %}
+<table>
+  <tr><th>Status</th><th>Site</th><th>Alarm</th><th>Active</th><th>Progress</th><th>Since</th><th>Details</th></tr>
+  {% for ta in tas %}
+  <tr class="{{ta.status}}">
+    <td>
+      {% if ta.status == 'passed' %}
+      <img src="{{ MEDIA_URL }}images/icon-yes.gif"/>
+      {% else %}
+      {% if ta.status == 'failed' %}
+      <img src="{{ MEDIA_URL }}images/icon-no.gif"/>
+      {% else %}
+      <img src="{{ MEDIA_URL }}images/icon-unknown.gif"/>
+      {% endif %}
+      {% endif %}
+    </td>
+    <td>{{ta.site.name}}</td>
+    <td>{{ta.alarm.name}}</td>
+    <td>{% if ta.active %}<img src="{{ MEDIA_URL }}images/icon-yes.gif">{% else %}<img src="{{ MEDIA_URL }}images/icon-no.gif">{% endif %}</td>
+    <td>{{ ta.progress }}</td>
+    <td>{{ ta.mtime|date:"d/M"}}, {{ta.mtime|time:"P"}}</td>
+    <td onClick="togglelogs('{{ta.site.name}}-{{ta.alarm.name}}');">&raquo;</td>
+  </tr>
+  {% for s,l in ta.log %}
+  <tr class="{% if s %}failed{% else %}passed{% endif %} {{ta.site.name}}-{{ta.alarm.name}}" style="display:none;">
+    <td>
+      {% if s %}
+      <img src="{{ MEDIA_URL }}images/icon-no.gif"/>
+      {% else %}
+      <img src="{{ MEDIA_URL }}images/icon-yes.gif"/>
+      {% endif %}
+    </td>
+    <td colspan="6">{{l}}</td>
+  </tr>
+  {% endfor %}
+  {% endfor %}
+</table>
+
+{% else %}
+<p>No alarms found for this test.</p>
+{% endif%}
+
+</div>
