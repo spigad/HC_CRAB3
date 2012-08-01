@@ -20,7 +20,11 @@
         }else{
           $(nRow).addClass('grey');
         }
-      {% block custom_row_callback %}{% endblock %}
+       {% block custom_row_callback %}
+         {% if config.monitoring_url %}
+           $('td:eq(4)', nRow).html('<a href="{{ config.monitoring_url }}' + aData[4] + '" target="blank">' + aData[4] + '</a>');
+         {% endif %}
+       {% endblock %}
        return nRow;
      }
     });

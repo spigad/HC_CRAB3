@@ -1,9 +1,12 @@
 PARTICULARITIES = {'atlas':{'cloud':'Cloud',
                             'base_template': 'atlas/base.html',
-                            'sls': 'HC.ATLAS'},
+                            'sls': 'HC.ATLAS',
+                            'monitoring_url': 'http://panda.cern.ch/server/pandamon/query?job='},
                    'cms'  :{'cloud':'Region',
                             'base_template': 'cms/base.html',
-                            'sls': 'HC.CMS'},
+                            'sls': 'HC.CMS',
+                            'monitoring_url': 'http://dashb-cms-job.cern.ch/dashboard/request.py/detailView?schedulerJobId='},
                    'lhcb' :{'cloud':'T1',
                             'base_template': 'core/app/base.html',
-                            'sls': 'HC.LHCb'}}
+                            'sls': 'HC.LHCb',
+                            'monitoring_url': None}}
