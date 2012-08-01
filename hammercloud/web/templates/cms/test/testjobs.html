@@ -1,0 +1,5 @@
+{% extends 'core/app/test/testjobs.html' %}
+
+{% block custom_row_callback %}
+  $('td:eq(4)', nRow).html('<a href="http://dashb-cms-job.cern.ch/dashboard/request.py/detailView?schedulerJobId=' + aData[4] + '" target="blank">' + aData[4] + '</a>');
+{% endblock %}
