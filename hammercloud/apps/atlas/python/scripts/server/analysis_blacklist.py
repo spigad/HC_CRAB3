@@ -306,7 +306,7 @@ class AnalysisBlacklist:
     sitesToEmail = []
     limit = datetime.datetime.now() - datetime.timedelta(minutes=30)
     online_sites = self.get_sites(status='online')
-    online_sites = ['ANALY_LRZ'] # this should filter online sites to those that requested this feature
+    online_sites = ['ANALY_LRZ']
     for site in online_sites:
       res = Result.objects.exclude(ganga_subjobid=1000000).filter(fixed=1).filter(mtime__gt=limit).filter(test__id__in=map(lambda x: x.id, self.runningTests)).filter(site__name=site).exclude(exit_status_2=1192).filter(ganga_status='f')
       if res:
@@ -314,7 +314,7 @@ class AnalysisBlacklist:
 
     for site in sitesToEmail:
        self.add_log("")
-       self.add_log("Site %s has failed jobs in the past 30 minutes" % s)
+       self.add_log("Site %s has failed jobs in the past 30 minutes" % site)
 
   def change_site_status(self, site, new_status):
     if new_status not in ('test', 'online'):
@@ -535,7 +535,8 @@ class AnalysisBlacklist:
     self.publisher.process_event(severity='aft-metrics',
                                  rel_site=s,
                                  site=site_name,
-                                 metric_name='HammerCloud Analysis Functional Testing (AFT)',
+                                 #metric_name='HammerCloud Analysis Functional Testing (AFT)',
+                                 metric_name='org.atlas.HC-Analysis',
                                  metric_status=metric_status,
                                  subject=description,
                                  description=report)
