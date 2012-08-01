@@ -180,7 +180,7 @@ class ProductionBlacklist:
 
   def __init__(self, templates=None):
     if not templates:
-      self.templates = (439,441,456)
+      self.templates = (439,441,457)
     else:
       self.templates = templates
     self.policies_for_test = (BlackListingPolicyLastOneFromThree, BlackListingPolicyLastTwoPlusOne,
