@@ -31,7 +31,8 @@ class TestGenerate:
     sites = []
 
     if 'PFT' in test.template.description:
-        Client.PandaSites = Client.getSiteSpecs('production')[1]
+        #Client.PandaSites = Client.getSiteSpecs('production')[1]
+        Client.PandaSites = Client.getSiteSpecs('all')[1]
 
     for site in Client.PandaSites[queue]['setokens'].values():
       sites.append(Client.convSrmV2ID(site))
@@ -69,6 +70,13 @@ class TestGenerate:
     test_sites = test.getTestSites_for_test.all()
 
     for ts in test_sites:
+      # Get Panda queue SE info
+      try:
+        extra_locs = self.convertQueueNameToDQ2Names(ts.site.name, test)
+      except:
+        extra_locs = []
+
+      # Get HammerCloud DB info
       locs = ts.site.ddm.split(',')
       site_locs = []
       for loc in locs:
@@ -78,11 +86,6 @@ class TestGenerate:
         if loc not in locations:
           locations.append(loc)
           site_locs.append(loc)
-
-      try:
-        extra_locs = self.convertQueueNameToDQ2Names(ts.site.name, test)
-      except:
-        extra_locs = []
 
       locations = locations + extra_locs
       site_locs = site_locs + extra_locs
