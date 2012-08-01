@@ -536,7 +536,7 @@ class AnalysisBlacklist:
                                  rel_site=s,
                                  site=site_name,
                                  #metric_name='HammerCloud Analysis Functional Testing (AFT)',
-                                 metric_name='org.atlas.HC-Analysis',
+                                 metric_name='org.atlas.HC-Analysis-atlas',
                                  metric_status=metric_status,
                                  subject=description,
                                  description=report)
