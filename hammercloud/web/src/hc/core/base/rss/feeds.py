@@ -141,14 +141,14 @@ class TemplateEntriesFeed(Feed):
     class_template_feed = custom_import('hc.%s.models.Template'%(plugin))
     template_feed       = get_object_or_404(class_template_feed,pk=template_id)
 
-    return "Hammercloud-%s for template %s"%(plugin.upper(),template_feed.name)
+    return "Hammercloud-%s for template %s"%(plugin.upper(),template_feed.description)
 
   def description(self,obj):
     plugin,template_id = obj
     class_template_feed = custom_import('hc.%s.models.Template'%(plugin))
     template_feed       = get_object_or_404(class_template_feed,pk=template_id)
 
-    return "Updates, changes and additions to template %s at HammerCloud-%s "%(template_feed.name,plugin.upper())
+    return "Updates, changes and additions to template %s at HammerCloud-%s "%(template_feed.description,plugin.upper())
 
   def link(self,obj):
     plugin,template_id = obj
