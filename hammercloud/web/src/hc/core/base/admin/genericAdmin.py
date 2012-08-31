@@ -279,7 +279,7 @@ class TemplateAdminBase(ActionsAdminBase):
   save_on_top = True
   fieldsets = [
     ('Type information', {'fields': ['category','description']                                }),
-    (None,               {'fields': ['lifetime','active','is_golden','obsolete']              }),
+    (None,               {'fields': ['lifetime','period','active','is_golden','obsolete']     }),
     ('Files',            {'fields': ['jobtemplate','usercode','optionfile','metricperm']      }),
     (None,               {'fields': ['inputtype','testoption','gangabin','extraargs']         }),
   ]
