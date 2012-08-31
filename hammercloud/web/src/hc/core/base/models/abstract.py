@@ -386,6 +386,7 @@ class TemplateBase(models.Model):
   mtime              = models.DateTimeField(auto_now=True)
   is_golden          = models.BooleanField(default=0,blank=True)
   obsolete           = models.BooleanField(default=0,blank=True)
+  period             = models.IntegerField(default=0)
 
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Template','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Template','usercode',{})
@@ -627,6 +628,7 @@ class TestBase(models.Model):
   cloned             = models.IntegerField(default = 0, blank=True)
   mtime              = models.DateTimeField(auto_now=True)
   is_golden          = models.BooleanField(default=0,blank=True)
+  period             = models.IntegerField(default=0)
 
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Test','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Test','usercode',{})
@@ -738,6 +740,11 @@ class TestBase(models.Model):
         is_golden = t[0].is_golden
 
       try:
+        period = self.period
+      except:
+        period = t[0].period
+
+      try:
         metricperm = self.metricperm
       except:
         metricperm = t[0].metricperm
@@ -752,6 +759,7 @@ class TestBase(models.Model):
       self.gangabin       = gangabin
       self.extraargs      = extraargs
       self.is_golden      = is_golden
+      self.period         = period
       self.metricperm     = metricperm
 
       self.state = final_state
@@ -771,6 +779,7 @@ class TestBase(models.Model):
       self.gangabin         = obj.gangabin
       self.extraargs        = obj.extraargs
       self.is_golden        = obj.is_golden
+      self.period           = obj.period
 
       super(TestBase, self).save()
 
