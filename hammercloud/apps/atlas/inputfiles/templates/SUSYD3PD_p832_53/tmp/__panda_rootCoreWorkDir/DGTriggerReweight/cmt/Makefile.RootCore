@@ -1,0 +1,13 @@
+# this makefile also gets parsed by shell scripts
+# therefore it does not support full make syntax and features
+# edit with care
+
+PACKAGE          = DGTriggerReweight
+PACKAGE_PRELOAD  = ReweightUtils
+PACKAGE_CXXFLAGS = 
+PACKAGE_LDFLAGS  = $(shell root-config --libs) -lPyROOT -lEG 
+PACKAGE_BINFLAGS = 
+PACKAGE_DEP      = ReweightUtils
+PACKAGE_NOOPT    = 0
+
+include $(ROOTCOREDIR)/Makefile-common

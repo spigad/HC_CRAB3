@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<!DOCTYPE unifiedTestConfiguration SYSTEM "http://www.hep.ucl.ac.uk/atlas/AtlasTesting/DTD/unifiedTestConfiguration.dtd">
+
+<unifiedTestConfiguration>
+
+<atn>
+
+   <TEST name="SUSYD3PD_RecoTrf_7TeV_data" type="script" suite="Reco_trf">
+       <options_atn>
+         Reco_trf.py inputAODFile=/afs/cern.ch/atlas/offline/test/data10_7TeV.00162882.physics_Egamma.merge.AOD._lb201.10evts.rel16.pool.root outputNTUP_SUSYFile=ntpsusy.root autoConfiguration=everything --ignoreerrors=True
+       </options_atn>
+       <timelimit>30</timelimit>
+       <author>Claire Adam-Bourdarios</author>
+       <prescript>rm -f $ATN_WORK_AREA/*</prescript>
+       <expectations>
+            <errorMessage>FAILURE </errorMessage>
+            <returnValue>0</returnValue>
+       </expectations>
+    </TEST>
+
+   <TEST name="SUSYD3PD_RecoTrf_MC" type="script" suite="Reco_trf">
+       <options_atn>
+         Reco_trf.py inputAODFile="root://eosatlas//eos/atlas/atlascerngroupdisk/phys-susy/RTT/AOD/AOD.219363._000028.pool.root.1"  autoConfiguration=everything --ignoreerrors=True outputNTUP_SUSYFile=ntp.root maxEvents=50
+       </options_atn>
+       <timelimit>30</timelimit>
+       <author>Claire Adam-Bourdarios</author>
+       <prescript>rm -f $ATN_WORK_AREA/*</prescript>
+       <expectations>
+            <errorMessage>FAILURE </errorMessage>
+            <returnValue>0</returnValue>
+       </expectations>
+    </TEST>
+
+   <TEST name="SUSYD3PD_RecoTrf_MC_virtualSkimming" type="script" suite="Reco_trf">
+       <options_atn>
+Reco_trf.py inputAODFile=root://eosatlas//eos/atlas/atlascerngroupdisk/phys-susy/RTT/AOD/AOD.219363._000028.pool.root.1 autoConfiguration=everything --ignoreerrors=True outputNTUP_SUSYFile=ntp.root maxEvents=50 preExec=SUSYD3PDFlags.DoEventSkimming=True postExec='SUSYD3PDStream.Stream.AcceptAlgs=[]'
+       </options_atn>
+       <timelimit>30</timelimit>
+       <author>Claire Adam-Bourdarios</author>
+       <prescript>rm -f $ATN_WORK_AREA/*</prescript>
+       <expectations>
+            <errorMessage>FAILURE </errorMessage>
+            <returnValue>0</returnValue>
+       </expectations>
+    </TEST>
+
+
+</atn>
+
+
+
+<rtt xmlns="http://www.hep.ucl.ac.uk/atlas/AtlasTesting/rtt">
+
+      <rttContactPerson>Claire Adam-Bourdarios </rttContactPerson>
+      <mailto>claire.bourdarios@cern.ch, david.cote@cern.ch, kravchenko.anton86@gmail.com, Jeanette.Miriam.Lorenz@cern.ch, louise.heelan@cern.ch</mailto>
+      <refRelease>16.6.3</refRelease>
+
+  <jobList>
+
+     <classification>
+          <displayClass>OfflineValidation</displayClass>
+          <displayProcess>Reco</displayProcess>
+          <displayComponent>Phys-Susy</displayComponent>
+     </classification>
+
+    <chain>
+    <chainName>SUSY_data10</chainName>
+
+     <chainElement>
+     <jobTransform userJobId="SUSYD3PD_data">
+     <doc>Reco_trf runs on 7TeV collision data AOD to produce SUSY D3PD and ntuple </doc>
+     <jobTransformJobName>SUSYD3PD_7TeV_data</jobTransformJobName>
+
+     <jobTransformCmd>
+Reco_trf.py inputAODFile=/afs/cern.ch/atlas/offline/test/data10_7TeV.00162882.physics_Egamma.merge.AOD._lb201.10evts.rel16.pool.root outputNTUP_SUSYFile=ntpsusy.root autoConfiguration=everything --ignoreerrors=True
+     </jobTransformCmd>
+
+         <group>SUSYD3PDtests</group>
+         <queue>medium</queue>
+
+        <auxFilePattern>BTagCalibrations*.root</auxFilePattern>
+        <auxFilePattern>EF_*.root</auxFilePattern>
+        <auxFilePattern>ObjectQualityMaps*.root</auxFilePattern>
+
+        <action>
+        <modulename>RttLibraryTools</modulename>
+        <testname>ExeRunner</testname>
+           <arg>
+              <argname>exeName</argname>
+              <argvalue>susy_0lepton_cutflow.exe</argvalue>
+           </arg>
+           <arg>
+              <argname>exeParamString</argname>
+              <argvalue>2 ntpsusy.root > 0lepton.log</argvalue>
+           </arg>
+        </action>
+
+        <action>
+        <modulename>RttLibraryTools</modulename>
+        <testname>ExeRunner</testname>
+           <arg>
+              <argname>exeName</argname>
+              <argvalue>susy_1lepton_cutflow.exe</argvalue>
+           </arg>
+           <arg>
+              <argname>exeParamString</argname>
+              <argvalue>ntpsusy.root > 1lepton.log</argvalue>
+           </arg>
+        </action>
+
+     </jobTransform>
+     </chainElement>
+
+    </chain>
+
+  </jobList>
+
+
+
+   <jobGroups>
+
+      <jobGroup name="SUSYD3PDtests" parent="Transform">
+        <keepFilePattern> *.root </keepFilePattern>
+         <keepFilePattern>*.log</keepFilePattern>
+      </jobGroup>
+
+   </jobGroups>
+
+
+</rtt>
+
+</unifiedTestConfiguration>

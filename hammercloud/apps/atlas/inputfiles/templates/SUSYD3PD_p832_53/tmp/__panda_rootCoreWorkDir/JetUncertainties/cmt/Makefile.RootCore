@@ -1,0 +1,7 @@
+
+PACKAGE          = JetUncertainties
+PACKAGE_CXXFLAGS = -DJES_STANDALONE
+PACKAGE_LDFLAGS  = 
+
+include $(ROOTCOREDIR)/Makefile-common
+

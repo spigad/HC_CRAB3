@@ -1,0 +1,15 @@
+Final Cutflow for run 190933
+Muon stream 
+Cut 0 : 15244		  no cut
+Cut 1 : 15244		  GRL cut
+Cut 2 : 15244		  Lar error cut
+Cut 3 : 15244		  Lar veto jet
+Cut 4 : 15228		  jet cleaning
+Cut 5 : 15148		  >= 1 vertex with > 4 tracks
+Cut 6 : 15148		  Bad muon veto
+Cut 7 : 14610		  Cosmic veto
+Cut 8 : 96		  EF_e10_medium_mu6
+Cut 9 : 100		  EF_e10_medium_mu6 || singleElectron
+Cut 10 : 12116		  EF_e10_medium_mu6 || singleMuon
+Cut 11 : 12120		  EF_e10_medium_mu6 || singleMuon || singleElectron
+Cut 12 : 12109		  singleMuon || singleElectron

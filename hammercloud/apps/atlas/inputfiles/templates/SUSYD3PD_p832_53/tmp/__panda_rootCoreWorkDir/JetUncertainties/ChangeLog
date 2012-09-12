@@ -1,0 +1,68 @@
+2010-07-21  Pier-Olivier DeViveiros < viveiros AT physics.utoronto.ca >
+	* First Commit with a preliminary version
+2010-07-22  Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk >
+	* First commit of number of vertices-dependent uncertainty	
+2010-07-28  Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk >
+	* Test of ATHENA version (with PathResolver), added init() function
+2010-08-03  Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - JetUncertainties-00-01-00
+	* Uncertainty provided up to |eta| < 4.5, down to 15 GeV
+2010-08-04  Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - JetUncertainties-00-01-01
+        * Bugfix for collection names, pileup plots (wrongly shifted in x axis)
+2010-08-04  Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - JetUncertainties-00-01-02
+        * Correct ROOT file that fixes bug in pileup plots (wrongly shifted in x axis)
+2010-12-10  Stefanie Adomeit < stefanie.adomeit AT cern.ch > - JetUncertainties-00-01-03
+        * Added MultijetJESUncertaintyProvider class
+2011-02-08 Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - JetUncertainties-00-01-04
+        * Copy of 00-01-03 tag, fixed CMT bug
+2011-02-11 Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - JetUncertainties-00-02-00
+        * Tag for release 15 uncertainties
+2011-03-24 Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - JetUncertainties-00-03-00
+        * Preparing for release 16 uncertainties, added Multijet ATHENA version
+2011-03-29 Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - JetUncertainties-00-03-01
+        * Fixed bug in input file reading for standalone version
+2011-04-16 Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk >
+        * Test version of PROOF-compatible provider (Bart Butler)
+2011-04-19 Stefanie Adomeit < stefanie.adomeit AT cern.ch > 
+        * Update on close-by jets uncertainty
+	* Removed release 15 analysis input files from analysisPlots/
+	* Updated analysis histogram titles in warning/error messages (MultijetJESUncertaintyProvider.cxx) to rel. 16 conventions
+2011-04-20 Stefanie Adomeit < stefanie.adomeit AT cern.ch > 
+	* Added example input files to analysisPlots/
+2011-04-20 Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - JetUncertainties-00-03-02
+        * CINT Standalone loading problems fixed (thanks to Bart Butler)   
+2011-04-27 Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - JetUncertainties-00-03-03
+        * Analysis files for Multijet now copied to share directory by default    
+2011-04-28 Stefanie Adomeit < stefanie.adomeit AT cern.ch > - JetUncertainties-00-03-03-branch 
+        * Added TopoGCW/LCTopo collections to MultijetJESUncertaintyProvider  
+2011-05-28 Stefanie Adomeit < caterina.doglioni AT physics.ox.ac.uk > - on JetUncertainties-00-03-03-branch 
+        * Added TopoGCW/LCTopo collections to JESUncertaintyProvider/python  
+2011-06-09 Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - on JetUncertainties-00-03-03-branch 
+        * Preparing LC/GCW Provider for tag 00-03-04
+2011-08-09 Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - on trunk
+        * Merged 00-03-03-branch with trunk
+2011-08-09 Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - on trunk
+        * RootCore version (still needs some testing)
+        * Actually adding directories and cleaning up old files
+2011-08-11 Caterina Doglioni < caterina.doglioni AT physics.ox.ac.uk > - on trunk
+        * Standalone RootCore version of JESUncertaintyProvider tested
+        * Updated JetUncertainty.root file with smooth intercalibration uncertainty/bugfix for eta intercalibration and dead material
+2011-08-12 Stefanie Adomeit < stefanie.adomeit AT cern.ch >  - on trunk
+        * moving MJES uncertainty plots to separate input file
+2011-08-12 Caterina Doglioni < caterina.doglioni AT cern.ch >  - on trunk
+        * changed to printf-style for message logging (thanks Attila) 
+        * Left to do: only JESUncertaintyProvider plots in JetUncertainties.root file, doublecheck in-situ intercalibration 
+2011-08-13 Caterina Doglioni < caterina.doglioni AT cern.ch >  - on trunk
+        * Only JESUncertaintyProvider plots in JetUncertainties.root file, smooth in-situ intercalibration 
+2011-08-13 Caterina Doglioni < caterina.doglioni AT cern.ch >  - JetUncertainties-00-03-05  
+        * Differences from previous tag: 
+          - RootCore structure
+          - Bugfixes for intercalibration and calorimeter uncertainty (impact: <1% endcap/forward,<0.5% central)
+          - two different input files for JES and MultijetJES 
+          - smooth in-situ intercalibration 
+          - printf-style logging to avoid compiler warnings
+2011-11-14  Caterina Doglioni < caterina.doglioni AT cern.ch >  - JetUncertainties-00-03-05-branch
+       * 2011 Pile-up uncertainty, RootCore version   
+2011-11-15  Caterina Doglioni < caterina.doglioni AT cern.ch >  - JetUncertainties-00-03-05-branch
+       * Removed non-working python version
+       * Preparing for tag to be inserted in R17.5.0
+

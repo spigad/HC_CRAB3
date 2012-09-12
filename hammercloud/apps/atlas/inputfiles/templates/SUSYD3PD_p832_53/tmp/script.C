@@ -1,0 +1,71 @@
+
+		{
+//		#include <vector>
+		TFileCollection * fc = new TFileCollection();
+//		cout << endl << "Registering files:" << endl;
+		fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000043.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000031.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000033.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000003.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000006.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000026.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000010.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000017.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000039.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000046.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000019.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000041.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000029.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000013.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000004.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000005.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000002.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000047.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000011.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000051.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000024.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000036.root.1__DQ2-1317760890");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000015.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000022.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000038.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000023.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000045.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000044.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000049.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000007.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000020.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000035.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000008.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000028.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000048.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000025.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000021.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000032.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000037.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000030.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000009.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000042.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000014.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000034.root.1__DQ2-1317760890");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000018.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000040.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000012.root.1");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000050.root.2__DQ2-1317760890");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000016.root.1__DQ2-1317759008");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000027.root.1__DQ2-1317760890");
+fc->Add("dcap://lcg-lrz-dcache.grid.lrz-muenchen.de/pnfs/lrz-muenchen.de/data/atlas/dq2/atlaslocalgroupdisk/data11_7TeV/NTUP_SUSY/r2603_p659_p697/data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697_tid510581_00/NTUP_SUSY.510581._000001.root.1__DQ2-1317759008");
+
+		cout << endl << "starting" << endl;
+	
+		proof = TProof::Open("");
+	
+		
+		if (proof->RegisterDataSet("data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697",fc,"OV")){ 
+			cout << endl << endl << "Successfully registered dataset data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697 on Proof!" << endl;
+			gSystem->Exit(0);
+		} else {
+			cout << endl << endl << "Registration of dataset data11_7TeV.00184130.physics_Muons.merge.NTUP_SUSY.r2603_p659_p697 registration failed!" << endl;
+			gSystem->Exit(-1);
+		}
+		}
+			

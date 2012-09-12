@@ -1,0 +1,39 @@
+Final Cutflow for run 178109
+Electron stream 
+Cut 0 : 754921		  no cut
+Cut 1 : 728779		  GRL cut
+Cut 2 : 727786		  Lar error cut
+Cut 3 : 727786		  Lar veto jet
+Cut 4 : 727081		  jet cleaning
+Cut 5 : 725636		  >= 1 vertex with > 4 tracks
+Cut 6 : 563272		  Bad muon veto
+Cut 7 : 562592		  Cosmic veto
+Cut 8 : 1558		  EE
+Cut 9 : 1524		   && mll cut
+Cut 10 : 1507		   && OS 
+Cut 11 : 1293		   && OS && Jet veto 
+Cut 12 : 222		   && OS && Jet veto && Z veto 
+Cut 13 : 0		   [SR1] && Jet veto && Z veto && METRel > 100 GeV
+Cut 14 : 44		   && OS && nJet >= 2
+Cut 15 : 10		   && OS && nJet >= 2 && Z veto
+Cut 16 : 6		   && OS && nJet >= 2 && Z veto && Bjet veto
+Cut 17 : 4		   && OS && nJet >= 2 && Z veto && Bjet veto && MCT Veto
+Cut 18 : 0		   [SR3] && nJet >= 2 && Z veto && Bjet veto && MCT Veto && METRel > 50 GeV
+Cut 19 : 1		   && OS && Jet veto && Z veto && METRel > 40 GeV
+Cut 20 : 1		   && OS && Jet veto && Z veto && METRel > 40 GeV && Pt(l1) > 50 GeV
+Cut 21 : 1		   && OS && Jet veto && Z veto && METRel > 40 GeV && Pt(l1) > 50 GeV && Pt(l1)+Pt(l2) > 100 GeV
+Cut 22 : 1		   && OS && Jet veto && Z veto && METRel > 40 GeV && Pt(l1) > 50 GeV && Pt(l1)+Pt(l2) > 100 GeV && dPhi(MET,ll) > 2.5
+Cut 23 : 1		   [SR4] && Jet veto && Z veto && METRel > 40 GeV && Pt(l1) > 50 GeV && Pt(l1)+Pt(l2) > 100 GeV && dPhi(MET,ll) > 2.5 && dPhi(MET,l2) > 0.5
+Cut 24 : 0		   [SR5] && Jet veto && Z veto && METRel > 40 GeV && mT2 > 90 GeV
+Cut 25 : 17		   && SS 
+Cut 26 : 14		   && SS && Jet veto
+Cut 27 : 0		   [SR2] && Jet veto && METRel > 100 GeV
+Cut 28 : 36		  EMU 
+Cut 29 : 34		   && mll cut
+Cut 30 : 31		   && OS 
+Cut 31 : 16		   && OS && Jet veto 
+Cut 32 : 14		   && OS && Jet veto && Z veto 
+Cut 33 : 0		   [SR1] && Jet veto && Z veto && METRel > 100 GeV
+Cut 34 : 3		   && SS 
+Cut 35 : 2		   && SS && Jet veto
+Cut 36 : 0		   [SR2] && Jet veto && METRel > 100 GeV

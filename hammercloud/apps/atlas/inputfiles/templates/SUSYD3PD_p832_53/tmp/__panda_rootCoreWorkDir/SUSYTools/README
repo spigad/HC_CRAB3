@@ -1,0 +1,132 @@
+SUSYTools library
+
+User Notes (Developers should look further down the page):
+
+Installation:
+-------------
+
+Which tag to use ? If you analyse with 
+======================================
+
+  * SUSYD3PDs tag p832, 2011 data and MC (mc11b/mc11c)
+svn co svn+ssh://svn.cern.ch/reps/atlasoff/PhysicsAnalysis/SUSYPhys/SUSYTools/tags/SUSYTools-00-00-52 SUSYTools
+  * SUSYD3PDs tag p756,p802 (+ corresponding factory NTUP p774), 2011 data and MC (MC11a)
+svn co svn+ssh://svn.cern.ch/reps/atlasoff/PhysicsAnalysis/SUSYPhys/SUSYTools/tags/SUSYTools-00-00-49 SUSYTools
+  * SUSYD3PDs tag p601/p602, 2011 data and MC (mc10b) for EPS11/LP11
+svn co svn+ssh://svn.cern.ch/reps/atlasoff/PhysicsAnalysis/SUSYPhys/SUSYTools/tags/SUSYTools-00-00-34 SUSYTools
+  * SUSYD3PDs tag p575/p576, 2011 data and MC (mc10b)
+svn co svn+ssh://svn.cern.ch/reps/atlasoff/PhysicsAnalysis/SUSYPhys/SUSYTools/tags/SUSYTools-00-00-29 SUSYTools
+  * SUSYD3PDs tag p543, 2011 data and MC (mc10a) for PLHC11
+svn co svn+ssh://svn.cern.ch/reps/atlasoff/PhysicsAnalysis/SUSYPhys/SUSYTools/tags/SUSYTools-00-00-23 SUSYTools
+  * SUSYD3PDMaker-00-09-04, rel 16 2010 data (skimmed or not) and MC, Etmiss RefJet term is fixed
+svn co svn+ssh://svn.cern.ch/reps/atlasoff/PhysicsAnalysis/SUSYPhys/SUSYTools/tags/SUSYTools-00-00-07 SUSYTools
+  * SUSYD3PDMaker-00-08-07, tag p428, rel 16 reprocessed data and MC, Etmiss RefJet term need to be recomputed
+svn co svn+ssh://svn.cern.ch/reps/atlasoff/PhysicsAnalysis/SUSYPhys/SUSYTools/tags/SUSYTools-00-00-06 SUSYTools
+
+First time step-by-step instructions for SUSYTools-00-00-35 and above
+=====================================================================
+
+mkdir Test
+cd Test
+source /afs/cern.ch/atlas/software/dist/AtlasSetup/scripts/asetup.sh 17.3.1.1,AtlasProduction,setup,here (or setup ROOT + PYTHON 2.6)
+svn co svn+ssh://svn.cern.ch/reps/atlasoff/PhysicsAnalysis/SUSYPhys/SUSYTools/tags/SUSYTools-00-XX-YY SUSYTools (tag defined above)
+python SUSYTools/python/install.py
+cd RootCore
+./configure
+source scripts/setup.sh
+cd ..
+$ROOTCOREDIR/scripts/find_packages.sh
+$ROOTCOREDIR/scripts/compile.sh
+
+Then every time you login:
+==========================
+
+cd Test
+source RootCore/scripts/setup.sh
+$ROOTCOREDIR/scripts/compile.sh
+
+Prior SUSYTools-00-00-35
+========================
+
+cd SUSYTools/cmt
+make -f Makefile.Standalone
+
+Usage:
+------
+
+With pyroot:
+============
+
+cd SUSYTools/macros
+chmod u+x susycutflow_1lep.py
+./susycutflow_1lep.py --nevts=1000
+chmod u+x susycutflow_2lep.py
+./susycutflow_2lep.py
+further options are described through
+./susycutflow_1lep.py --help
+
+With ROOT - CINT interpreter:
+=============================
+
+In SUSYTools/Root/LinkDef.h:
+  * Uncomment ' //#include "SUSYTools/Reco_dpd2.h" '
+  * Uncomment ' //#pragma link C++ class Reco_dpd2+; '
+$ROOTCOREDIR/scripts/compile.sh
+cd SUSYTools/macros
+root -l $ROOTCOREDIR/scripts/load_packages.C+
+root [1] std::string inFiles = "/<path>/<my_NTUP_SUSY>.root";
+root [2] Reco_dpd2 t;
+root [3] t.Loop(inFiles);
+
+With C++ compiled executable:
+=============================
+
+Examples of executables can be found in SUSYTools/util/
+To run it:
+cd SUSYTools/macros
+../bin/susy_1lepton_cutflow /<path>/<my_NTUP_SUSY>.root
+
+
+To add GRL checking to python scripts (only for versions < SUSYTools-00-00-35);
+> cmt co DataQuality/GoodRunsLists
+> cd DataQuality/GoodRunsLists/cmt
+> make -f Makefile.Standalone
+Then check the GRLs in SUSYTools/macros are appropriate before running.
+
+To add PileUpWeighting to python scripts (only for versions < SUSYTools-00-00-35);
+> cmt co PhysicsAnalysis/AnalysisCommon/PileupReweighting
+> cd PhysicsAnalysis/AnalysisCommon/PileupReweighting/cmt
+> make -f Makefile.Standalone
+Check the susy_*_avgintperbx.root files in data/ are current.
+
+Accessing cross-sections:
+=========================
+
+A file with cross-sections per sample (caracterize by its dataset (DS) id) is available in data/susy_crosssections.txt
+A parser is provided with SUSYTools to access it:
+root -l $ROOTCOREDIR/scripts/load_packages.C+
+root [1] SUSY::CrossSectionDB myDB("SUSYTools/data/susy_crosssections.txt")
+root [2] myDB.xsectTimesEff(107710)
+(const float)3.42275457046111882e+01
+
+_______________________________________________________________________
+
+Developer Notes:
+
+All ClassDef and ClassDef lines must be written like:
+
+#infdef SUSY_ATHENA
+Class<blah>
+#endif
+
+so that only the standalone compilation sees them. 
+
+If you add any new *.cxx files, don't forget to add them in cmt/requirements and in Root/LinkDef.h.
+
+All #include should specify the path "SUSYTOOLS/file.h" if the header is in this package - the athena compliation requires this, even though the standalone does not.
+
+All classes which are copied from other atloff athena pkgs should be put inside namespace SUSY
+
+Please test any updates.
+
+

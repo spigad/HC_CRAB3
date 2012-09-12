@@ -1,0 +1,23 @@
+Final Cutflow for run 178109
+Electron stream 
+Cut 0 : 754921		  no cut
+Cut 1 : 728779		  GRL cut
+Cut 2 : 727786		  Lar error cut
+Cut 3 : 727786		  Lar veto jet
+Cut 4 : 727081		  jet cleaning
+Cut 5 : 725636		  >= 1 vertex with > 4 tracks
+Cut 6 : 156600		  Bad muon veto
+Cut 7 : 155626		  Cosmic veto
+Cut 8 : 6046		  EF_e10_medium_mu6
+Cut 9 : 85305		  EF_e10_medium_mu6 || singleElectron
+Cut 10 : 6169		  EF_e10_medium_mu6 || singleMuon
+Cut 11 : 85428		  EF_e10_medium_mu6 || singleMuon || singleElectron
+Cut 12 : 80235		  singleMuon || singleElectron
+Cut 13 : 349		  Zee Tag
+Cut 14 : 1		   & Probe (EF_e10_medium)
+Cut 15 : 0		  Zmumu Tag
+Cut 16 : 0		   & Probe (EF_mu6)
+Cut 17 : 0		  Bootstrap for electron: muon matched to EF_mu6
+Cut 18 : 0		   && electron matched to EF_e10_medium
+Cut 19 : 1		  Bootstrap for muon: electron matched to EF_e10_medium
+Cut 20 : 0		   && muon matched to EF_mu6

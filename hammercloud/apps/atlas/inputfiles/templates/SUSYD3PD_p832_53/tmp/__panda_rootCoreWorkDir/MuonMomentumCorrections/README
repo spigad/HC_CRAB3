@@ -1,0 +1,71 @@
+INSTRUCTIONS
+
+In the latest version of SmearingClass you're able to choose between:
+   MuID and Staco algorithm;
+   pT or q/pT smearing.
+
+There are several ways to create a Smearing Class Object:
+
+1) SmearingClass sm() or SmearingClass *sm = new SmearingClass();
+
+   this is the default constructor. 
+   In this case SmearingClass use:
+	muid algorithm, pT smearing, default path for corrections values files 
+
+   N.B: default path is ".../testarea/InstallArea/share/"
+
+
+2) SmearingClass sm(algo) or SmearingClass *sm(algo) = new SmearingClass()
+  
+   where algo (as string) is the algorithm's name ("muid" or "staco")
+
+   In this case, you're using the following default options:
+	pT smearing and default path to read correction values files!
+
+   N.B: default path is ".../testarea/InstallArea/share/"
+   
+
+3) SmearingClass sm(algo,smeartype) or SmearingClass *sm(algo,smeartype) = new SmearingClass()
+
+   where algo (as string) is the algorithm's name ("muid" or "staco")
+         smeartype (as string) is the smearing momentum type ("pT" or "q_pT")
+
+   In this case, you're using default path to read correction values files!
+
+   N.B: default path is ".../testarea/InstallArea/share/"
+
+   
+4) SmearingClass sm(algo,smeartype,dir) or SmearingClass *new(algo,smeartype,dir) = new SmearingClass()
+	
+   where algo (as strin) is the algorithm's name ("muid" or "staco")
+	 smeartype (as string) is the smearing momentum type ("pT" or "q_pT")
+	 dir (as string) is the path to data files (e.g. dir="/home/salvucci/smearing/data/")
+  
+   
+If you would to change SmearingClass configuration after creation of the object, you can use:
+
+sm.SetAlgoSmearDir(algo,smeatType,dir); or sm->SetAlgoSmearDir(algo,smeatType,dir);
+
+in 3 ways:
+
+   a) sm.SetAlgoSmearDir(algo) or sm->SetAlgoSmearDir(algo)
+
+      where algo (as string) is the algorithm's name ("muid" or "staco")
+
+      In this case, you're using the following default options:
+	pT smearing and default path to read correction values files!
+
+     N.B: default path is ".../testarea/InstallArea/share/"
+
+   b) sm.SetAlgoSmearDir(algo,smeartype) or sm->SetAlgoSmearDir(algo,smeartype)
+
+      where algo (as string) is the algorithm's name ("muid" or "staco")
+            smeartype (as string) is the smearing momentum type ("pT" or "q_pT")
+
+      N.B: default path is ".../testarea/InstallArea/share/"
+
+   c) sm.SetAlgoSmearDir(algo,smeartype,dir) or sm->SetAlgoSmearDir(algo,smeartype,dir)
+
+      where algo (as strin) is the algorithm's name ("muid" or "staco")
+	    smeartype (as string) is the smearing momentum type ("pT" or "q_pT")
+	    dir (as string) is the path to data files (e.g. dir="/home/salvucci/smearing/data/")

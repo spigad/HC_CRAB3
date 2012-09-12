@@ -1,0 +1,1032 @@
+2012-01-26 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* egamma preliminary recommendations with rel17 for Winter conferences analyses
+	*  - move to egammaAnalysisUtils-00-02-70
+	*  - set mc_withCT=false in getSmearingCorrectionMeV as recommended for MC11
+	*  - add an extra energy calibration on electrons around barrel-endcap crack region applyMCCalibrationMeV
+	*  - add a flag isAF2 in IsElectron and IsPhoton to apply an extra calibration to electrons/photons
+	*  - change to rel=6 (MC for Moriond) in GetSignalElecSF,GetSignalElecSFUnc,GetTrigElecSF,GetTrigElecSFUnc:
+	M SUSYTools/SUSYObjDef.h
+	M Root/SUSYObjDef.cxx
+	M python/install.py
+	* Update HFOR tool to remove overlap only between light jets and b-quarks via HforToolD3PD::setbbOnlyOr
+	M SUSYTools/HforToolD3PD.h
+	M Root/HforToolD3PD.cxx
+	* tagging as SUSYTools-00-00-53
+
+2012-01-25 Mike Flowerdew <flowerde@mpp.mpg.de>
+	* Updated muon trigger matching in SUSYObjDef::MuonHasTriggerMatch
+	* Changed interface => modified Reco_dpd2 so it compiles
+	M          478807   Root/Reco_dpd2.cxx
+	M          478807   Root/SUSYObjDef.cxx
+	M          478807   SUSYTools/Reco_dpd2.h
+	M          478807   SUSYTools/SUSYObjDef.h
+
+2012-01-25 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Add SetDataScaleFactors(0.9) to show how to change <mu> in pileup reweighting:
+	M macros/susycutflow_1lep.py
+
+2012-01-25 Stewart Martin-Haugh <Stewart.Martin-Haugh@cern.ch>
+	* Update muon scale factor luminosities to new GRL (typo...)
+	M       Root/SUSYObjDef.cxx
+
+2012-01-25 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Add missing samples for HFOR class:
+	M Root/HforToolD3PD.cxx
+
+2012-01-24 Stewart Martin-Haugh <Stewart.Martin-Haugh@cern.ch>
+	* Update muon scale factor luminosities to new GRL
+	M       Root/SUSYObjDef.cxx
+
+2012-01-24 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Change BTagCalib interface to pass path to BTagCalibration.env and folder via function call:
+	M SUSYTools/BTagCalib.h
+	M Root/BTagCalib.cxx
+	M macros/susycutflow_1lep.py
+
+2012-01-23 Bart Butler <Bart.Butler@cern.ch>
+	* Changes to declarations/definitions of GetMET and MuonHasTriggerMatch for const correctness
+
+2012-01-23 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Modify/update/add missing cross-sections:
+	M data/susy_crosssections.txt
+	A python/amixsec.py
+
+2012-01-23 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx/.h: small modification of meff cuts
+
+2012-10-21  Teng Jian Khoo <Teng.Jian.Khoo@cern.ch>
+	M       Root/BTagCalib.cxx
+	* 
+
+2012-10-20  Zach Marshall <zach.marshall@cern.ch>
+	* Root/BTagCalib.cxx: Changing default behavior from error and abort when finding a jet out of acceptance to
+	 simply assigning a b-tag weight of one and continuing with the remaining jets
+
+2012-01-20 Teng Jian Khoo <Teng.Jian.Khoo@cern.ch>
+        M       Root/SUSYObjDef.cxx
+	* Turn on RefGamma -- irrelevant for Simplified20 because it's just not computed, but needed for anything with photons
+
+2012-01-20 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* macros/susycutflow_1lep.py: fix pt descendent sorting using smeared or modified jet pT instead of raw one
+
+2012-01-19 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYTools/ScaleVariatioReweighter.hpp: remove typedef to fix warning message
+	* tagging as SUSYTools-00-00-52
+
+2012-01-19 Teng Jian Khoo <Teng.Jian.Khoo@cern.ch>	
+        M       python/install.py
+	* Update to MissingETUtility-00-02-08 (bugfixes and RootCore improvements)
+        M       Root/SUSYObjDef.cxx
+	* Changes to photon selection and GetMET JER calls
+        M       SUSYTools/SUSYObjDef.h
+	* Add photon scale factor for last eta bin
+
+2012-01-19 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* macros/susycutflow_1lep.py: fix mc11b pileup file name, set electron threshold to 10 GeV, readd b-tagging SF
+	* data/BTagCalibrations.root: replace B-tagging calibration file by the one from https://twiki.cern.ch/twiki/pub/AtlasProtected/Analysis17/TopCalibrations_rel17_MC11b.root and recommended for winter conferences
+
+2012-01-19 Valerio Consorti <valerio.consorti@cern.ch>
+	* ScaleVariatioReweighter.cxx, ScaleVariatioReweighter.hpp: new routine to reweight W,Z and ttbar AlpGen samples from the central value to the to the value 
+                                                              that they would assume variating factorization or renormalization scale in MC generator.
+																															For W also some MLM matching parameter variation is available.
+
+2012-01-18 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx, Reco_dpd2.h: major update; can now also deal with systematics, can obtain fake efficiencies, can get QCD weights for QCD estimate etc.
+
+2012-01-17 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Cleaning, remove warning messages.
+
+2012-01-16 Bart Butler <Bart.Butler@cern.ch>
+        * Multiple minor changes for initialized class persistification (PROOF)
+        * Fixes for unstable random number generation (prevent use of seed 0)
+
+2012-01-16 Mike Flowerdew <flowerde@mpp.mpg.de>
+	M          476890   data/susy_crosssections.txt
+	* Added lepton-filtered PythiaB cross sections for MC11b (e825)
+
+2012-01-16 Iacopo Vivarelli <Iacopo.Vivarelli@cern.ch>
+	* Changed jet pt passed to isBadJet in SUSYObjDef 
+	
+2012-01-13 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Move to PileupReweighting-00-02-01 for bug fix reasons
+	M python/install.py
+	* Following request from Anders Floderus, modify order of arguments in initialize function
+	M SUSYTools/SUSYObjDef.h
+	M Root/SUSYObjDef.cxx
+
+2012-01-12 Stewart Martin-Haugh <Stewart.Martin-Haugh@cern.ch>
+	* Remove all references to SUSYTools egammaPIDdefs.h
+	M       Root/Reco_dpd2.cxx
+	M       Root/Reco2Lep.cxx
+	M       SUSYTools/Reco_dpd2.h
+	M       SUSYTools/Reco2Lep.h
+	D       SUSYTools/egammaPIDdefs.h
+
+
+2012-01-12 Iacopo Vivarelli <Iacopo.Vivarelli@cern.ch>
+	* Bug fix in susycutflow_1lep.py, IsJet function was using a variable available only for MC
+
+
+2012-01-11 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Bug fix in GetMET, el_pt, el_eta and el_phi have now content filled as el_wet, el_wpx and el_wpy
+	M Root/SUSYObjDef.cxx
+	* Bug fix in choice of trig_EF_el_EF chain used when having 2 triggers like EF_e22vh_medium1 OR EF_e45_medium1
+	M macros/susycutflow_1lep.py
+	* tagging as SUSYTools-00-00-51
+
+2012-01-10 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* bug fix in susycutflow_1lep.py about trigger chain used in MC for electron channel
+	* bug fix in susycutflow_1lep.py, apply mu18 trigger always to MC
+
+2012-01-10 Mike Flowerdew <flowerde@mpp.mpg.de>
+	M          475819   SUSYTools/SUSYCrossSection.h
+	* Added begin() and end() methods to allow iteration over processes
+	M          475819   Root/LinkDef.h
+	* Added associated dictionary generation, for CINT and pyROOT
+
+2012-01-09 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* tagging as SUSYTools-00-00-50
+
+2012-01-09 Dan Short <Daniel.Short@cern.ch>
+	* Updated pileup reweighting in macros/susycutflow_1lep.py and python/install.py, default is now mc11b
+
+2012-01-09 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* 1- Modify SUSYObjDef::IsJet to include the new jet cleaning recommendation:
+	* VeryLooseBad becomes default criteria and
+	* add a new input variable jet_AntiKt4TopoNewEM_AverageLArQF required for VeryLooseBad cleaning.
+	* 2- Fill only TLorentzVector for electrons if entering Etmiss RefEle => these are electrons later used in GetMET.
+	* As a consequence, IsElectron need an additionnal variable el_wet as input.
+	* 3- Etmiss can now be computed up to eta=4.9 => set doForwardEtaCut(false) in SUSYObjDef::initialize
+	* and use smeared electron pT computed in IsElectron to recompute RefEle term
+	* 4- Add a proper Trigger treatment for leptonic trigger depending on RunNumber both in data and MC
+	M SUSYTools/SUSYObjDef.h
+	M Root/SUSYObjDef.cxx
+	M macros/susycutflow_1lep.py
+	* The next two files are broken and momentary filled with dummy values
+	M Root/Reco_dpd2.cxx
+	M Root/Reco2lep.cxx
+
+2012-01-07 Iacopo Vivarelli <iacopo.vivarelli@cern.ch>
+	* Modified default MET in susycutflow_1lep, now obtained always from METUtility
+	* Modified JER systematics in IsJet
+	* Added protection for jets with too large eta in SmearJets
+	M Root/SUSYObjDef.cxx
+	M macros/susycutflow_1lep.py
+
+2012-01-06 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Replace obsolete mu_staco_isLowPtReconstructedMuon by mu_staco_isSegmentTaggedMuon in SUSYObjDef::IsMuon
+	M SUSYTools/SUSYObjDef.h
+	M Root/SUSYObjDef.cxx
+	M macros/susycutflow_1lep.py
+
+2012-01-05 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Define "signal" jets in 1-lepton cutflow as |eta|<2.5 AND jvf>0.75
+	* Check if an offline electron is matching a corresponding trigger object + require that electron candidate is matching a trigger object
+	* set config.nojetsmear to false by default:
+	M macros/susycutflow_1lep.py
+
+2012-01-05 Iacopo Vivarelli <Iacopo.Vivarelli@cern.ch>
+	* Fixing a bug in the IsJet function
+
+2011-12-23 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* tagging as SUSYTools-00-00-49
+
+2011-12-22 Iacopo Vivarelli <iacopo.vivarelli@cern.ch>
+	* add additional jet smearing by default as per Jet/EtMiss recommendations. This is done in a new function in SUSYObjDef called SmearJets. Note that the propagation to the missing et is not yet done. 
+	* modified also susycutflow_1lep.py to add a flag to switch off smearing. The smearing is off by default.
+	* Jet cleaning code updated to the latest recommendation from Jet/EtMiss. Cleaning criteria moved to VeryLooseBad in susycutflow_1lep.py. Cleaning now applied both to data and MC. 
+	
+2011-12-20 Louise Heelan <louise.heelan@cern.ch>
+	* fixing checkreq.py problems, removing CalibrationDataInterface from
+	  requirements file, fixing JetUncertainties typo in requirements file
+	* (plan: update 17.X.0 and 17.0.X nightlies, waiting on other packages)
+
+2011-12-20 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Root/SUSYObjDef.cxx: from Laurent Duflot, to gain computing time, call SetElecTLV in IsElectron after all cuts (except pT cut of course)
+
+2011-12-19 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* data/susy_crosssections.txt: from Lucian Ancu add cross-sections for Alpgen Wc+jets, Algpen DY, diboson samples
+
+2011-12-18 Iacopo vivarelli <iacopo.vivarelli@cern.ch>
+	* SUSYTools/SUSYObjDef.h Modified interface to IsJet function to pass the true flavor of the jet (new recommendations on b-jet energy scale uncertainty)
+	* Root/SUSYObjDef.cxx Modified IsJet function to comply with the latest (JetUncertainties-00-03-05-01) recommendations on JES uncertainty. Added b-jet energy scale uncertainty based on true flavor
+	* Reco_dpd2, Reco2Lep, susycutflow_1lep.py all modified to cope with the new IsJet interface
+
+2011-12-16 Iacopo Vivarelli <iacopo.vivarelli@cern.ch>
+	* python/install.py Moved to JetUncertainties-00-03-05-01. Code to use new pileup uncertainties not yet updated.
+
+2011-12-16 Zach Marshall <zach.marshall@cern.ch>
+	* python/install.py: Adding TrigRootAnalysis for convenient trigger pre-scale access
+	* Root/SUSYObjDef.cxx: Small modification to make sure JER uncertainty uses existing functions (compiles now)
+	 Will have to be updated for R17/MC11 recommendations when they are available.
+
+2011-12-15 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* python/install.py: move to JetResolution-00-00-08 which are latest JER recommendations 
+
+2011-12-12 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYTools/SUSYObjDef.h: bug fix in GetTrigElecSF and GetTrigElecSFUnc, default set = 10 instead of 11
+
+2011-12-05 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* tagging as SUSYTools-00-00-48
+
+2011-12-04 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: bug fix, initialize m_iEl, m_iPh, m_iMu and m_iJet in constructor
+	* python/install.py: use egammaAnalysisUtils-00-02-56
+
+2011-12-02 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* macros/susycutflow_1lep.py: bug fix in meff computation, forgot to add lepton pt
+	* SUSYObjDef: Replace arrays by stl vector to store TLorentzVector in SUSYObjDef. This avoids memory leaks when object index is exceeding array size.
+	* tagging as SUSYTools-00-00-47
+
+2011-12-01 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* python/install.py: use RootCore-00-00-31 fixing behavior of clean.sh. Add a new command --vclean to remove obsolete pkgs before checking them out again.
+	* Root/MuonTriggerSFTool.cxx: bug fix. Remove delete statement for histos (done by ROOT). Initialize pointers to 0 in constructor.
+	* tagging as SUSYTools-00-00-46
+
+2011-11-30 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* macros/susycutflow_1lep.py: cleanup, remove all references to egammaOQ weights, add Moriond12 cuts for 1-lepton + 3jets tight definition 
+
+2011-11-29 Dan Short <Daniel.Short@cern.ch>
+	* Implemented new pileup reweighting (version 00-01-02) as per instructions on https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/ExtendedPileupReweighting
+	* python/install.py: Get new version of the tool
+	* macros/susycutflow_1lep.py: New option to generate MC pileup file --PUgen should be run before using with pileup weights otherwise the default file as shipped with PileupReweighting will be used. Hardcoded to run with Action=2 and merging last two runs - preliminary studies showed this should give best statistical representation of data (kinematics should be checked, where possible!). Run as before with --PUwgt
+	* Updated pileup files in data/susy_*_avginterpbx.root for GRL data11_7TeV.periodAllYear_DetStatus-v36-pro10_CoolRunQuery-00-04-08_Susy.xml
+	* Added new pileup file for soft lepton triggers susy_MET_avgintperbx.root
+	
+2011-11-25 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Photon selection for mc11a rel17: follow recommendations from https://twiki.cern.ch/twiki/bin/view/AtlasProtected/SMDirectPhoton2011Common#Photon_selection_and_calibration and https://twiki.cern.ch/twiki/bin/view/AtlasProtected/HSG1WinterConf2012#Inclusive_selection
+	M SUSYObjDef: IsPhoton is now including a cut on electron/photon ambiguity resolver (AR) bit removal and a flag isloose to apply either ph_loose or ph_tight (default) as isEM criteria
+	* Photon fudge factors: Add FudgeMCTool class using $SVNGRP/Physics/StandardModel/PromptPhotons/FudgeMCTool/tags/FudgeMCTool-00-00-10 following recommendations from https://twiki.cern.ch/twiki/bin/viewauth/AtlasProtected/PhotonFudgeFactors
+	A FudgeMCTool
+	M SUSYObjDef: IsPhoton is now calling FudgeMCTool for MC
+
+2011-11-25 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* tagging as SUSYTools-00-00-45
+
+2011-11-23 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Root/LinkDef.h: add vector<vector<unsigned int>>
+	* Root/SUSYObjDef.cxx: bug fix in JES/JER propagation to Etmiss. Add break statement after each case.
+	* macros/susycutflow_1lep.py: add ROOT.gInterpreter.GenerateDictionary for vector<vector<float>> and vector<vector<unsigned int>> causing troubles with some ROOT versions
+
+2011-11-22 Louise Heelan <louise.heelan@cern.ch
+	M test/SUSYTools_TestConfiguration.xml
+	* updating the SUSY ATN tests with change of data location from
+	  castor to eos
+	* also removed some outdated tests (to do with DAODs -> no longer use)
+	* tagging as SUSYTools-00-00-44
+
+2011-11-22 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* python/install.py: use MuonEfficiencyCorrections-01-00-10 which is latest recommendation from https://twiki.cern.ch/twiki/bin/view/AtlasProtected/MCPAnalysisGuidelinesRel17MC11a
+	* python/install.py: use egammaAnalysisUtils-00-02-50 which is latest egamma r17 recommendation from https://twiki.cern.ch/twiki/bin/view/AtlasProtected/EfficiencyMeasurements#Electron_efficiencies_2011_Counc
+	* SUSYObjDef, macros/susycutflow_1lep.py: IsSignalElectron is now using el_tightPP as default for r17
+	* SUSYObjDef, macros/susycutflow_1lep.py: GetTrigElecSF method now requires as input also electron cluster ET.
+	* tagging as SUSYTools-00-00-43
+
+2011-11-21 Sophie Henrot-Versille <versille@lal.in2p3.fr>
+	* in SUSYObjDef change the energy of the jet as for the jet pt once JES/JER computation is activated.
+
+2011-11-19 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* python/install.py: use MuonEfficiencyCorrections-01-00-08 which is latest recommendation from https://twiki.cern.ch/twiki/bin/view/AtlasProtected/MCPAnalysisGuidelinesRel17MC11a
+
+2011-11-16 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* macros/susycutflow_1lep.py: update GetMETUtil
+	* Root/MuonTriggerSFTool.cxx: do not use pT dependent muon scale factors for r17
+
+2011-11-15 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx: small bug fix in trigger rescaling for muons
+
+2011-11-4 Sophie HenrotVersille versille@lal.in2p3.fr
+	* correct for getMETUtil function bug in call for syste computation
+	* add function to get the MET component independantly 
+	* remove useless arguments to getMETUtil
+	* carefull for the arguments to getMETUtil !! see the code for the correct arguments
+	
+2011-11-14 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* python/install.py: add egammaEvent-03-06-20 to get egammaPIDdefs.h 
+	* SUSYObjDef: now use "egammaEvent/egammaPIDdefs.h"
+
+2011-11-12 Michel Janus <janus@cern.ch>
+        *       Root/SUSYObjDef.cxx: bugfix in tau eta cut definition
+
+2011-11-10 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* tagging as SUSYTools-00-00-42 to keep track of initial rel16 tau obj selection 
+
+2011-11-10 Michel Janus <janus@cern.ch>
+	*       SUSYTools/SUSYObjDef.h: added new method IsTau to provide common tau definition  
+        *       Root/SUSYObjDef.cxx: first implementation of IsTau
+		
+2011-11-10 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* python/install.py: bug fix in ReweightUtils-00-02-03 which was previously causing crashes
+	* SUSYObjDef: Modify Initialize methods with additionnal configurables for jes/jer
+
+2011-11-09 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx, Reco_dpd2.h: add possibility to use scale factors for muon triggers (default)
+
+2011-11-08 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* macros/susycutflow_1lep.py: add examples on how to use Jet/Etmiss uncertainties (--jesup, --jesdown, --jer).
+	* Root/LinkDef.h: add namespaces JetID and JetErr to the dictionary 
+	* python/install.py: move to RootCore-00-00-29 and add ReweightUtils-00-02-02
+	* Move to ReweightUtils package
+	D SUSYTools/APEvtWeight.h
+	D SUSYTools/APReweightND.h
+	D SUSYTools/APWeightEntry.h
+	D Root/APEvtWeight.cxx
+	D Root/APReweightND.cxx
+	D Root/APWeightEntry.cxx
+	* Remove obsolete GRL files
+	D macros/data10_7TeV.pro05.merged_LBSUMM_Susy.xml
+	D macros/data11_7TeV.pro07.merged_LBSUMM_Susy.xml
+	* tagging as SUSYTools-00-00-41
+
+2011-11-08 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx, Reco_dpd2.h: incorporate changes in SUSYObjDef 
+
+2011-11-07 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* macros/susycutflow_1lep.py: bug fix in loading preload libraries. Get egammaOQ from SUSYObjDef class. 
+	* Root/SUSYObjDef.cxx: fix memory leak in SUSYObjDef::Reset 
+	* First MCP recommendations for rel17: use MuonMomentumCorrections-00-04-01 and MuonEfficiencyCorrections-01-00-05. Update SUSYObjDef accordingly.
+
+2011-11-04: Sophie Henrot-Versille <versille@lal.in2p3.fr>
+	* python/install.py add JetUncertainties-00-03-05, JetResolution-00-00-05, MissingETUtility-00-02-06
+	* changes in requirements and Makefile in cmt/ accordingly
+	* Add functions in SUSYObjDef: a JetErr namespace, new arguments in isJet (namely syste and drmin)
+	and a new GetMETUtil function which is supposed to replace GetMet for syste (and even without
+	syste : for instance GetMET and GetMETUtil give the same values for JetErr:NONE I kept GetMET
+	since the interfaces were _very_ different between the 2 functions...) 
+
+2011-11-02 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* python/install.py: move to egammaAnalysisUtils-00-02-45 to use egammaOQ weights
+	* macros/susycutflow_1lep.py: Update default file to r17. Turn off pileup and b-tagging weights. Use the same method to both data and mc for the smart veto. Reweight mc events as a function of integrated lumi for each four main COND data periods via egammaOQ. 
+	* HforToolD3PD: added class from Takashi Yamanaka following instructions from https://twiki.cern.ch/twiki/bin/view/Main/HforToolD3PD
+
+2011-10-31 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* README: update compilation and usage instructions
+	* SUSYObjDef: Update default working points for b-tagging in IsBJet method following r17 preliminary instructions from https://twiki.cern.ch/twiki/bin/view/AtlasProtected/BTagCalibWinter2012
+
+2011-10-26 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: use el_mediumPP instead of el_medium for "baseline" IsElectron selection to fulfill triger requirement
+	* python/install.py: use GoodRunsLists-00-00-96 to include a bug fix
+
+2011-10-21 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Include text file with cross-sections plus parser to access them in C++/pyroot
+	A data/susy_crosssections.txt
+	A SUSYTools/SUSYCrossSection.h
+	A Root/SUSYCrossSection.cxx
+	* tagging as SUSYTools-00-00-40
+
+2011-10-20 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Add further methods for "signal" photon selection where isolation is recomputed
+	M SUSYObjDef: new method named IsSignalPhotonCompIso
+
+2011-10-19 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Add RTT xml validation
+	M cmt/requirements: apply_pattern validate_xml
+	* Use el_medium and el_tight instead of el_isEM because egammaPID is error prone
+	M SUSYObjDef: IsElectron and IsSignalElectron are now using el_medium and el_tight respectively
+
+2011-10-18 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Add photon selection as done by T. Sandoval for EPS11 0-lepton paper
+	M SUSYObjDef: new methods are 
+	IsPhoton (baseline selection), 
+	IsSignalPhoton (isolation + tighter pT cut), 
+	SetPhotonTLV, GetPhotonTLV helper functions
+	A PhotonIDTool, PtEtaCollection: 
+	classes provided by SMDP group to perform photon id selection
+	* Changes in b-tagging treatment
+	M python/install.py: rely now on CalibrationDataInterface svn pkg
+	M Root/BTagCalib.cxx: request from Takashi to modify error treatment
+	D SUSYTools/CalibrationDataInterfaceBase.h
+	D SUSYTools/CalibrationDataInterfaceROOT.h
+	D Root/CalibrationDataInterfaceROOT.cxx
+	D Root/CalibrationDataInterfaceBase.cxx
+	* release 17 changes
+	M SUSYObjDef: checkOQ flag set to False by default in IsElectron and
+	IsPhoton
+	* cleaning of 0-lepton code duplicated in zero-lepton factory
+	D SUSYTools/Reco0Lep.h
+	D Root/Reco0Lep.cxx
+	D util/susy_0lepton_cutflow.cxx
+
+2011-10-14 Louise Heelan <louise.heelan@cern.ch>
+	M cmt/requirements
+	* adding final package:
+	  PhysicsAnalysis/MuonID/MuonIDAnalysis/MuonEfficiencyCorrections
+	  for checkreq.py to work
+	* tagging as SUSYTools-00-00-39
+
+2011-10-09 Louise Heelan <louise.heelan@cern.ch>
+        M cmt/requirements
+        * add required 'use' lines for checkreq script
+	* (note one package MuonEfficiencyCorrections still not found)
+	* tagging SUSYTools-00-00-38
+
+2011-10-06 Louise Heelan <louise.heelan@cern.ch>
+	M cmt/requirements
+	* fix compilation bug(s) when gmake-ing
+	  (no longer code in src/ dir)
+	* tagging SUSYTools-00-00-37
+
+2011-10-05 Louise Heelan <louise.heelan@cern.ch>
+	M test/SUSYTools_TestConfiguration.xml
+	* removing SUSYD3PD_RecoTrf_memoryLeak from the RTT tests
+	  (crashing in 17.X.0 and taking a really long time to run)
+	* tagging SUSYTools-00-00-36
+
+2011-10-03 Dan Short <Daniel.Short@cern.ch>
+	* data/susy_*_avgintperbx.root: Updated to SUSY GRL v28 (2.05fb-1)
+	* data/susy_nonBCID_intperbx.root: Updated to SUSY GRL v28 (2.05fb-1)
+
+2011-10-03 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Use egammaAnalysisUtils pkg with tag egammaAnalysisUtils-00-02-43, remove duplicated classes from SUSYTools
+	D Root/EnergyRescaler.cxx and SUSYTools/EnergyRescaler.h
+	D Root/egammaSFclass.cxx and SUSYTools/egammaSFclass.h
+	D Root/checkOQ.cxx and SUSYTools/checkOQ.h
+	M Reco0Lep, Reco2Lep, Reco_dpd2 
+	* SUSYObjDef: bin scaleFactorRecoTrkQual as a function of both eta and Et
+	* SUSYObjDef: EnergyRescaler functions can now be in MeV
+	* macros/susycutflow_1lep.py: egamma scale factors Et is computed as cluter_E/cosh(track_eta)
+
+2011-09-15 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* python/install.py: upgrade to RootCore-00-00-15 for grid scripts typo fix
+	* Tagging SUSYTools-00-00-35
+
+2011-09-14 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: remove usage of TJetCleaningTool causing crashes when executed under athena environment => go back to JetID
+	* SUSYObjDef: add a new method IsBadMuon returning true when sigma(q/p)/|q/p|>0.2. If event contains a bad muon before overlap removal, the event should be vetoed. Remove this cut from IsMuon method.
+	* macros/susycutflow_1lep.py: count the number of bad muons before overlap removal and reject events with >= 1 bad muon
+	D cmt/Makefile.Standalone: remove standalone makefile from SUSYTools as obsolete
+
+2011-08-29 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* python/install.py: cosmetic change, instructions printed from a method named doc
+	A python/__init__.py: add
+
+2011-08-24 Dan Short <Daniel.Short@cern.ch>
+	* data/susy_*_avgintperbx.root: Updated to SUSY GRL v27 (1.95fb-1). Triggers for new menu are included for corresponding valid periods according to https://twiki.cern.ch/twiki/bin/view/AtlasProtected/SusyObjectDefinitionsr16 by splitting the GRL into <periodJ and >=periodJ and generating separate ilumicalc files for each period/trigger combination. These histograms are then merged.
+	* data/susy_nonBCID_intperbx.root: Updated to SUSY GRL v27 (1.95fb-1).
+
+2011-08-23 Ryuichi Ueno <ryuichi.ueno@cern.ch>
+	* src/Reco2Lep.cxx: Modification to jet selection. Using updated SUSYObjDef class instead of JetID tool for badjet selection
+	
+2011-08-22 Ryuichi Ueno <ryuichi.ueno@cern.ch>
+	* cmt/Makefile.RootCore: Added GRL and PileupReweighting dependencies. XMLParser library needed for GRL
+	* src/Reco2Lep.cxx: Fixed compilation warnings. Modified to bypass GRL and Pileup library checks, as it is now included by default. 
+	* SUSYTools/Reco2Lep.h: See above.
+
+2011-08-15 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Move to RootCore framework
+	A cmt/Makefile.RootCore: add baseline makefile
+	A Root: add a Root folder containing all ROOT standalone cxx files
+	A util: add an util folder containing all executables susy_*lepton_cutflow.cxx
+	A python/install.py: script to use to download SUSYTools pkg dependencies
+	M SUSYTools/SUSYObjDef.h: use muon classes directly from their pkgs MuonMomentumCorrections and MuonEfficiencyCorrections. Modify correspondingly SUSYTools::initialize method
+	M SUSYTools/SUSYObjDef.h: use JetSelectorTools pkg for apply jet cleaning in the method SUSYObjDef::IsJet. Add a method SUSYTools::finalize
+	M macros/susycutflow_1lep.py: make it RootCore compatible
+	M README: update instructions to compile
+	R remove all files contained in MuonMomentumCorrections and MuonEfficiencyCorrections
+
+2011-08-10 Ryuichi Ueno <ryuichi.ueno@cern.ch>
+	* src/Reco2Lep.cxx: Modified to reflect changes in SUSYObjDef. Also changes to BadJet Rejection method to current recommendation
+	* SUSYTools/Reco2Lep.h: See above
+	* src/susy_2lepton_cutflow.cpp: Some minor input changes. No longer does lumi scaling.
+
+2011-08-05 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx, Reco_dpd2.h: propagated more changes in SUSYObjDef, included modification of container definition in SUSYObjDef.h 
+
+2011-08-04 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx, Reco_dpd2.h: propagated some of the changes in SUSYObjDef (muon object definition) - to be continued in the next days
+
+2011-08-03 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYTools/SUSYObjDef.h: include a cut on sigma(q/p)/(q/p) < 0.2 in the muon method IsMuon. The cut can be mofidied as an input argument (negative value means no cut applied)
+	* SUSYTools/SUSYObjDef.h: add a new method from Takashi Yamanaka to reject jets duplicating an electron in Etmiss computation. The method is named GetFixedMet
+	* macros/susycutflow_1lep.py: modify the macro to reflect the above changes
+	* Tagging SUSYTools-00-00-34
+
+2011-07-26 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYTools/FakeMetEstimator.h: updated FakeMetEstimator.h v4.0 from Yousuke
+	* SUSYTools/Reco_dpd2.h: revert to previous version reincluding missing branches
+	* SUSYTools/LinkDef.h: revert to previous version reincluding TJVFReweighting
+
+2011-07-25 Ryuichi Ueno <ryuichi.ueno@cern.ch>
+	* SUSYTools/SUSYObjDef.h: Moved Container class from Reco_dpd2.h Reco0Lep and Reco2Lep was also using this so move to more centralized location. This also enables Reco0Lep and Reco2Lep to be compiled without depending on Reco_dpd2.
+	* SUSYTools/Reco_dpd2.h: Container class moved to SUSYObjDef.h
+	* SUSYTools/Reco2Lep.h: Removed Reco_dpd2.h from the header.
+	* SUSYTools/LinkDef.h: See above
+	* src/susy_2lepton_cutflow.cpp: Small aesthetic changes
+	* src/Reco2Lep.cxx: Minor changes 
+
+2011-07-24 Ryuichi Ueno <ryuichi.ueno@cern.ch>
+	* cmt/requirements: Did not read the README file carefully. Linking error is now fixed
+	* SUSYTools/LinkDef.h: See above
+	* src/susy_2lepton_cutflow.cpp: Change user input, now require external file for parameter
+	* src/Reco2Lep.cxx: Use of smeared muon kinematic variables for SF calculation
+
+2011-07-19 Ryuichi Ueno <ryuichi.ueno@cern.ch>
+	* SUSYTools/Reco2Lep.h: Accomodate changes for src/Reco2Lep.cxx
+	* src/Reco2Lep.cxx: Update to most recent cutflow recommendation. Prettify code structure 
+	* src/susy_2lepton_cutflow.cpp: Change user input
+
+2011-07-17 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* src/StacoCBScaleEffFactors.cxx: Units corrected as done in MuonEfficiencyCorrections-00-03-12 
+
+2011-07-14 Ryuichi Ueno <ryuichi.ueno@cern.ch>
+	* SUSYTools/Reco2Lep.h: Header file for src/Reco2Lep.cxx
+	* src/Reco2Lep.cxx: Cutflow tool for 2-lepton channel
+	* src/susy_2lepton_cutflow.cpp: Binary executable for 2-lepton channel
+	* cmt/Makefile.Standalone: Update Makefile to accomodate the 2lepton cutflow binary
+
+2011-07-13 Bart Butler <bbutler@cern.ch>
+	* PROOF-compatibility changes, mostly back-port of old changes
+	* SUSYTools/CalibrationDataInterfaceBase.h: inherit from TNamed, ClassDef macro
+	* SUSYTools/CalibrationDataInterfaceROOT.h: ClassDef macro, don't save TFile pointers, initialize function, default constructor
+	* src/CalibrationDataInterfaceROOT.cxx: initialize function, default constructor
+	* SUSYTools/TJVFReweighting.h: don't save TFile pointer
+
+2011-07-13 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYTools/SmearingClass.h: From Alex Pinder, fix a returning NAN for some events 
+	* Tagging SUSYTools-00-00-33
+
+2011-07-13 Dan Short <Daniel.Short@cern.ch>
+	* data/jvfWeights.root: Scale factors for JVFReweighting
+	* src/TJVFReweighting.cxx: Tool to do the JVFReweighting for 1 lepton JVF cut systematic
+	* SUSYTools/TJVFReweighting.h: Tool to do the JVFReweighting for 1 lepton JVF cut systematic
+	* SUSYTools/LinkDef.h: Added in ROOT access to JVFReweighting class
+	* macros/susycutflow_1lep.py: Added example implementation of JVFReweighting with config flag to switch it on
+	
+2011-07-11 Dan Short <Daniel.Short@cern.ch>
+	* data/susy*intperbx.root Updated to use latest luminosity tag
+	* data/susy_nonBCID_intperbx.root: Updated to use latest luminosity tag
+
+2011-07-08 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* macros/susycutflow_1lep.py: modify dphi(jet,met) cut (use all jets) and smart LAr hole veto (require jets have pT > 20 GeV). Add possibility to run on data.
+
+2011-07-07 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* macros/susycutflow_1lep.py: update 1-lepton cutflow including the smart LAr hole veto. Fix also trigger matching when data-driven reweighting is used.
+
+2011-07-07 Marie-Helene Genest <marie-helene.genest@lmu.de>
+	* SUSYObjDef: corrected a small bug in the muon trigger matching in setting the TLorentzVector (the bug had no impact on the matching results)
+
+2011-07-06 Dan Short <Daniel.Short@cern.ch>
+	* data/susy_*intperbx.root: New pileup reweighting histograms for data11_7TeV.periodAllYear_DetStatus-v18-pro08-04_CoolRunQuery-00-03-98_Susy.xml
+	* data/susy_nonBCID_intperbx.root: Updated for data11_7TeV.periodAllYear_DetStatus-v18-pro08-04_CoolRunQuery-00-03-98_Susy.xml
+	
+2011-07-06 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* macros/susycutflow_1lep.py: include a JVF cut at |JVF|>0.75 to define "signal" jets in 1-lepton analysis. For people reading this ChangeLog, this cut is only applied in 1-lepton analysis till now.
+	* data/BTagCalibration.env: comment some line only used in Athena but which could bring confusion
+	* data/susy_*_GRLv18.root: remove deprecated pileup reweighting files
+
+2011-07-05 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: Bug fix in IsBJet, change jetTagger name from "JetFitterCombNN" to "JetFitterCOMBNN" for consistency with D3PD branch name
+	* FakeMetEstimator: Fix memory leak adding in destructor cache_ftype[i]->SetOwner(1)
+	* macros/susycutflow_1lep.py: Revert to previous cosmics cuts z0pv < 5 mm and d0pv < 2mm for the RPV search. 
+	* macros/susycutflow_1lep.py: Fix bug when counting number of events passing LAr hole veto. 
+	* Tagging SUSYTools-00-00-32
+
+2011-07-04 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx, Reco_dpd2.h: change MET definitions, modify weight for electrons due to electron trigger
+
+2011-07-01 Bart Butler <bbutler@cern.ch>
+	* Minor changes and bugfixes to the APReweightND and APWeightEntry classes for PROOF-compatibility (muon trigger reweighting)
+
+2011-07-01 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* BTagCalib: Bug fix, change operating point value previously hardcoded to a variable steered by method
+
+2011-06-30 Tim Brooks <brooks@cern.ch>
+	* macros/susycutflow_1lep.py: Added in triggers on data.
+
+2011-06-29 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* BTagCalib: add possibility to change the taggerName and the operating point value
+	* macros/susycutflow_1lep.py: show an example on how to tag a jet with a different tagger and compute the b-tagging weight in MC
+	* SUSYObjDef: IsBJet, add possibility to change the taggerName and the operating point value following recommendations from https://twiki.cern.ch/twiki/bin/view/AtlasProtected/Analysis16#Calibrations_to_be_used_for_EPS
+	* egammaSFclass: add new egamma recommendations with SF available above 7 GeV (rel=4) taking it from egammaAnalysisUtils-00-02-29
+	* macros/susycutflow_1lep.py: when selecting == 1 muon, request that this offline muon is matched to a trigger object
+	* SUSYTools/LinkDef.h: include namespace SUSY for CalibrationDataInterfaceBase, CalibrationDataInterfaceROOT
+	* Tagging SUSYTools-00-00-31
+
+2011-06-28 Tim Brooks <brooks@cern.ch>
+	* macros/susycutflow_2lep.py: Propagated changes from susycutflow_1lep.py
+	* macros/susycutflow_2lep.py: Implemented trigger reweighting from trigger matched muons.
+	* macros/susycutflow_2lep.py: Added PileUp implementation (if PileupReweighting is compiled stand-alone).
+	* macros/susycutflow_1lep.py: Added trigger reweighting and PileUp implementation as above.
+	* src/APEvtWeight.cxx: Fixed compile error on some platforms.
+	* SUSYTools/LinkDef.h: Linked in some STL classes needed for muon trigger matching.
+
+2011-06-28 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* CalibrationDataInterfaceBase, CalibrationDataInterfaceROOT: update the classes with latest version of CalibrationDataInterface-00-00-07
+	* data/BTagCalibrations.root: new b-tagging recommendations for EPS. File is copy from https://twiki.cern.ch/twiki/pub/AtlasProtected/Analysis16/TopCalibrations_EPS_2011_v0.root
+
+2011-06-27 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: add RunNumber as input argument to IsLArHoleVeto. Pt threshold is multiplied by (1-BCH_CORR_JET)/(1-BCH_CORR_CELL) only if running on data and RunNumber >= 180614.
+	* susycutflow_1lep.py: always apply the electron veto to data (to do as in MC)
+	* susycutflow_1lep.py: add an example on how to apply the trigger scaling factors for muons on MC
+	* susycutflow_1lep.py: compute Etmiss up to 4.5 only by summing contributions from CentralRef + EndcapReg + ForwardReg
+	* Tagging SUSYTools-00-00-30
+
+2011-06-27 Max Baak <mbaak@cern.ch>
+	* Muon Trigger group scale factor recommendation for EPS
+	A       SUSYTools/MuonTriggerSFTool.h
+	M       SUSYTools/LinkDef.h
+	A       src/MuonTriggerSFTool.cxx
+	* Input files for muon trigger scale factor tool
+	A  (bin)  trigger/SF_barrel_ptdep.root
+	A  (bin)  trigger/SF_for_EPS.root
+
+
+2011-06-23 Marie-Helene Genest <marie-helene.genest@lmu.de>
+	* updated muon trigger map EF_mu18.root
+
+2011-06-23 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* LinkDef.h: add #pragma link C++ namespace egammaPID; 
+
+2011-06-22 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* data/susy_*intperbx_GRLv18.root: update for data11_7TeV.periodAllYear_DetStatus-v18-pro08-04_Susy.xml 
+
+2011-06-21 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* SUSYObjDef: Bug fix in m_eRescale.applyEnergyCorrection multiply by 1000. to get MeV and not GeV ! 
+	* data/susy_nonBCID_intperbx.root: non-BCID averaged PU file to be used for syst studies 
+	* Tagging SUSYTools-00-00-29
+
+2011-06-20 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* susy_<channel>_avgintperbx.root: Prepared by Daniel Short, update for data11_7TeV.periodAllYear_DetStatus-v17-pro08-03_Susy.xml GRL
+	* SUSYObjDef: Bug fix line 119 of SUSYObjDef: set et in GeV in m_eRescale.applyEnergyCorrection but was harmless for analysis except if running syst uncertainties on energy scale from real data. 
+	* susycutflow_1lep.py: add jet pt descendent sorting
+	* Tagging SUSYTools-00-00-28
+
+2011-06-19 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx: change vertex requirement, require loose muons instead of tight muons
+
+2011-06-18 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* SUSYObjDef: IsCosmicMuon is updated with new recommendations from 2-lepton team to z0cut=1mm and d0cut=0.2mm to match cuts from Zprime analysis
+	* SUSYObjDef: IsGoodVertex: only the primary vertex (number 0) is required to get > 4 tracks
+	* SUSYObjDef: GetSignalElecSF and GetSignalElecUncSF: combine both reconstruction and identification scale factors by default
+	* SUSYObjDef: GetTrigElecSF: method to get the trigger scale factor to correct e20_medium trigger in MC
+	* EnergyRescalerTool: preliminary recommendations from egamma wg for EPS. Use version EnergyRescalerTool-00-00-09.
+	* egammaSFClass: preliminary recommendations from egamma wg for EPS. Use version egammaAnalysisUtils-00-02-21.
+	* All Egamma or MCP classes in SUSYTools: put them in a namespace SUSY to avoid confusion with classes in others athena pkgs
+	* Tagging SUSYTools-00-00-27
+
+2011-06-17 Graham Sellers <Graham.John.Sellers@cern.ch>
+        * Updated BTagCalib.C & BTagCalib.h to include check on jet |eta| < 2.5
+
+2011-06-17 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx: change to official BadJet function
+
+2011-06-17 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* susy_<channel>_avgintperbx.root: Prepared by Daniel Short, update for data11_7TeV.periodAllYear_DetStatus-v16-pro08-03_Susy.xml GRL
+
+2011-06-16 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* Tagging SUSYTools-00-00-26
+
+2011-06-16 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx: correct RunNumber for MC samples for treatment of LAr hole as for data
+
+2011-06-16 Marie-Helene Genest <marie-helene.genest@lmu.de>
+	* SUSYObjDef: Add new method for muon trigger matching
+	* Reco_dpd2: Added trigger reweighting and matching for the muons, changed mcevt_weight to a vector<vector>, removed obsolete variables from .h
+	* data/EF_mu18*.root: added latest root file for muon trigger reweighting and removed old ones
+
+2011-06-16 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* FakeMetEstimator: update from Yousuke to v3.0. BCH_CORR_JET is needed also for isBadEmul.
+	* SUSYObjDef: Add new method IsLArHoleVeto to apply a basic LAr hole veto based on calo jets
+	* susycutflow_1lep.py: include examples on how to apply the basic or smarter LAr hole veto. Add possibility to emulate muon trigger in MC via trigger reweighting.
+
+2011-06-10 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* SmearingClass: following MCP EPS2011 recommendations, update to MuonMomentumCorrections-00-02-04
+	* Tagging SUSYTools-00-00-25
+
+2011-06-09 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx: update and electron cutflow included
+
+2011-06-09 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* StacoCBScaleEffFactors, StacoLooseScaleEffFactors: MCP EPS2011 recommendations, use release MuonEfficiencyCorrections-00-03-03
+	* FakeMetEstimator: new class from Yousuke Kataoka to reject or correct events by BCH_CORR_JET
+	* SUSYObjDef: IsElectron, remove electrons in LAr hole by *default*, to turn off that setting, you need to set ischeckOQ=false
+	* SUSYObjDef: IsMuon updated with EPS2011 MCP recommendations, pixel+SCT holes<3 and mu_staco_loose
+	* SUSYObjDef: GetSignalMuonSFUnc, add the two systematic sources linearly (and not in quadrature)
+	* susycutflow_1lep.py: update with latest recommendations and add an example on how to flag events with a jet in the LAr hole
+	* data/EF_mu18*.root: add root files used for single muon trigger emulation in MC
+	* data/mu_mc10b.root: add pileup mu distribution for mc10b
+	* data/fest_periodF_v1.root: add fake met estimator map for MC emulation. Add only period F as template for LAr hole.
+	* Tagging SUSYTools-00-00-24
+
+2011-05-26 Graham Sellers <Graham.John.Sellers@cern.ch>
+        * Updated BTagCalib.C with new possibility for extended pt range for light jets
+
+2011-05-20 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx: change jet cuts from 60,30,30 to 60,25,25
+
+2011-05-18 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* data/BTagCalibrations.root: new b-tagging recommendations for PLHC. File is copy from https://twiki.cern.ch/twiki/pub/AtlasProtected/Analysis16/TopCalibrations_PLHC_2011.root
+	* *.root: move root files from macros/ to data/ folder. Remove obsolete root files (2010).
+	* cmt/requirements: point to root files in data/ instead of macros/
+	* Tagging SUSYTools-00-00-23
+
+2011-05-17 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* egammaSFclass: egamma PLHC recommendations, use release egammaAnalysisUtils-00-02-10
+	* susy_<channel>_avgintperbx.root: Prepared by Daniel Short, update for 2011 PLHC GRL
+	* SUSYObjDef: adding new methods for scale factor uncertainties: GetSignalElecSFUnc, GetSignalMuonSFUnc 
+	* Tagging SUSYTools-00-00-22
+
+2011-05-05 Tim Brooks <brooks@cern.ch>
+	* macros/susycutflow_2lep.py: Fixed IsElectron method + added new invarient mass cut.
+
+2011-05-12 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* SUSYObjDef: IsElectron method is containing again a flag ischeckOQ to remove Monte Carlo electrons in dead LAr region if necessary. At the moment, the flag is set to false by default.
+	* checkOQ: update to 2011 analysis to cope with dead FEBs after run 180614. Use tag EGammaOQ_2011-00-00-04.
+	* StacoCBScaleEffFactors, StacoTightScaleEffFactors: MCP PLHC recommendations, use release MuonEfficiencyCorrections-00-02-02
+	* Tagging SUSYTools-00-00-21
+
+2011-05-09 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* susycutflow_1lep.py: include larError check and change subleading jet cut to 25 GeV
+
+2011-05-08 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx: update and bug fix
+
+2011-05-05 Tim Brooks <brooks@cern.ch>
+	* macros/susycutflow_2lep.py: Update to to include new object definitions and move cosmic cut into SUSYObjDef
+
+2011-05-05 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* SUSYObjDef: add new method IsCosmicMuon and remove cosmic cuts from IsMuon method
+	* susycutflow_1lep.py: include cosmic cut done after overlap removal (after applying deltaR(m,j) veto)
+	* Tagging SUSYTools-00-00-20
+
+2011-05-04 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx: update to muon object definitions of SUSYTools-00-00-19, comment trigger simulation part because of problems in nightly tests
+
+2011-05-04 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* SUSYObjDef: New muon definition: IsMuon does not include isolation cut anymore, but includes the new cosmics cuts from Ximo
+	* SUSYObjDef: New muon definition: IsSignalMuon includes the isolation cut + a default 20 GeV pT cut to match trigger (can be overwritten)
+	* SUSYObjDef: GetSignalElecSF set default release as 2 meaning release 16.6 estimated from 2010 data
+	* susycutflow_1lep.py: update for new muon selection
+	* susy_<channel>_avgintperbx.root: Prepared by Daniel Short, update for 2011 data periods B2-D7
+	* Tagging SUSYTools-00-00-19
+
+2011-05-03 Tim Brooks <brooks@cern.ch>
+	* macros/susycutflow_2lep.py: Update to latest object definitions
+
+2011-05-03 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx, Reco_dpd2.h: update to SUSYD3PD version 00-09-30 
+
+2011-05-02 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* SUSYObjDef: include again tagged muons by default + request tight criteria
+	* SmearingClass: MCP PLHC recommendations, use release MuonMomentumCorrections-00-02-01
+	* StacoCBScaleEffFactors: MCP PLHC recommendations, use release MuonEfficiencyCorrections-00-02-01
+	* StacoTightScaleEffFactors: add version from MuonEfficiencyCorrections-00-02-01
+	* susy_<channel>_avgintperbx.root: Prepared by Daniel Short, update for 2011 data periods B2-D5
+	* Tagging SUSYTools-00-00-18
+
+2011-04-29 Sophie Henrot-Versille <versille@lal.in2p3.fr>
+        * Reco0Lep; update to get the SR definitions in agreement with webpage for PLHC2011
+          a lot of changes: larerror, charge fraction, pt cut>20 GeV for muons except for
+	  MET computations, right handling of el_OQ variable, and order of cuts to fit
+          with definitions  
+        * susy_0lepton_cutflow.cpp: change the first argument in order to fit with 
+	  A(2)/B(3)/C(4)/D(5)/E(6) SR and 7 to obtain all the SR cut flows at once
+ 
+2011-04-26 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* egammaSFClass: update following 2011 PLHC egamma recommendations
+	* EnergyRescaler: update to EnergyRescalerTool-00-00-08 following 2011 PLHC egamma recommendations
+	* susycutflow_1lep.py: count number of Bad jets AFTER overlap removal to follow jet/met recommendations
+	* susy_<channel>_avgintperbx.root: Prepared by Daniel Short, data root files for pileup reweighting tool
+	* mu_mc10a.root: MC10a root file for pileup reweighting tool
+	* Tagging SUSYTools-00-00-17
+
+2011-04-22 Susumu Oda <Susumu.Oda@cern.ch>
+	* Fixed a compilation warning in cmt/requirements. 
+	* Tagging SUSYTools-00-00-16
+
+2011-04-21 Renaud Bruneliere <Renaud.Bruneliere@cern.ch> 
+	* SUSYObjDef: remove OQpath in initialize() causing warning messages
+	* Tagging SUSYTools-00-00-15
+
+2011-04-21  Claire Adam-Bourdarios <claire.bourdarios@cern.ch>
+	* fix for RTT
+	* Tagging SUSYTools-00-00-15
+
+2011-04-21 Tim Brooks <brooks@cern.ch>
+	* macros/: linked DataQuality/GoodRunsLists into pyROOT scripts.
+	* macros/susycutflow_2lep.py: update to new signal region.
+
+2011-04-20 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: bug fix, m_jet size changed from 100 to 300 in Reset function
+	* SUSYObjDef: call Reset function in constructor
+	* SUSYObjDef: From Michael Boehler: Include electron and muon smearing systematics flags in IsElectron and IsMuon
+	* MatrixMethod, MuonMatrixMethod: remove files as they are now in SUSYPhys/FakeLeptBkg pkg
+
+2011-04-18 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: bug fix, m_jet size changed from 100 to 300 
+	* SUSYObjDef: electron signal selection is now including a ptcone20/pt < 0.1 cut
+	* Reco_dpd2.cxx, SUSYObjDef.cxx: fix some compiler warnings 
+	* README: update instructions 
+	* Tagging SUSYTools-00-00-14
+
+2011-04-18 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco0Lep.cxx, Reco0Lep.h, SUSYObjDef.cxx: fix some compiler warnings 
+
+2011-04-14  Claire Adam-Bourdarios <claire.bourdarios@cern.ch>
+	* add 0Lpeton and 1Lepton RTT tests
+	* Tagging SUSYTools-00-00-13
+
+2011-04-13 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* susycutflow_2lep.py: make executable and add to requirement file 	
+
+2011-04-12 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.h: update header file to SUSYD3PD-00-09-17
+	* Reco_dpd2.cxx: update for 2011 analysis: propagate changes of SUSYObjDef, set default trigger for data to EF_mu18, reset directory after trigger reweighting
+
+2011-04-11 Tim Brooks <brooks@cern.ch>
+	* macros/susycutflow_2lep.py: update for 2011 analysis.
+
+2011-04-11 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: use emscale jet eta for jet cleaning
+	* SUSYObjDef: muon and electron random seed smearing set as (int)1e+5*fabs(phi)
+	* SUSYObjDef: do NOT apply electron energy rescaling to data anymore as already applied earlier during reco.
+	* SUSYObjDef: NEW: check object quality flag for electrons
+	* susycutflow_1lep.py: update for 2011 analysis. Change triggers to EF_e20_medium and EF_mu18
+	* Tagging SUSYTools-00-00-12
+
+2011-04-11 Marie-Helene Genest <marie-helene.genest@lmu.de>
+	* Fixed cmt compilation problems by adding #ifndef SUSY_ATHENA #endif checks in the AP*.cxx,.h
+
+2011-04-08 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.h: change type of jet_AntiKt4TopoNewEM_fracSamplingMax from double to float 
+
+2011-04-07 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* egammaPIDdefs.h: update to version from egammaEvent-03-04-24-06
+	* SUSYObjDef: jet_AntiKt4TopoNewEM_fracSamplingMax is now a float
+
+2011-04-07 Marie-Helene Genest <marie-helene.genest@lmu.de>
+	* Reco_dpd2.cxx: added the trigger reweighting for muons to replace the trigger decision for Monte Carlo
+	* Added the EF_mu...root trigger maps in the macro directory
+	* Added APEvtWeight.cxx,h APReweightND.cxx,h and APWeightEntry.cxx,h for the reweighting 
+
+2011-04-06 Tim Brooks <brooks@cern.ch>
+	* macros/susycutflow_2lep.py: Updated cutflow to latest object definitions.
+
+2011-04-05 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx: selected signal muon must have p_T > 20 GeV; veto on additional muons with p_T > 10 GeV
+
+2011-04-05  Claire Adam-Bourdarios <claire.bourdarios@cern.ch>
+	* add more atn tests
+	* Tagging SUSYTools-00-00-11
+
+2011-04-05 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx: remove crack veto on electrons
+	* Reco_dpd2.h: fix compilation warning: "warning: unused parameter ???entry???"
+	* SUSYObjDef.cxx: fix following compilation warnings: "../src/SUSYObjDef.cxx:148: warning: unused parameter
+???mu_staco_isLowPtReconstructedMuon???" and "../src/SUSYObjDef.cxx:197: warning: unused parameter ???mu_staco_E???"
+
+2011-04-04 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SmearingClass: update with new MCP version MuonMomentumCorrections-00-01-02
+	* SUSYObjDef: do NOT apply dead OTX check by default to prepare 2011 analysis
+	* susycutflow_1lep.py: do NOT apply electron crack veto in 2011 analysis
+	* SUSYObjDef: lower muon pT threshold to 10 GeV
+	* SUSYObjDef: raise jet |eta| acceptance cut from 2.5 to 2.8
+
+2011-04-04 Mark Hodgkinson
+	* Move cmt compiler flags to private
+
+2011-04-04 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx and Reco_dpd2.h: fix some harmless compiler warnings
+
+2011-04-01 Bart Butler <bbutler@cern.ch>
+	* CalibrationDataInterfaceROOT and CalibrationDataInterfaceBase (b-tagging weighting and systematics) now PROOF-compatible
+
+2011-04-01 Tim Brooks <brooks@cern.ch>
+	* Added susycutflow_2lep.py to macros/
+
+2011-03-29 David Cote  <david.cote@cern.ch>
+	* Fixed susy_1lepton_cutflow dependencies in cmt/requirements
+	* Tagging SUSYTools-00-00-09
+
+2011-03-25 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx and Reco_dpd2.h updated to 00-09-04
+	* README: modified instructions for standalone use of Reco_dpd2.cxx 
+	* Tagging SUSYTools-00-00-08 (David Cote: tag for AtlasProduction-16.6.X.Y)
+
+2011-03-25 Graham Sellers <graham.john.sellers@cern.ch>
+	* Initial commit of the release 16 b-tagging calibration tool
+	* BTagCalib, CalibrationDataInterfaceBase, CalibrationDataInterfaceROOT added to SUSYTools/ and src/
+	* BTagCalibration.env and BTagCalibrations_rel16.root added to macros/
+
+2011-03-25 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: Update sw to tag SUSYD3PDMaker-00-09-04: AntiKt4TopoEM -> AntiKt4TopoNewEM
+	* SUSYObjDef: do not recompute RefJet by default in Etmiss computation
+	* SUSYObjDef: add a default etcut at 25 GeV in IsSignalElectron to match the new foreseen e20_medium trigger
+	* SUSYObjDef: remove mu_staco_tight reference as branch is missing in D3PD
+	* susycutflow_1lep.py: update to new obj def
+	* README: update instructions 
+	* Tagging SUSYTools-00-00-07: first working tag for SUSYD3PDMaker-00-09-04
+
+2011-03-25 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx, Reco_dpd2.h, Test_dpd.C: modified, that no input.txt is needed, input files need to be provided as comma separated list with full path in the call of the macros
+	* susy_1lepton_cutflow.cpp: format of input file list changed form TString to std:: string
+	* macros/susy_1lepton_cutflow.C: removed 
+
+2011-03-25 David Cote  <david.cote@cern.ch>
+	* Added executable susy_1lepton_cutflow.exe (see README), which links both in athena and in standalone-ROOT,
+	  using 'bin' option in Makefile.Standalone and 'application' option in cmt/requirements
+	  This supercedes macros/susy_1lepton_cutflow.C
+
+2011-03-24 Mark Hodgkinson (University of Sheffield)
+	* Changed SUSYTOOLS -> SUSYTools in cmt/requirements
+	* added -D option for athena compile + added apply_tag ROOT* statements - all in cmt/requirements
+	* Changed #ifdef SUSY_STANDALONE -> #ifndef SUSY_ATHENA everywhere
+	* Remove all -D options from Makefile.Standalone
+
+2011-03-24 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx: bug fixes in M_T and in M_eff calculation; include electrons with 10 < p_T < 20 GeV in MET calculation
+	* Reco_dpd2.h: add additional function for electrons in MET calculation
+	* Test_dpd.C: do not need any input file list of branches any more
+	* input2.txt: removed, not longer needed
+	* run.C: moved to susy_1lepton_cutflow.C
+
+2011-03-24 Mark Hodgkinson (University of Sheffield)
+	* Changed all #include "a.h" to #include "SUSYTools/a.h" - required for compilation in athena, also fine for standalone compilation
+	* Added -D SUSY_STANDALONE=1 to all c++ compile lines in Makefile.Standalone
+	* Surrounded ClasDef/ClassImp lines with #ifdef SUSY_STANDALONE, so only standalone compilation sees these lines.
+	* Updated requirements for athena compilation
+	* Added developer notes in README, relevant for above changes
+	* Added private use of TestPolicy in requirements, required for RTT tests so validateXML is run at compile time in athena compliation.
+
+2011-03-23 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.cxx and Reco_dpd2.h: Some updates during cutflow comparison and due to update of SUSYObjDef class, muon and electron definitions only called once per event
+	* Reco_dpd2.cxx: add initialize() and clear() function 
+
+2011-03-23 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: add initialize function and change TObject to TNamed for Proof usage. Do not forget to call the initialize function in your program.
+	* SUSYObjDef: add Reset function to reset internal variables every event
+	* SUSYObjDef: set electron electron random seed as EventNumber+iEl*1000000. This is to make sure same rnd number is used even if IsElectron is not called for every electron in an event.
+	* checkOQ: add possibility to modify path to OQ maps
+	* Tagging SUSYTools-00-00-06: bug fix tag for SUSYD3PDMaker-00-08-07, tag p428
+
+2011-03-22 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: bug fix, need to remove overlap between electrons and jet when recomputing MET_RefJet, therefore a list of electron indices is required as input to GetMET
+
+2011-03-21 Claire Adam-Bourdarios <claire.bourdarios@cern.ch>
+	* Fix ATN tests names
+
+2011-03-17 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: bug fix, EnergyRescaler provides GeV as output, set MC seed only once per event
+	* JetID: update, change timing cut from 10 to 25 ns
+	* Tagging SUSYTools-00-00-05: bug fix tag for SUSYD3PDMaker-00-08-07, tag p428
+
+2011-03-15 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* Tagging SUSYTools-00-00-04: this tag should be used with SUSYD3PDMaker-00-08-07, tag p428
+
+2011-03-14 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* MatrixMethod, MuonMatrixMethod: add templates
+
+2011-03-12 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: bug fix, EnergyRescaler needs GeV as input
+
+2011-03-10 Claire Adam-Bourdarios <claire.bourdarios@cern.ch>
+	* Add ATN tests running on MC files
+	* Tagging SUSYTools-00-00-03
+
+2011-03-10 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SmearingClass: update with new MCP version 
+	* susycutflow_1lep.py: bug fix 
+
+2011-03-08 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch> 
+	* Reco_dpd2.cxx: link to jet and MET definition in SUSYObjDef class, include event weight corrections for muons
+	* Reco_dpd2.h: update to SUSYD3PDMaker version 00-08-07
+	* included additional files egammaSFclass.cxx, StacoCBScaleEffFactors.cxx, EtaPhiBinning.cxx (needed for correct compiling)
+
+2011-03-08 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef.cxx: bug fix in SetMuonTLV, apply muon pt smearing to MC and not data
+	* run.py: remove and rename to susycutflow_1lep.py
+
+2011-03-07 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: add reco efficiencies scale factors, missing Et recomputing RefJet, vertex cut
+	* run.py: update to reproduce whole 1-lepton cutflow
+	* include electron and muon scale factor classes
+
+2011-03-07 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* run.C: update
+	* input2.txt: update
+	* README: add comments
+
+2011-03-02 Jeanette Lorenz <Jeanette.Miriam.Lorenz@cern.ch>
+	* Reco_dpd2.C: move to src, change name to Reco_dpd2.cxx, update from rel. 15 to rel. 16, link electron and muon object defintions to SUSYObjDef, jet and MET definitions will be linked later 
+	* Reco_dpd2.h: update to rel. 16 and to SUSYD3PDMaker 00-08-01, move to SUSYTools
+	* macros: remove some unnecessary files, add more otx maps, because otherwise problems while compiling the package
+	* LinkDef.h: add class Reco_dpd2
+
+2011-03-02 Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* SUSYObjDef: add Jets, Etmiss, B-tagging, crack removal
+	* run.py: improve analysis cutflow as done in 2010 1-lepton channel
+	* include JetID classes 
+
+2011-03-01 Claire Adam-Bourdarios <claire.bourdarios@cern.ch>
+	* Add RTT infrastructure and D3PDMaker tests
+	* Tagging SUSYTools-00-00-02
+
+2011-02-28  Renaud Bruneliere <Renaud.Bruneliere@cern.ch>
+	* First include of SUSY object definition class SUSYObjDef
+	* Include a standalone makefile Makefile.Standalone
+	* Include header and source files needed to use obj definitions
+	* Add README
+
+2011-02-25  David Cote  <david.cote@cern.ch>
+	* Creation of the package
+	* Tagging SUSYTools-00-00-01

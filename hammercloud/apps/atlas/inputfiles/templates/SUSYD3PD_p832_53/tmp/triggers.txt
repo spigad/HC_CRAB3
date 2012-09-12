@@ -1,0 +1,21 @@
+Triggers                                       Offline 
+
+
+EF_2e10_medium                                    15
+EF_2e12_medium                                    17     
+EF_2e12T_medium (+L1_2EM_10)                      17
+EF_2e15_medium (simulated with offline cut)       20
+
+
+EF_e10_medium_mu6
+EF_e10_medium_mu10
+EF_e15_medium_mu6
+
+EF_e20_medium                                      
+EF_e20_medium1  -> prescaled
+EF_e22_medium
+EF_e25medium
+
+EF_mu18
+EF_mu18_medium (&& L1_MU11)
+EF_mu20 
