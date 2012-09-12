@@ -299,6 +299,9 @@ def _copyJob(job, site):
         logger.warning(sys.exc_info()[1])
         j.inputdata.dataset = previous_datasets[0:num]
 
+      # FIXME JE 25 Jun 2012
+      if category == 'stress':
+        j.inputdata.number_of_files = 0
       logger.info('New input datasets = %s' % j.inputdata.dataset)
 
     j.submit()
@@ -1109,6 +1112,7 @@ if hasSubjobs:
           break
    
     test_sleep(20)
+    print '.',
 else:
   noJobs = True
   logger.warning('No jobs to monitor. Exiting now.')
