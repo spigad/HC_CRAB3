@@ -74,16 +74,20 @@ urlpatterns += patterns('hc.core.base.views.dispatcher',
   url(r'^app/(?P<app>[a-z]+)/ssb/(?P<list_type>[a-z]+)/$'     , 'dispatcher', name='robot_ssb-view'    , kwargs={'func':'robot_ssb'}),
 
   #STATS
-  url(r'^app/(?P<app>[a-z]+)/stats/$'                         , 'dispatcher', name='stats-view'      , kwargs={'func':'stats'}),
+
+  # DISABLED BY DAN 16.06.2012  url(r'^app/(?P<app>[a-z]+)/stats/$'                         , 'dispatcher', name='stats-view'      , kwargs={'func':'stats'}),
   url(r'^app/(?P<app>[a-z]+)/evolution/$'                     , 'dispatcher', name='evolution-view'  , kwargs={'func':'evolution'}),
   url(r'^app/(?P<app>[a-z]+)/statistics/$'                    , 'dispatcher', name='statistics-view' , kwargs={'func':'statistics'}),
-  url(r'^app/(?P<app>[a-z]+)/joberrors/$'                    , 'dispatcher', name='joberrors-view' , kwargs={'func':'joberrors'}),
-  url(r'^app/(?P<app>[a-z]+)/abortedjobs/$'                    , 'dispatcher', name='abortedjobs-view' , kwargs={'func':'abortedjobs'}),
+  url(r'^app/(?P<app>[a-z]+)/joberrors/$'                     , 'dispatcher', name='joberrors-view' , kwargs={'func':'joberrors'}),
+  url(r'^app/(?P<app>[a-z]+)/abortedjobs/$'                   , 'dispatcher', name='abortedjobs-view' , kwargs={'func':'abortedjobs'}),
   url(r'^app/(?P<app>[a-z]+)/failedjobs/$'                    , 'dispatcher', name='failedjobs-view' , kwargs={'func':'failedjobs'}),
 
+  url(r'^app/(?P<app>[a-z]+)/ip/$'                            , 'dispatcher', name='check_ip-view' , kwargs={'func':'check_ip'}),
 
   #XHR
   #url(r'^app/(?P<app>[a-z]+)/xhr/(?P<format>\w+)/$'         , 'dispatcher', name ='xhr-view'      , kwargs={'func':'xhr'}),  
 
+
   )
+
 
