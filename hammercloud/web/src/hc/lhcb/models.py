@@ -6,6 +6,14 @@ from hc.core.base.rss.abstract import *
 ##
 ## SIMPLE CLASSES
 ##
+## *GlobalOption
+##
+class GlobalOption(GlobalOptionBase):
+  pass
+
+##
+## SIMPLE CLASSES
+##
 ## *Alarm
 ## *Backend
 ## *Cloud

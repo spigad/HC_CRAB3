@@ -12,6 +12,14 @@ import subprocess
 ##
 ## SIMPLE CLASSES
 ##
+## *GlobalOption
+##
+class GlobalOption(GlobalOptionBase):
+  pass
+
+##
+## SIMPLE CLASSES
+##
 ## *Alarm
 ## *Backend
 ## *Cloud

@@ -13,6 +13,28 @@ from datetime import datetime
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 ##
+## GLOBAL BASE CLASSES
+##
+## *GlobalOptionBase
+##
+
+class GlobalOptionBase(models.Model):
+  __metaclass__ = MetaCreator
+
+  id          = models.AutoField(primary_key=True)
+  option_name = models.CharField(unique=True, max_length=255)
+  option_value = models.CharField(max_length=2047, blank=True)
+  mtime       = models.DateTimeField(auto_now=True)
+
+  def __unicode__(self):
+    return '%s: %s' % (self.option_name, self.option_value)
+
+  class Meta:
+    abstract = True
+    db_table = u'global_option'
+
+## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
+##
 ## SIMPLE BASE CLASSES
 ##
 ## *AlarmBase
