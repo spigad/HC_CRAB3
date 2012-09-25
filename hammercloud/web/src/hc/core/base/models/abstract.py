@@ -79,12 +79,14 @@ class GlobalOptionBase(models.Model):
       status['color'] = cls.COLORS[status['status']]
       status['action'] = cls.ACTIONS[status['status']]
       status['last_site'], status['last_timestamp'] = be.get_last_excluded_site()
+      status['author'] = cls.objects.get(option_name='autoexclusion_author').option_value
     except cls.DoesNotExist:
       status['status'] = 'unknown'
       status['last_pass'] = None
       status['color'] = 'gray'
       status['action'] = 'enable'
       status['last_site'], status['last_timestamp'] = None, None
+      status['author'] = None
 
     return status
 

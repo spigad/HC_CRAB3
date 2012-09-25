@@ -1284,12 +1284,15 @@ class GenericView():
 
     return HttpResponse(t.render(c))
 
-  def autoexclusion_control(self, request, dic={'GlobalOption': None}, *args, **kwargs):
+  def autoexclusion_control(self, request, dic={'GlobalOption': None, 'SiteOption': None}, *args, **kwargs):
     """Control view for the autoexclusion feature."""
-    go   = dic['GlobalOption']
-    app  = go.__module__.split('.')[1]
+    go = dic['GlobalOption']
+    so = dic['SiteOption']
+    app = go.__module__.split('.')[1]
 
     autoexclusion = go.get_autoexclusion_status()
+    site_statuses = so.objects.select_related('site').filter(option_name='autoexclusion', option_value='disable')
+    user = request.user
 
     t = loader.select_template(['%s/robot/control.html' % (app), 'core/app/robot/control.html'])
     c = RequestContext(request, locals(), [defaultContext])

@@ -200,6 +200,7 @@ def autoexclusion(request):
 def autoexclusion_set(request):
   pass
 
+@login_required
 @GenView_dec(params={'on':True})
 def autoexclusion_control(request):
   pass

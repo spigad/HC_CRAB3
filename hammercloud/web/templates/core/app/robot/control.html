@@ -6,19 +6,35 @@
 
 <h2>Autoexclusion control for {{ app|upper }}</h2>
 
+<div style="width: 600px; margin-right:auto;margin-left:auto;">
 <p>This form allows to toggle the global status of the HammerCloud autoexclusion feature manually. There are cases in which HammerCloud autoexclusion will autoshutdown (for instance, in the case of a central service failure or a HammerCloud downtime).</p>
 
 <p>The current status of the system is: <span style="color: {{ autoexclusion.color }}; font-weight: bold; font-size: 120%;">{{ autoexclusion.status|upper }}</span><br />
 Last blacklisting was: {{ autoexclusion.last_site }} ({{ autoexclusion.last_timestamp }})<br />
-Last change of autoexclusion configuration: {{ autoexclusion.last_pass }}</p>
+Last change of autoexclusion configuration: {{ autoexclusion.last_pass }} (by {{ autoexclusion.author }})</p>
 
 <p>To change the autoexclusion status, please use the toggle below. Please not that the following actions will be taken:</p>
 <ol>
   <li>The autoexclusion functionality will be {{ autoexclusion.action }}d.</li>
   <li>An alarm will be raised to the corresponding shifters, experts and HammerCloud administrators.</li>
-  <li>The change, along with your credentials, will be logged.</li>
+  <li>The change, along with your credentials ({{ user }}), will be logged.</li>
 </ol>
 
-<p style="font-weight: bold;font-size:150%;"><a href="{{ action_url }}">{{ autoexclusion.action|upper }}</a></p>
+<a href="{{ action_url }}"><p style="font-weight: bold;font-size:150%;">{{ autoexclusion.action|upper }} &raquo;</p></a>
+
+
+<h3>Autoexclusion service status</h3>
+<p>It is also possible to control the autoexclusion in a per-site basis. The following sites are disabled in the autoexclusion processing.</p>
+{% if site_statuses %}
+  <table cellspacing="10" style="margin-right:auto;margin-left:auto">
+    <tr><th>Site</th><th></th></tr>
+    {% for so in site_statuses %}
+      <tr><td>{{ so.site.name }}</td><td><a href="{% url autoexclusion_set-view app 'enable' so.site.name %}">ENABLE &raquo;</a></td></tr>
+    {% endfor %}
+  </table>
+{% else %}
+  <p>No data available.</p>
+{% endif %}
+</div>
 
 {% endblock %}
