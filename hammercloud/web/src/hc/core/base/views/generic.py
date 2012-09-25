@@ -548,75 +548,87 @@ class GenericView():
                        [defaultContext])
     return HttpResponse(t.render(c))
 
-  def testmodify(self,request,test_id,dic={'Test':None,'TestLog':None},*args,**kwargs):
-
+  def testmodify(self, request, test_id, dic={'Test': None, 'TestLog': None}, *args, **kwargs):
+    """View to change parameters of the current test."""
     test = dic['Test']
+    testlog = dic['TestLog']
     app  = test.__module__.split('.')[1]
 
-    testlog = dic['TestLog']
-
-    test = get_object_or_404(test,pk=test_id)
+    test = get_object_or_404(test.objects, pk=test_id)
     usernames = [tu.user for tu in test.getTestUsers_for_test.all()]
 
-    error,done,message,form,formset = None,0,'',None,None
+    error, done, message, form, formset = None, 0, '', None, None
 
-    if not(request.user.is_superuser or request.user.username in usernames or request.user.groups.filter(name__endswith='admin').filter(name__startswith=app)):
+    if not(request.user.is_superuser
+           or request.user.username in usernames
+           or (request.user
+                      .groups.filter(name__endswith='admin')
+                      .filter(name__startswith=app))):
       error = "You are not allowed to modify this test!"
-
     else:
-
       form = custom_import('hc.core.base.forms.forms.TestRunningModifyForm')(app)
-
       TestSite = custom_import('hc.'+app+'.models.TestSite')
-
       if request.method == 'POST':  
-
         TestSiteFormSet = modelformset_factory(TestSite,
-                             fields=('num_datasets_per_bulk', 'min_queue_depth', 'max_running_jobs', 'resubmit_enabled', 'resubmit_force'),
+                             fields=('num_datasets_per_bulk',
+                                     'min_queue_depth',
+                                     'max_running_jobs',
+                                     'resubmit_enabled',
+                                     'resubmit_force'),
                              extra=0)
         form = form(request.POST, instance=test)
         formset = TestSiteFormSet(request.POST,
-                                  queryset=TestSite.objects.filter(test=test.id))
-
-#        if not form.cleaned_data,has_key('pause'):
-#          form.cleaned_data['pause'] == 'off'
-
+                                  queryset=(TestSite.objects
+                                                    .select_related('site')
+                                                    .filter(test=test.id)))
         if form.is_valid() and formset.is_valid():
-
           values  = form.cleaned_data  
           comment = 'Test modifications: '           
-
           for change in form.changed_data:
             comment += '%s -> %s, '%(change,values[change])
-
           if comment != 'Test modifications: ':
-            testlog = testlog(test=test,comment=comment,user=request.user.username)
+            testlog = testlog(test=test, comment=comment, user=request.user.username)
             testlog.save()
-
           form.save()
           formset.save()
           message = 'Test modified!'
-
           done = 1
         else:
           message = 'Correct data!'
           TestSiteFormSet = modelformset_factory(TestSite,
-                               fields=('site','num_datasets_per_bulk', 'min_queue_depth', 'max_running_jobs', 'resubmit_enabled', 'resubmit_force'),
+                               fields=('site',
+                                       'num_datasets_per_bulk',
+                                       'min_queue_depth',
+                                       'max_running_jobs',
+                                       'resubmit_enabled',
+                                       'resubmit_force'),
                                extra=0)
-          formset = TestSiteFormSet(queryset=TestSite.objects.filter(test=test_id))
-
+          formset = TestSiteFormSet(queryset=(TestSite.objects
+                                                      .select_related('site')
+                                                      .filter(test=test_id)))
       else:
-      
         form = form(instance=test)
-
         TestSiteFormSet = modelformset_factory(TestSite,
-                             fields=('site','num_datasets_per_bulk', 'min_queue_depth', 'max_running_jobs', 'resubmit_enabled', 'resubmit_force'),
+                             fields=('site',
+                                     'num_datasets_per_bulk',
+                                     'min_queue_depth',
+                                     'max_running_jobs',
+                                     'resubmit_enabled',
+                                     'resubmit_force'),
                              extra=0)
-        formset = TestSiteFormSet(queryset=TestSite.objects.filter(test=test.id))
+        formset = TestSiteFormSet(queryset=(TestSite.objects
+                                                    .select_related('site')
+                                                    .filter(test=test.id)))
 
-    t = loader.select_template(['%s/test/testmodify.html'%(app),'core/app/test/testmodify.html'])
+    t = loader.select_template(['%s/test/testmodify.html' % (app), 'core/app/test/testmodify.html'])
     c = RequestContext(request,
-                       {'test': test, 'user': request.user, 'form':form, 'formset':formset, 'error':error, 'done':done, 'message':message },
+                       {'test': test,
+                        'user': request.user,
+                        'form': form,
+                        'formset': formset,
+                        'error': error,
+                        'done': done,
+                        'message': message},
                        [defaultContext])
     return HttpResponse(t.render(c))
 
@@ -1268,6 +1280,18 @@ class GenericView():
       message = 'AutoExclussion not enabled for %s.'%(app)
 
     t = loader.select_template(['%s/robot/autoexclusion.html'%(app),'core/app/robot/autoexclusion.html'])
+    c = RequestContext(request, locals(), [defaultContext])
+
+    return HttpResponse(t.render(c))
+
+  def autoexclusion_control(self, request, dic={'GlobalOption': None}, *args, **kwargs):
+    """Control view for the autoexclusion feature."""
+    go   = dic['GlobalOption']
+    app  = go.__module__.split('.')[1]
+
+    autoexclusion = go.get_autoexclusion_status()
+
+    t = loader.select_template(['%s/robot/control.html' % (app), 'core/app/robot/control.html'])
     c = RequestContext(request, locals(), [defaultContext])
 
     return HttpResponse(t.render(c))
