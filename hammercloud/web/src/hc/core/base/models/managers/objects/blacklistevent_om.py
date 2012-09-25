@@ -5,6 +5,15 @@ from django.db.models import Count
 
 
 class BlacklistAutomata(object):
+  """Automata for calculating blacklisting counts.
+
+  Small automata that process blacklisting events streams to get the number of
+  sites excluded.
+
+  Attributes:
+      _transitions: a dictionary representing the automata transitions with the new
+                    status, a possible action and the count of sites.
+  """
   _transitions = { 0: { 'blacklist': (1, None, 1),
                         'whitelist': (2, None, 0) },
                    1: { 'blacklist': (1, None, 1),
@@ -15,18 +24,36 @@ class BlacklistAutomata(object):
                         'whitelist': (0, None, 0) } }
 
   def __init__(self, site=None):
+    """Inits with an optional site to allow classification of automata."""
     super(BlacklistAutomata, self).__init__()
     self.site = site
     self.status = 0
     self.count = 0
 
   def event(self, event):
+    """Process an event.
+
+    Follow the automata transition to the new status and execute an optional action.
+
+    Arguments:
+        event: the event name (blacklist or whitelist).
+    """
     (self.status, action, self.count) = self._transitions[self.status][event]
     if action:
       action()
 
 
 def timify_events(events):
+  """Groups events by its time.
+
+  Returns a generator by yielding of lists of events that have the same timestamp
+  to be processed group by group.
+
+  Arguments:
+      events: a list of events to make groups.
+  Returns:
+      yields groups of events with the same timestamp.
+  """
   events = iter(events)
   last_time = None
   group = []
@@ -45,13 +72,23 @@ def timify_events(events):
 
 
 class BlacklistEventManager(models.Manager):
-  '''
-  Class that override the default Manager for the BlacklistEvent object in the data models
-  '''
+  """Manager for the BlaclistEvent model.
+
+  Class that override the default Manager for the BlacklistEvent object in the data models.
+  """
+
   def get_autoexclusion_chart(self, time_limit=None, site=None, cloud=None):
-    '''
-    Method that return the default Queryset
-    '''
+    """Generates the autoexclusion chart.
+
+    Generates the autoexclusion chart by processing the stream of events.
+
+    Arguments:
+        time_limit: timeout for a missing whitelisting event.
+        site: site to filter by.
+        cloud: cloud to filter by.
+    Returns:
+        a list of timestamps with the count of sites blacklisted and some notes (site names).
+    """
     limit = datetime.datetime.now() - datetime.timedelta(days=30)
     events = super(BlacklistEventManager, self).get_query_set().select_related()
     if time_limit:
@@ -80,10 +117,7 @@ class BlacklistEventManager(models.Manager):
     return chart
 
   def get_top_excluded_sites(self, time_limit=30, number=None):
-    '''
-    Method that returns the list of sites with more exclusions for a given
-    number of days. If specified, can select only the number top of sites.
-    '''
+    """List of the most excluded sites in the last days."""
     return (super(BlacklistEventManager, self).get_query_set()
                                               .filter(event='blacklist')
                                               .filter(timestamp__gte=(datetime.datetime.now() - datetime.timedelta(days=time_limit)))
