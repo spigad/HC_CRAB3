@@ -10,6 +10,7 @@ from hc.core.base.models.managers.functions import test_fm
 from hc.core.utils.generic.class_func import custom_import
 
 from datetime import datetime
+import time
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 ##
@@ -19,15 +20,130 @@ from datetime import datetime
 ##
 
 class GlobalOptionBase(models.Model):
+  """Global option.
+
+  Stores global options for an app in a key/value fashion.
+
+  Attributes:
+      id: integer for the primary key.
+      option_name: string for the option name (unique).
+      option_value: longer string for the option value.
+      mtime: last modification time of the object.
+  """
   __metaclass__ = MetaCreator
 
-  id          = models.AutoField(primary_key=True)
-  option_name = models.CharField(unique=True, max_length=255)
-  option_value = models.CharField(max_length=2047, blank=True)
-  mtime       = models.DateTimeField(auto_now=True)
+  COLORS = {
+    'enabled': 'green',
+    'disabled': 'red',
+    'warning': 'yellow',
+  }
+
+  ACTIONS = {
+    'enabled': 'disable',
+    'disabled':'enable',
+    'warning': 'enable',
+  }
+
+  id            = models.AutoField(primary_key=True)
+  option_name   = models.CharField(unique=True, max_length=255)
+  option_value  = models.CharField(max_length=2047, blank=True)
+  mtime         = models.DateTimeField(auto_now=True)
 
   def __unicode__(self):
     return '%s: %s' % (self.option_name, self.option_value)
+
+  @classmethod
+  def get_autoexclusion_status(cls):
+    """Reports the autoexclusion status.
+
+    Reports the autoexclusion status by returning a dictionary with the following fields:
+      - status: string with the status definition.
+      - last_site: last site excluded (Site object).
+      - last_timestamp: last exclusion time.
+      - last_pass: timestamp of the last autoexclusion run.
+      - action: action to take (enable, disable) in function of the current status.
+      - color: suggested color of the status (for reports).
+
+    Arguments:
+        cls: is the class object to process, in this case GlobalOption.
+    Returns:
+        the dictionary specified above.
+    """
+    app  = cls.__module__.split('.')[1]
+    be = custom_import('hc.%s.models.BlacklistEvent' % app)
+    status = {}
+
+    try:
+      status['status'] = cls.objects.get(option_name='autoexclusion_status').option_value
+      status['last_pass'] = datetime.fromtimestamp(float(cls.objects.get(option_name='autoexclusion_last_timestamp').option_value))
+      status['color'] = cls.COLORS[status['status']]
+      status['action'] = cls.ACTIONS[status['status']]
+      status['last_site'], status['last_timestamp'] = be.get_last_excluded_site()
+    except cls.DoesNotExist:
+      status['status'] = 'unknown'
+      status['last_pass'] = None
+      status['color'] = 'gray'
+      status['action'] = 'enable'
+      status['last_site'], status['last_timestamp'] = None, None
+
+    return status
+
+  @classmethod
+  def disable_autoexclusion(cls):
+    """Disables the autoexclusion globally.
+
+    Sets or adds the global option 'autoexclusion_status' with a value of 'disabled'
+    and does the same processing with the 'autoexclusion_last_timestamp' option.
+
+    Arguments:
+        cls: is the class object to process, in this case GlobalOption.
+    """
+    cls.change_autoexclusion('disabled')
+
+  @classmethod
+  def enable_autoexclusion(cls, status):
+    """Enables the autoexclusion globally.
+
+    Sets or adds the global option 'autoexclusion_status' with a value of 'enabled'
+    and does the same processing with the 'autoexclusion_last_timestamp' option.
+
+    Arguments:
+        cls: is the class object to process, in this case GlobalOption.
+    """
+    cls.change_autoexclusion('enabled')
+
+  def change_autoexclusion(cls, status):
+    """Changes the status of the autoexclusion.
+
+    Sets the new status of the autoexclusion and the timestamp for the change. This
+    timestamp is a local epoch string, used for simplicity. Be careful when reading.
+
+    Arguments:
+        cls: is the class object to process, in this case GlobalOption.
+        status: (str) the new status, must be 'disabled' or 'enabled'
+    """
+    if status not in ('enabled', 'disabled'):
+      raise ValueError('Status for autoexclusion must be disabled or enabled')
+    cls.set_option('autoexclusion_status', status)
+    cls.set_option('autoexclusion_last_timestamp', str(int(time.time())))
+
+  @classmethod
+  def set_option(cls, option_name, option_value):
+    """Sets the value for an option.
+
+    Will update or create a new option value for the given option_name.
+
+    Arguments:
+        cls: is the class object to process, in this case GlobalOption.
+        option_name: name for the option, must be unique.
+        option_value: value (str) for the option.
+    """
+    try:
+      option = cls.objects.get(option_name=option_name)
+      option.option_value = option_value
+      option.save()
+    except cls.DoesNotExist:
+      cls(option_name=option_name, option_value=option_value).save()
 
   class Meta:
     abstract = True
@@ -1759,7 +1875,7 @@ class BlacklistEventBase(models.Model):
     (u'whitelist', u'whitelist'),
   )
   
-  objects = BlacklistEventManager()
+  objects     = BlacklistEventManager()
 
   id          = models.AutoField(primary_key=True)
   event       = models.CharField(choices = EVENT_CHOICES, max_length = 31)
@@ -1768,13 +1884,26 @@ class BlacklistEventBase(models.Model):
   mtime       = models.DateTimeField(auto_now=True)
   external    = models.BooleanField()
 
-  #test        -> hc.core.base.models.keys.fk.generator.generateFK('Test','BlacklistEvent','test',{})
-  #site        -> hc.core.base.models.keys.fk.generator.generateFK('Site','BlacklistEvent','site',{})
+  #test       -> hc.core.base.models.keys.fk.generator.generateFK('Test','BlacklistEvent','test',{})
+  #site       -> hc.core.base.models.keys.fk.generator.generateFK('Site','BlacklistEvent','site',{})
+
+  @classmethod
+  def get_last_excluded_site(cls):
+    """Get the last autoexcluded site.
+
+    Returns the site name of the last autoexcluded site, with the timestamp of
+    the exclusion.
+
+    Returns:
+        a tuple of (site, timestamp), being site a Site object and timestamp a
+        datetime object.
+    """
+    event = cls.objects.select_related('site').filter(event='blacklist').order_by('-timestamp')[0]
+    return (event.site, event.timestamp)
 
   class Meta:
     abstract = True
     db_table = u'blacklist_event'
-    #unique_together -> hc.core.base.models.keys.relation.UNIQUE_TOGETHER_DIC
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
 ##
