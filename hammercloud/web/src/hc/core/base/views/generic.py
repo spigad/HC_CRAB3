@@ -1305,9 +1305,18 @@ class GenericView():
 
     return HttpResponse(t.render(c))
 
-  def autoexclusion_control_action(self, request, action, dic={'GlobalOption': None}, *args, **kwargs):
+  def autoexclusion_control_action(self, request, action, dic={'GlobalOption': None, 'Site':None}, *args, **kwargs):
     """Call for the API to enable or disable the autoexclusion."""
     go = dic['GlobalOption']
+    site = dic['Site']
+
+    class ISOEncoder(json.JSONEncoder):
+      def default(self, obj):
+        if isinstance(obj, datetime):
+          return obj.isoformat()
+        elif isinstance(obj, site):
+          return obj.name
+        return json.JSONEncoder.default(self, obj)
 
     if not request.user.is_authenticated():
       # TODO(rmedrano): authenticate API calls.
@@ -1316,8 +1325,7 @@ class GenericView():
       user = request.user.username
 
     if action == 'status':
-      #result = json.dumps(go.get_autoexclusion_status(), sort_keys=True)
-      result = repr(go.get_autoexclusion_status()['status'])
+      result = ISOEncoder().encode(go.get_autoexclusion_status())
       return HttpResponse(result, content_type='application/javascript')
     elif action == 'enable':
       go.enable_autoexclusion(user=user)
