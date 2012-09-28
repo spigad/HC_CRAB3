@@ -29,7 +29,7 @@ Last change of autoexclusion configuration: {{ autoexclusion.last_pass }} (by {{
   <table cellspacing="10" style="margin-right:auto;margin-left:auto">
     <tr><th>Site</th><th></th></tr>
     {% for so in site_statuses %}
-      <tr><td>{{ so.site.name }}</td><td><a href="{% url autoexclusion_set-view app 'enable' so.site.name %}">ENABLE &raquo;</a></td></tr>
+      <tr><td>{{ so.site.name }}</td><td><a href="{% url autoexclusion_set-view app 'enable' so.site.name %}?redir={% url autoexclusion_control-view app %}">ENABLE &raquo;</a></td></tr>
     {% endfor %}
   </table>
 {% else %}
