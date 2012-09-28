@@ -20,11 +20,11 @@ Last change of autoexclusion configuration: {{ autoexclusion.last_pass }} (by {{
   <li>The change, along with your credentials ({{ user }}), will be logged.</li>
 </ol>
 
-<a href="{{ action_url }}"><p style="font-weight: bold;font-size:150%;">{{ autoexclusion.action|upper }} &raquo;</p></a>
+<a href="{% url autoexclusion_control_action-view app autoexclusion.action %}?redir={% url autoexclusion_control-view app %}"><p style="font-weight: bold;font-size:150%;">{{ autoexclusion.action|upper }} &raquo;</p></a>
 
 
-<h3>Autoexclusion service status</h3>
-<p>It is also possible to control the autoexclusion in a per-site basis. The following sites are disabled in the autoexclusion processing.</p>
+<h3>Autoexclusion service status per site</h3>
+<p>It is also possible to control the autoexclusion in a per-site basis. The following sites are individually disabled in the autoexclusion processing.</p>
 {% if site_statuses %}
   <table cellspacing="10" style="margin-right:auto;margin-left:auto">
     <tr><th>Site</th><th></th></tr>

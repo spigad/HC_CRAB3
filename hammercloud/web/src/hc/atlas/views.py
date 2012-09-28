@@ -206,6 +206,10 @@ def autoexclusion_control(request):
   pass
 
 @GenView_dec(params={'on':True})
+def autoexclusion_control_action(request):
+  pass
+
+@GenView_dec(params={'on':True})
 def contact_set(request):
   pass
 

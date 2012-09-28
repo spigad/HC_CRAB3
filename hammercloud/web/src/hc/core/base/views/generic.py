@@ -1,7 +1,7 @@
 from django.http import HttpResponse,HttpResponseRedirect,Http404
 from django.template import Context, loader, RequestContext
 
-from django.shortcuts import get_object_or_404,render_to_response
+from django.shortcuts import get_object_or_404,render_to_response,redirect
 
 from hc.core.utils.hc.datahelper import Datahelper
 from hc.core.utils.hc.stats import Stats
@@ -15,6 +15,7 @@ from django.core.cache import cache
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.urlresolvers import reverse
 from django.conf import settings
+from django.core.mail import send_mail
 
 from hc.core.utils.generic.class_func import custom_import
 from hc.core.utils.generic.dic_config import DicConfig
@@ -26,6 +27,11 @@ from pytz import timezone
 from hc.core.base.views import configuration
 
 import dateutil.parser,re,time
+
+try:
+  import simplejson as json
+except ImportError:
+  import json
 
 #######################################################
 ## DEFAULT CONTEXT
@@ -1299,8 +1305,36 @@ class GenericView():
 
     return HttpResponse(t.render(c))
 
-  def autoexclusion_set(self,request,action,sitename,dic={'Site':None,'SiteOption':None},*args,**kwargs):
+  def autoexclusion_control_action(self, request, action, dic={'GlobalOption': None}, *args, **kwargs):
+    """Call for the API to enable or disable the autoexclusion."""
+    go = dic['GlobalOption']
 
+    if not request.user.is_authenticated():
+      # TODO(rmedrano): authenticate API calls.
+      raise Http404
+    else:
+      user = request.user.username
+
+    if action == 'status':
+      #result = json.dumps(go.get_autoexclusion_status(), sort_keys=True)
+      result = repr(go.get_autoexclusion_status()['status'])
+      return HttpResponse(result, content_type='application/javascript')
+    elif action == 'enable':
+      go.enable_autoexclusion(user=user)
+    elif action == 'disable':
+      go.disable_autoexclusion(user=user)
+    else:
+      raise Http404
+    send_mail('Autoexclusion changed',
+              'Warning: a request to %s the autoexclusion has been processed.' % action,
+              'hammercloud@mail.cern.ch',
+              go.objects.get(option_name='autoexclusion_contact').option_value.split(','))
+    if request.GET.get('redir'):
+      return redirect(request.GET['redir'])
+    return HttpResponse("Autoexclusion %sd globally." % action, content_type='text/plain')
+
+  def autoexclusion_set(self,request,action,sitename,dic={'Site':None,'SiteOption':None},*args,**kwargs):
+    """View to control de exclusion options for each site."""
     so   = dic['SiteOption']
     site = dic['Site']
     app  = so.__module__.split('.')[1]
@@ -1321,6 +1355,8 @@ class GenericView():
         so.option_value=action
     so.save()
 
+    if request.GET.get('redir'):
+      return redirect(request.GET['redir'])
     return HttpResponse('Site %s autoexclusion %s'%(sitename,action))
 
   def contact_set(self,request,email,sitename,dic={'Site':None,'SiteOption':None},*args,**kwargs):

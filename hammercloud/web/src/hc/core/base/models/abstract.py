@@ -91,7 +91,7 @@ class GlobalOptionBase(models.Model):
     return status
 
   @classmethod
-  def disable_autoexclusion(cls):
+  def disable_autoexclusion(cls, user=None):
     """Disables the autoexclusion globally.
 
     Sets or adds the global option 'autoexclusion_status' with a value of 'disabled'
@@ -100,10 +100,10 @@ class GlobalOptionBase(models.Model):
     Arguments:
         cls: is the class object to process, in this case GlobalOption.
     """
-    cls.change_autoexclusion('disabled')
+    cls.change_autoexclusion('disabled', user=user)
 
   @classmethod
-  def enable_autoexclusion(cls, status):
+  def enable_autoexclusion(cls, user=None):
     """Enables the autoexclusion globally.
 
     Sets or adds the global option 'autoexclusion_status' with a value of 'enabled'
@@ -112,9 +112,10 @@ class GlobalOptionBase(models.Model):
     Arguments:
         cls: is the class object to process, in this case GlobalOption.
     """
-    cls.change_autoexclusion('enabled')
+    cls.change_autoexclusion('enabled', user=user)
 
-  def change_autoexclusion(cls, status):
+  @classmethod
+  def change_autoexclusion(cls, status, user=None):
     """Changes the status of the autoexclusion.
 
     Sets the new status of the autoexclusion and the timestamp for the change. This
@@ -128,6 +129,8 @@ class GlobalOptionBase(models.Model):
       raise ValueError('Status for autoexclusion must be disabled or enabled')
     cls.set_option('autoexclusion_status', status)
     cls.set_option('autoexclusion_last_timestamp', str(int(time.time())))
+    if user:
+      cls.set_option('autoexclusion_author', user)
 
   @classmethod
   def set_option(cls, option_name, option_value):
