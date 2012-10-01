@@ -1,6 +1,7 @@
 from hc.core.base.views.decorator import GenView_dec
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
+from django.views.decorators.cache import never_cache
 
 @cache_page(60 * 5)
 @GenView_dec(params={'on':True})
@@ -196,23 +197,28 @@ def incidents(request):
 def autoexclusion(request):
   pass
 
+@never_cache
 @GenView_dec(params={'on':True})
 def autoexclusion_set(request):
   pass
 
+@never_cache
 @login_required
 @GenView_dec(params={'on':True})
 def autoexclusion_control(request):
   pass
 
+@never_cache
 @GenView_dec(params={'on':True})
 def autoexclusion_control_action(request):
   pass
 
+@never_cache
 @GenView_dec(params={'on':True})
 def contact_set(request):
   pass
 
+@never_cache
 @GenView_dec(params={'on':True})
 def contact_unset(request):
   pass
