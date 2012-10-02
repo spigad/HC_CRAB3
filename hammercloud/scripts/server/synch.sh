@@ -37,6 +37,9 @@ then
     echo 'Synch CMS'
     echo '--------- vocms207 --------'
     rsync -av /data/hc/ --exclude '*settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude '*.jdl' --exclude '*.log' --exclude 'glite_list_match_*' --exclude 'glite_*' vocms207:/data/hc/
+    echo '-------- vocms228 -------'
+#    rsync -av /data/hc/external/ vocms228:/data/hc/external/
+    rsync -av /data/hc/apps/cms/config/x509* vocms228:/data/hc/apps/cms/config/
 fi
 
 if [ "$1" == "atlas" ]
