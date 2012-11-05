@@ -79,9 +79,12 @@ class GenericView():
     # Prefetch everything to minimize queries. This lookup does only
     # 2 queries for this view -- O(1)
     tests = (test.objects
-                 .select_related('host','template')
+                 .select_related('host',  'template')
                  .prefetch_related('getSummaryTests_for_test')
-                 .filter(state__in=('running','submitting','scheduled'))
+                 .filter(state__in=('running', 'submitting', 'scheduled'))
+                 .only('state', 'id', 'host__name', 'template__id',
+                       'template__description', 'template__category',
+                       'starttime', 'endtime', 'is_golden')
                  .order_by())
 
     stress = filter(lambda x: x.template.category == 'stress' and not x.is_golden, tests)
@@ -685,6 +688,9 @@ class GenericView():
                             11: 'test_site__resubmit_force',
                             12: 'test_site__site__name'
                             }
+
+      querySet = querySet.only('test_site__test__id', *columnIndexNameMap.values())
+
       jsonTemplatePath += 'testsites.txt'
 
     elif type == 'testsummary':
@@ -709,7 +715,6 @@ class GenericView():
         querySet = summary_test.objects.all()
       elif mode in ['functional', 'stress']:
         querySet = (summary_test.objects
-                                .select_related('test__template')
                                 .filter(test__template__category=mode))
       elif mode in ['scheduled', 'submitting', 'error', 'running', 'completed']:
         querySet = (summary_test.objects
@@ -723,12 +728,14 @@ class GenericView():
                             2: 'test__host__name',
                             3: 'clouds',
                             4: 'test__template__id',
-                            5: 'test__inputtype',
+                            5: 'test__inputtype__type',
                             6: 'test__starttime',
                             7: 'test__endtime',
                             8: 'nr_sites',
                             9: 'total',
                             10: 'test__id'}
+
+      querySet = querySet.only('test__template__description', *columnIndexNameMap.values())
 
       jsonTemplatePath += 'testlist.txt'
 
@@ -785,10 +792,12 @@ class GenericView():
     elif type == 'testreasons':
       querySet = (result.objects.filter(test__id=id)
                                 .filter(ganga_status='f')
-                                .exclude(ganga_subjobid=1000000))
+                                .exclude(ganga_subjobid=1000000)
+                                .order_by())
       columnIndexNameMap = {0: 'reason',
                             1: 'site__name'
                             }
+
       jsonTemplatePath += 'testreasons.txt'
 
     else:

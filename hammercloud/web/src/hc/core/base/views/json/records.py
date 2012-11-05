@@ -16,7 +16,7 @@ def get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTe
   # TODO(rmedrano): remove this ugly dictionary from here. This is a *pain*.
   dic = {}
   if "testlist" in type:
-    dic = {'id': 'test__id',
+    dic = {'id': 'test_id',
            'status': 'test__state',
            'host': 'test__host__name',
            'cloud': 'clouds',
@@ -27,7 +27,7 @@ def get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTe
            'sites': 'nr_sites',
            'jobs': 'total',
            }
-    querySet = querySet.select_related('test', 'test__template', 'test__host', 'test__inputtype')
+    querySet = querySet.select_related('test__template', 'test__host', 'test__inputtype')
   elif type == "testsites":
     dic = {'site': 'test_site__site__name',
            'submitted': 'submitted',
