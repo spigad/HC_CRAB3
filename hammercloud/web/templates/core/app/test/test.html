@@ -4,7 +4,7 @@
   {{ block.super }}
   <link type="text/css" href="{{ MEDIA_URL }}css/datatables.css" rel="stylesheet" />
   <link type="text/css" href="{{ MEDIA_URL }}css/TableTools.css" rel="stylesheet" />
-  <link type="text/css" href="{{ MEDIA_URL }}css/ui-lightness/jquery-ui.css" rel="stylesheet" />
+  <link type="text/css" href="{{ MEDIA_URL }}css/jquery-ui/jquery-ui.css" rel="stylesheet" />
 {% endblock %}
 
 {% block javascript %}
@@ -19,7 +19,6 @@
   {{block.super}}
   $("#tabs").tabs();
   $("#accordionoverall").accordion({ autoHeight:false,active:false,collapsible:true});
-  $('#accordionoverall').tabs('option', 'spinner', 'Retrieving data...');
   $('#accordionoverall> h3').click(function() {
     $('#'+String(this.id)+'_div').load("{% url index-view app %}ajax/test/{{test.id}}/"+String(this.id)+"/");
   });

@@ -830,6 +830,7 @@ jsddm li ul li a
 #feedback { font-size: 1.4em; }
 .chart_series .ui-selecting { background: #FECA40; }
 .chart_series .ui-selected { background: #F39814; color: white; }
+.ui-accordion-header { padding: 0 !important; }
 .chart_series { list-style-type: none; margin: 5px 0 0 0; padding: 0; width: 100%; }
 .chart_series li { font-weight:550; margin: 2px; padding: 0.4em 1em 0.3em 1em; font-size: 0.83em; float: left;    }
 
