@@ -1,0 +1,14 @@
+{% extends config.base_template %}
+
+{% block javascript %}
+  {{ block.super }}
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/highcharts/highcharts.js"></script>
+{% endblock %}
+
+{% block content %}
+<div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
+<h2>HammerCloud reports</h2>
+
+<div id="container" style="width: 100%; height: 400px"></div>
+
+{% endblock %}

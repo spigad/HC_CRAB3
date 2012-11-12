@@ -2,9 +2,9 @@
 
 {% block javascript %}
   {{block.super}}
-  <link type=​"text/​css" href=​"{{ MEDIA_URL }}​css/​atlas/​style.css" rel=​"stylesheet" />​
+  <link type=​"text/​css" href=​"{{ MEDIA_URL }}css/atlas/style.css" rel=​"stylesheet" />
   <script type="text/javascript" src="{{ MEDIA_URL }}js/atlas/maps.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui-1.8.2.custom.min.js"></script>
+  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui.js"></script>
   <script type="text/javascript">
     $(function() {
       $("#day").datepicker({
