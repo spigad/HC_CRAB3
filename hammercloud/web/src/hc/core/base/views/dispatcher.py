@@ -1,15 +1,12 @@
 from django.http import Http404
 from hc.core.utils.generic.class_func import custom_import
 
-def dispatcher(request,app,*args,**kwargs):
-  res = None
-  func = kwargs.pop('func')
 
-  try:
-    m = custom_import('hc.'+app+'.views.'+func)
-    if m is None:
-      raise TypeError()
-    return m(request,*args,**kwargs)
-  except TypeError:
-    raise Http404
-
+def dispatcher(request, app, *args, **kwargs):
+    """Loads the proper view function from the reqeusted app."""
+    try:
+        func = kwargs.pop('func')
+        m = custom_import('hc.' + app + '.views.' + func)
+        return m(request, *args, **kwargs)
+    except (KeyError, TypeError):
+        raise Http404
