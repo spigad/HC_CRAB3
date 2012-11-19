@@ -115,7 +115,7 @@ def setattr_from_remote_json(obj, attr, url):
 
 class TestATLASToplogy(unittest.TestCase):
     """Class with the unit tests for this module."""
-
+    # TODO(rmedrano): Add tests to this.
     pass
 
 
