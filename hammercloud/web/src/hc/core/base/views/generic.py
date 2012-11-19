@@ -1,37 +1,28 @@
-from django.http import HttpResponse,HttpResponseRedirect,Http404
-from django.template import Context, loader, RequestContext
-
-from django.shortcuts import get_object_or_404,render_to_response,redirect
-
-from hc.core.utils.hc.datahelper import Datahelper
-from hc.core.utils.hc.stats import Stats
-
-from hc.core.base.forms import forms
-
-from hc.core.base.views.json.records import get_records
-from django.db.models import Min,Max,Count,Q
-from django.forms.models import modelformset_factory
+from datetime import date, timedelta, datetime
+from django.conf import settings
 from django.core.cache import cache
+from django.core.mail import send_mail
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.urlresolvers import reverse
-from django.conf import settings
-from django.core.mail import send_mail
-
+from django.db.models import Count, Q
+from django.forms.models import modelformset_factory
+from django.http import HttpResponse, HttpResponseRedirect, Http404
+from django.shortcuts import get_object_or_404, render_to_response, redirect
+from django.template import Context, loader, RequestContext
+from hc.core.base.views import configuration
+from hc.core.base.views.json.records import get_records
 from hc.core.utils.generic.class_func import custom_import
 from hc.core.utils.generic.dic_config import DicConfig
-from hc.core.base.models.managers.functions import test_fm
-
-from datetime import date,timedelta,datetime
-from pytz import timezone
-
-from hc.core.base.views import configuration
-
-import dateutil.parser,re,time
+from hc.core.utils.hc.datahelper import Datahelper
+from hc.core.utils.hc.stats import Stats
+import dateutil.parser
+import re
+import time
 
 try:
-  import simplejson as json
+    import simplejson as json
 except ImportError:
-  import json
+    import json
 
 #######################################################
 ## DEFAULT CONTEXT
@@ -1463,6 +1454,14 @@ class GenericView():
                       locals(),
                       [defaultContext]
                     )
+    return HttpResponse(t.render(c))
+
+  def reports(self, request, dic={'Result': None}, *args, **kwargs):
+    """View that shows different reports from the results table on the database."""
+    result = dic['Result']
+    app = result.__module__.split('.')[1]
+    t = loader.select_template(['%s/stats/reports.html' % app, 'core/app/stats/reports.html'])
+    c = RequestContext(request, locals(), [defaultContext])
     return HttpResponse(t.render(c))
 
   def statistics(self,request,dic={'MetricType':None,'Test':None,'Site':None,'Cloud':None,'Template':None},*args,**kwargs):
