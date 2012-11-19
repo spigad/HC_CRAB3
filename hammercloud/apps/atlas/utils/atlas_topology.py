@@ -7,10 +7,15 @@ of CE hostnames and meta information for a PanDA queue.
 """
 
 import getopt
-import simplejson
 import sys
 import unittest
 import urllib
+
+try:
+    import simplejson as json
+except ImportError:
+    import json
+
 
 __author__ = 'Ramon Medrano Llamas'
 __email__ = 'ramon.medrano.llamas@cern.ch'
@@ -66,7 +71,7 @@ class ATLASTopology(object):
                         return site_name
         return None
 
-    def get_site_id_of_panda_queue(self, panda_queue, site_type=None):
+    def get_site_id_of_panda_queue(self, panda_queue, _site_type=None):
         """Returns the SiteID name of a PanDA queue."""
         # This can be done with nested map() / filter() but is more readable
         # like this (and slower, if perfomance is not enough, should be changed
@@ -101,7 +106,7 @@ class ATLASTopology(object):
 def setattr_from_remote_json(obj, attr, url):
     """Loads a remote JSON file and sets an attrbute to an object from it."""
     try:
-        setattr(obj, attr, simplejson.load(urllib.urlopen(url)))
+        setattr(obj, attr, json.load(urllib.urlopen(url)))
     except IOError, (_, msg):
         raise ATLASTopologyException(msg)
     except ValueError, ve:
@@ -135,7 +140,7 @@ def main(argv=None):
                 return 0
         # Process arguments.
         if len(args) > 0:
-            raise ATLASTopologyException('This program does not allow argument')
+            raise ATLASTopologyException("This program doesn't allow argument")
         # Launch unit tests for this module here.
         unittest.main()
     except ATLASTopologyException, err:
