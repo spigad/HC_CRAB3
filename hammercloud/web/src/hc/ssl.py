@@ -3,7 +3,8 @@ from django.http import get_host, HttpResponsePermanentRedirect
 
 """Django middleware to redirect to a SSL url.
 
-This is used mainly for the admin panel, but could be user for all the site."""
+This is used mainly for the admin panel, but could be user for all the site.
+Copied from: http://djangosnippets.org/snippets/880/"""
 
 
 class SSLRedirect(object):
