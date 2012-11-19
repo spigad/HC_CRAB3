@@ -24,29 +24,26 @@ try:
 except ImportError:
     import json
 
-#######################################################
-## DEFAULT CONTEXT
-#######################################################
+"""Generic view set to be used or redefined in the app view set."""
+
 
 def defaultContext(request):
-
-  request_path = request.path
-
-  app = request_path.split('app/')[1].split('/')[0]
-  if request_path.find('admin')>-1:
-    request_path = reverse('index-view')
-
-  config = configuration.PARTICULARITIES[app]
-
-  c = DicConfig(config)
-
-  return {'app':app, 'user':request.user, 'request_path':request_path,'config':c}
+    """Default context processor which adds some variables to the templates."""
+    app = request.path.split('app/')[1].split('/')[0]
+    if request.path.find('admin') > -1:
+        request_path = reverse('index-view')
+    else:
+        request_path = request.path
+    return {'app': app,
+            'user': request.user,
+            'request_path': request_path,
+            'config': DicConfig(configuration.PARTICULARITIES[app])}
 
 #######################################################
-## LOGIN VIEWS
+# # LOGIN VIEWS
 #######################################################
 
-#def logout(request):
+# def logout(request):
 #  logout_user(request)
 #  next = request.GET.get('next', None)
 #  if next:
@@ -58,19 +55,19 @@ class GenericView():
   """Class with all the generic views. It is not a Django GCBV."""
 
 #######################################################
-## INDEX BLOCK
+# # INDEX BLOCK
 #######################################################
 
   def index(self, request, dic={'Test': None}, *args, **kwargs):
     """Homepage view for an app. Shows the test summaries."""
 
     test = dic['Test']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
     # Prefetch everything to minimize queries. This lookup does only
     # 2 queries for this view -- O(1)
     tests = (test.objects
-                 .select_related('host',  'template')
+                 .select_related('host', 'template')
                  .prefetch_related('getSummaryTests_for_test')
                  .filter(state__in=('running', 'submitting', 'scheduled'))
                  .only('state', 'id', 'host__name', 'template__id',
@@ -82,12 +79,12 @@ class GenericView():
     functional = filter(lambda x: x.template.category == 'functional' and not x.is_golden, tests)
     golden = filter(lambda x: x.is_golden, tests)
 
-    dh         = Datahelper()
-    stress     = dh.annotateTests(stress)
+    dh = Datahelper()
+    stress = dh.annotateTests(stress)
     functional = dh.annotateTests(functional)
-    golden     = dh.annotateTests(golden)
+    golden = dh.annotateTests(golden)
 
-    t = loader.select_template(['%s/index.html'%(app),'core/app/index.html'])
+    t = loader.select_template(['%s/index.html' % (app), 'core/app/index.html'])
     c = RequestContext(request,
                        {'tests': {'golden': golden,
                                   'stress': stress,
@@ -97,20 +94,20 @@ class GenericView():
 
 
 #######################################################
-## BACKENDS BLOCK
+# # BACKENDS BLOCK
 #######################################################
 
-  def backends(self,request,dic={'Backend':None},*args,**kwargs):
+  def backends(self, request, dic={'Backend':None}, *args, **kwargs):
 
     backend = dic['Backend']
-    app     = backend.__module__.split('.')[1]
+    app = backend.__module__.split('.')[1]
 
     try:
       backends = backend.objects.all()
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/backends.html'%(app),'core/app/more/backends.html'])
+    t = loader.select_template(['%s/more/backends.html' % (app), 'core/app/more/backends.html'])
     c = RequestContext(request,
                        {'backends': backends},
                        [defaultContext]
@@ -119,30 +116,30 @@ class GenericView():
 
 
 #######################################################
-## CLOUDS BLOCK
+# # CLOUDS BLOCK
 #######################################################
 
-  def clouds(self,request,dic={'Cloud':None},*args,**kwargs):
+  def clouds(self, request, dic={'Cloud':None}, *args, **kwargs):
 
     cloud = dic['Cloud']
-    app   = cloud.__module__.split('.')[1]
+    app = cloud.__module__.split('.')[1]
 
     try:
-      clouds = cloud.objects.all().order_by('code') 
+      clouds = cloud.objects.all().order_by('code')
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/clouds.html'%(app),'core/app/more/clouds.html'])
+    t = loader.select_template(['%s/more/clouds.html' % (app), 'core/app/more/clouds.html'])
     c = RequestContext(request,
                        {'clouds': clouds},
                        [defaultContext]
                       )
     return HttpResponse(t.render(c))
 
-  def cloud(self,request,cloud_id,dic={'Cloud':None},*args,**kwargs):
+  def cloud(self, request, cloud_id, dic={'Cloud':None}, *args, **kwargs):
 
     cloud = dic['Cloud']
-    app   = cloud.__module__.split('.')[1]
+    app = cloud.__module__.split('.')[1]
 
     try:
       cloud = cloud.objects.get(pk=cloud_id)
@@ -151,8 +148,8 @@ class GenericView():
 
     cloud.charts = []
     cloud.sites = cloud.getSites_for_cloud.all()
-   
-    t = loader.select_template(['%s/more/cloud.html'%(app),'core/app/more/cloud.html'])
+
+    t = loader.select_template(['%s/more/cloud.html' % (app), 'core/app/more/cloud.html'])
     c = RequestContext(request,
                        {'cloud': cloud},
                        [defaultContext]
@@ -161,20 +158,20 @@ class GenericView():
 
 
 #######################################################
-## DSPATTERNS BLOCK
+# # DSPATTERNS BLOCK
 #######################################################
 
-  def dspatterns(self,request,dic={'Dspattern':None},*args,**kwargs):
+  def dspatterns(self, request, dic={'Dspattern':None}, *args, **kwargs):
 
     dspattern = dic['Dspattern']
-    app       = dspattern.__module__.split('.')[1]
+    app = dspattern.__module__.split('.')[1]
 
     try:
       dspatterns = dspattern.objects.all()
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/dspatterns.html'%(app),'core/app/more/dspatterns.html'])
+    t = loader.select_template(['%s/more/dspatterns.html' % (app), 'core/app/more/dspatterns.html'])
     c = RequestContext(request,
                        {'dspatterns': dspatterns},
                        [defaultContext]
@@ -183,37 +180,37 @@ class GenericView():
 
 
 #######################################################
-## HOSTS BLOCK
+# # HOSTS BLOCK
 #######################################################
 
-  def hosts(self,request,dic={'Host':None},*args,**kwargs):
+  def hosts(self, request, dic={'Host':None}, *args, **kwargs):
 
     host = dic['Host']
-    app  = host.__module__.split('.')[1]
+    app = host.__module__.split('.')[1]
 
     try:
       hosts = host.objects.all()
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/hosts.html'%(app),'core/app/more/hosts.html'])
+    t = loader.select_template(['%s/more/hosts.html' % (app), 'core/app/more/hosts.html'])
     c = RequestContext(request,
                        {'hosts': hosts},
                        [defaultContext]
                       )
     return HttpResponse(t.render(c))
 
-  def host(self,request,host_id,dic={'Host':None},*args,**kwargs):
+  def host(self, request, host_id, dic={'Host':None}, *args, **kwargs):
 
     host = dic['Host']
-    app  = host.__module__.split('.')[1]
+    app = host.__module__.split('.')[1]
 
     try:
       host = host.objects.get(pk=host_id)
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/host.html'%(app),'core/app/more/host.html'])
+    t = loader.select_template(['%s/more/host.html' % (app), 'core/app/more/host.html'])
     c = RequestContext(request,
                        {'host': host},
                        [defaultContext]
@@ -221,20 +218,20 @@ class GenericView():
     return HttpResponse(t.render(c))
 
 #######################################################
-## JOBTEMPLATES BLOCK
+# # JOBTEMPLATES BLOCK
 #######################################################
 
-  def jobtemplates(self,request,dic={'JobTemplate':None},*args,**kwargs):
+  def jobtemplates(self, request, dic={'JobTemplate':None}, *args, **kwargs):
 
     jobtemplate = dic['JobTemplate']
-    app         = jobtemplate.__module__.split('.')[1]
+    app = jobtemplate.__module__.split('.')[1]
 
     try:
       jobtemplates = jobtemplate.objects.all()
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/jobtemplates.html'%(app),'core/app/more/jobtemplates.html'])
+    t = loader.select_template(['%s/more/jobtemplates.html' % (app), 'core/app/more/jobtemplates.html'])
     c = RequestContext(request,
                        {'jobtemplates': jobtemplates},
                        [defaultContext]
@@ -242,54 +239,54 @@ class GenericView():
     return HttpResponse(t.render(c))
 
 #######################################################
-## METRICS BLOCK
+# # METRICS BLOCK
 #######################################################
 
-  def metric_types(self,request,dic={'MetricType':None},*args,**kwargs):
+  def metric_types(self, request, dic={'MetricType':None}, *args, **kwargs):
 
     metric_type = dic['MetricType']
-    app         = metric_type.__module__.split('.')[1]
+    app = metric_type.__module__.split('.')[1]
 
     try:
       metric_types = metric_type.objects.all()
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/metric_types.html'%(app),'core/app/more/metric_types.html'])
+    t = loader.select_template(['%s/more/metric_types.html' % (app), 'core/app/more/metric_types.html'])
     c = RequestContext(request,
                        {'metric_types': metric_types},
                        [defaultContext]
                       )
     return HttpResponse(t.render(c))
 
-  def metric_type(self,request,metric_type_id,dic={'MetricType':None},*args,**kwargs):
+  def metric_type(self, request, metric_type_id, dic={'MetricType':None}, *args, **kwargs):
 
     metric_type = dic['MetricType']
-    app         = metric_type.__module__.split('.')[1]
+    app = metric_type.__module__.split('.')[1]
 
     try:
       metric_type = metric_type.objects.get(pk=metric_type_id)
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/metric_type.html'%(app),'core/app/more/metric_type.html'])
+    t = loader.select_template(['%s/more/metric_type.html' % (app), 'core/app/more/metric_type.html'])
     c = RequestContext(request,
                        {'metric_type': metric_type},
                        [defaultContext]
                       )
     return HttpResponse(t.render(c))
 
-  def metric_permissions(self,request,dic={'MetricPerm':None},*args,**kwargs):
+  def metric_permissions(self, request, dic={'MetricPerm':None}, *args, **kwargs):
 
     metric_permission = dic['MetricPerm']
-    app               = metric_permission.__module__.split('.')[1]
+    app = metric_permission.__module__.split('.')[1]
 
     try:
       metric_permissions = metric_permission.objects.all()
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/metric_permissions.html'%(app),'core/app/more/metric_permissions.html'])
+    t = loader.select_template(['%s/more/metric_permissions.html' % (app), 'core/app/more/metric_permissions.html'])
     c = RequestContext(request,
                        {'metric_permissions': metric_permissions},
                        [defaultContext]
@@ -298,15 +295,15 @@ class GenericView():
 
 
 #######################################################
-## MORE BLOCK
+# # MORE BLOCK
 #######################################################
 
-  def more(self,request,dic={'Test':None},*args,**kwargs):
+  def more(self, request, dic={'Test':None}, *args, **kwargs):
 
     test = dic['Test']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
-    t = loader.select_template(['%s/more/more.html'%(app),'core/app/more/more.html'])
+    t = loader.select_template(['%s/more/more.html' % (app), 'core/app/more/more.html'])
     c = RequestContext(request,
                        {},
                        [defaultContext]
@@ -316,20 +313,20 @@ class GenericView():
 
 
 #######################################################
-## OPTIONFILES BLOCK
+# # OPTIONFILES BLOCK
 #######################################################
 
-  def optionfiles(self,request,dic={'OptionFile':None},*args,**kwargs):
+  def optionfiles(self, request, dic={'OptionFile':None}, *args, **kwargs):
 
     optionfile = dic['OptionFile']
-    app        = optionfile.__module__.split('.')[1]
+    app = optionfile.__module__.split('.')[1]
 
     try:
       optionfiles = optionfile.objects.all()
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/optionfiles.html'%(app),'core/app/more/optionfiles.html'])
+    t = loader.select_template(['%s/more/optionfiles.html' % (app), 'core/app/more/optionfiles.html'])
     c = RequestContext(request,
                        {'optionfiles': optionfiles},
                        [defaultContext]
@@ -338,27 +335,27 @@ class GenericView():
 
 
 #######################################################
-## SITES BLOCK
+# # SITES BLOCK
 #######################################################
 
-  def sites(self,request,dic={'Site':None},*args,**kwargs):
+  def sites(self, request, dic={'Site':None}, *args, **kwargs):
 
     site = dic['Site']
-    app  = site.__module__.split('.')[1]
+    app = site.__module__.split('.')[1]
 
     try:
       sites = site.objects.all()
     except:
       raise Http404
- 
-    t = loader.select_template(['%s/more/sites.html'%(app),'core/app/more/sites.html'])
+
+    t = loader.select_template(['%s/more/sites.html' % (app), 'core/app/more/sites.html'])
     c = RequestContext(request,
                       {'sites': sites},
                       [defaultContext]
                       )
     return HttpResponse(t.render(c))
 
-  def site(self,request,site_id,dic={'Site':None},*args,**kwargs):
+  def site(self, request, site_id, dic={'Site':None}, *args, **kwargs):
 
     app = dic['Site'].__module__.split('.')[1]
 
@@ -368,8 +365,8 @@ class GenericView():
       raise Http404
 
     site.charts = []
-   
-    t = loader.select_template(['%s/more/site.html'%(app),'core/app/more/site.html'])
+
+    t = loader.select_template(['%s/more/site.html' % (app), 'core/app/more/site.html'])
     c = RequestContext(request,
                        {'site': site},
                        [defaultContext]
@@ -378,41 +375,41 @@ class GenericView():
 
 
 #######################################################
-## TEMPLATES BLOCK
+# # TEMPLATES BLOCK
 #######################################################
 
-  def templates(self,request,dic={'Template':None},*args,**kwargs):
+  def templates(self, request, dic={'Template':None}, *args, **kwargs):
 
     template = dic['Template']
-    app      = template.__module__.split('.')[1]
+    app = template.__module__.split('.')[1]
 
     try:
       templates = template.objects.all()
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/templates.html'%(app),'core/app/more/templates.html'])
+    t = loader.select_template(['%s/more/templates.html' % (app), 'core/app/more/templates.html'])
     c = RequestContext(request,
                        {'templates': templates},
                        [defaultContext]
                       )
-    return HttpResponse(t.render(c))   
+    return HttpResponse(t.render(c))
 
-  def template(self,request,template_id,dic={'Template':None},*args,**kwargs):
+  def template(self, request, template_id, dic={'Template':None}, *args, **kwargs):
 
     template = dic['Template']
-    app      = template.__module__.split('.')[1]
+    app = template.__module__.split('.')[1]
 
     try:
       template = template.objects.get(pk=template_id)
     except:
       raise Http404
 
-    template.hosts      = template.getTemplateHosts_for_template.all()
-    template.sites      = template.getTemplateSites_for_template.all()
+    template.hosts = template.getTemplateHosts_for_template.all()
+    template.sites = template.getTemplateSites_for_template.all()
     template.dspatterns = template.getTemplateDspatterns_for_template.all()
 
-    t = loader.select_template(['%s/more/template.html'%(app),'core/app/more/template.html'])
+    t = loader.select_template(['%s/more/template.html' % (app), 'core/app/more/template.html'])
     c = RequestContext(request,
                        {'template': template},
                        [defaultContext]
@@ -421,20 +418,20 @@ class GenericView():
 
 
 #######################################################
-## TESTOPTIONS BLOCK
+# # TESTOPTIONS BLOCK
 #######################################################
 
-  def testoptions(self,request,dic={'TestOption':None},*args,**kwargs):
+  def testoptions(self, request, dic={'TestOption':None}, *args, **kwargs):
 
     testoption = dic['TestOption']
-    app        = testoption.__module__.split('.')[1]
+    app = testoption.__module__.split('.')[1]
 
     try:
       testoptions = testoption.objects.all()
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/testoptions.html'%(app),'core/app/more/testoptions.html'])
+    t = loader.select_template(['%s/more/testoptions.html' % (app), 'core/app/more/testoptions.html'])
     c = RequestContext(request,
                        {'testoptions': testoptions},
                        [defaultContext]
@@ -443,20 +440,20 @@ class GenericView():
 
 
 #######################################################
-## USERCODES BLOCK
+# # USERCODES BLOCK
 #######################################################
 
-  def usercodes(self,request,dic={'UserCode':None},*args,**kwargs):
+  def usercodes(self, request, dic={'UserCode':None}, *args, **kwargs):
 
     usercode = dic['UserCode']
-    app      = usercode.__module__.split('.')[1]
+    app = usercode.__module__.split('.')[1]
 
     try:
       usercodes = usercode.objects.all()
     except:
       raise Http404
 
-    t = loader.select_template(['%s/more/usercodes.html'%(app),'core/app/more/usercodes.html'])
+    t = loader.select_template(['%s/more/usercodes.html' % (app), 'core/app/more/usercodes.html'])
     c = RequestContext(request,
                        {'usercodes': usercodes},
                        [defaultContext]
@@ -465,7 +462,7 @@ class GenericView():
 
 
 #######################################################
-## TESTS BLOCK
+# # TESTS BLOCK
 #######################################################
 
 
@@ -494,8 +491,8 @@ class GenericView():
     if test.getSummaryTests_for_test.count():
       summary = test.getSummaryTests_for_test.all()[0]
 
-    #Independently of the number of metrics selected on the MetricPerm.index,
-    #for the test main page only the 3 first ones are selected.
+    # Independently of the number of metrics selected on the MetricPerm.index,
+    # for the test main page only the 3 first ones are selected.
 
     test_metrics = (test.getTestMetrics_for_test
                         .select_related('metric')
@@ -503,7 +500,7 @@ class GenericView():
 
     patterns = test.getTestDspatterns_for_test.select_related('dspattern').all()
 
-    t = loader.select_template(['%s/test/test.html'%(app), 'core/app/test/test.html'])
+    t = loader.select_template(['%s/test/test.html' % (app), 'core/app/test/test.html'])
     c = RequestContext(request,
                        {'test': test,
                         'test_metrics': test_metrics,
@@ -512,12 +509,12 @@ class GenericView():
                        [defaultContext])
     return HttpResponse(t.render(c))
 
-  def testclone(self,request,test_id,dic={'Test':None},*args,**kwargs):
+  def testclone(self, request, test_id, dic={'Test':None}, *args, **kwargs):
 
     test = dic['Test']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
-    test = get_object_or_404(test,pk=test_id)
+    test = get_object_or_404(test, pk=test_id)
 
     error = None
 
@@ -528,21 +525,21 @@ class GenericView():
 
       if request.POST.has_key('Test'):
 
-        queryset = get_object_or_404(dic['Test'],pk=request.POST['Test'])
+        queryset = get_object_or_404(dic['Test'], pk=request.POST['Test'])
         from hc.core.base.admin.actions import clone
 
         new_obj_id = clone.view_method(self, request, queryset)
         if new_obj_id:
           next = reverse('portal-view')
-          return HttpResponseRedirect(next+'admin/%s/test/%s'%(app,new_obj_id))  
+          return HttpResponseRedirect(next + 'admin/%s/test/%s' % (app, new_obj_id))
         else:
           error = 'Internal error.'
 
 
       else:
-        error = 'Mal formated form.'     
+        error = 'Mal formated form.'
 
-    t = loader.select_template(['%s/test/testclone.html'%(app),'core/app/test/testclone.html'])
+    t = loader.select_template(['%s/test/testclone.html' % (app), 'core/app/test/testclone.html'])
     c = RequestContext(request,
                        {'test': test, 'error': error },
                        [defaultContext])
@@ -552,7 +549,7 @@ class GenericView():
     """View to change parameters of the current test."""
     test = dic['Test']
     testlog = dic['TestLog']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
     test = get_object_or_404(test.objects, pk=test_id)
     usernames = [tu.user for tu in test.getTestUsers_for_test.all()]
@@ -567,8 +564,8 @@ class GenericView():
       error = "You are not allowed to modify this test!"
     else:
       form = custom_import('hc.core.base.forms.forms.TestRunningModifyForm')(app)
-      TestSite = custom_import('hc.'+app+'.models.TestSite')
-      if request.method == 'POST':  
+      TestSite = custom_import('hc.' + app + '.models.TestSite')
+      if request.method == 'POST':
         TestSiteFormSet = modelformset_factory(TestSite,
                              fields=('num_datasets_per_bulk',
                                      'min_queue_depth',
@@ -582,10 +579,10 @@ class GenericView():
                                                     .select_related('site')
                                                     .filter(test=test.id)))
         if form.is_valid() and formset.is_valid():
-          values  = form.cleaned_data  
-          comment = 'Test modifications: '           
+          values = form.cleaned_data
+          comment = 'Test modifications: '
           for change in form.changed_data:
-            comment += '%s -> %s, '%(change,values[change])
+            comment += '%s -> %s, ' % (change, values[change])
           if comment != 'Test modifications: ':
             testlog = testlog(test=test, comment=comment, user=request.user.username)
             testlog.save()
@@ -633,23 +630,23 @@ class GenericView():
     return HttpResponse(t.render(c))
 
 
-  def testlist(self,request,list_type,dic={'Test':None},*args,**kwargs):
+  def testlist(self, request, list_type, dic={'Test':None}, *args, **kwargs):
 
     test = dic['Test']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
-    if not list_type in  ['all','functional','stress','scheduled','submitting','error','running','completed']:
+    if not list_type in  ['all', 'functional', 'stress', 'scheduled', 'submitting', 'error', 'running', 'completed']:
         raise Http404
 
-    list_type = 'testlist'+str(list_type)
+    list_type = 'testlist' + str(list_type)
     help = True
 
-    #Here there is no customization allowed.
-    return render_to_response('core/app/test/testlist.html', locals(), context_instance = RequestContext(request, {}, [defaultContext]))
+    # Here there is no customization allowed.
+    return render_to_response('core/app/test/testlist.html', locals(), context_instance=RequestContext(request, {}, [defaultContext]))
 
 
 #######################################################
-## AJAX BLOCK
+# # AJAX BLOCK
 #######################################################
 
   def get_list(self, request, type, id, filter, dic={'SummaryTest': None, 'SummaryTestSite': None, 'SummaryRobot': None, 'Result': None}, *args, **kwargs):
@@ -692,13 +689,13 @@ class GenericView():
                                    .filter(test__id=id))
       qs0 = querySet[0]
       metr = qs0.test.metricperm.summary.all()
-      columnIndexNameMap = {0:'test_site__site__name'} 
+      columnIndexNameMap = {0:'test_site__site__name'}
       for i in xrange(0, len(metr)):
         metric = metr[i].name
-        columnIndexNameMap[i+1] = metr[i].name
+        columnIndexNameMap[i + 1] = metr[i].name
         searchableColumns[metr[i].name] = metr[i].name
 
-      jsonTemplatePath = str(app)+'/json/'+str(qs0.test.metricperm.name)+'.txt'
+      jsonTemplatePath = str(app) + '/json/' + str(qs0.test.metricperm.name) + '.txt'
 
     elif type.startswith('testlist'):
       mode = type.replace('testlist', '')
@@ -733,15 +730,15 @@ class GenericView():
     elif type == 'robotlist':
 #      yesterday = date.today()-timedelta(1)
 
-      day = request.GET.get('day','day')
+      day = request.GET.get('day', 'day')
       if not bool(re.compile(r'[^0-9-]').search(day)):
         day = datetime(*time.strptime(day, "%Y-%m-%d")[0:5])
       else:
-        day = date.today()-timedelta(1)
+        day = date.today() - timedelta(1)
 
 #      querySet = summary_robot.objects.filter(day=yesterday)
       querySet = summary_robot.objects.filter(day=day)
-      columnIndexNameMap = {0:'site__name',1:'completed',2:'failed',3:'total',4:'efficiency',5:'efficiencyNorm',6:'errorrate',7:'errorrateNorm'}
+      columnIndexNameMap = {0:'site__name', 1:'completed', 2:'failed', 3:'total', 4:'efficiency', 5:'efficiencyNorm', 6:'errorrate', 7:'errorrateNorm'}
       jsonTemplatePath += 'robotlist.txt'
 
     elif type == 'testjobs':
@@ -769,14 +766,14 @@ class GenericView():
     elif type == 'robotjobs':
       #      yesterday = date.today()-timedelta(1)
 
-      day = request.GET.get('day','day')
+      day = request.GET.get('day', 'day')
       if not bool(re.compile(r'[^0-9-]').search(day)):
         day = datetime(*time.strptime(day, "%Y-%m-%d")[0:5])
       else:
-        day = date.today()-timedelta(1)
+        day = date.today() - timedelta(1)
 
-      querySet = result.objects.filter(mtime__gt=day).filter(mtime__lt=day+timedelta(days=1)).filter(test__template__category='functional').exclude(ganga_subjobid=1000000)
-      columnIndexNameMap = {0:'ganga_status',1:'site__name',2:'test__id',3:'ganga_jobid',4:'ganga_subjobid',5:'backendID',6:'submit_time',7:'start_time',8:'stop_time',9:'reason'}
+      querySet = result.objects.filter(mtime__gt=day).filter(mtime__lt=day + timedelta(days=1)).filter(test__template__category='functional').exclude(ganga_subjobid=1000000)
+      columnIndexNameMap = {0:'ganga_status', 1:'site__name', 2:'test__id', 3:'ganga_jobid', 4:'ganga_subjobid', 5:'backendID', 6:'submit_time', 7:'start_time', 8:'stop_time', 9:'reason'}
 
       jsonTemplatePath += 'robotjobs.txt'
 
@@ -799,7 +796,7 @@ class GenericView():
   def testaccordion(self, request, test_id, type, dic={'Test': None}, *args, **kwargs):
     """AJAX view for the test accordion details in the main test view."""
     test = dic['Test']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
     ACCORDION = ['testsites',
                  'testsummary',
@@ -832,18 +829,18 @@ class GenericView():
                  'MEDIA_URL': settings.MEDIA_URL})
     return HttpResponse(t.render(c))
 
-  def ajaxtestmetricsbysite(self,request,test_id,dic={'Test':None},*args,**kwargs):
+  def ajaxtestmetricsbysite(self, request, test_id, dic={'Test':None}, *args, **kwargs):
 
     test = dic['Test']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
-    test = get_object_or_404(test,pk=test_id)
-    #logs = test.getTestLogs_for_test.all()
+    test = get_object_or_404(test, pk=test_id)
+    # logs = test.getTestLogs_for_test.all()
 
     plots = test.getSiteMetrics_for_test.all()
-  
-    t = loader.select_template(['%s/testmetricsbysite.html'%(app),'core/app/testmetricsbysite.html'])
-    c = Context({'plots':plots,'app':app,'test':test})
+
+    t = loader.select_template(['%s/testmetricsbysite.html' % (app), 'core/app/testmetricsbysite.html'])
+    c = Context({'plots':plots, 'app':app, 'test':test})
     return HttpResponse(t.render(c))
 
   def ajaxtestjobs(self, request, test_id, site_id, dic={'Test': None, 'Site': None}, *args, **kwargs):
@@ -861,7 +858,7 @@ class GenericView():
       # TODO(rmedrano): improve this error handling.
       site = 0
 
-    t = loader.select_template(['%s/test/testjobs.html'%(app), 'core/app/test/testjobs.html'])
+    t = loader.select_template(['%s/test/testjobs.html' % (app), 'core/app/test/testjobs.html'])
     c = RequestContext(request,
                        {'app': app, 'test': test, 'site': site, 'type': 'testjobs'},
                        [defaultContext])
@@ -870,9 +867,9 @@ class GenericView():
   def ajaxtestevolution(self, request, test_id, dic={'Test': None}, *args, **kwargs):
     """AJAX view for the accordion in the test main view (evolution)."""
     test = dic['Test']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
-    test  = get_object_or_404(test.objects, pk=test_id)
+    test = get_object_or_404(test.objects, pk=test_id)
 
     evolution = {}
     def filter_metrics(queryset):
@@ -884,7 +881,7 @@ class GenericView():
     for site in sites:
       evolution[site.name] = [y for y in metrics if y.site_id == site.id]
 
-    for k,v in evolution.items():
+    for k, v in evolution.items():
       if not v:
         del evolution[k]
 
@@ -895,7 +892,7 @@ class GenericView():
   def ajaxtestalarms(self, request, test_id, dic={'Test': None}, *args, **kwargs):
     """AJAX view for the accordion in the test main view (alarms)."""
     test = dic['Test']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
     test = get_object_or_404(test.objects, pk=test_id)
     alarms = test.getTestSiteAlarms_for_test.all()
@@ -913,54 +910,54 @@ class GenericView():
   def ajaxtestlogs(self, request, test_id, dic={'Test': None}, *args, **kwargs):
     """AJAX view for the accordion in the test main view (jobs)."""
     test = dic['Test']
-    app  = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
     test = get_object_or_404(test.objects, pk=test_id)
     logs = test.getTestLogs_for_test.order_by('-mtime')
-    
+
     t = loader.select_template(['%s/test/testlogs.html' % (app), 'core/app/test/testlogs.html'])
     c = Context({'logs':logs, 'app': app, 'test': test})
     return HttpResponse(t.render(c))
 
-  def ajaxtestlogreport(self,request,test_id,dic={'Test':None,'TestLog':None},*args,**kwargs):
+  def ajaxtestlogreport(self, request, test_id, dic={'Test':None, 'TestLog':None}, *args, **kwargs):
 
-    test    = dic['Test']
+    test = dic['Test']
     testlog = dic['TestLog']
-    app     = test.__module__.split('.')[1]
+    app = test.__module__.split('.')[1]
 
-    test = get_object_or_404(test,pk=test_id)
+    test = get_object_or_404(test, pk=test_id)
 
     usernames = [tu.user for tu in test.getTestUsers_for_test.all()]
 
     form = ''
     done = 0
     error = ''
- 
+
     if not(request.user.is_superuser or request.user in usernames or request.user.groups.filter(name__endswith='admin').filter(name__startswith=app)):
         error = "You are not allowed to report incidences in this test."
-    
+
     else:
 
-      done = 0      
+      done = 0
 
       testlog = testlog(test=test)
 
       form = custom_import('hc.core.base.forms.forms.TestLogReportForm')(app)
       if request.method == 'POST':
-        form = form(request.POST,instance=testlog)
- 
+        form = form(request.POST, instance=testlog)
+
         if form.is_valid():
-          log      = form.save(commit=False)
+          log = form.save(commit=False)
 #          log.test = test
           log.user = request.user.username
           log.save()
           done = 1
       else:
-        form = form(instance=testlog)     
- 
-    t = loader.select_template(['%s/test/testlogreport.html'%(app),'core/app/test/testlogreport.html'])
+        form = form(instance=testlog)
+
+    t = loader.select_template(['%s/test/testlogreport.html' % (app), 'core/app/test/testlogreport.html'])
     c = RequestContext(request,
-                       {'test': test, 'form':form,'done':done,'error':error},
+                       {'test': test, 'form':form, 'done':done, 'error':error},
                        [defaultContext])
     return HttpResponse(t.render(c))
 
@@ -973,7 +970,7 @@ class GenericView():
     dh = Datahelper()
     test = dh.annotateTestPerSite(test)
 
-    t = loader.select_template(['%s/test/testsites.html'%(app), 'core/app/test/testsites.html'])
+    t = loader.select_template(['%s/test/testsites.html' % (app), 'core/app/test/testsites.html'])
     c = Context({'test': test})
     return HttpResponse(t.render(c))
 
@@ -986,194 +983,194 @@ class GenericView():
     dh = Datahelper()
     test = dh.annotateTestPerMetric(test)
 
-    t = loader.select_template(['%s/test/testmetrics.html'%(app), 'core/app/test/testmetrics.html'])
+    t = loader.select_template(['%s/test/testmetrics.html' % (app), 'core/app/test/testmetrics.html'])
     c = Context({'test': test})
     return HttpResponse(t.render(c))
 
 
 #######################################################
-## ROBOT BLOCK
+# # ROBOT BLOCK
 #######################################################
 
-  def robot(self,request,dic={'Site':None,'SiteOption':None,'Cloud':None,'Backend':None},*args,**kwargs):
+  def robot(self, request, dic={'Site':None, 'SiteOption':None, 'Cloud':None, 'Backend':None}, *args, **kwargs):
 
     site = dic['Site']
     siteoption = dic['SiteOption']
-    app  = site.__module__.split('.')[1]
-  
-    sites    = list(site.objects.filter(enabled=True).exclude(id__in=map(lambda x: x.site_id, siteoption.objects.filter(option_name='autoexclusion').filter(option_value='disable'))))
-    cloud    = dic['Cloud']
-    clouds   = list(cloud.objects.exclude(code__contains='ALL').exclude(name__contains='TEST'))
-    backend  = dic['Backend']
+    app = site.__module__.split('.')[1]
+
+    sites = list(site.objects.filter(enabled=True).exclude(id__in=map(lambda x: x.site_id, siteoption.objects.filter(option_name='autoexclusion').filter(option_value='disable'))))
+    cloud = dic['Cloud']
+    clouds = list(cloud.objects.exclude(code__contains='ALL').exclude(name__contains='TEST'))
+    backend = dic['Backend']
     backends = list(backend.objects.all())
 
     dh = Datahelper()
 
-    day = request.GET.get('day','day')
+    day = request.GET.get('day', 'day')
     if not bool(re.compile(r'[^0-9-]').search(day)):
       day = datetime(*time.strptime(day, "%Y-%m-%d")[0:5])
     else:
       day = date.today()
-      #FIXME: This is not generic!
+      # FIXME: This is not generic!
       if app != 'atlas':
-        day = date.today()-timedelta(1)
+        day = date.today() - timedelta(1)
 
-    sites = dh.annotateSitesEfficiency(sites,day,app)
+    sites = dh.annotateSitesEfficiency(sites, day, app)
 
-    t = loader.select_template(['%s/robot/robot.html'%(app),'core/app/robot/robot.html'])
+    t = loader.select_template(['%s/robot/robot.html' % (app), 'core/app/robot/robot.html'])
     c = RequestContext(request,
-                      {'sites': sites,'clouds':clouds,'backends':backends,'day':day},
+                      {'sites': sites, 'clouds':clouds, 'backends':backends, 'day':day},
                       [defaultContext]
                     )
     return HttpResponse(t.render(c))
 
-  def robotsite(self,request,site_id,dic={'Site':None},*args,**kwargs):
+  def robotsite(self, request, site_id, dic={'Site':None}, *args, **kwargs):
 
     site = dic['Site']
-    app  = site.__module__.split('.')[1]
+    app = site.__module__.split('.')[1]
 
-    site = get_object_or_404(site,pk=site_id)
+    site = get_object_or_404(site, pk=site_id)
 
 #    day = date.today()-timedelta(1)
 
-    day = request.GET.get('day','day')
+    day = request.GET.get('day', 'day')
     if not bool(re.compile(r'[^0-9-]').search(day)):
       day = datetime(*time.strptime(day, "%Y-%m-%d")[0:5])
     else:
-      day = date.today()-timedelta(1)
+      day = date.today() - timedelta(1)
 
     summary = site.getSummaryRobots_for_site.filter(day=day)
     if summary:
       summary = summary[0]
 
-    t = loader.select_template(['%s/robot/robotsite.html'%(app),'core/app/robot/robotsite.html'])
+    t = loader.select_template(['%s/robot/robotsite.html' % (app), 'core/app/robot/robotsite.html'])
     c = RequestContext(request,
-                      {'site': site,'day':day,'summary':summary},
+                      {'site': site, 'day':day, 'summary':summary},
                       [defaultContext]
                     )
     return HttpResponse(t.render(c))
 
-  def robotlist(self,request,dic={'SummaryRobot':None},*args,**kwargs):
+  def robotlist(self, request, dic={'SummaryRobot':None}, *args, **kwargs):
 
-    sr   = dic['SummaryRobot']
-    app  = sr.__module__.split('.')[1]
+    sr = dic['SummaryRobot']
+    app = sr.__module__.split('.')[1]
 
 #    day = date.today()-timedelta(1)
 
-    day = request.GET.get('day','day')
+    day = request.GET.get('day', 'day')
     if not bool(re.compile(r'[^0-9-]').search(day)):
       day = datetime(*time.strptime(day, "%Y-%m-%d")[0:5])
     else:
-      day = date.today()-timedelta(1)
+      day = date.today() - timedelta(1)
 
     srs = sr.objects.filter(day=day)
 
-    t = loader.select_template(['%s/robot/robotlist.html'%(app),'core/app/robot/robotlist.html'])
+    t = loader.select_template(['%s/robot/robotlist.html' % (app), 'core/app/robot/robotlist.html'])
     c = RequestContext(request,
-                      {'srs': srs,'day':day},
+                      {'srs': srs, 'day':day},
                       [defaultContext]
                     )
     return HttpResponse(t.render(c))
 
-  def robotstats(self,request,dic={'SummaryRobot':None},*args,**kwargs):
+  def robotstats(self, request, dic={'SummaryRobot':None}, *args, **kwargs):
 
-    sr   = dic['SummaryRobot']
-    app  = sr.__module__.split('.')[1]
+    sr = dic['SummaryRobot']
+    app = sr.__module__.split('.')[1]
 
 #    day = date.today()-timedelta(1)
 
-    day = request.GET.get('day','day')
+    day = request.GET.get('day', 'day')
     if not bool(re.compile(r'[^0-9-]').search(day)):
       day = datetime(*time.strptime(day, "%Y-%m-%d")[0:5])
     else:
-      day = date.today()-timedelta(1)
+      day = date.today() - timedelta(1)
 
     srs = sr.objects.filter(day=day)
 
     urls = []
 
-    from hc.core.utils.plots.charts import hist,pie
+    from hc.core.utils.plots.charts import hist, pie
 
-    efficiency     = [sr.efficiency*100 for sr in srs if sr.efficiency > -1]
-    urls += [hist(efficiency,20,day,'Efficiency')]
+    efficiency = [sr.efficiency * 100 for sr in srs if sr.efficiency > -1]
+    urls += [hist(efficiency, 20, day, 'Efficiency')]
 
-    efficiencynorm     = [sr.efficiencyNorm for sr in srs if sr.efficiencyNorm > -1]
-    urls += [hist(efficiencynorm,20,day,'Efficiency(Norm)')]
+    efficiencynorm = [sr.efficiencyNorm for sr in srs if sr.efficiencyNorm > -1]
+    urls += [hist(efficiencynorm, 20, day, 'Efficiency(Norm)')]
 
-    errorrate     = [sr.errorrate*100 for sr in srs if sr.errorrate > -1]
-    urls += [hist(errorrate,20,day,'Errorrate')]
+    errorrate = [sr.errorrate * 100 for sr in srs if sr.errorrate > -1]
+    urls += [hist(errorrate, 20, day, 'Errorrate')]
 
     errorratenorm = [sr.errorrateNorm for sr in srs if sr.errorrateNorm > -1]
-    urls += [hist(errorratenorm,20,day,'Error Rate(Norm)')]
+    urls += [hist(errorratenorm, 20, day, 'Error Rate(Norm)')]
 
     completed = [sr.completed for sr in srs if sr.efficiency > -1]
-    urls += [hist(completed,20,day,'Completed')]
+    urls += [hist(completed, 20, day, 'Completed')]
 
     failed = [sr.failed for sr in srs if sr.efficiency > -1]
-    urls += [hist(failed,20,day,'Failed')]
+    urls += [hist(failed, 20, day, 'Failed')]
 
-    total     = [sr.total for sr in srs if sr.efficiency > -1]
-    urls += [hist(total,20,day,'Total')]
+    total = [sr.total for sr in srs if sr.efficiency > -1]
+    urls += [hist(total, 20, day, 'Total')]
 
 
-    t = loader.select_template(['%s/robot/robotstats.html'%(app),'core/app/robot/robotstats.html'])
+    t = loader.select_template(['%s/robot/robotstats.html' % (app), 'core/app/robot/robotstats.html'])
     c = RequestContext(request,
-                      {'srs': srs,'day':day,'urls':urls},
+                      {'srs': srs, 'day':day, 'urls':urls},
                       [defaultContext]
                     )
     return HttpResponse(t.render(c))
 
-  def robotjobs(self,request,dic={'SummaryRobot':None},*args,**kwargs):
+  def robotjobs(self, request, dic={'SummaryRobot':None}, *args, **kwargs):
 
-    sr   = dic['SummaryRobot']
-    app  = sr.__module__.split('.')[1]
+    sr = dic['SummaryRobot']
+    app = sr.__module__.split('.')[1]
 
 #    day = date.today()-timedelta(1)
 
-    day = request.GET.get('day','day')
+    day = request.GET.get('day', 'day')
     if not bool(re.compile(r'[^0-9-]').search(day)):
       day = datetime(*time.strptime(day, "%Y-%m-%d")[0:5])
     else:
-      day = date.today()-timedelta(1)
+      day = date.today() - timedelta(1)
 
     srs = sr.objects.filter(day=day)
 
-    t = loader.select_template(['%s/robot/robotjobs.html'%(app),'core/app/robot/robotjobs.html'])
+    t = loader.select_template(['%s/robot/robotjobs.html' % (app), 'core/app/robot/robotjobs.html'])
     c = RequestContext(request,
-                      {'srs': srs,'day':day},
+                      {'srs': srs, 'day':day},
                       [defaultContext]
                     )
     return HttpResponse(t.render(c))
 
-  def historical(self,request,dic={'SummaryRobot':None,'Site':None,'Cloud':None},*args,**kwargs):
+  def historical(self, request, dic={'SummaryRobot':None, 'Site':None, 'Cloud':None}, *args, **kwargs):
 
-    sr   = dic['SummaryRobot']
-    app  = sr.__module__.split('.')[1]
+    sr = dic['SummaryRobot']
+    app = sr.__module__.split('.')[1]
 
     LENGTH = 50
 
-    day_from = request.GET.get('from','day_from')
-    day_to = request.GET.get('to','day_to')
+    day_from = request.GET.get('from', 'day_from')
+    day_to = request.GET.get('to', 'day_to')
 
     if bool(re.compile(r'[^0-9-]').search(day_from)) or bool(re.compile(r'[^0-9-]').search(day_to)):
-      #Mal format
-      day_to   = date.today()
+      # Mal format
+      day_to = date.today()
       day_from = day_to - timedelta(days=LENGTH)
     else:
       day_from = datetime(*time.strptime(day_from, "%Y-%m-%d")[0:5])
-      day_to   = datetime(*time.strptime(day_to, "%Y-%m-%d")[0:5]) 
+      day_to = datetime(*time.strptime(day_to, "%Y-%m-%d")[0:5])
 
       if day_to > day_from + timedelta(days=LENGTH):
-        day_to = day_from + timedelta(days=LENGTH) 
+        day_to = day_from + timedelta(days=LENGTH)
       else:
         LENGTH = day_to - day_from
-    
+
     srs = sr.objects.filter(day__gte=day_from).filter(day__lte=day_to)
     site = dic['Site']
 
     hists = {}
     for site in site.objects.all():
-      vals = srs.filter(site=site).order_by('day')  
+      vals = srs.filter(site=site).order_by('day')
       hists[site.name] = vals
 #      if len(vals) != LENGTH:
 #        hists[site.name] = []
@@ -1183,18 +1180,18 @@ class GenericView():
 #    for c in clouds:
 #      c.sites = c.getSites_for_cloud.all()
 
-    t = loader.select_template(['%s/robot/historical.html'%(app),'core/app/robot/historical.html'])
+    t = loader.select_template(['%s/robot/historical.html' % (app), 'core/app/robot/historical.html'])
     c = RequestContext(request,
-                      {'to':day_to,'from':day_from,'hists':sorted(hists.iteritems()),'length':LENGTH,'help':True},
+                      {'to':day_to, 'from':day_from, 'hists':sorted(hists.iteritems()), 'length':LENGTH, 'help':True},
                       [defaultContext]
                     )
     return HttpResponse(t.render(c))
 
-  def incidents(self,request,dic={'TestLog':None,'Site':None},*args,**kwargs):
+  def incidents(self, request, dic={'TestLog':None, 'Site':None}, *args, **kwargs):
 
-    tl   = dic['TestLog']
-    si   = dic['Site']
-    app  = tl.__module__.split('.')[1]
+    tl = dic['TestLog']
+    si = dic['Site']
+    app = tl.__module__.split('.')[1]
 
     q = request.GET.get('q', None)
     try:
@@ -1218,40 +1215,40 @@ class GenericView():
                                                   site_name=site_name,
                                                   severity=severity)
     sites = si.objects.filter(enabled=True).exclude(name__contains='DISK')
-    severities = (u'white+blacklisting',)+zip(*tl.SEVERITY_CHOICES)[0]
+    severities = (u'white+blacklisting',) + zip(*tl.SEVERITY_CHOICES)[0]
     paginator = Paginator(list(incidents), 25)
     try:
         incident_list = paginator.page(page)
     except (EmptyPage, InvalidPage):
         incident_list = paginator.page(paginator.num_pages)
-    t = loader.select_template(['%s/robot/incidents.html'%(app),'core/app/robot/incidents.html'])
+    t = loader.select_template(['%s/robot/incidents.html' % (app), 'core/app/robot/incidents.html'])
     c = RequestContext(request, locals(), [defaultContext])
     return HttpResponse(t.render(c))
 
-  def autoexclusion(self,request,dic={'SiteOption':None, 'Cloud':None, 'Site':None, 'BlacklistEvent':None},*args,**kwargs):
+  def autoexclusion(self, request, dic={'SiteOption':None, 'Cloud':None, 'Site':None, 'BlacklistEvent':None}, *args, **kwargs):
 
-    so   = dic['SiteOption']
-    cl   = dic['Cloud']
-    si   = dic['Site']
-    be   = dic['BlacklistEvent']
-    app  = so.__module__.split('.')[1]
+    so = dic['SiteOption']
+    cl = dic['Cloud']
+    si = dic['Site']
+    be = dic['BlacklistEvent']
+    app = so.__module__.split('.')[1]
 
     params = {}
     if kwargs.has_key('params'):
       params = kwargs['params']
 
-    clouds       = []
-    sites        = []
+    clouds = []
+    sites = []
     site_options = []
-    message      = ''
-    ext          = ''
-    chart        = None
-    top_month    = None
-    top_week     = None
+    message = ''
+    ext = ''
+    chart = None
+    top_month = None
+    top_week = None
     top_month_extra = None
     top_week_extra = None
 
-    #Autoexclusion enabled
+    # Autoexclusion enabled
     if params.has_key('autoexclusion'):
       try:
           cloud_id = int(request.GET.get('cloud', '0'))
@@ -1267,25 +1264,25 @@ class GenericView():
       chart = be.objects.get_autoexclusion_chart(site=site_id, cloud=cloud_id)
       top_month = be.objects.get_top_excluded_sites(time_limit=30)
       top_week = be.objects.get_top_excluded_sites(time_limit=7)
-      
+
       if params.has_key('extra_report'):
         extra_report = custom_import(params['extra_report'])
         if extra_report:
-          top_month_extra = cache.get('%s_top_month_extra'%app)
+          top_month_extra = cache.get('%s_top_month_extra' % app)
           if not top_month_extra:
             top_month_extra = extra_report(days=30)
-            cache.set('%s_top_month_extra'%app, top_month_extra, 7200)
-          top_week_extra = cache.get('%s_top_week_extra'%app)
+            cache.set('%s_top_month_extra' % app, top_month_extra, 7200)
+          top_week_extra = cache.get('%s_top_week_extra' % app)
           if not top_week_extra:
             top_week_extra = extra_report(days=7)
-            cache.set('%s_top_week_extra'%app, top_week_extra, 3600)
+            cache.set('%s_top_week_extra' % app, top_week_extra, 3600)
         else:
           raise RuntimeError('Could no import extra_report for %s: %s, %s' % (app, params['extra_report'], extra_report))
-      
-    else:
-      message = 'AutoExclussion not enabled for %s.'%(app)
 
-    t = loader.select_template(['%s/robot/autoexclusion.html'%(app),'core/app/robot/autoexclusion.html'])
+    else:
+      message = 'AutoExclussion not enabled for %s.' % (app)
+
+    t = loader.select_template(['%s/robot/autoexclusion.html' % (app), 'core/app/robot/autoexclusion.html'])
     c = RequestContext(request, locals(), [defaultContext])
 
     return HttpResponse(t.render(c))
@@ -1341,62 +1338,62 @@ class GenericView():
       return redirect(request.GET['redir'])
     return HttpResponse("Autoexclusion %sd globally." % action, content_type='text/plain')
 
-  def autoexclusion_set(self,request,action,sitename,dic={'Site':None,'SiteOption':None},*args,**kwargs):
+  def autoexclusion_set(self, request, action, sitename, dic={'Site':None, 'SiteOption':None}, *args, **kwargs):
     """View to control de exclusion options for each site."""
-    so   = dic['SiteOption']
+    so = dic['SiteOption']
     site = dic['Site']
-    app  = so.__module__.split('.')[1]
+    app = so.__module__.split('.')[1]
 
     # ATLAS specific
-    if action not in ('enable','disable'):
+    if action not in ('enable', 'disable'):
       raise Http404
 
-    s=site.objects.filter(name=sitename)
+    s = site.objects.filter(name=sitename)
     if not s:
       raise Http404
 
     site_option = so.objects.filter(option_name='autoexclusion').filter(site__name=sitename)
     if not site_option:
-      so = so(site=s[0],option_name='autoexclusion',option_value=action)
+      so = so(site=s[0], option_name='autoexclusion', option_value=action)
     else:
         so = site_option[0]
-        so.option_value=action
+        so.option_value = action
     so.save()
 
     if request.GET.get('redir'):
       return redirect(request.GET['redir'])
-    return HttpResponse('Site %s autoexclusion %s'%(sitename,action))
+    return HttpResponse('Site %s autoexclusion %s' % (sitename, action))
 
-  def contact_set(self,request,email,sitename,dic={'Site':None,'SiteOption':None},*args,**kwargs):
+  def contact_set(self, request, email, sitename, dic={'Site':None, 'SiteOption':None}, *args, **kwargs):
 
-    so   = dic['SiteOption']
+    so = dic['SiteOption']
     site = dic['Site']
-    app  = so.__module__.split('.')[1]
+    app = so.__module__.split('.')[1]
 
-    s=site.objects.filter(name=sitename)
+    s = site.objects.filter(name=sitename)
     if not s:
       raise Http404
 
     site_option = so.objects.filter(option_name='contact').filter(site__name=sitename)
     if not site_option:
-      so = so(site=s[0],option_name='contact',option_value=email)
+      so = so(site=s[0], option_name='contact', option_value=email)
     else:
         so = site_option[0]
-        so.option_value=email
+        so.option_value = email
     try:
       so.save()
     except:
       raise Http404
 
-    return HttpResponse('The email notifications for "%s" will be sent to "%s"'%(sitename,so.option_value))
+    return HttpResponse('The email notifications for "%s" will be sent to "%s"' % (sitename, so.option_value))
 
-  def contact_unset(self,request,sitename,dic={'Site':None,'SiteOption':None},*args,**kwargs):
+  def contact_unset(self, request, sitename, dic={'Site':None, 'SiteOption':None}, *args, **kwargs):
 
-    so   = dic['SiteOption']
+    so = dic['SiteOption']
     site = dic['Site']
-    app  = so.__module__.split('.')[1]
+    app = so.__module__.split('.')[1]
 
-    s=site.objects.filter(name=sitename)
+    s = site.objects.filter(name=sitename)
     if not s:
       raise Http404
 
@@ -1411,14 +1408,14 @@ class GenericView():
 
 
 #######################################################
-## STATS BLOCK
+# # STATS BLOCK
 #######################################################
 
-  def evolution(self,request,dic={'Site':None,'Result':None,'Cloud':None,'Template':None,'Test':None,'SummaryEvolution':None},*args,**kwargs):
+  def evolution(self, request, dic={'Site':None, 'Result':None, 'Cloud':None, 'Template':None, 'Test':None, 'SummaryEvolution':None}, *args, **kwargs):
 
-    site  = dic['Site']
-    cloud = dic['Cloud'] 
-    app  = site.__module__.split('.')[1]
+    site = dic['Site']
+    cloud = dic['Cloud']
+    app = site.__module__.split('.')[1]
 
     clouds = cloud.objects.all()
     for cloud in clouds:
@@ -1426,30 +1423,30 @@ class GenericView():
 
     stats = Stats()
     try:
-      titles,evol,type = stats.overview_evol(request,dic)
+      titles, evol, type = stats.overview_evol(request, dic)
     except:
       raise Http404
 
-    t = loader.select_template(['%s/stats/evolution.html'%(app),'core/app/stats/evolution.html'])
+    t = loader.select_template(['%s/stats/evolution.html' % (app), 'core/app/stats/evolution.html'])
     c = RequestContext(request,
-                      {'titles':titles,'evol':evol,'clouds':clouds,'type':type,'help':True},
+                      {'titles':titles, 'evol':evol, 'clouds':clouds, 'type':type, 'help':True},
                       [defaultContext]
                     )
     return HttpResponse(t.render(c))
 
-  def stats(self,request,dic={'Site':None,'Result':None,'Cloud':None,'Template':None,'Test':None},*args,**kwargs):
+  def stats(self, request, dic={'Site':None, 'Result':None, 'Cloud':None, 'Template':None, 'Test':None}, *args, **kwargs):
 
     site = dic['Site']
-    app  = site.__module__.split('.')[1]
+    app = site.__module__.split('.')[1]
 
     stats = Stats()
-    since,version,vsince,total,completed,completed_total,failed,failed_total,overall_url     = stats.overview_basic(dic)
-    sites,clouds,max_site_per_cloud,min_site_per_cloud,sites_per_cloud,sites_url             = stats.overview_sites(dic)
-    users                                                                                    = stats.overview_users(dic)
-    templates,tests,max_test_per_template,min_test_per_template,tests_per_template,tests_url = stats.overview_tests(dic)
+    since, version, vsince, total, completed, completed_total, failed, failed_total, overall_url = stats.overview_basic(dic)
+    sites, clouds, max_site_per_cloud, min_site_per_cloud, sites_per_cloud, sites_url = stats.overview_sites(dic)
+    users = stats.overview_users(dic)
+    templates, tests, max_test_per_template, min_test_per_template, tests_per_template, tests_url = stats.overview_tests(dic)
 
 
-    t = loader.select_template(['%s/stats/stats.html'%(app),'core/app/stats/stats.html'])
+    t = loader.select_template(['%s/stats/stats.html' % (app), 'core/app/stats/stats.html'])
     c = RequestContext(request,
                       locals(),
                       [defaultContext]
@@ -1464,13 +1461,13 @@ class GenericView():
     c = RequestContext(request, locals(), [defaultContext])
     return HttpResponse(t.render(c))
 
-  def statistics(self,request,dic={'MetricType':None,'Test':None,'Site':None,'Cloud':None,'Template':None},*args,**kwargs):
+  def statistics(self, request, dic={'MetricType':None, 'Test':None, 'Site':None, 'Cloud':None, 'Template':None}, *args, **kwargs):
 
     metric_type = dic['MetricType']
     app = metric_type.__module__.split('.')[1]
 
     stats = Stats()
-    Qobjects,commands,obj,error = stats.parseQuery(request,dic)
+    Qobjects, commands, obj, error = stats.parseQuery(request, dic)
 
     if not commands['go']:
 
@@ -1479,25 +1476,25 @@ class GenericView():
         type = commands['type']
 
       if not error:
-        dialog = stats.getDialog(obj,Qobjects)
+        dialog = stats.getDialog(obj, Qobjects)
       else:
         dialog = []
       c = RequestContext(request,
-                      {'dialog':dialog,'type':type,'sort_by':commands['sort_by'],'error':error},
+                      {'dialog':dialog, 'type':type, 'sort_by':commands['sort_by'], 'error':error},
                       [defaultContext]
                     )
     else:
 
       statistics = {}
-      stats = Stats() 
+      stats = Stats()
 
       if commands['type'] == 'timeline':
 
-        titles,statistics = [],[]
+        titles, statistics = [], []
         if not error:
-          titles,statistics,error = stats.process(Qobjects,commands)
+          titles, statistics, error = stats.process(Qobjects, commands)
         c = RequestContext(request,
-                           {'titles':titles,'statistics':statistics,'error':error,'type':commands['type']},
+                           {'titles':titles, 'statistics':statistics, 'error':error, 'type':commands['type']},
                            [defaultContext]
                           )
 
@@ -1509,14 +1506,14 @@ class GenericView():
 
           statistics = []
           if not error:
-            statistics,error = stats.process(Qobjects,commands)
+            statistics, error = stats.process(Qobjects, commands)
 
         c = RequestContext(request,
-                           {'statistics':statistics,'error':error,'type':commands['type'],'metrics':metrics},
+                           {'statistics':statistics, 'error':error, 'type':commands['type'], 'metrics':metrics},
                            [defaultContext]
-                          )  
+                          )
 
-    t = loader.select_template(['%s/stats/statistics.html'%(app),'core/app/stats/statistics.html'])
+    t = loader.select_template(['%s/stats/statistics.html' % (app), 'core/app/stats/statistics.html'])
     return HttpResponse(t.render(c))
 
   def joberrors(self, request, dic={'Site': None, 'Result': None, 'Cloud': None}, *args, **kwargs):
@@ -1570,7 +1567,7 @@ class GenericView():
       if params.has_key('failed'):
         q = q & Q(**params['failed'])
       i = {'site': s,
-           'finished': r.filter(ganga_status__in=('c','f')).count(),
+           'finished': r.filter(ganga_status__in=('c', 'f')).count(),
            'failed': r.filter(q).count(),
            'aborted': 0,
            'efficiency': 0.0}
@@ -1580,7 +1577,7 @@ class GenericView():
         i['efficiency'] = float(i['finished'] - total_failed) / float(i['finished'])
       site_data.append(i)
 
-    #site_data.sort(key=lambda x: x['efficiency'], reverse=True)
+    # site_data.sort(key=lambda x: x['efficiency'], reverse=True)
 
     # TODO(rmedrano): Avoid passing the request by creating a custom url_with_get tag.
     get_params = request.GET.copy()
@@ -1589,10 +1586,10 @@ class GenericView():
     except KeyError:
       pass
     c = RequestContext(request, locals(), [defaultContext])
-    t = loader.select_template(['%s/stats/joberrors.html'%(app),'core/app/stats/joberrors.html'])
+    t = loader.select_template(['%s/stats/joberrors.html' % (app), 'core/app/stats/joberrors.html'])
     return HttpResponse(t.render(c))
 
-  def abortedjobs(self,request,dic={'Site':None,'Result':None},*args,**kwargs):
+  def abortedjobs(self, request, dic={'Site':None, 'Result':None}, *args, **kwargs):
     site = dic['Site']
     result = dic['Result']
     app = site.__module__.split('.')[1]
@@ -1627,7 +1624,7 @@ class GenericView():
     results_filtered = result.objects.filter(result_filters)
 
     site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
-    #site_data = results_filtered.filter(site=site).values(params['field']).annotate(jcount=Count(params['field'])).order_by('-jcount')
+    # site_data = results_filtered.filter(site=site).values(params['field']).annotate(jcount=Count(params['field'])).order_by('-jcount')
 
     for s in site_data:
       s['code'] = s[params['field']]
@@ -1635,11 +1632,11 @@ class GenericView():
       if params.has_key('extra'):
         s['details'] = [x[0] for x in result.objects.filter(result_filters).filter(site=site).filter(**{params['field']:s['code']}).distinct().values_list(params['extra'])]
 
-    c = RequestContext(request, {'site_data': site_data,'kind':'grid','type':'aborted'}, [defaultContext])
-    t = loader.select_template(['%s/stats/failedjobs.html'%(app),'core/app/stats/failedjobs.html'])
+    c = RequestContext(request, {'site_data': site_data, 'kind':'grid', 'type':'aborted'}, [defaultContext])
+    t = loader.select_template(['%s/stats/failedjobs.html' % (app), 'core/app/stats/failedjobs.html'])
     return HttpResponse(t.render(c))
 
-  def failedjobs(self,request,dic={'Site':None,'Result':None},*args,**kwargs):
+  def failedjobs(self, request, dic={'Site':None, 'Result':None}, *args, **kwargs):
     site = dic['Site']
     result = dic['Result']
     app = site.__module__.split('.')[1]
@@ -1674,19 +1671,19 @@ class GenericView():
     results_filtered = result.objects.filter(result_filters)
 
     site_data = results_filtered.exclude(**{params['field']:None}).values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
-    #site_data = results_filtered.values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
+    # site_data = results_filtered.values(params['field']).filter(site=site).annotate(jcount=Count(params['field'])).order_by('-jcount')
 
     for s in site_data:
       s['code'] = s[params['field']]
       del s[params['field']]
       if params.has_key('extra'):
-        s['details'] = [x[0] for x in result.objects.filter(result_filters).filter(site=site).filter(**{params['field']:s['code']}).distinct().values_list(params['extra'])] 
+        s['details'] = [x[0] for x in result.objects.filter(result_filters).filter(site=site).filter(**{params['field']:s['code']}).distinct().values_list(params['extra'])]
 
-    c = RequestContext(request, {'site_data': site_data, 'kind':'application','type':'failed'}, [defaultContext])
-    t = loader.select_template(['%s/stats/failedjobs.html'%(app),'core/app/stats/failedjobs.html'])
+    c = RequestContext(request, {'site_data': site_data, 'kind':'application', 'type':'failed'}, [defaultContext])
+    t = loader.select_template(['%s/stats/failedjobs.html' % (app), 'core/app/stats/failedjobs.html'])
     return HttpResponse(t.render(c))
 
-  def robot_ssb(self,request,list_type,dic={'Site':None,'SummaryRobot':None},*args,**kwargs):
+  def robot_ssb(self, request, list_type, dic={'Site':None, 'SummaryRobot':None}, *args, **kwargs):
     site = dic['Site']
     summary_robot = dic['SummaryRobot']
     app = site.__module__.split('.')[1]
@@ -1699,7 +1696,7 @@ class GenericView():
 
     sites = filter(lambda x: x.site_type() == list_type, site.objects.filter(enabled=1).select_related('cloud').all())
     dh = Datahelper()
-    sites = dh.annotateSitesEfficiency(sites,date.today(),app)
+    sites = dh.annotateSitesEfficiency(sites, date.today(), app)
 
     now = datetime.utcnow().strftime("%Y-%m-%d %H-%M-%S")
 
@@ -1716,9 +1713,9 @@ class GenericView():
       else:
          color = 'green'
       url = 'http://hammercloud.cern.ch/hc/app/atlas/robot/incidents/?site=%s' % s.name
-      #site_data.append((now, s.ssb_name(), eff, color, url))
+      # site_data.append((now, s.ssb_name(), eff, color, url))
       site_data.append((now, s.name, eff, color, url))
-    
+
     c = RequestContext(request, {'site_data': site_data}, [defaultContext])
-    t = loader.select_template(['%s/robot/ssb.html'%(app),'core/app/robot/ssb.html'])
+    t = loader.select_template(['%s/robot/ssb.html' % (app), 'core/app/robot/ssb.html'])
     return HttpResponse(t.render(c), content_type='text/plain')
