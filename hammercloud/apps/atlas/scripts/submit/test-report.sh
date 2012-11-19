@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # Script for the test submission.
-#ARGUMETNS: <testid><...>
 
 if [ -z $1 ]
 then
