@@ -4,9 +4,9 @@
 
 <head>
   <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-  <link type="text/css" href="{{MEDIA_URL}}css/portal/style.css" rel="stylesheet" />
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/hm.js"></script>
+  <link type="text/css" href="{{STATIC_URL}}css/portal/style.css" rel="stylesheet" />
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/hm.js"></script>
   <title>HammerCloud</title>
 </head>
 
@@ -27,7 +27,7 @@
     <p>No apps.</p>
   {% endif %}
 
-  <h1>HammerCloud<a href="{% url portal-view %}feed/"><img src="{{ MEDIA_URL }}images/rss_grey.ico" border="0" alt="rss"/></a></h1>
+  <h1>HammerCloud<a href="{% url portal-view %}feed/"><img src="{{ STATIC_URL }}images/rss_grey.ico" border="0" alt="rss"/></a></h1>
 </div>
 
 </body>

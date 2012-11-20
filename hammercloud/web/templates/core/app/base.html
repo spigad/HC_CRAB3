@@ -61,7 +61,7 @@
 
         <h1 style="margin-bottom: 20px;	text-align: left;">
           <a href="{% url portal-view %}">HammerCloud</a> | <a href="{% url index-view app %}">{{app|upper}}</a>
-          <a href="{% url portal-view %}feed/app/{{app}}/"><img src="{{ MEDIA_URL }}images/rss_{{app}}.ico" border="0" alt="rss"/></a>
+          <a href="{% url portal-view %}feed/app/{{app}}/"><img src="{{ STATIC_URL }}images/rss_{{app}}.ico" border="0" alt="rss"/></a>
         </h1>
 
         <div style="float: right; color: #ffffff; margin: 7px 10px auto auto;">
@@ -107,7 +107,7 @@
       {% endblock %}
       {% if help %}
       <div id='help' style="float: right">
-        <img src='{{ MEDIA_URL }}images/help.png' />
+        <img src='{{ STATIC_URL }}images/help.png' />
       </div>
       <div id='usage'>
         <h3>{% block help_title %}{% endblock %}</h3>

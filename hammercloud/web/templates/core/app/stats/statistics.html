@@ -3,23 +3,23 @@
 {% block css %}
 
   {{block.super}}
-  <link type="text/css" href="{{ MEDIA_URL }}css/jquery.multiselect.css" rel="stylesheet" /> 
-  <link type="text/css" href="{{ MEDIA_URL }}css/jquery.multiselect.filter.css" rel="stylesheet" />
+  <link type="text/css" href="{{ STATIC_URL }}css/jquery.multiselect.css" rel="stylesheet" /> 
+  <link type="text/css" href="{{ STATIC_URL }}css/jquery.multiselect.filter.css" rel="stylesheet" />
 
 {% endblock %}
 
 {% block javascript %}
 
   {{block.super}}
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.multiselect.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.multiselect.filter.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.cookie.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.collapse.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/json2.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/dumbFormState.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/time_dialog.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.multiselect.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.multiselect.filter.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.collapse.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/json2.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/dumbFormState.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/time_dialog.js"></script>
 
 
   <script type="text/javascript">
@@ -55,7 +55,7 @@
         changeMonth: true,
         changeYear: true,
         showOn: 'button',
-        buttonImage: '{{ MEDIA_URL }}images/icon_calendar.gif',
+        buttonImage: '{{ STATIC_URL }}images/icon_calendar.gif',
         buttonImageOnly: true,
         dateFormat : 'yy-mm-dd'
       });
@@ -63,7 +63,7 @@
         changeMonth: true,
         changeYear: true,
         showOn: 'button',
-        buttonImage: '{{ MEDIA_URL }}images/icon_calendar.gif',
+        buttonImage: '{{ STATIC_URL }}images/icon_calendar.gif',
         buttonImageOnly: true,
         dateFormat : 'yy-mm-dd'
       });
@@ -72,7 +72,7 @@
   </script>
 
 
-  <script type='text/javascript' src="{{ MEDIA_URL }}js/AC_OETags.js" language="javascript"></script>
+  <script type='text/javascript' src="{{ STATIC_URL }}js/AC_OETags.js" language="javascript"></script>
   <script>document.documentElement.className = "js";</script> 
 
   {% ifequal type 'timeline' %}
@@ -325,9 +325,9 @@
           <div>
           <p class="stats_tips">Advanced search allows you to set more specific options.</p>
           <input type="text" id="from" name="from" value="From" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" />
-          <input type="text" id="starttime" name="starttime" value="Starttime" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" /><img id='starttime_img' src="{{ MEDIA_URL }}images/icon_clock.gif" alt="starttime"/>
+          <input type="text" id="starttime" name="starttime" value="Starttime" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" /><img id='starttime_img' src="{{ STATIC_URL }}images/icon_clock.gif" alt="starttime"/>
           <input type="text" id="to" name="to" value="To" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" />
-          <input type="text" id="endtime" name="endtime" value="Endtime" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" /><img id="endtime_img" src="{{ MEDIA_URL }}images/icon_clock.gif" alt="endtime"/>
+          <input type="text" id="endtime" name="endtime" value="Endtime" onfocus="if(this.value==this.defaultValue)this.value='';" onblur="if(this.value=='')this.value=this.defaultValue;" /><img id="endtime_img" src="{{ STATIC_URL }}images/icon_clock.gif" alt="endtime"/>
           </div>
           </div>
 

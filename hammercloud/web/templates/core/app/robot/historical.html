@@ -2,21 +2,21 @@
 
 {% block css %}
   {{block.super}}
-  <link type="text/css" href="{{ MEDIA_URL }}css/jquery.multiselect.css" rel="stylesheet" />
+  <link type="text/css" href="{{ STATIC_URL }}css/jquery.multiselect.css" rel="stylesheet" />
 {% endblock %}
 
 {% block javascript %}
   {{block.super}}
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/maps.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.multiselect.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/maps.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.multiselect.js"></script>
   <script type="text/javascript">
     $(function() {
       $(".daypicker").datepicker({
         changeMonth: true,
         changeYear: true,
         showOn: 'button',
-        buttonImage: '{{ MEDIA_URL }}images/icon_calendar.gif',
+        buttonImage: '{{ STATIC_URL }}images/icon_calendar.gif',
         buttonImageOnly: true,
         dateFormat : 'yy-mm-dd',
       });

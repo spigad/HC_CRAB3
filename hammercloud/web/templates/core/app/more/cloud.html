@@ -7,7 +7,7 @@
   <div id="standard">
     <h2>
       {{ cloud.name }}
-      <a href="{% url portal-view %}feed/app/{{app}}/cloud/{{cloud.id}}/"><img src="{{ MEDIA_URL }}images/rss_{{app}}.ico" border="0"></a>
+      <a href="{% url portal-view %}feed/app/{{app}}/cloud/{{cloud.id}}/"><img src="{{ STATIC_URL }}images/rss_{{app}}.ico" border="0"></a>
     </h2>
     <div id="standard_menu">
        <a href="{% url statistics-view app %}?type=plot&cloud={{cloud.id}}&sort_by=cloud">&nbsp;PLOTS&nbsp;</a>
@@ -27,9 +27,9 @@
             <td>{{ site.queue }}</td>
             <td>
               {% if site.enabled %}
-                <img src="{{ MEDIA_URL }}admin/img/admin/icon-yes.gif" alt='True'>
+                <img src="{{ STATIC_URL }}admin/img/admin/icon-yes.gif" alt='True'>
               {% else %}
-                <img src="{{ MEDIA_URL }}admin/img/admin/icon-no.gif" alt='False'>
+                <img src="{{ STATIC_URL }}admin/img/admin/icon-no.gif" alt='False'>
               {% endif %}
             </td>
           </tr>

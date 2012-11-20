@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-  <link type="text/css" href="{{ MEDIA_URL }}css/login.css" rel="stylesheet" />
+  <link type="text/css" href="{{ STATIC_URL }}css/login.css" rel="stylesheet" />
   <title>Login</title>
 </head>
 
 <body>
 <div id="banner">
-<h1><img src="{{ MEDIA_URL }}images/logo_small.jpg" alt="logo"/>HAMMERCLOUD LOGIN</h1>
+<h1><img src="{{ STATIC_URL }}images/logo_small.jpg" alt="logo"/>HAMMERCLOUD LOGIN</h1>
 </div>
 <div id="content">
 {% if form.errors %}

@@ -12,7 +12,7 @@
 </script>
 
 <div id='help' style="float: right">
-  <img src='{{ MEDIA_URL }}images/help.png' />
+  <img src='{{ STATIC_URL }}images/help.png' />
 </div>
 <div id='usage'>
   <h3>Hints</h3>
@@ -50,18 +50,18 @@
   <tr class="{{ta.status}}">
     <td>
       {% if ta.status == 'passed' %}
-      <img src="{{ MEDIA_URL }}images/icon-yes.gif"/>
+      <img src="{{ STATIC_URL }}images/icon-yes.gif"/>
       {% else %}
       {% if ta.status == 'failed' %}
-      <img src="{{ MEDIA_URL }}images/icon-no.gif"/>
+      <img src="{{ STATIC_URL }}images/icon-no.gif"/>
       {% else %}
-      <img src="{{ MEDIA_URL }}images/icon-unknown.gif"/>
+      <img src="{{ STATIC_URL }}images/icon-unknown.gif"/>
       {% endif %}
       {% endif %}
     </td>
     <td>{{ta.site.name}}</td>
     <td>{{ta.alarm.name}}</td>
-    <td>{% if ta.active %}<img src="{{ MEDIA_URL }}images/icon-yes.gif">{% else %}<img src="{{ MEDIA_URL }}images/icon-no.gif">{% endif %}</td>
+    <td>{% if ta.active %}<img src="{{ STATIC_URL }}images/icon-yes.gif">{% else %}<img src="{{ STATIC_URL }}images/icon-no.gif">{% endif %}</td>
     <td>{{ ta.progress }}</td>
     <td>{{ ta.mtime|date:"d/M"}}, {{ta.mtime|time:"P"}}</td>
     <td onClick="togglelogs('{{ta.site.name}}-{{ta.alarm.name}}');">&raquo;</td>
@@ -70,9 +70,9 @@
   <tr class="{% if s %}failed{% else %}passed{% endif %} {{ta.site.name}}-{{ta.alarm.name}}" style="display:none;">
     <td>
       {% if s %}
-      <img src="{{ MEDIA_URL }}images/icon-no.gif"/>
+      <img src="{{ STATIC_URL }}images/icon-no.gif"/>
       {% else %}
-      <img src="{{ MEDIA_URL }}images/icon-yes.gif"/>
+      <img src="{{ STATIC_URL }}images/icon-yes.gif"/>
       {% endif %}
     </td>
     <td colspan="6">{{l}}</td>

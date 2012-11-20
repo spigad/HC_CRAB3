@@ -1,6 +1,6 @@
 <script type="text/javascript">
   $(document).ready(function() {
-    TableToolsInit.sSwfPath="{{ MEDIA_URL }}swf/ZeroClipboard.swf";
+    TableToolsInit.sSwfPath="{{ STATIC_URL }}swf/ZeroClipboard.swf";
     $('#testjobs').dataTable({
       "sPaginationType": 'full_numbers',
       "bServerSide": true,
@@ -45,7 +45,7 @@
 </script>
 
 <div id='help' style="float: right">
-  <img src='{{ MEDIA_URL }}images/help.png' />
+  <img src='{{ STATIC_URL }}images/help.png' />
 </div>
 <div id='usage'>
   <h3>USAGE of the SEARCH field</h3>

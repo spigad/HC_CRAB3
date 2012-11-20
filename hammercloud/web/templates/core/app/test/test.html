@@ -2,17 +2,17 @@
 
 {% block css %}
   {{ block.super }}
-  <link type="text/css" href="{{ MEDIA_URL }}css/datatables.css" rel="stylesheet" />
-  <link type="text/css" href="{{ MEDIA_URL }}css/TableTools.css" rel="stylesheet" />
-  <link type="text/css" href="{{ MEDIA_URL }}css/jquery-ui/jquery-ui.css" rel="stylesheet" />
+  <link type="text/css" href="{{ STATIC_URL }}css/datatables.css" rel="stylesheet" />
+  <link type="text/css" href="{{ STATIC_URL }}css/TableTools.css" rel="stylesheet" />
+  <link type="text/css" href="{{ STATIC_URL }}css/jquery-ui/jquery-ui.css" rel="stylesheet" />
 {% endblock %}
 
 {% block javascript %}
   {{block.super}}
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.dataTables.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/TableTools.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/ZeroClipboard.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/TableTools.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/ZeroClipboard.js"></script>
 {% endblock %}
 
 {% block docready %}
@@ -30,7 +30,7 @@
 
   <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
   <h2>Test {{ test.id }}
-    <a href="{% url portal-view %}feed/app/{{app}}/test/{{test.id}}/"><img src="{{ MEDIA_URL }}images/rss_{{app}}.ico" border="0"></a>
+    <a href="{% url portal-view %}feed/app/{{app}}/test/{{test.id}}/"><img src="{{ STATIC_URL }}images/rss_{{app}}.ico" border="0"></a>
   </h2>
   <div style="float:right;">
         &nbsp;<a href="{% url testclone-view app,test.id %}">Clone</a>

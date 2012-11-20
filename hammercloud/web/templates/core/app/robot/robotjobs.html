@@ -6,24 +6,24 @@
 {% endblock  %}
 
 {% block css %}
-  <link type="text/css" href="{{MEDIA_URL}}css/datatables.css" rel="stylesheet"/>
-  <link type="text/css" href="{{ MEDIA_URL }}css/TableTools.css" rel="stylesheet"/>
+  <link type="text/css" href="{{STATIC_URL}}css/datatables.css" rel="stylesheet"/>
+  <link type="text/css" href="{{ STATIC_URL }}css/TableTools.css" rel="stylesheet"/>
   {{block.super}}
 {% endblock %}
 
 {% block javascript %}
   {{block.super}}
-  <script type="text/javascript" src="{{MEDIA_URL}}js/jquery.dataTables.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/TableTools.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/ZeroClipboard.js"></script>
-  <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui.js"></script>
+  <script type="text/javascript" src="{{STATIC_URL}}js/jquery.dataTables.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/TableTools.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/ZeroClipboard.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui.js"></script>
   <script type="text/javascript">
     $(function() {
       $("#day").datepicker({
         changeMonth: true,
         changeYear: true,
         showOn: 'button',
-        buttonImage: '{{ MEDIA_URL }}images/icon_calendar.gif',
+        buttonImage: '{{ STATIC_URL }}images/icon_calendar.gif',
         buttonImageOnly: true,
         dateFormat : 'yy-mm-dd',
         onSelect: function(dateText, inst){$('#robot_form')[0].submit()}
@@ -31,7 +31,7 @@
     });
   </script>
   <script type="text/javascript">
-    TableToolsInit.sSwfPath="{{ MEDIA_URL }}swf/ZeroClipboard.swf";
+    TableToolsInit.sSwfPath="{{ STATIC_URL }}swf/ZeroClipboard.swf";
     $(document).ready(function() {
       $('#robotjobs_table').dataTable({
         "sPaginationType": 'full_numbers',
@@ -79,7 +79,7 @@
   <div style="float:left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
 
 <div id='help' style="float: right">
-    <img src='{{ MEDIA_URL }}images/help.png' />
+    <img src='{{ STATIC_URL }}images/help.png' />
       </div>
       <div id='usage'>
     <h3>USAGE of the SEARCH field.</h3>
