@@ -1,4 +1,4 @@
-from django.conf.urls import include, patterns, url
+from django.conf.urls import include, patterns
 from django.contrib import admin
 
 admin.autodiscover()
@@ -12,5 +12,6 @@ urlpatterns = patterns('',
     (r'', include('hc.core.base.xhr.urls')),
     (r'', include('hc.core.base.xmlrpc.urls')),
 
-    url(r'^admin/', include(admin.site.urls)),
+    (r'^admin/', include(admin.site.urls)),
+    (r'^admin/varnish/', include('varnishapp.urls')),
 )
