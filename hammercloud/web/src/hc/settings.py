@@ -140,6 +140,7 @@ INSTALLED_APPS = (
     'hc.atlas',
     'hc.cms',
     'hc.lhcb',
+    'varnishapp',
 )
 
 # A sample logging configuration. The only tangible logging
