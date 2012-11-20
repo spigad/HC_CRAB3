@@ -135,6 +135,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.admin',
     'django.contrib.humanize',
+    'django.contrib.staticfiles',
     'hc.core',
     'hc.atlas',
     'hc.cms',
