@@ -11,20 +11,20 @@
     {% endblock %}
 
     {% block css %}
-      <link type="text/css" href="{{ MEDIA_URL }}css/style.css" rel="stylesheet" />
+      <link type="text/css" href="{{ STATIC_URL }}css/style.css" rel="stylesheet" />
       {% if app %}
-        <link type="text/css" href="{{ MEDIA_URL }}css/{{app}}/style.css" rel="stylesheet" />
+        <link type="text/css" href="{{ STATIC_URL }}css/{{app}}/style.css" rel="stylesheet" />
       {% endif %}
     {% endblock %}
 
     {% block javascript %}
-      <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery.js"></script>
-      <script type="text/javascript" src="{{ MEDIA_URL }}js/hm.js"></script>
+      <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.js"></script>
+      <script type="text/javascript" src="{{ STATIC_URL }}js/hm.js"></script>
     {% endblock %}
 
     {% if help %}
-      <script type="text/javascript" src="{{ MEDIA_URL }}js/jquery-ui.js"></script>
-      <link type="text/css" href="{{ MEDIA_URL }}css/jquery-ui/jquery-ui.css" rel="stylesheet" />
+      <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-ui.js"></script>
+      <link type="text/css" href="{{ STATIC_URL }}css/jquery-ui/jquery-ui.css" rel="stylesheet" />
       <script type="text/javascript" charset="utf-8">
 	$(function() {
           $('#usage').dialog({
