@@ -13,7 +13,7 @@ class SSLRedirect(object):
     def process_view(self, request, view_func, view_args, view_kwargs):
         """Before answering to the request, check if SSL is needed."""
         if settings.DEBUG:
-            return request
+            return None
         if 'SSL' in view_kwargs:
             secure = view_kwargs['SSL']
             del view_kwargs['SSL']
