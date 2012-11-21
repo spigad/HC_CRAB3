@@ -1,17 +1,19 @@
 from django.db import models
-
-from hc.core.base.models.abstract import *
 from hc.core.base.models.fields import UnixTimestampField
-
 from hc.core.base.rss.abstract import HCFeedBase
 
-class Plugin(models.Model):
+"""This is the model module for the core database."""
 
-  name = models.CharField(max_length = 16)
-  mtime = UnixTimestampField(auto_created=True)
-  
-  class Meta:
-    db_table = 'plugin'
+
+class Plugin(models.Model):
+    """Plugins are the apps installed in HammerCloud (like ATLAS or CMS)."""
+    name = models.CharField(max_length=16)
+    mtime = UnixTimestampField(auto_created=True)
+
+    class Meta:
+        db_table = 'plugin'
+
 
 class HCFeed(HCFeedBase):
-  pass
+    """Model for the HammerCloud RSS feed."""
+    pass
