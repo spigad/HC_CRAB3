@@ -6,7 +6,7 @@ Allows the access to one database per app, distributing the load.
 """
 
 PLUGINS = [app.split('.')[1] for app in settings.INSTALLED_APPS
-           if app.startswith('hc') and app != 'core']
+           if app.startswith('hc') and 'core' not in app]
 
 
 class PrimaryRouter(object):
@@ -16,13 +16,13 @@ class PrimaryRouter(object):
         """Find database for read."""
         if model._meta.app_label in PLUGINS:
             return model._meta.app_label
-        return None
+        return 'default'
 
     def db_for_write(self, model, **hints):
         """Find database for write."""
         if model._meta.app_label in PLUGINS:
             return model._meta.app_label
-        return None
+        return 'default'
 
     def allow_relation(self, obj1, obj2, **hints):
         """The router does not forbid relations."""
