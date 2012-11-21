@@ -3,7 +3,7 @@ from hc.core.base.admin import ConfiguredAdmin
 from hc.core.base.rss.admin import HCFeedAdminBase
 from hc.core.models import Plugin, HCFeed
 
-"""Admin configuration for the"""
+"""Admin configuration for the core models."""
 
 
 class PluginAdmin(ConfiguredAdmin):
