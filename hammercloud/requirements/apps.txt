@@ -1,4 +1,4 @@
-Django
+Django<1.5
 GChartWrapper
 MySQL-python
 South
@@ -8,8 +8,10 @@ django-dtpanel-htmltidy
 django-extensions
 git+https://github.com/justquick/django-varnish.git
 ipython
-memcache-toolbar
+git+https://github.com/ross/memcache-debug-panel.git
 numpy
 python-memcached
 python-varnish
 pytz
+raven
+simplejson
