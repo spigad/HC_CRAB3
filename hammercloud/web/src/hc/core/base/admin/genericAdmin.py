@@ -8,6 +8,7 @@ from hc.core.base.forms.forms import TestAdminForm,TestSuperUserAdminForm
 from hc.core.utils.generic.class_func import custom_import
 from django.http import Http404
 
+from hc.core.base.admin import ConfiguredAdmin
 from hc.core.base.admin.actions import cancel,clone,delete_marked,delete_view,make_approved,pause,unpause,send_for_approval
 
 ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ## ##
@@ -18,7 +19,7 @@ from hc.core.base.admin.actions import cancel,clone,delete_marked,delete_view,ma
 ##
 ##
 
-class ActionsAdminBase(admin.ModelAdmin):
+class ActionsAdminBase(ConfiguredAdmin):
 
 #  actions = ['clone','delete_marked','send_for_approval','cancel','pause','make_approved','unpause']
 
