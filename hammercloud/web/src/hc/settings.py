@@ -141,6 +141,7 @@ INSTALLED_APPS = (
     'hc.cms',
     'hc.lhcb',
     'varnishapp',
+    'raven.contrib.django',
 )
 
 # A sample logging configuration. The only tangible logging
