@@ -1,4 +1,9 @@
+from collections import defaultdict
+from datetime import timedelta
+from django.db.models import Avg, Count, Max, Min
+from django.utils.timezone import now
 from hc.core.base.models.managers.functions import site_fm, test_fm
+from hc.core.base.views.configuration import PARTICULARITIES
 from hc.core.utils.generic.class_func import custom_import
 
 """The datahelper module offers general functionality to manage HC data."""
@@ -9,6 +14,7 @@ class Datahelper(object):
 
     def annotateTest(self, test):
         """Adds information to the test object from the SummaryTest."""
+        super(Datahelper, self).__init__()
         # This lookup should be already chached in test. We're calling to
         # ensure that the data is there.
         sts = test.getSummaryTests_for_test.all()[0]
@@ -47,3 +53,20 @@ class Datahelper(object):
             else:
                 site.eff = -1
         return sites
+
+    def timeBreakdownSeries(self, app, duration=timedelta(days=7)):
+        """Annotates the provided list of sites with its time breakdown."""
+        kwargs = {}
+        for k, v in PARTICULARITIES[app]['metrics'].iteritems():
+            for m in (Min, Avg, Max):
+                kwargs['%s_%s' % (k, m.__name__)] = m(v)
+        s_t_s = custom_import('hc.%s.models.SummaryTestSite' % (app))
+        summaries = (s_t_s.objects
+                          .filter(test__starttime__gt=now() - duration)
+                          .values('test_site__site')
+                          .annotate(**kwargs))
+        series = defaultdict(list)
+        for summary in summaries:
+            for metric, value in summary.iteritems():
+                series[metric].append(value)
+        return series
