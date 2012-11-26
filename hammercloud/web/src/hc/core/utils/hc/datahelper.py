@@ -1,6 +1,6 @@
 from collections import defaultdict
 from datetime import timedelta
-from django.db.models import Avg, Count, Max, Min
+from django.db.models import Avg, Max, Min
 from django.utils.timezone import now
 from hc.core.base.models.managers.functions import site_fm, test_fm
 from hc.core.base.views.configuration import PARTICULARITIES
