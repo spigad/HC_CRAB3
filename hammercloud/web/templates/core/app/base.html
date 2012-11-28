@@ -1,13 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" itemscope itemtype="http://schema.org/Product">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
   <head>
     <title>{% block title %}HammerCloud-{{app|upper}}{% endblock %}</title>
 
     {% block meta %}
       <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-      <meta itemprop="name" content="HammerCloud" />
-      <meta itemprop="description" content="HammerCloud is the testing engine for the Grid" />
+      <meta name="description" content="HammerCloud is the testing engine for the Grid" />
     {% endblock %}
 
     {% block css %}
@@ -80,7 +79,7 @@
                   <li><a href="{% url testlist-view app,'all' %}">All</a></li>
                 </ul>
               </li>
-              <li><a href="{% url statistics-view app %}">Statistics</a>
+              <li><a href="{% url statistics-view app %}">Reports</a>
                 <ul>
                   <li><a href="{% url statistics-view app %}?type=plot">Plots</a></li>
                   <li><a href='{% url statistics-view app %}?type=rank'>Ranks</a></li>
@@ -120,12 +119,7 @@
       {% endblock %}
 
       {% block bottom %}
-        <div id="bottom-bar">
-          <div style="text-align: right; color: white; font-size: 0.7em;">
-            <a href="https://twiki.cern.ch/twiki/bin/view/IT/HammerCloud" target="_blank" style="color: white;">Help</a> |
-            <a href="https://savannah.cern.ch/projects/hammercloud/" target="_blank" style="color: white;">Savannah</a>
-          </div>
-        </div>
+        <div id="bottom-bar"></div>
         {% block account %}{% endblock %}
       {% endblock %}
 
