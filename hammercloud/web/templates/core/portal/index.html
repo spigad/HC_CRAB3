@@ -3,23 +3,21 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
-  <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
   <link type="text/css" href="{{STATIC_URL}}css/portal/style.css" rel="stylesheet" />
-  <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.js"></script>
-  <script type="text/javascript" src="{{ STATIC_URL }}js/hm.js"></script>
+  <link href="//fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet" type="text/css" />
+  <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
   <title>HammerCloud</title>
 </head>
 
 <body>
   <div id="content">
-
   {% if apps %}
-    <table>
+    <table summary="List of HammerCloud apps.">
       {% for app in apps %}
-        <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
+        <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='pointer';"
             onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
             onclick="DoNav('{% url index-view app %}');">
-         <td id="{{app}}">{{app}}</td>
+          <td id="{{app}}">{{app}}</td>
         </tr>
       {% endfor %}
     </table>
@@ -27,10 +25,23 @@
     <p>No apps.</p>
   {% endif %}
 
-  <h1>HammerCloud<a href="{% url portal-view %}feed/"><img src="{{ STATIC_URL }}images/rss_grey.ico" border="0" alt="rss"/></a></h1>
-</div>
+  <h1>HammerCloud <a href="{% url portal-view %}feed/"><img src="{{ STATIC_URL }}images/rss_grey.ico" border="0" alt="rss"/></a></h1>
+  </div>
 
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/hm.js"></script>
+  <script type="text/javascript" src="//its.cern.ch/jira/s/en_USiokvet/734/82/1.2.5/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=cd48a51a"></script>
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-244374-10']);
+    _gaq.push(['_setSiteSpeedSampleRate', 100]);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
 </body>
 
 </html>
-
