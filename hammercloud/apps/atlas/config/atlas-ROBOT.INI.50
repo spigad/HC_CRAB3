@@ -19,7 +19,7 @@
 
 [Configuration]
 RUNTIME_PATH = :::GangaAtlas:GangaPanda:GangaRobot
-gangadir = /data/gangarobot/hammercloud/gangadir/robot/
+gangadir = /data/hc/gangarobot/gangadir/robot/
 #repositorytype = LocalXML
 
 [defaults_GridProxy]
@@ -50,7 +50,7 @@ SCRIPTS_PATH = GangaRobot/scripts
 [Logging]
 # Enable INFO logging for GangaRobot
 GangaRobot = INFO
-_logfile = /data/gangarobot/hammercloud/logs/ganga.log
+_logfile = /data/hc/gangarobot/logs/ganga.log
 _logfile_size = 10000000
 _format = VERBOSE
 
