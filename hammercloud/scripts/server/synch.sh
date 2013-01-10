@@ -36,7 +36,7 @@ if [ "$1" == "cms" ]
 then
     echo 'Synch CMS'
     echo '--------- vocms207 --------'
-    rsync -av /data/hc/ --exclude '*settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude '*.jdl' --exclude '*.log' --exclude 'glite_list_match_*' --exclude 'glite_*' vocms207:/data/hc/
+    rsync -av /data/hc/ --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude '*.jdl' --exclude '*.log' --exclude 'glite_list_match_*' --exclude 'glite_*' vocms207:/data/hc/
     echo '-------- vocms228 -------'
 #    rsync -av /data/hc/external/ vocms228:/data/hc/external/
     rsync -av /data/hc/apps/cms/config/x509* vocms228:/data/hc/apps/cms/config/
@@ -46,9 +46,13 @@ if [ "$1" == "atlas" ]
 then
     echo 'Synch ATLAS'
     echo '-------- voatlas65 -------'
-    rsync -av /data/hc/ --exclude '*settings.py*' --exclude '*testdirs*' --exclude '*logs*' voatlas65:/data/hc/
+    rsync -av /data/hc/ --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' voatlas65:/data/hc/
     echo '-------- voatlas167 -------'
-    rsync -av /data/hc/ --exclude '*settings.py*' --exclude '*testdirs*' --exclude '*logs*' voatlas167:/data/hc/
+    rsync -av /data/hc/ --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' voatlas167:/data/hc/
+    echo '-------- voatlas284 -------'
+    rsync -av /data/hc/ --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude 'scripts/submit/delete_old_test_dirs.sh*' --exclude 'scripts/config/config-main.sh*' --exclude 'apps/atlas/config/GangaAtlas.ini.50*' --exclude 'python/scripts/submit/create_at_job.py*' voatlas284:/data/hc/
+    echo '-------- voatlas285 -------'
+    rsync -av /data/hc/ --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude 'scripts/submit/delete_old_test_dirs.sh*' --exclude 'scripts/config/config-main.sh*' --exclude 'apps/atlas/config/GangaAtlas.ini.50*' --exclude 'python/scripts/submit/create_at_job.py*' voatlas285:/data/hc/
 fi
 
 rm -f /tmp/synch-app_$1.running
