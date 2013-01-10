@@ -58,6 +58,7 @@ HAMMERCLOUD_ORIGINAL_PATH=$PATH
 source /opt/dq2/profile.d/dq2_common_env.sh
 export DQ2_ENDUSER_SETUP=True
 export RUCIO_ACCOUNT=gangarbt
+export DQ2_LOCAL_SITE_ID=ROAMING
 export PYTHONPATH=/opt/dq2/lib:$PYTHONPATH
 echo '  Sourced DQ2 Client.'
 
