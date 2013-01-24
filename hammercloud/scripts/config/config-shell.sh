@@ -23,4 +23,4 @@ source $HCDIR/scripts/config/config-main.sh $HC_SHELL_APP
 cd $HCDIR/web/src/hc
 
 # debugsqlshell needs django-toolbar installed.
-python manage.py debugsqlshell
+python manage.py shell
