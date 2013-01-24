@@ -4,8 +4,8 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 process = cms.Process("NTupleProducer")
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.MessageLogger.cerr.threshold = "ERROR"
-process.load("Configuration.StandardSequences.Geometry_cff")
 process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
+process.load("Configuration.Geometry.GeometryIdeal_cff")
 process.load("Configuration.StandardSequences.MagneticField_cff")
 
 
@@ -17,13 +17,8 @@ from PhysicsTools.PatAlgos.patEventContent_cff import patEventContent
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(50000) )
 
 process.source = cms.Source("PoolSource",
-                            # replace 'myfile.root' with the source file you want to use
                             fileNames = cms.untracked.vstring(
-'/store/mc/SAM/RelValProdTTbar/GEN-SIM-RECO/MC_42_V12_SAM-v1/0092/0ECB8D49-EC94-E011-865E-0018F3D0968A.root',
-'/store/mc/SAM/RelValProdTTbar/GEN-SIM-RECO/MC_42_V12_SAM-v1/0092/2A805A6A-C593-E011-8CE7-002618FDA263.root',
-'/store/mc/SAM/RelValProdTTbar/GEN-SIM-RECO/MC_42_V12_SAM-v1/0092/E2F302D9-B592-E011-B3E7-0026189438A2.root',
-'/store/mc/SAM/RelValProdTTbar/GEN-SIM-RECO/MC_42_V12_SAM-v1/0092/EC6673E0-CA92-E011-9C63-002618FDA21D.root'
-
+'/store/mc/HC/GenericTTbar/GEN-SIM-RECO/CMSSW_5_3_1_START53_V5-v1/0010/B4C55F00-BDAD-E111-9841-003048D2C1C4.root'
     )
                             )
 
@@ -36,39 +31,25 @@ process.out = cms.OutputModule("PoolOutputModule",
                                outputCommands = cms.untracked.vstring('drop *' )
                                )
 
-# Configure PAT to use PF2PAT instead of AOD sources
+############
+# Global Tag: this MUST BE UPDATED IF MAJOR/MINOR RELEASE IS CHANGED (eg from 5_3 to 5_4)
+# list of GlobalTags: https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
+process.GlobalTag.globaltag = cms.string("START52_V7::All")
+
+
+####################
+# PF2PAT sequence: this can change with MINOR/MAJOR releases, please check here:
+# https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookPF2PAT
+# http://cmssw.cvs.cern.ch/cgi-bin/cmssw.cgi/CMSSW/PhysicsTools/PatAlgos/test/patTuple_PF2PAT_cfg.py
 from PhysicsTools.PatAlgos.tools.pfTools import *
-
-process.GlobalTag.globaltag = cms.string("START42_V12::All")
-#process.GlobalTag.globaltag = cms.string("auto::All")
-
-
-### Jet Corrections ##########################################################
-# See https://twiki.cern.ch/twiki/bin/view/CMS/WorkBookJetEnergyCorrections
-# note: this runs the L1Fast-Jet corrections for PF jets. not applied on Calo
-process.load('JetMETCorrections.Configuration.DefaultJEC_cff')
-process.load('RecoJets.Configuration.RecoPFJets_cff')
-# Turn-on the FastJet density calculation -----------------------
-process.kt6PFJets.doRhoFastjet = True
-# Turn-on the FastJet jet area calculation
-process.ak5PFJets.doAreaFastjet = True
-process.ak5PFJets.Rho_EtaMax = process.kt6PFJets.Rho_EtaMax
-
-
-### Configuration in common to all collections
-usePF2PAT(process,runPF2PAT=True, jetAlgo='AK5', runOnMC=True)#, postfix='PF2PAT') 
-# turn to false when running on data and MC 
-#getattr(process, 'patElectrons').embedGenMatch = False
-#getattr(process, 'patMuons').embedGenMatch = False
-
+postfix = "PFlow"
+jetAlgo="AK5"
+usePF2PAT(process,runPF2PAT=True, jetAlgo=jetAlgo, runOnMC=True, postfix=postfix)
 
 #the dump, just for test (disabled)
 process.dump=cms.EDAnalyzer('EventContentAnalyzer')
 
-process.ak5JetTracksAssociatorAtVertex.jets = cms.InputTag("ak5PFJets")
-
-#process.SimpleMemoryCheck = cms.Service("SimpleMemoryCheck")
-
+#Timing module
 process.Timing = cms.Service("Timing",
                              useJobReport = cms.untracked.bool(True)
                              )
@@ -81,9 +62,7 @@ process.Timing = cms.Service("Timing",
 #process.source.cacheSize = cms.untracked.uint32(20*1024*1024)
 
 process.p = cms.Path(
-    process.kt6PFJets
-    + process.ak5PFJets+
-     process.patPF2PATSequence
+    process.patPF2PATSequence
     #+ process.dump
     )
 
