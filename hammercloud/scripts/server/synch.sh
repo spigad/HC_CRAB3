@@ -38,8 +38,7 @@ then
     echo '--------- vocms207 --------'
     rsync -av /data/hc/ --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude '*.jdl' --exclude '*.log' --exclude 'glite_list_match_*' --exclude 'glite_*' vocms207:/data/hc/
     echo '-------- vocms228 -------'
-#    rsync -av /data/hc/external/ vocms228:/data/hc/external/
-    rsync -av /data/hc/apps/cms/config/x509* vocms228:/data/hc/apps/cms/config/
+    rsync -av /data/hc/ --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude '*.jdl' --exclude '*.log' --exclude 'glite_list_match_*' --exclude 'glite_*' --exclude 'python/scripts/submit/create_at_job.py*' --exclude 'external/cms/crab/scripts/CMSSW_generic.sh*' --exclude 'scripts/submit/submit-main.sh*'  vocms228:/data/hc/
 fi
 
 if [ "$1" == "atlas" ]
