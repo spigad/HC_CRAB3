@@ -5,7 +5,7 @@ import os
 # Points to the installation path of HammerCloud web.
 HC_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 # Admins and managers lists has been moved to local_settings.py
@@ -142,6 +142,7 @@ INSTALLED_APPS = (
     'hc.lhcb',
     'varnishapp',
     'raven.contrib.django',
+    'south',
 )
 
 # A sample logging configuration. The only tangible logging
