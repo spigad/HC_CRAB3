@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.conf.urls import include, patterns
 from django.contrib import admin
 
@@ -15,3 +16,10 @@ urlpatterns = patterns('',
     (r'^admin/', include(admin.site.urls)),
     (r'^admin/varnish/', include('varnishapp.urls')),
 )
+
+# TODO(rmedrano): move these URLs to a debug URLs file.
+if settings.DEBUG:
+    urlpatterns += (
+        (r'^', include('debug_toolbar_htmltidy.urls')),
+        (r'', include('debug_toolbar_user_panel.urls')),
+    )
