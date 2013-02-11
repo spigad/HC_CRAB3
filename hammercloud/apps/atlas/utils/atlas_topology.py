@@ -65,8 +65,12 @@ class ATLASTopology(object):
 
     def get_hepspec_from_siteid(self, panda_siteid):
         """Returns the HEPSPEC/jobslot for this site."""
-        return (float(self.get_total_hepspec_from_siteid(panda_siteid)) /
-                float(self.get_jobslots_from_siteid(panda_siteid)))
+        try:
+            return (float(self.get_total_hepspec_from_siteid(panda_siteid)) /
+                    float(self.get_jobslots_from_siteid(panda_siteid)))
+        except ZeroDivisionError:
+            raise ATLASTopologyError(('REBUS info not consistent for %s' %
+                                      panda_siteid))
 
     def get_jobslots_from_siteid(self, panda_siteid):
         """Returns the total jobslots count declared in REBUS data."""
@@ -75,6 +79,14 @@ class ATLASTopology(object):
     def get_site_from_siteid(self, panda_siteid):
         """Returns the site name of a PanDA queue."""
         return self._get_field_from_siteid(panda_siteid, 'atlas_site')
+
+    def get_ddm_from_siteid(self, panda_siteid):
+        """Returns the site name of a PanDA queue."""
+        return self._get_field_from_siteid(panda_siteid, 'ddm')
+
+    def get_email_from_siteid(self, panda_siteid):
+        """Returns the site name of a PanDA queue."""
+        return self._get_field_from_siteid(panda_siteid, 'email')
 
     def _get_field_from_siteid(self, panda_siteid, field):
         """Returns one of the multiple fields from AGIS for that siteid."""
@@ -113,10 +125,10 @@ def setattr_from_remote_json(obj, attr, url):
     try:
         logging.debug('Downloading JSON source at %s', url)
         setattr(obj, attr, json.load(urllib.urlopen(url)))
-    except IOError as (_, msg):  # pylint: disable=E211
+    except IOError, (_, msg):  # pylint: disable=E211
         logging.exception('Could not parse the source at %s', url)
         raise ATLASTopologyError(msg)
-    except ValueError as ve:
+    except ValueError, ve:
         logging.exception('Could not parse the source at %s', url)
         raise ATLASTopologyError(str(ve))
 
