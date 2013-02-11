@@ -1,6 +1,6 @@
 body {
     font-size: 82.5%;
-    font-family: Verdana, sans-serif;
+    font-family: 'PT Sans', sans-serif;
     color: #20548E;
 }
 
@@ -237,7 +237,7 @@ a{
     color: #1c94c4;
     font-weight: bold;
     font-size: 1.1em;
-    font-family: "Trebuchet MS",Tahoma,Verdana,Arial,sans-serif;
+    font-family: 'PT Sans', sans-serif;
 }
 
 .incidencelist{
@@ -269,7 +269,7 @@ a{
 
 .incidencelist td.comment {
     color: black;
-    font-family: monospace;
+    font-family: 'PT Mono', monospace;
     font-size: 90%;
 }
 
@@ -710,7 +710,7 @@ a{
 
 .pagination .page a, .pagination .page a:visited, .pagination .curr {
     padding:.25em .20em;
-    font:normal .875em verdana;
+    font:normal .875em 'PT Sans', sans-serif;
     border:1px solid #20548E;
     background-color:#ADDFFF;
     margin:0em .02em;
@@ -791,7 +791,8 @@ a{
 #jsddm li
 {	float: left;
         list-style: none;
-        font: 13px Tahoma, Arial}
+        font: 13px 'PT Sans', sans-serif
+}
 
 #jsddm li a
 {	display: block;
