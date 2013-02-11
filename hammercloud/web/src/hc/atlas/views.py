@@ -160,6 +160,10 @@ def ajaxtestalarms(request,test_id):
 def ajaxtestlogreport(request, test_id):
   pass
 
+@GenView_dec(params={'on':True})
+def ajaxreports(request,site_id):
+  pass
+
 #######################################################
 ## ROBOT BLOCK
 #######################################################
@@ -232,6 +236,10 @@ def robot_ssb(request):
 #######################################################
 
 @GenView_dec(params={'on':False})
+def reports(request):
+  pass
+
+@GenView_dec(params={'on':True})
 def evolution(request):
   pass
 
