@@ -4,21 +4,23 @@
   <head>
     <title>{% block title %}HammerCloud-{{app|upper}}{% endblock %}</title>
 
-    {% block meta %}
-      <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-      <meta name="description" content="HammerCloud is the testing engine for the Grid" />
-    {% endblock %}
-
     {% block css %}
       <link type="text/css" href="{{ STATIC_URL }}css/style.css" rel="stylesheet" />
       {% if app %}
         <link type="text/css" href="{{ STATIC_URL }}css/{{app}}/style.css" rel="stylesheet" />
       {% endif %}
+      <link type="text/css" href="//fonts.googleapis.com/css?family=PT+Sans:400,700,400italic|PT+Serif+Caption|PT+Mono|PT+Serif:400,700,400italic|PT+Sans+Caption" rel="stylesheet" />
     {% endblock %}
 
     {% block javascript %}
-      <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.js"></script>
+      {# TODO(rmedrano): extract this to a footer.js. #}
+      <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
       <script type="text/javascript" src="{{ STATIC_URL }}js/hm.js"></script>
+    {% endblock %}
+
+    {% block meta %}
+      <meta http-equiv="Content-type" content="text/html;charset=utf-8" />
+      <meta name="description" content="HammerCloud is the testing engine for the Grid" />
     {% endblock %}
 
     {% if help %}
@@ -124,7 +126,7 @@
       {% endblock %}
 
     </div>
-    <!-- TODO(rmedrano): One might move this to a configuration file. -->
+
     <script type="text/javascript" src="https://its.cern.ch/jira/s/en_USiokvet/734/82/1.2.5/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?collectorId=cd48a51a"></script>
     <script type="text/javascript">
       var _gaq = _gaq || [];
