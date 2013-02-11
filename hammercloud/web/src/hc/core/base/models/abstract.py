@@ -450,6 +450,13 @@ class UserCodeBase(models.Model):
 class SiteBase(models.Model):
   __metaclass__ = MetaCreator
 
+  CLASS_CHOICES = (
+    (u'analysis', u'analysis'),
+    (u'production', u'production'),
+    (u'hybrid', u'hybrid'),
+    (u'test', u'test'),
+  )
+
   id             = models.AutoField(primary_key=True)
   name           = models.CharField(unique=True,max_length=255)
   alternate_name = models.CharField(max_length=511, blank=True)
@@ -459,6 +466,8 @@ class SiteBase(models.Model):
   queue          = models.CharField(max_length=511, blank=True)
   monitoring_link= models.CharField(max_length=2047, blank=True)
   mtime          = models.DateTimeField(auto_now=True)
+  real_name      = models.CharField(max_length=255, blank=True)
+  category       = models.CharField(choices = CLASS_CHOICES, max_length = 31, db_column='class')
 
   #cloud     -> hc.core.base.models.keys.fk.generator.generateFK('Cloud','Site','cloud',{})
   #backend   -> hc.core.base.models.kays.fk.generator.generateFK('Backend','Site','backend',{})
