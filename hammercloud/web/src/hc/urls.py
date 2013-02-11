@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import include, patterns
+from django.conf.urls import include, patterns, url
 from django.contrib import admin
 
 admin.autodiscover()
@@ -13,7 +13,7 @@ urlpatterns = patterns('',
     (r'', include('hc.core.base.xhr.urls')),
     (r'', include('hc.core.base.xmlrpc.urls')),
 
-    (r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls), kwargs={'SSL': True}),
     (r'^admin/varnish/', include('varnishapp.urls')),
 )
 
