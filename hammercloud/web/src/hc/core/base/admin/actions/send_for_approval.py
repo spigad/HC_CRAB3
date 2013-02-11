@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 def method(self, request, queryset):
 
   CLONED_THRESHOLD = 2
-  ALLOWED_USERS = ('gangarbt', 'dozerov', 'desilva', 'jwhuang', 'hclee')
+  DISALLOWED_USERS = []
 
   app  = self.__module__.split('.')[1]
   url = 'http://'+request.META['HTTP_HOST']+request.META['SCRIPT_NAME']
@@ -34,7 +34,7 @@ def method(self, request, queryset):
 
       # GOOD TESTS
 
-      elif t.cloned > CLONED_THRESHOLD or request.user.username in ALLOWED_USERS:
+      elif t.cloned > CLONED_THRESHOLD or (request.user.is_authenticated() and request.user.username not in DISALLOWED_USERS):
         t.state = 'tobescheduled'
         objs['auto'] += ['%s/admin/%s/test/%d/ \n Starttime: %s'%(url,app,t.id,t.starttime.ctime())]
       else:
