@@ -231,15 +231,15 @@ def robot_ssb(request):
 ## STATS BLOCK
 #######################################################
 
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on':False})
 def evolution(request):
   pass
 
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on':False})
 def stats(request):
   pass
 
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on':False})
 def statistics(request):
   pass
 
