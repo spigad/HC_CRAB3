@@ -1,14 +1,16 @@
+from collections import defaultdict
 from datetime import date, timedelta, datetime
 from django.conf import settings
 from django.core.cache import cache
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.urlresolvers import reverse
-from django.db.models import Count, Q
+from django.db.models import Avg, Count, Q, Min, Max
 from django.forms.models import modelformset_factory
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import get_object_or_404, render_to_response, redirect
 from django.template import Context, loader, RequestContext
+from django.utils.timezone import now
 from hc.core.base.views import configuration
 from hc.core.base.views.json.records import get_records
 from hc.core.utils.generic.class_func import custom_import
@@ -413,7 +415,7 @@ class GenericView(object):
 
         error = None
 
-        if not(request.user.is_superuser or request.user.is_staff 
+        if not(request.user.is_superuser or request.user.is_staff
                or (request.user.groups.filter(name__endswith='admin')
                                       .filter(name__startswith=app))):
             error = "You are not allowed to clone this test!"
@@ -874,6 +876,50 @@ class GenericView(object):
         c = Context({'test': test})
         return HttpResponse(t.render(c))
 
+    def ajaxreports(self, request, report_type, dic={'Site': None, 'SummaryTestSite': None}, *args, **kwargs):
+        """AJAX view that generates a JSON response for the reports view."""
+        summary_test_site = dic['SummaryTestSite']
+        site = dic['Site']
+        app = summary_test_site.__module__.split('.')[1]
+        starttime = now() - timedelta(days=7)
+        dh = Datahelper()
+
+        if report_type == 'timings':
+            data = dh.timeBreakdownSeries(app)
+            categories = json.dumps(data['test_site__site__name'])
+            series = []
+            # This is in reverse order to have natural stacking.
+            for metric in ('stageout_Avg', 'running_Avg', 'stagein_Avg', 'queue_Avg'):
+                series.append({'name': metric.split('_')[0],
+                               'data': data[metric],
+                               'visible': metric != 'queue_Avg'})
+            height = int(len(categories) * 1.5)
+            series = json.dumps(series)
+            template = loader.select_template(['%s/json/reporttimings.txt' % (app),
+                                               'core/app/json/reporttimings.txt'])
+        elif report_type == 'performance':
+            data = dh.performanceSeries(app, sites=site.objects.exclude(name__startswith='ANALY'))
+            categories = json.dumps(data['test_site__site__name'])
+            series = []
+            # This is in reverse order to have natural stacking.
+            for metric in ('throughput_Avg',):
+                series.append({'name': metric.split('_')[0],
+                               'data': data[metric],
+                               'visible': metric != 'queue_Avg'})
+            height = int(len(categories) * 1.5)
+            series = json.dumps(series)
+            template = loader.select_template(['%s/json/reportperformange.txt' % (app),
+                                               'core/app/json/reportperformance.txt'])
+        else:
+            raise Http404
+        c = RequestContext(request,
+                           {'series': series,
+                            'categories': categories,
+                            'report_type': report_type,
+                            'height': height,
+                            'starttime': starttime},
+                           [defaultContext])
+        return HttpResponse(template.render(c), content_type='application/json')
 
 #######################################################
 # # ROBOT BLOCK
