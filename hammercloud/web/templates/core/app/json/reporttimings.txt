@@ -1,0 +1,51 @@
+{% autoescape off %}chart = new Highcharts.Chart({
+    "chart": {
+        "renderTo": "container",
+        "type": "bar",
+        "height": {{ height }}
+    },
+    "credits": {
+        "enabled": false
+    },
+    "global": {
+        "useUTC": false
+    },
+    "title": {
+        "text": "Timing breakdown per site"
+    },
+    "subtitle": {
+        "text": "For successful jobs since {{ starttime }}"
+    },
+    "xAxis": {
+        "categories": {{ categories }}
+    },
+    "yAxis": [{
+        "min": 0,
+        "title": {
+            "text": "Time to job completion (seconds)"
+        },
+        "alternateGridColor": "#FDFFD5",
+        "opposite": true
+    }, {
+        "min": 0,
+        "title": {
+            "text": "Time to job completion (seconds)"
+        }
+    }],
+    "legend": {
+        "backgroundColor": "#FFFFFF",
+        "reversed": true,
+        "floating": true,
+        "align": "right",
+        "verticalAlign": "top",
+        "x": -10,
+        "y": 100
+    },
+    "plotOptions": {
+        "series": {
+            "stacking": "normal",
+            "groupPadding": 0
+        }
+    },
+    "series": {{ series }}
+});{% endautoescape %}
