@@ -3,12 +3,60 @@
 {% block javascript %}
   {{ block.super }}
   <script type="text/javascript" src="{{ STATIC_URL }}js/highcharts/highcharts.js"></script>
+  <script type="text/javascript">
+    function load_report(report_name) {
+        $.ajax({url: "/hc/app/atlas/ajax/reports/" + report_name + "/",
+            timeout: 5000,
+            dataType: "script",
+            error: function() {
+                     alert("There has been an error loading the plot data.");
+                   },
+            statusCode: { 404: function() {
+                                 alert("The plot requested was not found.");
+                               }
+                        }
+           });
+    }
+    function reload_form() {
+    	$('#container').empty().append('<img src="{{ STATIC_URL }}images/ajax-loader.gif" alt="loading..." />');
+        load_report($('#report').val());
+    }
+  </script>
+{% endblock %}
+
+{% block docready %}
+  {{ block.super }}
+  reload_form();
 {% endblock %}
 
 {% block content %}
-<div style="float: left;"><a href="javascript:history.go(-1)">&laquo; Back</a></div><br/>
-<h2>HammerCloud reports</h2>
-
-<div id="container" style="width: 100%; height: 400px"></div>
-
+<form>
+  Report: <select id="report" onchange="reload_form();">
+    <option value="timings">Job time breakdown</option>
+    <option value="performance">Site performance analysis</option>
+  </select>,
+  for: <select id="site" onchange="reload_form();">
+    <option value="analy">Analysis sites</option>
+    <option value="prod">Production sites</option>
+    <option value="lcg">LCG sites</option>
+    <option value="all">All</option>
+  </select>,
+  during: <select id="time" onchange="reload_form();">
+    <option value="week">Last week</option>
+    <option value="month">Last month</option>
+    <option value="quarter">Last quarter</option>
+    <option value="year">Last year</option>
+  </select>,
+  restrict to: <select id="golden" onchange="reload_form();">
+    <option value="golden">AFT and/or PFT</option>
+    <option value="all">All tests</option>
+  </select>,
+  and: <select id="category" onchange="reload_form();">
+    <option value="quarter">Functional tests</option>
+    <option value="stress">Stress tests</option>
+    <option value="all">All type</option>
+  </select>
+</form>
+<hr />
+<div id="container" style="width: 100%"></div>
 {% endblock %}
