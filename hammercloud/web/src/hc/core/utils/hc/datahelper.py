@@ -54,19 +54,95 @@ class Datahelper(object):
                 site.eff = -1
         return sites
 
-    def timeBreakdownSeries(self, app, duration=timedelta(days=7)):
-        """Annotates the provided list of sites with its time breakdown."""
+    # TODO(rmedrano): the following methods have a lot in common and should be
+    #                 refactored.
+
+    def timeBreakdownSeries(self, app, starttime=now() - timedelta(days=7),
+                            sites=None, clouds=None, templates=None,
+                            golden=False, category=None, site_class=None):
+        """Generates the time breakdown for the filters provided.
+
+        Receives the following arguments:
+         starttime = time zone aware datetime object for the start time.
+         sites = iterable of site objects to filter .
+         clouds = clouds for the filtering, iterable.
+         templates = templates list to filter out.
+         golden = if set, only will who results from golden templates.
+         category = whether stress tests or functional (if None, both).
+         site_class = whether production or analysis (if None, both).
+        """
         kwargs = {}
-        for k, v in PARTICULARITIES[app]['metrics'].iteritems():
+        for k, v in PARTICULARITIES[app]['timings'].iteritems():
             for m in (Min, Avg, Max):
                 kwargs['%s_%s' % (k, m.__name__)] = m(v)
         s_t_s = custom_import('hc.%s.models.SummaryTestSite' % (app))
-        summaries = (s_t_s.objects
-                          .filter(test__starttime__gt=now() - duration)
-                          .values('test_site__site')
-                          .annotate(**kwargs))
+        queryset = (s_t_s.objects
+                         .filter(test__starttime__gt=starttime)
+                         .filter(test_site__site__enabled=True))
+        if sites:
+            queryset = queryset.filter(test_site__site__in=sites)
+        if clouds:
+            queryset = queryset.filter(test_site__site__cloud__in=clouds)
+        if templates:
+            queryset = queryset.filter(test_site__test__template__in=templates)
+        #if golden:
+        queryset = queryset.filter(test_site__test__template__is_golden=True)
+        if category:
+            queryset = queryset.filter(test_site__test__template__category='category')
+        if site_class:
+            raise NotImplementedError('Not yet added to the DB.')
+        summaries = (queryset.values('test_site__site__name')
+                             .annotate(**kwargs))
         series = defaultdict(list)
         for summary in summaries:
-            for metric, value in summary.iteritems():
-                series[metric].append(value)
+            # Exclude possible values with null.
+            if not all(x is None for k, x in summary.iteritems()
+                       if k != 'test_site__site__name'):
+                for metric, value in summary.iteritems():
+                    series[metric].append(value)
+        return series
+
+    def performanceSeries(self, app, starttime=now() - timedelta(days=7),
+                          sites=None, clouds=None, templates=None,
+                          golden=False, category=None, site_class=None):
+        """Generates the performance comparison for the filters set.
+
+        Receives the following arguments:
+         starttime = time zone aware datetime object for the start time.
+         sites = iterable of site objects to filter .
+         clouds = clouds for the filtering, iterable.
+         templates = templates list to filter out.
+         golden = if set, only will who results from golden templates.
+         category = whether stress tests or functional (if None, both).
+         site_class = whether production or analysis (if None, both).
+        """
+        kwargs = {}
+        for k, v in PARTICULARITIES[app]['performance'].iteritems():
+            for m in (Min, Avg, Max):
+                kwargs['%s_%s' % (k, m.__name__)] = m(v)
+        s_t_s = custom_import('hc.%s.models.SummaryTestSite' % (app))
+        queryset = (s_t_s.objects
+                         .filter(test__starttime__gt=starttime)
+                         .filter(test_site__site__enabled=True))
+        if sites:
+            queryset = queryset.filter(test_site__site__in=sites)
+        if clouds:
+            queryset = queryset.filter(test_site__site__cloud__in=clouds)
+        if templates:
+            queryset = queryset.filter(test_site__test__template__in=templates)
+        #if golden:
+        queryset = queryset.filter(test_site__test__template__is_golden=True)
+        if category:
+            queryset = queryset.filter(test_site__test__template__category='category')
+        if site_class:
+            raise NotImplementedError('Not yet added to the DB.')
+        summaries = (queryset.values('test_site__site__name')
+                             .annotate(**kwargs))
+        series = defaultdict(list)
+        for summary in summaries:
+            # Exclude possible values with null.
+            if not all(x is None for k, x in summary.iteritems()
+                       if k != 'test_site__site__name'):
+                for metric, value in summary.iteritems():
+                    series[metric].append(value)
         return series
