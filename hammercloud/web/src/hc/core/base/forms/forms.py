@@ -9,6 +9,7 @@ from datetime import datetime
 from datetime import timedelta
 from django.utils.safestring import mark_safe
 from django.utils.html import escape
+from django.utils.timezone import now
 
 from django.forms.util import ErrorList
 
@@ -46,7 +47,7 @@ class TestRunningModifyForm(forms.ModelForm):
     if self.cleaned_data.get("endtime"):
       endtime = self.cleaned_data["endtime"]
       endtime.replace(second=0)
-      if endtime<datetime.now():
+      if endtime<now():
         self._errors["endtime"] = ErrorList(["End time must be in the future"])
 
     return cleaned_data
@@ -73,7 +74,7 @@ class TestAdminForm(forms.ModelForm):
             if cleaned_data["endtime"] != self.instance.endtime:
               self._errors["endtime"] = ErrorList(["You can't change anymore the endtime, leave %s"%str(self.instance.endtime)])
         else:
-          if starttime-datetime.now()<timedelta(0,0,0,0,30):
+          if starttime-now()<timedelta(0,0,0,0,30):
             self._errors["starttime"] = ErrorList(["Start time must be more than 30 minutes in the future"])
         cleaned_data["starttime"] = starttime.replace(second=0)
         if cleaned_data.get("endtime"):
@@ -107,7 +108,7 @@ class TestSuperUserAdminForm(forms.ModelForm):
             if cleaned_data["endtime"] != self.instance.endtime:
               self._errors["endtime"] = ErrorList(["You can't change anymore the endtime, leave %s"%str(self.instance.endtime)])
 #       else:
-#         if starttime-datetime.now() < timedelta(0,0,0,0,30)
+#         if starttime-now() < timedelta(0,0,0,0,30)
 #           self._errors["starttime"] = ErrorList(["Startime cannot be on the past."])
         cleaned_data["starttime"] = starttime.replace(second=0)
         if cleaned_data.get("endtime"):
