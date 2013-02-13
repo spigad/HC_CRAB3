@@ -19,4 +19,4 @@ def custom_import(name):
             m = getattr(m, comp)
         return m
     except (ValueError, AttributeError):
-        raise ImportError
+        raise ImportError('No object named %s' % name)
