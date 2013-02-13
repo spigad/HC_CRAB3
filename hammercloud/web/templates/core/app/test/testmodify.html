@@ -18,29 +18,7 @@
       <h2 style="color: red;">{{ message }}</h2>
       <form action="" method="POST">{% csrf_token %}
         <div style="text-align:left; width:100%;">
-          {% for field in form %}
-
-            {% comment %}
-            {% if not 'Pause' in field.label %}
-              <p>
-                {{ field.errors }}
-                {{ field.label_tag }}: {{ field }}
-              </p>
-            {% endif %}
-            {% if 'Pause' in field.label and user.is_superuser %}
-              <p>
-                {{ field.errors }}
-                {{ field.label_tag }}: {{ field }}
-              </p>
-            {% endif %}
-            {% endcomment %}
-
-            <p>
-              {{ field.errors }}
-              {{ field.label_tag }}: {{ field }}
-            </p>
-
-          {% endfor %}
+	  {{ form.as_p }}
         </div>
         {% comment %}{{ formset }}{% endcomment %}
         <h3 style="text-align: left;">Test Site Properties</h3>
