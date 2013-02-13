@@ -11,6 +11,7 @@ git+https://github.com/justquick/django-varnish.git
 ipython
 git+https://github.com/ross/memcache-debug-panel.git
 numpy
+python-dateutil
 python-memcached
 python-varnish
 pytz
