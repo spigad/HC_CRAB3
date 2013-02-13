@@ -35,7 +35,7 @@ class TestLogReportForm(forms.ModelForm):
       self._errors["comment"] = ErrorList(["Missing comment parameter."])
 
     return self.cleaned_data
- 
+
 class TestRunningModifyForm(forms.ModelForm):
   __metaclass__ = FormMetaCreator
 
@@ -43,14 +43,13 @@ class TestRunningModifyForm(forms.ModelForm):
     '''
     Method that clean the data inserted in the form.
     '''
-    cleaned_data = self.cleaned_data
     if self.cleaned_data.get("endtime"):
       endtime = self.cleaned_data["endtime"]
       endtime.replace(second=0)
       if endtime<now():
         self._errors["endtime"] = ErrorList(["End time must be in the future"])
 
-    return cleaned_data
+    return self.cleaned_data
 
 ## FORMS WITH METHODS
 
