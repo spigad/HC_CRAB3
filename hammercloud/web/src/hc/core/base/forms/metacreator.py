@@ -13,10 +13,10 @@ class FormMetaCreator(ModelFormMetaclass):
 
     def __create(*args):
 
-      if attrs.has_key('__module__'):
-        module = attrs['__module__'].split('.')[1]
-      elif args:
+      if args:
         module = args[0]
+      elif attrs.has_key('__module__'):
+        module = attrs['__module__'].split('.')[1]
 
       try:
         f = getattr(FormGenerator,'get'+name)
@@ -24,7 +24,7 @@ class FormMetaCreator(ModelFormMetaclass):
         for k,v in dic.items():
           attrs[k] = v
       except:
-        pass
+        raise
 
       form = super(FormMetaCreator, cls).__new__(cls, name, bases, attrs)
       return form
