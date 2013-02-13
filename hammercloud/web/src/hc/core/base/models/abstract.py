@@ -1,5 +1,6 @@
 from django.db import models
 from django.db import IntegrityError
+from django.utils.timezone import now
 
 from hc.core.base.models.fields import PickledObjectField
 from hc.core.base.models.metacreator import MetaCreator
@@ -822,7 +823,7 @@ class TestBase(models.Model):
       clone = True
 
     # No test can be saved with active functional template
-    if self.template.category == 'functional' and self.template.active and self.starttime >= datetime.now():
+    if self.template.category == 'functional' and self.template.active and self.starttime >= now():
       return 0
 
     test = custom_import('hc.'+self._meta.app_label+'.models.Test')
@@ -1104,7 +1105,7 @@ class TestCloudBase(models.Model):
     return '%s - %s'%(self.test,self.cloud)
 
   def save(self,*args,**kwargs):
-    self.mtime = datetime.now()
+    self.mtime = now()
 
     sites = self.cloud.getSites_for_cloud.all()
 
