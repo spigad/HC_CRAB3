@@ -239,7 +239,7 @@ def robot_ssb(request):
 def reports(request):
   pass
 
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on':False})
 def evolution(request):
   pass
 
