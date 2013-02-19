@@ -41,6 +41,7 @@ echo ' CODE: python python/scripts/dispatcher.py -f register_host'
 echo ''
 python python/scripts/dispatcher.py -f register_host
 
+umask 002
 echo ' CODE: python python/scripts/dispatcher.py -f create_at_job'
 echo ''
 python python/scripts/dispatcher.py -f create_at_job
