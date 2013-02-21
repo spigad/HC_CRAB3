@@ -1,10 +1,11 @@
 #!/bin/bash
 
 # Script that sets up the environment for the submission of a new test.
-#ARGUMENTS: <gangabin>
+#ARGUMENTS: <gangabin> (full path to Ganga)
+
+echo 'Setting up HammerCloud submission environment...'
 
 # Check the presence of a gangabin on the arguments.
-echo 'Setting up HammerCloud submission environment...'
 if [ -z $1 ] ; then
 	echo ' ERROR: gangabin argument not set.'
     exit
