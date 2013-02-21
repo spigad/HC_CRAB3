@@ -18,7 +18,7 @@ def main():
         print >> sys.stderr, '$VIRTUAL_ENV not found, please enable one.'
         return -1
     base_path = os.path.dirname(__file__)
-    return subprocess.call(['pip', 'install', '--requirement',
+    return subprocess.call(['pip', 'install', '--upgrade', '--requirement',
                             os.path.join(base_path, 'requirements/apps.txt')])
 
 
