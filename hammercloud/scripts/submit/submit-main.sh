@@ -26,11 +26,11 @@ fi
 source $HCDIR/scripts/config/config-main.sh $APP
 
 # Launch the register_host script to update loads.
-echo ' Launching the register_host action...'
+echo 'Launching the register_host action...'
 python $HCDIR/python/scripts/dispatcher.py -f register_host
 
 # Launch the register_host script to update loads.
-echo ' Launching the create_at_job action...'
+echo 'Launching the create_at_job action...'
 python $HCDIR/python/scripts/dispatcher.py -f create_at_job
 
 # Unlock the lockfile.
