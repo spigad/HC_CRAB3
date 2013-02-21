@@ -29,7 +29,7 @@ echo ' PYTHONPATH='$PYTHONPATH
 
 # Export HammerCloud settings.
 export DJANGO_SETTINGS_MODULE='hc.settings'
-echo ' DJANGO_SETTINGS_MODULE'$DJANGO_SETTINGS_MODULE
+echo ' DJANGO_SETTINGS_MODULE='$DJANGO_SETTINGS_MODULE
 
 # Look for app specific settings.
 if [ -e $HCAPP/scripts/config/config-main.sh ] ; then
