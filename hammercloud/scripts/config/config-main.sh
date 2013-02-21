@@ -5,10 +5,6 @@
 
 echo 'Setting up HammerCloud core environment...'
 
-# Save current configuration for other scripts.
-export HC_ORIGINAL_PATH=$PATH
-export HC_ORIGINAL_PYTHONPATH=$PYTHONPATH
-
 # Get HCDIR from current installation.
 export HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 echo ' HCDIR'=$HCDIR
