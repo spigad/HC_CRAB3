@@ -1,55 +1,37 @@
-#!/bin/sh
-	
-echo ''
-echo '_ Submit Main.'
-echo ''
+#!/bin/bash
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set application tag.'
-    echo ''
-    echo '_ End Submit Main.'
-    echo ''
+# Configuration script for the submission role of a machine.
+# ARGUMENTS: <app> (must be set)
+
+# Check the presence of a gangabin on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application argument not set.'
     exit
 else
-    APP=$1
+    export APP=$1
     shift
 fi
 
-if [ -f /tmp/submit-main_$APP.running ]
-then
-    echo '  ERROR! Script 'submit-main_$1 already running.
-    echo ''
-    echo '_ End Server Main.'
-    echo ''
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo ' WARNING: the lock $LOCKFILE was taken. Exiting.'
     exit
 fi
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
-
-touch /tmp/submit-main_$APP.running
-echo '  Lock written: '/tmp/submit-main_$APP.running
-
-echo ''
+# Set up the core environment.
 source $HCDIR/scripts/config/config-main.sh $APP
-echo ''
 
-cd $HCDIR
+# Launch the register_host script to update loads.
+echo ' Launching the register_host action...'
+python $HCDIR/python/scripts/dispatcher.py -f register_host
 
-echo ' CODE: python python/scripts/dispatcher.py -f register_host'
-echo ''
-python python/scripts/dispatcher.py -f register_host
+# Launch the register_host script to update loads.
+echo ' Launching the create_at_job action...'
+python $HCDIR/python/scripts/dispatcher.py -f create_at_job
 
-umask 002
-echo ' CODE: python python/scripts/dispatcher.py -f create_at_job'
-echo ''
-python python/scripts/dispatcher.py -f create_at_job
-echo ''
-
-rm -f /tmp/submit-main_$APP.running
-
-echo '  Lock released: '/tmp/submit-main_$APP.running
-echo ''
-echo '_ End Server Main'
-echo ''
+# Unlock the lockfile.
+unlock
