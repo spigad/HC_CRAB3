@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <serviceaccountinginfo xmlns="http://sls.cern.ch/SLS/XML/accounting">
-  <id>HC.LHCb</id>
+  <id>HC.ATLAS</id>
   <day>###DAY###</day>
   <kpis>
     <kpi id="websites_up" name="Websites running"
@@ -29,10 +29,10 @@
       <target>1</target>
       <value>###STRESS_RUNNING###</value>
     </kpi>
-    <kpi id="failed" name="Total tests failed"
-         type="numeric" unit="# of tests failed" goal="less">
+    <kpi id="autoexclusions" name="Autoexclusions"
+         type="numeric" unit="# of autoexclusions" goal="more">
       <target>0</target>
-      <value>###ERROR###</value>
+      <value>###AUTOEXCLUSIONS###</value>
     </kpi>
   </kpis>
 </serviceaccountinginfo>

@@ -1,15 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
 # Wrapper to start up a Django shell with the HC environment set.
 # ARGUMENTS: <command>
 
-# Get HCDIR from current installation.
-# TODO(rmedrano): This makes mandatory to run this script with the full path.
-HCDIR=`which $0|sed 's/\/scripts/ /g' | awk '{print $1}'`
+# Setup HammerCloud.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+source $HCDIR/scripts/config/config-main.sh
 
-# Setup the virtualenv of HammerCloud
-source $HCDIR/external/bin/activate
-export PYTHONPATH=$HCDIR/python:$HCDIR/apps:$HCDIR/web/src
-
-# debugsqlshell needs django-toolbar installed.
+# Launch the Django CLI.
 python $HCDIR/web/src/hc/manage.py ${1:-shell}

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<serviceupdate xmlns="http://sls.cern.ch/SLS/XML/update">
+  <id>HC</id>
+  <availability>###AVAILABILITY###</availability>
+  <timestamp>###TIMESTAMP###</timestamp>
+  <validityduration>PT30M</validityduration>
+  <refreshperiod>PT5M</refreshperiod>
+  <lemon>
+    <host>voatlas286</host>
+    <host>voatlas49</host>
+    <host>voatlas65</host>
+    <host>voatlas167</host>
+    <host>voatlas284</host>
+    <host>voatlas285</host>
+    <host>vocms06</host>
+    <host>vocms207</host>
+    <host>vocms228</host>
+    <host>volhcb29</host>
+    <host>voatlas159</host>
+    <host>voatlas148</host>
+    <host>dbodhccore</host>
+    <host>dbodhcatlas</host>
+    <host>dbodhccms</host>
+    <host>dbodhclhcb</host>
+  </lemon>
+</serviceupdate>

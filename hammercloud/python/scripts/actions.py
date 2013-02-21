@@ -1,4 +1,4 @@
-from scripts.server import create_functional_tests,robot,compress_summary_table,blacklist,external_queue_update,add_site_to_ft,remove_site_from_templates,event_processor
+from scripts.server import create_functional_tests,robot,compress_summary_table,blacklist,external_queue_update,add_site_to_ft,remove_site_from_templates,event_processor,sls_sensor
 from scripts.submit import register_host,create_at_job,test_generate,test_submit,test_report,test_alarm,test_summary
 
 class CronActions:
@@ -6,6 +6,10 @@ class CronActions:
   def event_processor(self,app,dic):
     ep = event_processor.EventProcessor()
     ep.run(app,dic)
+
+  def sls_sensor(self,app,dic):
+    sls = sls_sensor.SLSSensor()
+    sls.run(app,dic)
 
   def blacklist(self,app,dic):
     bl = blacklist.Blacklist()
