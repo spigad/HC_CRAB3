@@ -1,43 +1,24 @@
-#!/bin/sh
+#!/bin/bash
 
-#ARGUMENTS: <gangabin><...>
+# Script that sets up the environment for the submission of a new test.
+#ARGUMENTS: <gangabin>
 
-echo ''
-echo '_ Submit  Configuration.'
-echo ''
-
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set GangaBin.'
-    echo ''
-    echo '_ End  Submit  Configuration.'
-    echo ''
+# Check the presence of a gangabin on the arguments.
+echo 'Setting up HammerCloud submission environment...'
+if [ -z $1 ] ; then
+	echo ' ERROR: gangabin argument not set.'
     exit
 else
-    GANGABIN=$1
+    export GANGABIN=$1
+    echo ' GANGABIN='$GANGABIN
     shift
 fi
 
-#Set PROXY
+# Set the proxy to be used.
 export X509_USER_PROXY=$HCAPP/config/x509up
-echo '  X509_USER_PROXY='$X509_USER_PROXY
+echo ' X509_USER_PROXY='$X509_USER_PROXY
 
-#Set GangaBin
-export GANGABIN=$GANGABIN
-echo '  GANGABIN='$GANGABIN
-
-echo '  Looking for app specific config script in '$HCAPP/scripts/config/config-submit.sh
-
-if [ -e $HCAPP/scripts/config/config-submit.sh ]
-then
-    echo '   found: config-submit.sh'
-    echo '   Sourced '$HCAPP/scripts/config/config-submit.sh $*    
-    source $HCAPP/scripts/config/config-submit.sh $*
-else
-    echo '   not found. Skipping.'
-
+# Look for app specific settings.
+if [ -e $HCAPP/scripts/config/config-submit.sh ] ; then
+    source $HCAPP/scripts/config/config-submit.sh
 fi
-
-echo ''
-echo '_ End  Submit  Configuration.'
-echo ''
