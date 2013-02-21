@@ -1,14 +1,24 @@
-# Set the HammerCloud dir.
-export HCDIR=/data/hc
+#!/bin/bash
 
-# Set the execution path.
-export PATH=$HCDIR/external/bin:/afs/cern.ch/sw/lcg/external/Python/2.5.4p2/x86_64-slc5-gcc43-opt/bin:$PATH
+# Script to clean up the old directories of tests in HammerCloud.
+# ARGUMENTS: all of them passed to the action.
 
-# Set the Python path.
-export PYTHONPATH=$HCDIR/apps:$HCDIR/external/django/Django-1.4.3:$HCDIR/external/lib/python2.5/site-packages:$HCDIR/web/src:/afs/cern.ch/sw/lcg/external/mysql_python/1.2.2-mysql5.0.18-python2.5/x86_64-slc5-gcc43-opt/lib/python2.5/site-packages:$PYTHONPATH:/usr/lib/python2.5/site-packages
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 
-export DJANGO_SETTINGS_MODULE='hc.settings'
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo ' WARNING: the lock $LOCKFILE was taken. Exiting.'
+    exit
+fi
+
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP
 
 # Run copy script.
+echo 'Launching the cleanup action...'
 python $HCDIR/python/scripts/submit/delete_old_test_dirs.py $*
 
+# Unlock the lockfile.
+unlock
