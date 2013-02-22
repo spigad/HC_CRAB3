@@ -18,7 +18,7 @@ HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 # Obtain a lock to continue running.
 source $HCDIR/scripts/config/locks.sh
 if ! exlock_now ; then
-    echo ' WARNING: the lock $LOCKFILE was taken. Exiting.'
+    echo " WARNING: the lock $LOCKFILE was taken. Exiting."
     exit
 fi
 
