@@ -1,50 +1,33 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ Test Alarm Main.'
-echo ''
+# Configuration script for the submission role of a machine.
+# ARGUMENTS: <app> (must be set)
 
+# Check the presence of a gangabin on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application argument not set.'
+    exit
+else
+    export APP=$1
+    shift
+fi
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set application tag.'
-    echo ''
-    echo '_ End Test Alarm Main.'
-    echo ''
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo ' WARNING: the lock $LOCKFILE was taken. Exiting.'
     exit
 fi
 
-# WARNING !
-# This script can run in more than one machine
-if [ -f /tmp/test-alarm_$1_$HOST.running ]
-then
-    echo '  ERROR! Script 'test-alarm_$1_$HOST already running.
-    echo ''
-    echo '_ End Test Alarm Main.'
-    echo ''
-    exit
-fi
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP
 
-touch /tmp/test-alarm_$1_$HOST.running
-echo '  Lock written: '/tmp/test-alarm_$1_$HOST.running
+# Launch the test_alarm script to update loads.
+echo 'Launching the test_alarm action...'
+python $HCDIR/python/scripts/dispatcher.py -f test_alarm
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
-
-echo ''
-source $HCDIR/scripts/config/config-main.sh $1 $HCDIR
-echo ''
-
-cd $HCDIR
-
-echo '  CODE: python python/scripts/dispatcher.py -f test_alarm'
-echo ''
-python python/scripts/dispatcher.py -f test_alarm
-echo ''
-echo '  END CODE'
-rm -f /tmp/test-alarm_$1_$HOST.running
-
-echo '  Lock released: '/tmp/test-alarm_$1_$HOST.running
-echo ''
-echo '_ End Test Alarm Main.'
-echo ''
+# Unlock the lockfile.
+unlock
