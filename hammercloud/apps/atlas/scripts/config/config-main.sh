@@ -12,8 +12,8 @@ set -- `getopt -u -o m: -- $@`
 
 while [ $# -gt 0 ] ; do
     case $1 in
-        -m) export HC_MODE=$2; break;;
-        *)  break;;
+        -m) shift; export HC_MODE=$1; shift;;
+        *) shift;;
     esac
 done
 
@@ -28,6 +28,8 @@ fi
 
 echo ' HC_MODE='$HC_MODE
 
+# Setup the proxies.
+HCAPP=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 if [ "$HC_MODE" == prod ] ; then
     # Redefine the proxy for Production testing.
     export X509_USER_PROXY=$HCAPP/config/x509rprod
