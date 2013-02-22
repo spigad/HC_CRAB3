@@ -1,98 +1,60 @@
-#!/bin/sh
+#!/bin/bash
 
-echo '    _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
-echo '    _                                                                 _'
-echo '    _                         CMS Configuration                       _'
-echo '    _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._' 
-echo '    _'
-echo '    _'
+# Script that sets up the main environment for HammerCloud scripts for CMS.
+# ARGUMENTS: -v <version> (CMSSW_VERSION wanted).
+#            -r <role> (proxy role {production, user}).
+#            -m <mode> (if not set, defaults to 'default').
 
-#if [ -z $1 ]
-#then
-#    echo '    _  ERROR! Please, set CMSSW_VERSION.'
-#    echo '    _'
-#    echo '    _                      End  CMS  Configuration                    _'
-#    echo '    _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
-#    exit
-#fi
+echo 'Setting up HammerCloud CMS submit environment...'
 
-# Possible options are:
-#   v (version): CMSSW_VERSION wanted
-#   r (role)   : proxy role, values accepted are production,user.
-#   m (mode)   : type of test_generate and runtest.py
-#
+# Parse the arguments to find the mode. Save the args to avoid collaterals.
+HC_MODE='default'
+HC_ROLE='user'
+ARGS=$*
+set -- `getopt -u -o r:v:m: -- $@`
 
-args=`getopt -o r:v:m: -- "$@"`
-eval set -- "$args"
-
-for i
-do
-  case "$i" in
-        -r) shift;echo '    _ HC_ROLE '$1;HC_ROLE=$1;shift;;
-        -v) shift;echo '    _ CMSSW_VERSION: '$1;CMSSW_VERSION=$1;shift;;
-        -m) shift;echo '    _ HC_MODE: '$1;HC_MODE=$1;shift;;
-  esac
+while [ $# -gt 0 ] ; do
+    case $1 in
+        -r) shift; export HC_ROLE=$1; shift;;
+        -v) shift; export CMSSW_VERSION=$1; shift;;
+        -m) shift; export HC_MODE=$1; shift;;
+        *) shift;;
+    esac
 done
 
-if [ -z $CMSSW_VERSION ]
-then
-    echo '    _  ERROR! Please, set CMSSW_VERSION.'
-    echo '    _'
-    echo '    _                      End  CMS  Configuration                    _'
-    echo '    _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
+# Restore the args (caller scripts might don't want to have them changed).
+set -- $ARGS
+
+# Validate the CMSSW_VERSION setup.
+if [ -z $CMSSW_VERSION ] ; then
+    echo ' ERROR: no CMSSW version provided (-v).'
     exit
 fi
+echo ' CMSSW_VERSION='$CMSSW_VERSION
 
-if [ -z $HC_ROLE ]
-then
-    echo '    _ No HC_ROLE provided'
-    echo '    _ Using default HC_ROLE=user'
-    HC_ROLE="user"
+# Validate the HC_ROLE setup.
+if [ "$HC_ROLE" != user -a "$HC_ROLE" != production -a "$HC_ROLE" != production2 ] ; then
+    echo ' ERROR: wrong role selected.'
+    exit
 fi
+echo ' HC_ROLE='$HC_ROLE
 
-if [ "$HC_ROLE" != user -a "$HC_ROLE" != production ]
-then
-    echo '    _ Wrong role, '$HC_ROLE
-    echo '    _ Using default HC_ROLE=user'
-    HC_ROLE="user"
+# Validate the HC_MODE setup.
+if [ "$HC_MODE" != default -a "$HC_MODE" != site ] ; then
+    echo ' ERROR: wrong mode selected.'
+    exit
 fi
+echo ' HC_MODE='$HC_MODE
 
-if [ -z $HC_MODE ]
-then
-    echo '    _ No MODE provided'
-    echo '    _ Using default HC_MODE=default'
-    HC_MODE="default"
-fi
-
-if [ "$HC_MODE" != default -a "$HC_MODE" != site ]
-then
-    echo '    _ Wrong mode, '$HC_MODE
-    echo '    _ Using default HC_MODE=default'
-    HC_MODE="default"
-fi
-
-export HC_MODE=$HC_MODE
-echo '  HC_MODE='$HC_MODE
-
+# Setup the proxies.
+HCAPP=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 export X509_USER_PROXY=$HCAPP/config/x509up_$HC_ROLE
-echo '  X509_USER_PROXY='$X509_USER_PROXY
+echo ' X509_USER_PROXY='$X509_USER_PROXY
 
-#Set TMPDIR
+# Set some options for CRAB/CMSSW.
 export TMPDIR=/tmp
-echo '    _ TMPDIR='/tmp
-
-#Set CMS_SITEDB_CACHE_DIR
-export CMS_SITEDB_CACHE_DIR=/tmp
-echo '    _ CMS_SITEDB_CACHE_DIR=/tmp'
-
-#Set CMS_CRAB_CACHE_DIR
-export CMS_CRAB_CACHE_DIR=/tmp
-echo '    _ CMS_CRAB_CACHE_DIR=/tmp'
-
-#Set CMSSW_VERSION
-export CMSSW_VERSION=$CMSSW_VERSION
-echo '    _ CMSSW_VERSION='$CMSSW_VERSION
-
-echo '    _'
-echo '    _                     End  CMS  Configuration                     _'
-echo '    _._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._._'
+export CMS_SITEDB_CACHE_DIR=$TMPDIR
+export CMS_CRAB_CACHE_DIR=$TMPDIR
+echo ' TMPDIR='$TMPDIR
+echo ' CMS_SITEDB_CACHE_DIR='$CMS_SITEDB_CACHE_DIR
+echo ' CMS_CRAB_CACHE_DIR='$CMS_CRAB_CACHE_DIR
