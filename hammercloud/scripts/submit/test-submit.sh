@@ -1,25 +1,21 @@
-#!/bin/sh
+#!/bin/bash
 
-#ARGUMETNS: <testid><...>
+# Wrapper for GangaRobot at submission stage.
+# ARGUMENTS: <testid> (test number to run).
+#            <extraargs> (extra arguments to pass to Ganga).
+# NOTES: the env X509_USER_PROXY, APP, HCAPP and GANGABIN must be set properly.
 
-if [ -z $1 ]
-then
-    echo '_  ERROR! Please, set test ID.'
+if [ -z $1 ] ; then
+    echo ' ERROR: no test ID provided.'
     exit
 fi
 
-echo X509_USER_PROXY=$X509_USER_PROXY
-echo APP=$APP
-echo HCAPP=$HCAPP
-echo GANGABIN=$GANGABIN
-echo PYTHONPATH=$PYTHONPATH
-
-echo Submitting test $1 with jobs in $HCAPP/testdirs/test_$1/jobs:
+# List the jobs to be submitted.
+echo "Submitting test $1 with jobs in $HCAPP/testdirs/test_$1/jobs:"
 ls $HCAPP/testdirs/test_$1/jobs/*
 
-echo Cleaning $HCAPP/testdirs/test_$1/gangadir
+echo "Cleaning $HCAPP/testdirs/test_$1/gangadir"
 rm -rf $HCAPP/testdirs/test_$1/gangadir
 
-echo $GANGABIN --config=$HCAPP/config/$APP-ROBOTStart.INI.50 -o[Configuration]gangadir=$HCAPP/testdirs/test_$1/gangadir -o[Logging]_logfile=$HCAPP/testdirs/test_$1/ganga.log $2 robot run $HCAPP/testdirs/test_$1/jobs/*
-$GANGABIN --config=$HCAPP/config/$APP-ROBOTStart.INI.50 -o[Configuration]gangadir=$HCAPP/testdirs/test_$1/gangadir -o[Logging]_logfile=$HCAPP/testdirs/test_$1/ganga.log $2 robot run $HCAPP/testdirs/test_$1/jobs/*
-
+echo 'Launching Ganga for submission...'
+$GANGABIN --config=$HCAPP/config/$APP-ROBOTStart.INI.50 -o[Logging]_format=VERBOSE -o[Configuration]gangadir=$HCAPP/testdirs/test_$1/gangadir -o[Logging]_logfile=$HCAPP/testdirs/test_$1/ganga.log $2 robot run $HCAPP/testdirs/test_$1/jobs/*
