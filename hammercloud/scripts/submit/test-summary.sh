@@ -1,50 +1,33 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ Test Summary Main.'
-echo ''
+# Configuration script for the summaries of the tests.
+# ARGUMENTS: <app> (must be set)
 
+# Check the presence of a gangabin on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application argument not set.'
+    exit
+else
+    export APP=$1
+    shift
+fi
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set application tag.'
-    echo ''
-    echo '_ End Test Summary Main.'
-    echo ''
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo ' WARNING: the lock $LOCKFILE was taken. Exiting.'
     exit
 fi
 
-# WARNING !
-# This script can run in more than one machine
-if [ -f /tmp/test-summary_$1_$HOST.running ]
-then
-    echo '  ERROR! Script 'test-summary_$1_$HOST already running.
-    echo ''
-    echo '_ End Test Summary Main.'
-    echo ''
-    exit
-fi
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP
 
-touch /tmp/test-summary_$1_$HOST.running
-echo '  Lock written: '/tmp/test-summary_$1_$HOST.running
+# Launch the test_summary script to update loads.
+echo 'Launching the test_summary action...'
+python $HCDIR/python/scripts/dispatcher.py -f test_summary -o 'pse'
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
-
-echo ''
-source $HCDIR/scripts/config/config-main.sh $1 $HCDIR
-echo ''
-
-cd $HCDIR
-
-echo '  CODE: python python/scripts/dispatcher.py -f test_summary'
-echo ''
-python python/scripts/dispatcher.py -f test_summary -o 'pse'
-echo ''
-echo '  END CODE'
-rm -f /tmp/test-summary_$1_$HOST.running
-
-echo '  Lock released: '/tmp/test-summary_$1_$HOST.running
-echo ''
-echo '_ End Test Summary Main.'
-echo ''
+# Unlock the lockfile.
+unlock
