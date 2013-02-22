@@ -25,7 +25,6 @@ if [ "$HC_MODE" != default -a "$HC_MODE" != t3 -a "$HC_MODE" != prod -a "$HC_MOD
     echo ' ERROR: wrong mode selected.'
     exit
 fi
-
 echo ' HC_MODE='$HC_MODE
 
 # Setup the proxies.
@@ -42,7 +41,6 @@ echo ' X509_USER_PROXY='$X509_USER_PROXY
 # Save the current paths, so we can restore them after sourcing PanDA tools.
 HAMMERCLOUD_ORIGINAL_PYTHONPATH=$PYTHONPATH
 HAMMERCLOUD_ORIGINAL_PATH=$PATH
-
 
 # Source PanDA client from AFS.
 echo 'Sourcing PanDA tools from AFS...'
