@@ -1,94 +1,64 @@
-#!/bin/sh
+#!/bin/bash
 
-#ARGUMETNS: <app><gangabin><testid><...>
+# Main runner for the HammerCloud tests.
+# ARGUMENTS: <app> (app tag to use {atlas, cms, lhcb}).
+#            <gangabin> (relative path of the Ganga binary).
+#            <testid> (test number to run).
+#            ... (remainders are passed to the config scripts).
 
-echo '_ Test  Run.'
-echo ''
+echo 'Starting up HammerCloud test run'
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set application tag.'
-    echo ''
-    echo '_ End Test Run'
-    echo ''
+if [ -z $1 ] ; then
+    echo ' ERROR: app tag not set.'
     exit
 else
     APP=$1
     shift
 fi
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set gangabin.'
-    echo ''
-    echo '_ End Test Run.'
-    echo ''
+if [ -z $1 ] ; then
+    echo ' ERROR: Ganga binary not set.'
     exit
 else
     GANGABIN=$1
     shift
 fi
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set test ID.'
-    echo ''
-    echo '_ End Test Run.'
-    echo ''
+if [ -z $1 ] ; then
+    echo 'ERROR: test ID not provided.'
     exit
 else
     TESTID=$1
     shift
 fi
 
-if [ -f /tmp/test-run_$APP_$TESTID.running ]
-then
-    echo '  ERROR! Script 'test-run_$APP_$TESTID already running.
-    echo ''
-    echo '_ End Test Run Main.'
-    echo ''
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo " WARNING: the test $TESTID is already running. Exiting."
     exit
 fi
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP $*
 
-touch /tmp/test-run-$APP_$TESTID.running
-echo '  Lock written: /tmp/test-run-'$APP_$TESTID.running
-
-echo ''
-source $HCDIR/scripts/config/config-main.sh $APP
-echo ''
-
-echo ''
+# Set up the submission environment.
 source $HCDIR/scripts/config/config-submit.sh $GANGABIN $*
-echo ''
 
-cd $HCDIR
+# Launch the test_generate action.
+echo 'Launching the test_generate action...'
+python $HCDIR/python/scripts/dispatcher.py -f test_generate -t $TESTID -m $HC_MODE
 
-##GENERATE
-echo '  CODE: 'python python/scripts/dispatcher.py -f test_generate -t $TESTID -m $HC_MODE
-echo ''
-python python/scripts/dispatcher.py -f test_generate -t $TESTID -m $HC_MODE
+# Launch the test_submit action.
+echo 'Launching the test_submit action...'
+python $HCDIR/python/scripts/dispatcher.py -f test_submit -t $TESTID -m $HC_MODE
 
-##SUBMIT
-echo '  CODE: 'python python/scripts/dispatcher.py -f test_submit -t $TESTID -m $HC_MODE
-echo ''
-python python/scripts/dispatcher.py -f test_submit -t $TESTID -m $HC_MODE
+# Launch the test_report action.
+echo 'Launching the test_reprot action...'
+python $HCDIR/python/scripts/dispatcher.py -f test_report -t $TESTID -m $HC_MODE
 
-##REPORT
-echo '  CODE: 'python python/scripts/dispatcher.py -f test_report -t $TESTID -m $HC_MODE
-echo ''
-python python/scripts/dispatcher.py -f test_report -t $TESTID -m $HC_MODE
-
-##POST_MORTEM STATISTICS
-#echo '  CODE: 'python python/scripts/dispatcher.py -f test_summary -o 'psef' -t $TESTID
-#echo ''
-#python python/scripts/dispatcher.py -f test_summary -o 'psef' -t $TESTID
-
-rm -f /tmp/test-run-$APP_$TESTID.running
-
-echo '  Lock released: /tmp/test-run-'$APP_$TESTID.running
-echo ''
-echo '_ End Test Run Main.'
-echo ''
+# Unlock the lockfile.
+unlock
