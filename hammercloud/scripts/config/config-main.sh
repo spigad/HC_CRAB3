@@ -29,5 +29,5 @@ echo ' DJANGO_SETTINGS_MODULE='$DJANGO_SETTINGS_MODULE
 
 # Look for app specific settings.
 if [ -e $HCAPP/scripts/config/config-main.sh ] ; then
-    source $HCAPP/scripts/config/config-main.sh
+    source $HCAPP/scripts/config/config-main.sh $*
 fi
