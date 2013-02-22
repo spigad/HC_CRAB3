@@ -3,7 +3,8 @@
 # Wrapper for GangaRobot at reporting stage.
 # ARGUMENTS: <testid> (test number to run).
 #            <extraargs> (extra arguments to pass to Ganga).
-# NOTES: the env X509_USER_PROXY, APP, HCAPP and GANGABIN must be set properly.
+# NOTES: the env X509_USER_PROXY, APP, HCAPP, HC_MODE and GANGABIN must be set
+#        properly.
 
 if [ -z $1 ] ; then
     echo ' ERROR: no test ID provided.'
