@@ -14,6 +14,7 @@ fi
 echo "Submitting test $1 with jobs in $HCAPP/testdirs/test_$1/jobs:"
 ls $HCAPP/testdirs/test_$1/jobs/*
 
+# Cleanup previous Ganga dirs.
 echo "Cleaning $HCAPP/testdirs/test_$1/gangadir"
 rm -rf $HCAPP/testdirs/test_$1/gangadir
 
