@@ -17,6 +17,7 @@ fi
 source $HCDIR/scripts/config/config-main.sh $APP
 
 # Run copy script.
+# TODO(rmedrano): Integrate this script in dispatcher.py
 echo 'Launching the cleanup action...'
 python $HCDIR/python/scripts/submit/delete_old_test_dirs.py $*
 
