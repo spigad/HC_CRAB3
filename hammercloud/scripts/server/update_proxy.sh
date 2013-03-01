@@ -58,6 +58,11 @@ then
   chown gangarbt:cg $HCDIR/apps/$1/config/x509up_production_new
   mv $HCDIR/apps/$1/config/x509up_production_new $HCDIR/apps/$1/config/x509up_production
   chmod 600 $HCDIR/apps/$1/config/x509up_production
+  chown gangarbt:cg $HCDIR/apps/$1/config/x509up_production2_new
+  mv $HCDIR/apps/$1/config/x509up_production2_new $HCDIR/apps/$1/config/x509up_production2
+  chmod 600 $HCDIR/apps/$1/config/x509up_production2
+  chown gangarbt:cg $HCDIR/apps/$1/config/x509up_user2_new
+  mv $HCDIR/apps/$1/config/x509up_user2_new $HCDIR/apps/$1/config/x509up_user2
 fi
 
 rm -f /tmp/update-proxy_$1.running
