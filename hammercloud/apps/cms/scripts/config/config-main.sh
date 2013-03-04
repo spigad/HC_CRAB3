@@ -46,7 +46,6 @@ fi
 echo ' HC_MODE='$HC_MODE
 
 # Setup the proxies.
-HCAPP=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 export X509_USER_PROXY=$HCAPP/config/x509up_$HC_ROLE
 echo ' X509_USER_PROXY='$X509_USER_PROXY
 
