@@ -417,9 +417,18 @@ def process_subjob(job,subjob):
     value   = value.replace('"','')
     cpudata = value.split(' ')
 
+  try:
     results['UserCPUTime']   = cpudata[0]
+  except (IndexError, UnboundLocalError):
+    pass
+  try:
     results['SysCPUTime']    = cpudata[1]
+  except (IndexError, UnboundLocalError):
+    pass
+  try:
     results['CPUPercentage'] = cpudata[2].replace('%','')
+  except (IndexError, UnboundLocalError):
+    pass
 
   if results.has_key('submissionTime'): 
     results['submit_time'] = results['submissionTime']
@@ -463,8 +472,12 @@ def process_subjob(job,subjob):
         v = datetime.strptime(v,'%Y-%m-%d %H:%M:%S')
       else:
         continue
-    setattr(result,k,v)
-  result.save()
+    if v is not None and (type(v) != str or len(v) > 0) and v != 'NULL' and v != '""':
+      setattr(result,k,v)
+  try:
+    result.save()
+  except ValueError:
+    logger.error('Could not save result object => %s', repr(result.__dict__))
 
   #logger.info(results)
 
@@ -522,7 +535,10 @@ def process_subjob(job,subjob):
     
     logger.debug('Subjob is in final state, marking row as fixed')
     result.fixed = 1
-    result.save()    
+    try:
+      result.save()    
+    except ValueError:
+      logger.error('Could not save fixed result object => %s', repr(result.__dict__))
 
 
 ##
@@ -598,6 +614,7 @@ if len(jobs):
         try:
           process_subjob(job,subjob)
         except:
+	  raise
           logger.warning('Exception in process_subjob:')
           logger.warning(sys.exc_info()[0])
           logger.warning(sys.exc_info()[1])
