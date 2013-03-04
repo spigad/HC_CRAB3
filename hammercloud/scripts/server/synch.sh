@@ -36,9 +36,9 @@ if [ "$1" == "cms" ]
 then
     echo 'Synch CMS'
     echo '--------- vocms207 --------'
-    rsync -av /data/hc/ --exclude '*.pyc*' --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude '*.jdl' --exclude '*.log' --exclude 'glite_list_match_*' --exclude 'glite_*' vocms207:/data/hc/
+    rsync -av /data/hc/ --exclude '*.pyc*' --exclude '*testdirs*' --exclude '*logs*' --exclude '*.jdl' --exclude '*.log' --exclude 'glite_list_match_*' --exclude 'glite_*' vocms207:/data/hc/
     echo '-------- vocms228 -------'
-    rsync -av /data/hc/ --exclude '*.pyc*' --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude '*.jdl' --exclude '*.log' --exclude 'glite_list_match_*' --exclude 'glite_*' --exclude 'python/scripts/submit/create_at_job.py*' --exclude 'external/cms/crab/scripts/CMSSW_generic.sh*' --exclude 'scripts/submit/submit-main.sh*'  vocms228:/data/hc/
+    rsync -av /data/hc/ --exclude '*.pyc*' --exclude '*testdirs*' --exclude '*logs*' --exclude '*.jdl' --exclude '*.log' --exclude 'glite_list_match_*' --exclude 'glite_*' vocms228:/data/hc/
 fi
 
 if [ "$1" == "atlas" ]
