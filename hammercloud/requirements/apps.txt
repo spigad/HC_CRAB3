@@ -8,7 +8,6 @@ git+https://github.com/playfire/django-debug-toolbar-user-panel.git
 django-dtpanel-htmltidy
 django-extensions
 git+https://github.com/justquick/django-varnish.git
-ipython
 git+https://github.com/ross/memcache-debug-panel.git
 numpy
 python-dateutil
