@@ -7,7 +7,7 @@
  
 ### HEADER ###
  
-LOCKFILE="/var/lock/`basename $0`"
+LOCKFILE="/tmp/`basename $0`"
 LOCKFD=99
  
 # PRIVATE
