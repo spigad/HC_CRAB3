@@ -823,8 +823,13 @@ class TestBase(models.Model):
       clone = True
 
     # No test can be saved with active functional template
-    if self.template.category == 'functional' and self.template.active and self.starttime >= now():
-      return 0
+    if self.template.category == 'functional' and self.template.active:
+      try:
+        end = self.starttime >= now()
+      except:
+        end = self.starttime >= datetime.now()
+      if end:
+        return 0
 
     test = custom_import('hc.'+self._meta.app_label+'.models.Test')
     t    = test.objects.filter(id = self.id)
