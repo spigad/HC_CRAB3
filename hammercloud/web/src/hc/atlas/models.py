@@ -63,14 +63,15 @@ class UserCode(UserCodeBase):
 ##
 
 
-ATLAS_TOPOLOGY = None
-try:
-  from atlas.utils.atlas_topology import ATLASTopology
-  ATLAS_TOPOLOGY = ATLASTopology()
-except:
-  print "Could not create ATLAS topology object."
-
 class Site(SiteBase):
+  ATLAS_TOPOLOGY = None
+
+  def __load_topology(self):
+    try:
+      from atlas.utils.atlas_topology import ATLASTopology
+      self.ATLAS_TOPOLOGY = ATLASTopology()
+    except:
+      print "Could not create ATLAS topology object."
 
   def site_type(self):
     if self.name.startswith('ANALY'):
@@ -81,6 +82,8 @@ class Site(SiteBase):
 
   def ssb_name(self):
     try:
+      if self.ATLAS_TOPOLOGY is None:
+        self.__load_topology()
       site_name = ATLAS_TOPOLOGY.get_site_id_of_panda_queue(self.name, site_type=self.site_type())
     except:
       return 'Toplogy not loaded'
