@@ -8,8 +8,8 @@
 echo 'Setting up HammerCloud CMS environment...'
 
 # Parse the arguments to find the mode. Save the args to avoid collaterals.
-HC_MODE='default'
-HC_ROLE='user'
+export HC_MODE='default'
+export HC_ROLE='user'
 ARGS=$*
 set -- `getopt -u -o r:v:m: -- $@`
 
