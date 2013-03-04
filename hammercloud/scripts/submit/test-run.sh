@@ -36,7 +36,7 @@ fi
 HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 
 # Obtain a lock to continue running.
-source $HCDIR/scripts/config/locks.sh
+source $HCDIR/scripts/config/locks.sh $TESTID
 if ! exlock_now ; then
     echo " WARNING: the test $TESTID is already running. Exiting."
     exit

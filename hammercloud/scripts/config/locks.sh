@@ -7,7 +7,7 @@
  
 ### HEADER ###
  
-LOCKFILE="/tmp/`basename $0`"
+LOCKFILE="/tmp/`basename $0`-${1:-0}"
 LOCKFD=99
  
 # PRIVATE
