@@ -27,8 +27,7 @@ set -- $ARGS
 
 # Validate the CMSSW_VERSION setup.
 if [ -z $CMSSW_VERSION ] ; then
-    echo ' ERROR: no CMSSW version provided (-v).'
-    exit
+    echo ' WARNING: no CMSSW version provided (-v).'
 fi
 echo ' CMSSW_VERSION='$CMSSW_VERSION
 
