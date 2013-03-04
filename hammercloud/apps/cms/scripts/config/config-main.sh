@@ -33,7 +33,7 @@ fi
 echo ' CMSSW_VERSION='$CMSSW_VERSION
 
 # Validate the HC_ROLE setup.
-if [ "$HC_ROLE" != user -a "$HC_ROLE" != production -a "$HC_ROLE" != production2 ] ; then
+if [ "$HC_ROLE" != user -a "$HC_ROLE" != production -a "$HC_ROLE" != production2 -a "$HC_ROLE" != user2 ] ; then
     echo ' ERROR: wrong role selected.'
     exit
 fi
