@@ -1,5 +1,6 @@
 from hc.core.utils.generic.class_func import custom_import
 from datetime import datetime
+from django.utils.timezone import now
 
 import os
 
@@ -33,7 +34,7 @@ class TestReport:
       print '[ERROR][%s][test_report] Test %s is on state %s, instead of running.'%(app,test.id,test.state)
       return 0
 
-    if not test.endtime >= datetime.now():
+    if not test.endtime >= now():
       print '[ERROR][%s][test_report] Test %s entime value is on the past.'%(app,testid)
       return 0
 
