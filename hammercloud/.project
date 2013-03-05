@@ -3,6 +3,7 @@
 	<name>HammerCloud</name>
 	<comment></comment>
 	<projects>
+		<project>Ganga</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
