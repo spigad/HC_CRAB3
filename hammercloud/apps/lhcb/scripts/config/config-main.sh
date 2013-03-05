@@ -7,8 +7,8 @@
 echo 'Setting up HammerCloud LHCb environment...'
 
 # Parse the arguments to find the mode. Save the args to avoid collaterals.
-HC_MODE='default'
-HC_ROLE='user'
+export HC_MODE='default'
+export HC_ROLE='user'
 ARGS=$*
 set -- `getopt -u -o r:v:m: -- $@`
 
@@ -38,7 +38,6 @@ fi
 echo ' HC_MODE='$HC_MODE
 
 # Setup the proxies.
-HCAPP=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 export X509_USER_PROXY=$HCAPP/config/x509up_$HC_ROLE
 echo ' X509_USER_PROXY='$X509_USER_PROXY
 
