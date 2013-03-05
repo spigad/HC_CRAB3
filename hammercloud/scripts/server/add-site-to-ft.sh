@@ -1,48 +1,25 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ Add site to FT.'
-echo ''
+# Configuration script for the submission role of a machine.
+# ARGUMENTS: <app> (must be set)
+#            <site> (must be set)
+#            <...> (options for the script)
 
-
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, at least one site name and the app tag.'
-    echo ''
-    echo '_ End Add site to FT'
-    echo ''
+# Check the presence of a gangabin on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application target and site name must be set.'
     exit
+else
+    export APP=$1
 fi
 
-if [ -f /tmp/add-site-to-ft_$1.running ]
-then
-    echo '  ERROR! Script add-site-to-ft_'$1 already running.
-    echo ''
-    echo '_ End Add site to FT.'
-    echo ''
-    exit
-fi
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 
-touch /tmp/add-site-to-ft_$1.running
-echo '  Lock written: '/tmp/add-site-to-ft_$1.running
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
-
-echo ''
-source $HCDIR/scripts/config/config-main.sh $1 $HCDIR
-echo ''
-
-cd $HCDIR
-
-echo '  CODE: python python/scripts/dispatcher.py -f add_site_to_ft' $@
-echo ''
-python python/scripts/dispatcher.py -f add_site_to_ft $@
-echo ''
-
-rm -f /tmp/add-site-to-ft_$1.running
-
-echo '  Lock released: '/tmp/add-site-to-ft_$1.running
-echo ''
-echo '_ End Add site to FT.'
-echo ''
+# Launch the add_site_to_ft script to add the site to the FTs.
+# The arguments are passed as a single string to be correctly parsed.
+echo 'Launching the add_site_to_ft action...'
+python $HCDIR/python/scripts/dispatcher.py -f add_site_to_ft $@
