@@ -28,8 +28,9 @@ set -- $ARGS
 # Validate the CMSSW_VERSION setup.
 if [ -z $CMSSW_VERSION ] ; then
     echo ' WARNING: no CMSSW version provided (-v).'
+else
+    echo ' CMSSW_VERSION='$CMSSW_VERSION
 fi
-echo ' CMSSW_VERSION='$CMSSW_VERSION
 
 # Validate the HC_ROLE setup.
 if [ "$HC_ROLE" != user -a "$HC_ROLE" != production -a "$HC_ROLE" != production2 -a "$HC_ROLE" != user2 ] ; then
