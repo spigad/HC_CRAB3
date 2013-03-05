@@ -1,40 +1,23 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ Server Main.'
-echo ''
+# SLS monitor for HC.
 
-if [ -f /tmp/sls-sensor.running ]
-then
-    echo '  ERROR! Script 'sls-sensor already running.
-    echo ''
-    echo '_ End Server Main.'
-    echo ''
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo " WARNING: the lock $LOCKFILE was taken. Exiting."
     exit
 fi
 
-touch /tmp/sls-sensor.running
-echo '  Lock written: '/tmp/sls-sensor.running
+# Set up the core environment directly for core.
+source $HCDIR/scripts/config/config-main.sh
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
+# Launch the SLS monitor.
+echo 'Launching the sls_sensor action...'
+python $HCDIR/python/scripts/dispatcher.py -f sls_sensor
 
-echo ''
-source $HCDIR/scripts/config/config-main.sh core $HCDIR
-echo ''
-
-cd $HCDIR
-
-export APP='core'
-
-echo '  CODE: python python/scripts/dispatcher.py -f sls_sensor'
-echo ''
-python python/scripts/dispatcher.py -f sls_sensor
-echo ''
-
-rm -f /tmp/sls-sensor.running
-
-echo '  Lock released: '/tmp/sls-sensor.running
-echo ''
-echo '_ End Server Main.'
-echo ''
+# Unlock the lockfile.
+unlock
