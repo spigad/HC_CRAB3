@@ -16,5 +16,5 @@ fi
 
 # Look for app specific settings.
 if [ -e $HCAPP/scripts/config/config-submit.sh ] ; then
-    source $HCAPP/scripts/config/config-submit.sh $*
+    source $HCAPP/scripts/config/config-submit.sh
 fi
