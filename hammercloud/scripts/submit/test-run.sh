@@ -57,7 +57,7 @@ echo 'Launching the test_submit action...'
 python $HCDIR/python/scripts/dispatcher.py -f test_submit -t $TESTID -m $HC_MODE
 
 # Launch the test_report action.
-echo 'Launching the test_reprot action...'
+echo 'Launching the test_report action...'
 python $HCDIR/python/scripts/dispatcher.py -f test_report -t $TESTID -m $HC_MODE
 
 # Unlock the lockfile.
