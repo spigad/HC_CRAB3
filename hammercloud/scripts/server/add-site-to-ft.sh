@@ -1,8 +1,8 @@
 #!/bin/bash
 
-# Configuration script for the submission role of a machine.
+# Add a site to the functional tests templates.
 # ARGUMENTS: <app> (must be set)
-#            <site> (must be set)
+#            <site> (site name on HC, must be set)
 #            <...> (options for the script)
 
 # Check the presence of a gangabin on the arguments.
