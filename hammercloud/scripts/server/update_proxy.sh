@@ -1,74 +1,56 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ Update proxy.'
-echo ''
+# Proxy renewal script.
+# NOTE: this script must be run as root and have a precreated proxy by the user
+# ARGUMENTS: <app> (must be set)
 
+# Check the presence of an application on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application argument not set.'
+    exit
+else
+    export APP=$1
+    shift
+fi
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set application tag.'
-    echo ''
-    echo '_ End Server Main.'
-    echo ''
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+HCAPP=$HCDIR/apps/$APP
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo " WARNING: the lock $LOCKFILE was taken. Exiting."
     exit
 fi
 
-if [ -f /tmp/update-proxy_$1.running ]
-then
-    echo '  ERROR! Script 'update-proxy_$1 already running.
-    echo ''
-    echo '_ End Server Main.'
-    echo ''
-    exit
-fi
+# The proxy x509up cannot have permissions different than 600, so the proxy
+# is copied as x509up_new by ubeda, so it cannot be read by gangarbt.
+# The proxy is copied at 10, 18 and at 02 hrs. So, five minutes before,
+# the script accepts the new proxy.
 
-touch /tmp/update-proxy_$1.running
-echo '  Lock written: '/tmp/update-proxy_$1.running
+# Common update procedure.
+function update {
+    echo "------- x509up$1 -------"
+    chown gangarbt:cg $HCAPP/config/x509up$1_new
+    mv $HCAPP/config/x509up$1_new $HCAPP/config/x509up$1
+    chmod 600 $HCAPP/config/x509up$1
+    echo 'Done.'
+}
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
+case "$APP" in
+    cms)
+        # Regular proxies.
+        update '_user'
+        update '_production'
+        # Proxies registered in cmsweb (CRAB 2.8.5+)
+        update '_user2'
+        update '_production2'
+        ;;
+    *)
+        update
+        ;;
+esac
 
-echo ''
-source $HCDIR/scripts/config/config-main.sh $1 $HCDIR
-echo ''
-
-
-#The proxy x509up cannot have permissions different than 600, so the 
-#proxy
-#is copied as x509up_new by ubeda, so it cannot be read by gangarbt.
-#This script copies it into something readable.
-
-#The proxy is copied at 10,18 and at 02 hrs. So, five minutes before,
-#the script accepts the new proxy.
-
-if [ "$1" != cms ]
-then
-  chown gangarbt:cg $HCDIR/apps/$1/config/x509up_new
-  mv $HCDIR/apps/$1/config/x509up_new $HCDIR/apps/$1/config/x509up
-fi
-
-if [ "$1" = cms ]
-then
-  #USER
-  chown gangarbt:cg $HCDIR/apps/$1/config/x509up_user_new
-  mv $HCDIR/apps/$1/config/x509up_user_new $HCDIR/apps/$1/config/x509up_user
-  chmod 600 $HCDIR/apps/$1/config/x509up_user
-  #PRODUCTION
-  chown gangarbt:cg $HCDIR/apps/$1/config/x509up_production_new
-  mv $HCDIR/apps/$1/config/x509up_production_new $HCDIR/apps/$1/config/x509up_production
-  chmod 600 $HCDIR/apps/$1/config/x509up_production
-  chown gangarbt:cg $HCDIR/apps/$1/config/x509up_production2_new
-  mv $HCDIR/apps/$1/config/x509up_production2_new $HCDIR/apps/$1/config/x509up_production2
-  chmod 600 $HCDIR/apps/$1/config/x509up_production2
-  chown gangarbt:cg $HCDIR/apps/$1/config/x509up_user2_new
-  mv $HCDIR/apps/$1/config/x509up_user2_new $HCDIR/apps/$1/config/x509up_user2
-  chmod 600 $HCDIR/apps/$1/config/x509up_user2
-fi
-
-rm -f /tmp/update-proxy_$1.running
-
-echo '  Lock released: '/tmp/update-proxy_$1.running
-echo ''
-echo '_ End Server Main.'
-echo ''
+# Unlock the lockfile.
+unlock
