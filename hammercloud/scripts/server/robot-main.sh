@@ -1,48 +1,33 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ Robot Main.'
-echo ''
+# Robot calculator, for the daily efficiencies plots per site.
+# ARGUMENTS: <app> (must be set)
 
+# Check the presence of an application on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application argument not set.'
+    exit
+else
+    export APP=$1
+    shift
+fi
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set application tag.'
-    echo ''
-    echo '_ End Robot Main.'
-    echo ''
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo " WARNING: the lock $LOCKFILE was taken. Exiting."
     exit
 fi
 
-if [ -f /tmp/robot-main_$1.running ]
-then
-    echo '  ERROR! Script 'robot-main_$1 already running.
-    echo ''
-    echo '_ End Robot Main.'
-    echo ''
-    exit
-fi
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP
 
-touch /tmp/robot-main_$1.running
-echo '  Lock written: '/tmp/robot-main_$1.running
+# Launch the robot calculator.
+echo 'Launching the robot action...'
+python $HCDIR/python/scripts/dispatcher.py -f robot
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
-
-echo ''
-source $HCDIR/scripts/config/config-main.sh $1
-echo ''
-
-cd $HCDIR
-
-echo '  CODE: python python/scripts/dispatcher.py -f robot'
-echo ''
-python python/scripts/dispatcher.py -f robot
-echo ''
-echo '  END CODE'
-rm -f /tmp/robot-main_$1.running
-
-echo '  Lock released: '/tmp/robot-main_$1.running
-echo ''
-echo '_ End Robot Main.'
-echo ''
+# Unlock the lockfile.
+unlock
