@@ -1,48 +1,33 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ Blacklist Main.'
-echo ''
+# Blacklist script for the autoexclusion.
+# ARGUMENTS: <app> (must be set)
 
+# Check the presence of a the application tag on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application argument not set.'
+    exit
+else
+    export APP=$1
+    shift
+fi
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set application tag.'
-    echo ''
-    echo '_ End Server Main.'
-    echo ''
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo " WARNING: the lock $LOCKFILE was taken. Exiting."
     exit
 fi
 
-if [ -f /tmp/blacklist-main_$1.running ]
-then
-    echo '  ERROR! Script 'blacklist-main_$1 already running.
-    echo ''
-    echo '_ End Server Main.'
-    echo ''
-    exit
-fi
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP
 
-touch /tmp/blacklist-main_$1.running
-echo '  Lock written: '/tmp/blacklist-main_$1.running
+# Launch the generic blacklist action.
+echo 'Launching the blacklist action...'
+python $HCDIR/python/scripts/dispatcher.py -f blacklist
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
-
-echo ''
-source $HCDIR/scripts/config/config-main.sh $1 $HCDIR
-echo ''
-
-cd $HCDIR
-
-echo '  CODE: python python/scripts/dispatcher.py -f blacklist'
-echo ''
-python python/scripts/dispatcher.py -f blacklist
-echo ''
-
-rm -f /tmp/blacklist-main_$1.running
-
-echo '  Lock released: '/tmp/blacklist-main_$1.running
-echo ''
-echo '_ End Server Main.'
-echo ''
+# Unlock the lockfile.
+unlock
