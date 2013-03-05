@@ -1,63 +1,58 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ Synch APP.'
-echo ''
+# Sync script, propagates the code to other machines.
+# ARGUMENTS: <app> (must be set)
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set application tag.'
-    echo ''
-    echo '_ End Synch APP.'
-    echo ''
+# Check the presence of an application on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application argument not set.'
+    exit
+else
+    export APP=$1
+    shift
+fi
+
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo " WARNING: the lock $LOCKFILE was taken. Exiting."
     exit
 fi
 
-if [ -f /tmp/synch-app_$1.running ]
-then
-    echo '  ERROR! Script 'synch-app_$1 already running.
-    echo ''
-    echo '_ End Synch APP.'
-    echo ''
-    exit
-fi
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP
 
-touch /tmp/synch-app_$1.running
-echo '  Lock written: '/tmp/synch-app_$1.running
+# Common sync procedure.
+function sync {
+    echo "------- $1 -------"
+    rsync -n -av $HCDIR/ --exclude '*.pyc*' --exclude '*.pyo*' --exclude '*testdirs*' --exclude '*.log' --exclude '*logs*' $2 $1:$HCDIR/
+}
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
+# Sync the machines per app.
+# TODO(rmedrano): This should come from the hosts table.
+case "$APP" in
+    atlas)
+        echo 'Synchronizing ATLAS...'
+        sync voatlas65
+        sync voatlas167
+        sync voatlas284 "--exclude 'scripts/submit/delete_old_test_dirs.sh*' --exclude 'scripts/config/config-main.sh*' --exclude 'apps/atlas/config/GangaAtlas.ini.50*' --exclude 'python/scripts/submit/create_at_job.py*'"
+        sync voatlas285 "--exclude 'scripts/submit/delete_old_test_dirs.sh*' --exclude 'scripts/config/config-main.sh*' --exclude 'apps/atlas/config/GangaAtlas.ini.50*' --exclude 'python/scripts/submit/create_at_job.py*'"
+        ;;
+    cms)
+        echo 'Synchronizing CMS...'
+        sync vocms207 "--exclude '*.jdl' --exclude 'glite_list_match_*' --exclude 'glite_*'"
+        sync vocms228 "--exclude '*.jdl' --exclude 'glite_list_match_*' --exclude 'glite_*'"
+        ;;
+    lhcb)
+        echo 'Synchronizing CMS...'
+        # Currently, just one host.
+        ;;
+    *)
+        echo ' ERROR: invalid application code.';;
+esac
 
-echo ''
-source $HCDIR/scripts/config/config-main.sh $1 $HCDIR
-echo ''
-
-if [ "$1" == "cms" ]
-then
-    echo 'Synch CMS'
-    echo '--------- vocms207 --------'
-    rsync -av /data/hc/ --exclude '*.pyc*' --exclude '*testdirs*' --exclude '*logs*' --exclude '*.jdl' --exclude '*.log' --exclude 'glite_list_match_*' --exclude 'glite_*' vocms207:/data/hc/
-    echo '-------- vocms228 -------'
-    rsync -av /data/hc/ --exclude '*.pyc*' --exclude '*testdirs*' --exclude '*logs*' --exclude '*.jdl' --exclude '*.log' --exclude 'glite_list_match_*' --exclude 'glite_*' vocms228:/data/hc/
-fi
-
-if [ "$1" == "atlas" ]
-then
-    echo 'Synch ATLAS'
-    echo '-------- voatlas65 -------'
-    rsync -av /data/hc/ --exclude '*.pyc*' --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' voatlas65:/data/hc/
-    echo '-------- voatlas167 -------'
-    rsync -av /data/hc/ --exclude '*.pyc*' --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' voatlas167:/data/hc/
-    echo '-------- voatlas284 -------'
-    rsync -av /data/hc/ --exclude '*.pyc*' --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude 'scripts/submit/delete_old_test_dirs.sh*' --exclude 'scripts/config/config-main.sh*' --exclude 'apps/atlas/config/GangaAtlas.ini.50*' --exclude 'python/scripts/submit/create_at_job.py*' voatlas284:/data/hc/
-    echo '-------- voatlas285 -------'
-    rsync -av /data/hc/ --exclude '*.pyc*' --exclude 'web/src/hc/settings.py*' --exclude '*testdirs*' --exclude '*logs*' --exclude 'scripts/submit/delete_old_test_dirs.sh*' --exclude 'scripts/config/config-main.sh*' --exclude 'apps/atlas/config/GangaAtlas.ini.50*' --exclude 'python/scripts/submit/create_at_job.py*' voatlas285:/data/hc/
-fi
-
-rm -f /tmp/synch-app_$1.running
-
-echo '  Lock released: '/tmp/synch-app_$1.running
-echo ''
-echo '_ End Synch APP.'
-echo ''
-
+# Unlock the lockfile.
+unlock
