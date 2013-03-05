@@ -1,49 +1,33 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ Compress Summary Table Main.'
-echo ''
+# Script to clean the summaries tables on the DB to make things faster.
+# ARGUMENTS: <app> (must be set)
 
+# Check the presence of an application on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application argument not set.'
+    exit
+else
+    export APP=$1
+    shift
+fi
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set application tag.'
-    echo ''
-    echo '_ End Compress Summary Table.'
-    echo ''
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo " WARNING: the lock $LOCKFILE was taken. Exiting."
     exit
 fi
 
-# WARNING !
-if [ -f /tmp/compress-summary-table_$1.running ]
-then
-    echo '  ERROR! Script 'compress-summary-table_$1 already running.
-    echo ''
-    echo '_ End Compress Summary Table Main.'
-    echo ''
-    exit
-fi
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP
 
-touch /tmp/compress-summary-table_$1.running
-echo '  Lock written: '/tmp/compress-summary-table_$1.running
+# Launch the compress_summary_table to cleanup things in the DB.
+echo 'Launching the compress_summary_table action...'
+python $HCDIR/python/scripts/dispatcher.py -f compress_summary_table -o 'd'
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
-
-echo ''
-source $HCDIR/scripts/config/config-main.sh $1 $HCDIR
-echo ''
-
-cd $HCDIR
-
-echo '  CODE: python python/scripts/dispatcher.py -f compress_summary_table'
-echo ''
-python python/scripts/dispatcher.py -f compress_summary_table -o 'd'
-echo ''
-echo '  END CODE'
-rm -f /tmp/compress-summary-table_$1.running
-
-echo '  Lock released: '/tmp/compress-summary-table_$1.running
-echo ''
-echo '_ End Compress Summary Table Main.'
-echo ''
+# Unlock the lockfile.
+unlock
