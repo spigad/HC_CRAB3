@@ -46,7 +46,7 @@ fi
 source $HCDIR/scripts/config/config-main.sh $APP $*
 
 # Set up the submission environment.
-source $HCDIR/scripts/config/config-submit.sh $GANGABIN $*
+source $HCDIR/scripts/config/config-submit.sh $GANGABIN
 
 # Launch the test_generate action.
 echo 'Launching the test_generate action...'
