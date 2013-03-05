@@ -22,9 +22,6 @@ if ! exlock_now ; then
     exit
 fi
 
-# Set up the core environment.
-source $HCDIR/scripts/config/config-main.sh $APP
-
 # Common sync procedure.
 function sync {
     echo "------- $1 -------"
