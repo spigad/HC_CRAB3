@@ -7,7 +7,7 @@ echo 'Setting up HammerCloud submission environment...'
 
 # Check the presence of a gangabin on the arguments.
 if [ -z $1 ] ; then
-    echo ' WARNING: gangabin argument not set.'
+    echo ' INFO: gangabin argument not set.'
 else
     export GANGABIN=$1
     echo ' GANGABIN='$GANGABIN
