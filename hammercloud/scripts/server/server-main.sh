@@ -1,48 +1,33 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ Server Main.'
-echo ''
+# Main wrapper for the server tasks, mainly creating the funcional tests.
+# ARGUMENTS: <app> (must be set)
 
+# Check the presence of an application on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application argument not set.'
+    exit
+else
+    export APP=$1
+    shift
+fi
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set application tag.'
-    echo ''
-    echo '_ End Server Main.'
-    echo ''
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo " WARNING: the lock $LOCKFILE was taken. Exiting."
     exit
 fi
 
-if [ -f /tmp/server-main_$1.running ]
-then
-    echo '  ERROR! Script 'server-main_$1 already running.
-    echo ''
-    echo '_ End Server Main.'
-    echo ''
-    exit
-fi
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP
 
-touch /tmp/server-main_$1.running
-echo '  Lock written: '/tmp/server-main_$1.running
+# Launch the robot calculator.
+echo 'Launching the create_functional_tests action...'
+python $HCDIR/python/scripts/dispatcher.py -f create_functional_tests
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
-
-echo ''
-source $HCDIR/scripts/config/config-main.sh $1 $HCDIR
-echo ''
-
-cd $HCDIR
-
-echo '  CODE: python python/scripts/dispatcher.py -f create_functional_tests'
-echo ''
-python python/scripts/dispatcher.py -f create_functional_tests
-echo ''
-
-rm -f /tmp/server-main_$1.running
-
-echo '  Lock released: '/tmp/server-main_$1.running
-echo ''
-echo '_ End Server Main.'
-echo ''
+# Unlock the lockfile.
+unlock
