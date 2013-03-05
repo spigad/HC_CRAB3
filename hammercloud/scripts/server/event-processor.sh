@@ -1,48 +1,34 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ Event Queue Processor.'
-echo ''
+# Wrapper for the event processor process, that publish stuff from the queue.
+# If this is launched in a cronjob, please append to the logfile.
+# ARGUMENTS: <app> (must be set)
 
+# Check the presence of an application on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application argument not set.'
+    exit
+else
+    export APP=$1
+    shift
+fi
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set application tag.'
-    echo ''
-    echo '_ End Event Queue Processor.'
-    echo ''
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo " WARNING: the lock $LOCKFILE was taken. Exiting."
     exit
 fi
 
-if [ -f /tmp/event-processor_$1.running ]
-then
-    echo '  ERROR! Script 'event-processor_$1 already running.
-    echo ''
-    echo '_ End Event Queue Processor.'
-    echo ''
-    exit
-fi
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP
 
-touch /tmp/event-processor_$1.running
-echo '  Lock written: '/tmp/event-processor_$1.running
+# Launch the event processor, which is not running.
+echo 'Launching the event_processor action...'
+python $HCDIR/python/scripts/dispatcher.py -f event_processor
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
-
-echo ''
-source $HCDIR/scripts/config/config-main.sh $1 $HCDIR
-echo ''
-
-cd $HCDIR
-
-echo '  CODE: python python/scripts/dispatcher.py -f event_processor'
-echo ''
-python python/scripts/dispatcher.py -f event_processor
-echo ''
-
-rm -f /tmp/event-processor_$1.running
-
-echo '  Lock released: '/tmp/event-processor_$1.running
-echo ''
-echo '_ End Event Queue Processor.'
-echo ''
+# Unlock the lockfile.
+unlock
