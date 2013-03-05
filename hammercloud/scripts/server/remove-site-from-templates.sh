@@ -1,48 +1,26 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ Add site to FT.'
-echo ''
+# Remove a site to the functional tests templates.
+# ARGUMENTS: <app> (must be set)
+#            <site> (site name on HC, must be set)
+#            <...> (options for the script)
 
-
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, at least one site name and the app tag.'
-    echo ''
-    echo '_ End Add site to FT'
-    echo ''
+# Check the presence of an application on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application target and site name must be set.'
     exit
+else
+    export APP=$1
 fi
 
-if [ -f /tmp/remove-site-from-templates_$1.running ]
-then
-    echo '  ERROR! Script remove-site-from-templates_'$1 already running.
-    echo ''
-    echo '_ End Add site to FT.'
-    echo ''
-    exit
-fi
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 
-touch /tmp/remove-site-from-templates_$1.running
-echo '  Lock written: '/tmp/remove-site-from-templates_$1.running
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
-
-echo ''
-source $HCDIR/scripts/config/config-main.sh $1 $HCDIR
-echo ''
-
-cd $HCDIR
-
-echo '  CODE: python python/scripts/dispatcher.py -f remove_site_from_templates'
-echo ''
-python python/scripts/dispatcher.py -f remove_site_from_templates $*
-echo ''
-
-rm -f /tmp/remove-site-from-templates_$1.running
-
-echo '  Lock released: '/tmp/remove-site-from-templates_$1.running
-echo ''
-echo '_ End Add site to FT.'
-echo ''
+# Launch the add_site_to_ft script to add the site to the FTs.
+# The arguments are passed as a single string to be correctly parsed.
+echo 'Launching the remove_site_from_templates action...'
+# TODO(rmedrano): unify this with the add site script/action.
+python $HCDIR/python/scripts/dispatcher.py -f remove_site_from_templates $*
