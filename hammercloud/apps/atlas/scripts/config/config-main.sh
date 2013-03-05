@@ -6,7 +6,7 @@
 echo 'Setting up HammerCloud ATLAS environment...'
 
 # Parse the arguments to find the mode. Save the args to avoid collaterals.
-HC_MODE='default'
+export HC_MODE='default'
 ARGS=$*
 set -- `getopt -u -o m: -- $@`
 
@@ -28,7 +28,6 @@ fi
 echo ' HC_MODE='$HC_MODE
 
 # Setup the proxies.
-HCAPP=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 if [ "$HC_MODE" == prod ] ; then
     # Redefine the proxy for Production testing.
     export X509_USER_PROXY=$HCAPP/config/x509rprod
@@ -46,7 +45,6 @@ HAMMERCLOUD_ORIGINAL_PATH=$PATH
 echo 'Sourcing PanDA tools from AFS...'
 source /afs/cern.ch/atlas/offline/external/GRID/DA/panda-client/latest/etc/panda/panda_setup.sh
 
-echo '  Sourced PanDA tools.'
 # The DQ2 client is now installed locally.
 echo 'Sourcing DQ2 client...'
 source /opt/dq2/profile.d/dq2_common_env.sh
