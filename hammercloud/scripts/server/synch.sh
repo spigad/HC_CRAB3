@@ -25,7 +25,7 @@ fi
 # Common sync procedure.
 function sync {
     echo "------- $1 -------"
-    rsync -av $HCDIR/ --exclude '*.pyc*' --exclude '*.pyo*' --exclude '*testdirs*' --exclude '*.log' --exclude '*logs*' $2 $1:$HCDIR/
+    rsync -av $HCDIR/ --exclude "'*.pyc*'" --exclude "'*.pyo*'" --exclude "'*testdirs*'" --exclude "'*.log'" --exclude "'*logs*'" $2 $1:$HCDIR/
 }
 
 # Sync the machines per app.
@@ -44,7 +44,7 @@ case "$APP" in
         sync vocms228 "--exclude '*.jdl' --exclude 'glite_list_match_*' --exclude 'glite_*'"
         ;;
     lhcb)
-        echo 'Synchronizing CMS...'
+        echo 'Synchronizing LHCb...'
         # Currently, just one host.
         ;;
     *)
