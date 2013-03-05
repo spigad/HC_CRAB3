@@ -28,7 +28,7 @@ source $HCDIR/scripts/config/config-main.sh $APP
 # Common sync procedure.
 function sync {
     echo "------- $1 -------"
-    rsync -n -av $HCDIR/ --exclude '*.pyc*' --exclude '*.pyo*' --exclude '*testdirs*' --exclude '*.log' --exclude '*logs*' $2 $1:$HCDIR/
+    rsync -av $HCDIR/ --exclude '*.pyc*' --exclude '*.pyo*' --exclude '*testdirs*' --exclude '*.log' --exclude '*logs*' $2 $1:$HCDIR/
 }
 
 # Sync the machines per app.
