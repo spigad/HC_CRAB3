@@ -1,48 +1,33 @@
-#!/bin/sh
+#!/bin/bash
 
-echo ''
-echo '_ External Queue Update.'
-echo ''
+# Wrapper for the event processor process, that publish stuff from the queue.
+# ARGUMENTS: <app> (must be set)
 
+# Check the presence of an application on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application argument not set.'
+    exit
+else
+    export APP=$1
+    shift
+fi
 
-if [ -z $1 ]
-then
-    echo '  ERROR! Please, set application tag.'
-    echo ''
-    echo '_ End External Queue Update.'
-    echo ''
+# Get HCDIR from current installation.
+HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+
+# Obtain a lock to continue running.
+source $HCDIR/scripts/config/locks.sh
+if ! exlock_now ; then
+    echo " WARNING: the lock $LOCKFILE was taken. Exiting."
     exit
 fi
 
-if [ -f /tmp/external-queue-update_$1.running ]
-then
-    echo '  ERROR! Script 'external-queue-update_$1 already running.
-    echo ''
-    echo '_ End External Queue Update.'
-    echo ''
-    exit
-fi
+# Set up the core environment.
+source $HCDIR/scripts/config/config-main.sh $APP
 
-touch /tmp/external-queue-update_$1.running
-echo '  Lock written: '/tmp/external-queue-update_$1.running
+# Launch the monitoring action for changes in, at the moment, PanDA.
+echo 'Launching the external_queue_update action...'
+python $HCDIR/python/scripts/dispatcher.py -f external_queue_update
 
-#Get HCDIR from current installation.
-HCDIR=`which $0|sed 's/\/scripts/ /g'|awk '{print $1}'`
-
-echo ''
-source $HCDIR/scripts/config/config-main.sh $1 $HCDIR
-echo ''
-
-cd $HCDIR
-
-echo '  CODE: python python/scripts/dispatcher.py -f external_queue_update'
-echo ''
-python python/scripts/dispatcher.py -f external_queue_update
-echo ''
-
-rm -f /tmp/external-queue-update_$1.running
-
-echo '  Lock released: '/tmp/external-queue-update_$1.running
-echo ''
-echo '_ End External Queue Update.'
-echo ''
+# Unlock the lockfile.
+unlock
