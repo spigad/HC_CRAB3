@@ -3,6 +3,7 @@
 # Wrapper for the event processor process, that publish stuff from the queue.
 # If this is launched in a cronjob, please append to the logfile.
 # ARGUMENTS: <app> (must be set)
+# TODO(rmedrano): This must be implemented as a daemon (i.e. with supervisord)
 
 # Check the presence of an application on the arguments.
 if [ -z $1 ] ; then
