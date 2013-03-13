@@ -24,8 +24,8 @@ fi
 
 # Common sync procedure.
 function sync {
-    echo "------- $1 -------"
-    rsync -av $HCDIR/ --exclude "'*.pyc*'" --exclude "'*.pyo*'" --exclude "'*testdirs*'" --exclude "'*.log'" --exclude "'*logs*'" $2 $1:$HCDIR/
+    echo " Starting $1 synch..."
+    rsync -av $HCDIR/ --exclude '*.pyc*' --exclude '*.pyo*' --exclude '*testdirs*' --exclude '*.log' --exclude '*logs*' $2 $1:$HCDIR/ > $HCDIR/apps/$APP/logs/synch-$1.log &
 }
 
 # Sync the machines per app.
@@ -50,6 +50,10 @@ case "$APP" in
     *)
         echo ' ERROR: invalid application code.';;
 esac
+
+# Wait for processes to complete.
+wait
+echo ' All done.'
 
 # Unlock the lockfile.
 unlock
