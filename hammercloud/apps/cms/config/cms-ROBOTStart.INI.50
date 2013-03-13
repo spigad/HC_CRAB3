@@ -51,6 +51,7 @@ location = /data/hc/apps/cms/config/metrics.ini_hc
 GangaCMS = INFO
 GangaRobot = INFO
 Ganga.GPI = INFO
+run_test = DEBUG
 _logfile = /data/hc/apps/cms/logs/ganga.log
 _logfile_size = 10000000
 _format = VERBOSE

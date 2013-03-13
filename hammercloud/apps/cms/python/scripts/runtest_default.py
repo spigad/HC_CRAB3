@@ -15,7 +15,7 @@ import types
 
 from Ganga.Core.GangaThread import GangaThread
 from Ganga.Utility.logging import getLogger
-logger = getLogger()
+logger = getLogger(name='run_test')
 
 ##
 ## CHECK IF WE HAVE RECEIVED TESTID
