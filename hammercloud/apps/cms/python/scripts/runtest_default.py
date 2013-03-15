@@ -138,7 +138,7 @@ def _copyJob(job):
     return
 
   logger.info('Copying job %d'%job.id)
-  nRetries = 3
+  nRetries = 5
 
   try:
     j=job.copy()
@@ -227,7 +227,7 @@ def copyJob(job):
     return
 
   if not test_site.resubmit_enabled:
-    logger.debug('Not copying job %d: test_site.resubmit_enabled is False for test %d at %s'%(job.id,test.id,site))
+    logger.info('Not copying job %d: test_site.resubmit_enabled is False for test %d at %s'%(job.id,test.id,site))
     return
 
   test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
@@ -262,14 +262,6 @@ def copyJob(job):
 
   #If the test is functional, we do not blacklist the site !
   if test.template.category == 'stress':
-
-    if total>20:
-      if float(failed)/float(total) > 0.7:
-        logger.warning('Not copying job %d: %d failed from %d finished (copy when <= 0.7)'%(job.id,failed,total))
-        logger.warning('Disabling site %s: test_site.resubmit_enabled <- 0'%(site))
-        test_site.resubmit_enabled = 0
-        test_site.save()
-        return
 
   logger.warning('Job %d at %s ran the gauntlet: %d submitted, %d running, %d failed, %d finished'%(job.id,site,submitted,running,failed,total))
   _copyJob(job)
