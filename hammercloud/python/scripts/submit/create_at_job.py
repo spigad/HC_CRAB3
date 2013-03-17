@@ -116,7 +116,7 @@ class CreateAtJob:
 
     try:
       f=open('%s/testdirs/run-test-%d.sh'%(HCAPP,test.id),'w')
-      f.write('umask 002\n')
+      f.write('umask 022\n')
       f.write('cd %s\n'%(HCAPP))
       f.write('mkdir -p testdirs/test_%d\n'%(test.id))
       f.write('if [ -e "testdirs/test_%d/stdouterr.txt" ]\nthen\n  mv testdirs/test_%d/stdouterr.txt testdirs/test_%d/stdouterr.txt.`date +%%s`\nfi\n'%(test.id,test.id,test.id))
