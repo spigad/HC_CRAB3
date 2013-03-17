@@ -254,15 +254,6 @@ def copyJob(job):
     logger.debug('Job %d has 0 subjobs. Not copying.'%job.id)
     return
 
-  # total last 1 hours
-  total = test.getResults_for_test.filter(site__name=site).filter(ganga_status__in=['c','f']).filter(mtime__gt=datetime.now()-timedelta(hours=1)).count()
-
-  # failed last 1 hours
-  failed = test.getResults_for_test.filter(site__name=site).filter(ganga_status='f').filter(mtime__gt=datetime.now()-timedelta(hours=1)).count()
-
-  #If the test is functional, we do not blacklist the site !
-  if test.template.category == 'stress':
-
   logger.warning('Job %d at %s ran the gauntlet: %d submitted, %d running, %d failed, %d finished'%(job.id,site,submitted,running,failed,total))
   _copyJob(job)
   return
