@@ -8,6 +8,9 @@
 
 echo 'Starting up HammerCloud test run'
 
+# Set the umask, so the logs are readable by Apache.
+umask 022
+
 if [ -z $1 ] ; then
     echo ' ERROR: app tag not set.'
     exit
