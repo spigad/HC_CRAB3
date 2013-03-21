@@ -19,9 +19,9 @@
       <tr><th>Lifetime:</th><td colspan="5">{{ template.lifetime }}</td></tr>
       <tr><th>Active:</th><td colspan="5">
         {% if template.active %}
-          <img src="{{ STATIC_URL }}admin/img/admin/icon-yes.gif" alt='True'>
+          <img src="{{ STATIC_URL }}admin/img/icon-yes.gif" alt='True'>
         {% else %}
-          <img src="{{ STATIC_URL }}admin/img/admin/icon-no.gif" alt='False'>
+          <img src="{{ STATIC_URL }}admin/img/icon-no.gif" alt='False'>
         {% endif %}
       </td></tr>
       <tr><th>Jobtemplate:</th><td colspan="5">{{ template.jobtemplate }}</td></tr>
@@ -55,16 +55,16 @@
             <td>{{ template_site.max_running_jobs }}</td>
             <td>
               {% if template_site.resubmit_enabled %}
-                <img src="{{STATIC_URL}}admin/img/admin/icon-yes.gif" alt='True'>
+                <img src="{{STATIC_URL}}admin/img/icon-yes.gif" alt='True'>
               {% else %}
-                <img src="{{STATIC_URL}}admin/img/admin/icon-no.gif" alt='False'>
+                <img src="{{STATIC_URL}}admin/img/icon-no.gif" alt='False'>
               {% endif %}
             </td>
             <td>
               {% if template_site.resubmit_force %}
-                <img src="{{STATIC_URL}}admin/img/admin/icon-yes.gif" alt='True'>
+                <img src="{{STATIC_URL}}admin/img/icon-yes.gif" alt='True'>
               {% else %}
-                <img src="{{STATIC_URL}}admin/img/admin/icon-no.gif" alt='False'>
+                <img src="{{STATIC_URL}}admin/img/icon-no.gif" alt='False'>
               {% endif %}
             </td>
           <tr>
