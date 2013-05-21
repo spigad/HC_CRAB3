@@ -9,6 +9,7 @@ django-dtpanel-htmltidy
 django-extensions
 git+https://github.com/justquick/django-varnish.git
 git+https://github.com/ross/memcache-debug-panel.git
+git+https://github.com/orf/django-debug-toolbar-template-timings.git
 numpy
 python-dateutil
 python-memcached
