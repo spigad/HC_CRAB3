@@ -528,6 +528,12 @@ class TemplateBase(models.Model):
     (u'functional', u'functional'),
     (u'stress', u'stress'),
   )
+  
+  TYPE_CHOICES = (
+    (u'analysis', u'analysis'),
+    (u'production', u'production'),
+    (u'nightly', u'nightly'),
+  )
 
   id                 = models.AutoField(primary_key=True)
   category           = models.CharField(choices = CATEGORY_CHOICES, max_length = 31)
@@ -540,6 +546,7 @@ class TemplateBase(models.Model):
   is_golden          = models.BooleanField(default=0,blank=True)
   obsolete           = models.BooleanField(default=0,blank=True)
   period             = models.IntegerField(default=0)
+  type               = models.CharField(blank=True,default='analysis',choices = TYPE_CHOICES, max_length = 31)
 
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Template','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Template','usercode',{})
