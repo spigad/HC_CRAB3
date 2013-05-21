@@ -4,7 +4,7 @@
 # ARGUMENTS: all of them passed to the action.
 
 # Get HCDIR from current installation.
-HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
+export HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 
 # Obtain a lock to continue running.
 source $HCDIR/scripts/config/locks.sh

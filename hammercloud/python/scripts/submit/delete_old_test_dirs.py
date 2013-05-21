@@ -33,7 +33,7 @@ def main():
     tests = t.objects.filter(endtime__lt=begin)
     for test in tests:
         print "Test #%d: ended %s."%(test.id, test.endtime),
-        dir = '/data/hc/apps/%s/testdirs/test_%d'%(app,test.id)
+        dir = '%s/apps/%s/testdirs/test_%d'%(os.environ['HCDIR'],app,test.id)
         if os.path.exists(dir):
             print "going to rm -rf %s"%dir,
             if doit: 
@@ -43,7 +43,7 @@ def main():
                 print "need to --doit.",
         else:
             print "testdir already deleted.",
-        files = ['/data/hc/apps/%s/testdirs/run-test-%d.sh'%(app,test.id), 
+        files = ['%s/apps/%s/testdirs/run-test-%d.sh'%(os.environ['HCDIR'],app,test.id), 
                 '/tmp/%d.%s'%(test.id, str(test.usercode).split('/')[-1])]
         for f in files:
             if os.path.exists(f):
