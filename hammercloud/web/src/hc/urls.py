@@ -19,7 +19,7 @@ urlpatterns = patterns('',
 
 # TODO(rmedrano): move these URLs to a debug URLs file.
 if settings.DEBUG:
-    urlpatterns += (
+    urlpatterns += patterns(
         (r'^', include('debug_toolbar_htmltidy.urls')),
         (r'', include('debug_toolbar_user_panel.urls')),
     )
