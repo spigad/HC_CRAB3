@@ -1,265 +1,351 @@
-from hc.core.base.views.decorator import GenView_dec
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.cache import cache_page
-from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_page, never_cache
+from hc.core.base.views.decorator import GenView_dec
 
-@cache_page(60 * 5)
-@GenView_dec(params={'on':True})
+"""Generic view module of HammerCloud for ATLAS.
+
+Defines the generic views as empty functions which will get 'meat' by the view
+generator decorator based on the parameters. All the caching settings are set
+in this declaration.
+"""
+
+LONG_CACHE = 6 * 60 * 60  # 6 hours.
+SHORT_CACHE = 60 * 60  # 1 hour.
+MINI_CACHE = 5 * 60  # 5 minutes.
+
+
+#######################################################
+# GENERAL VIEWS
+#######################################################
+
+@cache_page(LONG_CACHE)
+@GenView_dec(params={'on': True})
 def index(request):
-  pass
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def backends(request):
-  pass
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def clouds(request):
-  pass
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
-def cloud(request,cloud_id):
-  pass
+@GenView_dec(params={'on': True})
+def cloud(request, cloud_id):
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def dspatterns(request):
-  pass
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def hosts(request):
-  pass
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
-def host(request,host_id):
-  pass
+@GenView_dec(params={'on': True})
+def host(request, host_id):
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
-def jobtemplates(request,jobtemplate_id):
-  pass
+@GenView_dec(params={'on': True})
+def jobtemplates(request, jobtemplate_id):
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def metric_types(request):
-  pass
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
-def metric_permissions(request,metric_permission_id):
-  pass
+@GenView_dec(params={'on': True})
+def metric_permissions(request, metric_permission_id):
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
-def metric_type(request,metric_type_id):
-  pass
+@GenView_dec(params={'on': True})
+def metric_type(request, metric_type_id):
+    pass
 
-@GenView_dec(params={'on':True})
+
+@GenView_dec(params={'on': True})
 def more(request):
-  pass
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
-def optionfiles(request,optionfile_id):
-  pass
+@GenView_dec(params={'on': True})
+def optionfiles(request, optionfile_id):
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
-def testoptions(request,testoption_id):
-  pass
+@GenView_dec(params={'on': True})
+def testoptions(request, testoption_id):
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def sites(request):
-  pass
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
-def site(request,site_id):
-  pass
+@GenView_dec(params={'on': True})
+def site(request, site_id):
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def templates(request):
-  pass
+    pass
 
-#@login_required
-@GenView_dec(params={'on':True})
-def template(request,template_id):
-  pass
 
-@GenView_dec(params={'on':True})
-def test(request,test_id):
-  pass
+@GenView_dec(params={'on': True})
+def template(request, template_id):
+    pass
 
-@GenView_dec(params={'on':True})
-def testlist(request,list_type):
-  pass
 
-@login_required
-@GenView_dec(params={'on':True})
-def testclone(request,test_id):
-  pass
+@GenView_dec(params={'on': True})
+def test(request, test_id):
+    pass
+
+
+@GenView_dec(params={'on': True})
+def testlist(request, list_type):
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
-def testmodify(request,test_id):
-  pass
+@GenView_dec(params={'on': True})
+def testclone(request, test_id):
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
+def testmodify(request, test_id):
+    pass
+
+
+@login_required
+@GenView_dec(params={'on': True})
 def usercodes(request, usercode_id):
-  pass
+    pass
 
-@GenView_dec(params={'on':True})
-def get_list(request,type,id):
-  pass
 
-@GenView_dec(params={'on':True})
-def testaccordion(request,test_id,type):
-  pass
+@GenView_dec(params={'on': True})
+def get_list(request, list_type, list_id):
+    pass
+
+
+@GenView_dec(params={'on': True})
+def testaccordion(request, test_id, test_type):
+    pass
+
 
 #######################################################
-## AJAX BLOCK
+# AJAX VIEWS
 #######################################################
 
-@GenView_dec(params={'on':True})
-def ajaxtestmetrics(request,test_id):
-  pass
+@GenView_dec(params={'on': True})
+def ajaxtestmetrics(request, test_id):
+    pass
 
-@GenView_dec(params={'on':True})
-def ajaxtestsites(request,test_id):
-  pass
 
-@GenView_dec(params={'on':True})
-def ajaxtestjobs(request,test_id):
-  pass
+@GenView_dec(params={'on': True})
+def ajaxtestsites(request, test_id):
+    pass
 
-@GenView_dec(params={'on':True})
-def ajaxtestjobsbysite(request,test_id,site_id):
-  pass
 
-@GenView_dec(params={'on':True})
-def ajaxtestevolution(request,test_id):
-  pass
+@GenView_dec(params={'on': True})
+def ajaxtestjobs(request, test_id):
+    pass
 
-@GenView_dec(params={'on':True})
-def ajaxtestlogs(request,test_id):
-  pass
 
-@GenView_dec(params={'on':True})
-def ajaxtestalarms(request,test_id):
-  pass
+@GenView_dec(params={'on': True})
+def ajaxtestjobsbysite(request, test_id, site_id):
+    pass
+
+
+@GenView_dec(params={'on': True})
+def ajaxtestevolution(request, test_id):
+    pass
+
+
+@GenView_dec(params={'on': True})
+def ajaxtestlogs(request, test_id):
+    pass
+
+
+@GenView_dec(params={'on': True})
+def ajaxtestalarms(request, test_id):
+    pass
+
 
 @login_required
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def ajaxtestlogreport(request, test_id):
-  pass
+    pass
 
-@GenView_dec(params={'on':True})
-def ajaxreports(request,site_id):
-  pass
+
+@GenView_dec(params={'on': True})
+def ajaxreports(request, site_id):
+    pass
+
 
 #######################################################
-## ROBOT BLOCK
+# ROBOT VIEWS
 #######################################################
 
-@GenView_dec(params={'on':True})
+@cache_page(LONG_CACHE)
+@GenView_dec(params={'on': True})
 def robot(request):
-  pass
+    pass
 
-@GenView_dec(params={'on':True})
+
+@cache_page(LONG_CACHE)
+@GenView_dec(params={'on': True})
 def robotsite(request, site_id):
-  pass
+    pass
 
-@GenView_dec(params={'on':True})
+
+@cache_page(LONG_CACHE)
+@GenView_dec(params={'on': True})
 def robotlist(request):
-  pass
+    pass
 
-@GenView_dec(params={'on':True})
+
+@cache_page(LONG_CACHE)
+@GenView_dec(params={'on': True})
 def robotstats(request):
-  pass
+    pass
 
-@GenView_dec(params={'on':True})
+
+@cache_page(LONG_CACHE)
+@GenView_dec(params={'on': True})
 def robotjobs(request):
-  pass
+    pass
 
-@GenView_dec(params={'on':True})
+
+@cache_page(LONG_CACHE)
+@GenView_dec(params={'on': True})
 def historical(request):
-  pass
+    pass
 
-@GenView_dec(params={'on':True})
+
+@cache_page(LONG_CACHE)
+@GenView_dec(params={'on': True})
 def incidents(request):
-  pass
+    pass
 
-@cache_page(60 * 30)
-@GenView_dec(params={'on':True,'autoexclusion':{'option_name':'autoexclusion','option_value':'disable','site__name__startswith':'ANALY'},'extra_report':'hc.atlas.models.blacklisting_panda_report'})
+
+@cache_page(SHORT_CACHE)
+@GenView_dec(params={'on': True,
+                     'autoexclusion': {'option_name': 'autoexclusion',
+                                       'option_value': 'disable',
+                                       'site__name__startswith': 'ANALY'},
+                     'extra_report': 'hc.atlas.models.blacklisting_panda_report'})
 def autoexclusion(request):
-  pass
+    pass
+
 
 @never_cache
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def autoexclusion_set(request):
-  pass
+    pass
+
 
 @never_cache
 @login_required
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def autoexclusion_control(request):
-  pass
+    pass
+
 
 @never_cache
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def autoexclusion_control_action(request):
-  pass
+    pass
+
 
 @never_cache
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def contact_set(request):
-  pass
+    pass
+
 
 @never_cache
-@GenView_dec(params={'on':True})
+@GenView_dec(params={'on': True})
 def contact_unset(request):
-  pass
+    pass
 
-@GenView_dec(params={'on':True})
+
+@cache_page(SHORT_CACHE)
+@GenView_dec(params={'on': True})
 def robot_ssb(request):
-  pass
+    pass
+
 
 #######################################################
-## STATS BLOCK
+# STATS VIEWS
 #######################################################
 
-@GenView_dec(params={'on':False})
+@GenView_dec(params={'on': True})
 def reports(request):
-  pass
+    pass
 
-@GenView_dec(params={'on':False})
+
+@GenView_dec(params={'on': False})
 def evolution(request):
-  pass
+    pass
 
-@GenView_dec(params={'on':False})
+
+@GenView_dec(params={'on': False})
 def stats(request):
-  pass
+    pass
 
-@GenView_dec(params={'on':False})
+
+@GenView_dec(params={'on': False})
 def statistics(request):
-  pass
+    pass
 
-@cache_page(60 * 60 * 2)
-@GenView_dec(params={'on':True})
+
+@cache_page(MINI_CACHE)
+@GenView_dec(params={'on': True})
 def joberrors(request):
-  pass
+    pass
 
-@GenView_dec(params={'on':True,'field':'reason','extra':'reason'})
+
+@cache_page(MINI_CACHE)
+@GenView_dec(params={'on': True,
+                     'field': 'reason',
+                     'extra': 'reason'})
 def abortedjobs(request):
-  pass
+    pass
 
-@GenView_dec(params={'on':True,'field':'exit_status_2','extra':'reason'})
+
+@cache_page(MINI_CACHE)
+@GenView_dec(params={'on': True,
+                     'field': 'exit_status_2',
+                     'extra': 'reason'})
 def failedjobs(request):
-  pass
+    pass
