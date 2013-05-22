@@ -16,6 +16,7 @@ export HCAPP=$HCDIR/apps/$APP
 echo ' HCAPP='$HCAPP
 
 # Activate the HammerCloud virtualenv.
+source /afs/cern.ch/sw/lcg/external/gcc/4.7/x86_64-slc6/setup.sh
 source $HCDIR/external/bin/activate
 echo ' PATH='$PATH
 
