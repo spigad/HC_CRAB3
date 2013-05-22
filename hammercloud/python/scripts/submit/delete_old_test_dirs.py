@@ -1,7 +1,6 @@
 from datetime import timedelta
 from django.utils.timezone import now
 from hc.core.utils.generic.class_func import custom_import
-
 import glob
 import logging
 import os
