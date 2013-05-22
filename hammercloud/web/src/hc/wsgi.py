@@ -1,4 +1,3 @@
-import logging
 import os
 
 SOURCES_FILTER = r'.*\\.py\\Z(?ms)|.*\\.html\\Z(?ms)'
