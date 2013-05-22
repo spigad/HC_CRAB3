@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 
+import os
+import subprocess
+import sys
+
 """Bootstrap script to set up the Python environment
 
 Should be called after the virtualenv is activated in order to install all the
 Python modules and dependencies in the local venv. This work has been greatly
 inspired by the following Colin Copeland's article: http://goo.gl/KIMsq
 """
-
-import os
-import subprocess
-import sys
 
 
 def main():
