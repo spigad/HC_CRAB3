@@ -19,7 +19,11 @@ class DeleteOldTestDirs(object):
 
     def run(self, app, dic):
         """Method to be run by the cron dispatcher."""
-        days_to_keep = int(dic['--days'])
+        try:
+            days_to_keep = int(dic['--days'])
+        except KeyError:
+            days_to_keep = 7
+            logging.info('Defaulting to %d days to keep', days_to_keep)
         doit = '--doit' in dic
         hcdir = os.environ['HCDIR']
 
