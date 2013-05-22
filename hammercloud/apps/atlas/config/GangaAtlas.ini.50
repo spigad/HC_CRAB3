@@ -4,17 +4,11 @@ validityAtCreation = 10:00
 minValidity = 00:15
 
 [LCG]
-#EDG_SETUP = /afs/cern.ch/sw/ganga/install/config/grid_env_atlas.sh
-#EDG_SETUP = /data/hammercloud/atlas/config/grid_env_hc.sh
 EDG_SETUP = /opt/glite/etc/profile.d/grid-env.sh
 GLITE_ENABLE = True
-#GLITE_SETUP = /afs/cern.ch/sw/ganga/install/config/grid_env_atlas.sh
-#GLITE_SETUP = /data/hammercloud/atlas/config/grid_env_hc.sh
 GLITE_SETUP = /opt/glite/etc/profile.d/grid-env.sh
 VirtualOrganisation = atlas
 Config = /data/gangarobot/hammercloud/config/atlas_glite_wms.conf
-#ExcludedCEs = nikhef\.nl.*atlas
-#ExcludedCEs = sara\.nl nikhef\.nl.*atlas
 
 [defaults_LCG]
 middleware = GLITE
@@ -46,4 +40,3 @@ GANGA_VERSION = Ganga-HC
 
 [defaults_AtlasLCGRequirements]
 dq2client_version = 0.1.32
-
