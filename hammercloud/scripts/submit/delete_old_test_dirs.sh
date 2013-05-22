@@ -3,6 +3,15 @@
 # Script to clean up the old directories of tests in HammerCloud.
 # ARGUMENTS: all of them passed to the action.
 
+# Check the presence of an application on the arguments.
+if [ -z $1 ] ; then
+    echo ' ERROR: application argument not set.'
+    exit
+else
+    export APP=$1
+    shift
+fi
+
 # Get HCDIR from current installation.
 export HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
 
@@ -19,7 +28,7 @@ source $HCDIR/scripts/config/config-main.sh $APP
 # Run copy script.
 # TODO(rmedrano): Integrate this script in dispatcher.py
 echo 'Launching the cleanup action...'
-python $HCDIR/python/scripts/submit/delete_old_test_dirs.py $*
+python $HCDIR/python/scripts/dispatcher.py -f delete_old_test_dirs $*
 
 # Unlock the lockfile.
 unlock
