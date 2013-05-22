@@ -8,11 +8,12 @@ echo 'Setting up HammerCloud ATLAS environment...'
 # Parse the arguments to find the mode. Save the args to avoid collaterals.
 export HC_MODE='default'
 ARGS=$*
-set -- `getopt -u -o m: -- $@`
+set -- `getopt -u -o m: --long doit -- "$@"`
 
 while [ $# -gt 0 ] ; do
     case $1 in
         -m) shift; export HC_MODE=$1; shift;;
+        --doit) shift;;
         *) shift;;
     esac
 done
