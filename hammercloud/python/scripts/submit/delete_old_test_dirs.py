@@ -1,62 +1,52 @@
-import getopt,sys,os
-from datetime import date, timedelta
+from datetime import timedelta
+from django.utils.timezone import now
 from hc.core.utils.generic.class_func import custom_import
 
-def main():
-    days_to_keep = 3
-    try:
-        opts, _ = getopt.getopt(sys.argv[2:], "", ["days=","doit"])
-        app = str(sys.argv[1])
-    except getopt.GetoptError, err:
-        # print help information and exit:
-        print str(err) # will print something like "option -a not recognized"
-        sys.exit(2)
-    doit = False
-    for o, a in opts:
-        if o in ("--doit"):
-            doit=True
-        elif o in ('--days'):
-            try:
-                days_to_keep = int(a)
-            except:
-                pass
-        else:
-            assert False, "unhandled option"
-   
-    
+import glob
+import logging
+import os
+import shutil
 
-    #cursor.execute ("select distinct id,endtime from test where date_add(endtime,interval 30 day)<now()")
-    print 'Keeping tests for %d days.' % days_to_keep
-    days = timedelta(days=days_to_keep)
-    begin = date.today() - days
-    t = custom_import('hc.%s.models.Test'%(app))
-    tests = t.objects.filter(endtime__lt=begin)
-    for test in tests:
-        print "Test #%d: ended %s."%(test.id, test.endtime),
-        dir = '%s/apps/%s/testdirs/test_%d'%(os.environ['HCDIR'],app,test.id)
-        if os.path.exists(dir):
-            print "going to rm -rf %s"%dir,
-            if doit: 
-                os.system('rm -rf %s'%dir)
-                print "done.",
-            else:
-                print "need to --doit.",
-        else:
-            print "testdir already deleted.",
-        files = ['%s/apps/%s/testdirs/run-test-%d.sh'%(os.environ['HCDIR'],app,test.id), 
-                '/tmp/%d.%s'%(test.id, str(test.usercode).split('/')[-1])]
-        for f in files:
-            if os.path.exists(f):
-                print "going to rm %s"%f,
-                if doit: 
-                    os.system('rm %s'%f)
-                    print "done.",
-                else:
-                    print "need to --doit.",
-            else:
-                print "no such file %s." % f,
-        print
+"""Removes the old test directories to make free space.
+
+This script removes the old test directories to make free space on the AFS
+workspace.
+"""
 
 
-if __name__ == "__main__":
-    main()
+class DeleteOldTestDirs(object):
+    """Cleans the old test directories for the given days."""
+
+    def run(self, app, dic):
+        """Method to be run by the cron dispatcher."""
+        days_to_keep = int(dic['--days'])
+        doit = '--doit' in dic
+        hcdir = os.environ['HCDIR']
+
+        if app == 'core':
+            logging.error('This script is not available for the core app.')
+            return False
+
+        Test = custom_import('hc.%s.models.Test' % app)
+        time_threshold = now() - timedelta(days=days_to_keep)
+        old_tests = (Test.objects
+                         .filter(endtime__lt=time_threshold)
+                         .values_list('id', 'usercode__path')
+                         .order_by())
+
+        logging.info('Keeping test data from %d days', days_to_keep)
+        for test_id, usercode in old_tests:
+            testdir = '%s/apps/%s/testdirs/test_%d' % (hcdir, app, test_id)
+            if os.path.exists(testdir):
+                logging.info('Removing directory %d', testdir)
+                if doit:
+                    shutil.rmtree(testdir)
+
+            files = ['%s/apps/%s/testdirs/run-test-%d.sh' % (hcdir, app, test_id)] 
+            files.extend(glob.glob('/tmp/*.%d.%s' % (test_id,
+                                                     usercode.split('/')[-1])))
+            for f in files:
+                if os.path.exists(f):
+                    logging.info('Removing file: %d', f)
+                    if doit:
+                        os.unlink(f)
