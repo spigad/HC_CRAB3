@@ -11,7 +11,7 @@ echo 'Setting up HammerCloud CMS environment...'
 export HC_MODE='default'
 export HC_ROLE='user'
 ARGS=$*
-set -- `getopt -u -o r:v:m: --long doit -- "$@"`
+set -- `getopt -u -o r:v:m: --long doit,days: -- "$@"`
 
 while [ $# -gt 0 ] ; do
     case $1 in
@@ -19,6 +19,7 @@ while [ $# -gt 0 ] ; do
         -v) shift; export CMSSW_VERSION=$1; shift;;
         -m) shift; export HC_MODE=$1; shift;;
         --doit) shift;;
+        --days) shift; shift;;
         *) shift;;
     esac
 done
