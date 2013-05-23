@@ -1,29 +1,29 @@
 from hc.core.utils.generic.class_func import custom_import
-
 import commands
+import logging
 
-class RegisterHost:
+"""Action to register the current load of the machine.
 
-  def run(self,app,dic):
+The load allows to schedule tests in different machines to balance the resource
+usage.
+"""
 
-    # Exponential smoothing control.
-    alpha = 0.2
 
-    #IMPORTS
-    host = custom_import('hc.%s.models.Host'%(app))
+class RegisterHost(object):
 
-    hostname = commands.getoutput('hostname')
-    load     = commands.getoutput("cat /proc/loadavg | awk '{print $1}'")
-    load     = float(load)
+    def run(self, app, dic, alpha=0.4):
+        """To calculate the load, an exponential smoothing is used."""
+        Host = custom_import('hc.%s.models.Host' % app)
+        hostname = commands.getoutput('hostname')
+        load = float(commands.getoutput("cat /proc/loadavg | awk '{print $1}'"))
 
-    host = host.objects.filter(name=hostname)
-    if host:
-      host = host[0]
-      host.loadavg1m = host.loadavg1m * (1.0 - alpha) + load * alpha
-      host.save()
-      print '[INFO][%s][register_host] Inserted new load:%s at %s.'%(app,host.loadavg1m,hostname)
-    else:
-      print '[ERROR][%s][register_host] Unknown host %s'%(app,hostname)
-      return 0
-
-    return 1
+        host = Host.objects.get(name=hostname)
+        if host:
+            host.loadavg1m = host.loadavg1m * (1.0 - alpha) + load * alpha
+            host.save()
+            logging.info('Inserted new load for %s: %f (new value: %f)',
+                         hostname, host.loadavg1m, load)
+            return True
+        else:
+            logging.error('Unknown host: %s', hostname)
+            return False
