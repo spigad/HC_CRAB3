@@ -5,6 +5,11 @@ from hc.atlas.models import BlacklistEvent, Site, SiteOption, TestLog
 from pandatools import Client
 import logging
 
+"""Monitor for the topology changes on PanDA.
+
+Mostly, this checks that the sites are in the same status and, if not, issues a
+BlacklistEvent to keep track of external changes on the topology.
+"""
 
 ATLAS_TOPOLOGY = ATLASTopology()
 STATUS_OPTION = 'panda_status'
@@ -13,7 +18,7 @@ TIMESTAMP_OPTION = 'panda_timestamp'
 HEPSPEC_OPTION = 'hepspec_declared'
 
 
-class ExternalQueueUpdate:
+class ExternalQueueUpdate(object):
     """ATLAS External Queue Update script."""
 
     def save_blacklistevent_for_site(self, site, event, reason):
@@ -27,18 +32,6 @@ class ExternalQueueUpdate:
             setattr(site, field, value)
             if save:
                 site.save()
-
-    def set_site_option(self, site, option_name, option_value):
-        try:
-            option = SiteOption.objects.get(site=site, option_name=option_name)
-            if option.option_value != option_value:
-                option.option_value = option_value
-                option.save()
-        except SiteOption.MultipleObjectsReturned:
-            logging.error('The site option is corrupted (multiple values)')
-        except SiteOption.DoesNotExist:
-            SiteOption(site=site, option_name=option_name,
-                       option_value=option_value).save()
 
     def update_status_for_site(self, site):
         """Updates the status from the PanDA Client if it is different or not
@@ -66,14 +59,14 @@ class ExternalQueueUpdate:
                                                     option_name=STATUS_OPTION)
         except ObjectDoesNotExist:
             # First time we see this site.
-            self.set_site_option(site, STATUS_OPTION, status)
-            self.set_site_option(site, TIMESTAMP_OPTION, now())
-            self.set_site_option(site, COMMENT_OPTION, comment)
+            SiteOption.set_option(site, STATUS_OPTION, status)
+            SiteOption.set_option(site, TIMESTAMP_OPTION, now())
+            SiteOption.set_option(site, COMMENT_OPTION, comment)
         else:
             if current_status.option_value != status:
-                self.set_site_option(site, STATUS_OPTION, status)
-                self.set_site_option(site, TIMESTAMP_OPTION, now())
-                self.set_site_option(site, COMMENT_OPTION, comment)
+                SiteOption.set_option(site, STATUS_OPTION, status)
+                SiteOption.set_option(site, TIMESTAMP_OPTION, now())
+                SiteOption.set_option(site, COMMENT_OPTION, comment)
                 logging.info("Site '%s' status updated ('%s' -> '%s')",
                              site.name, current_status, status)
                 # Store a BlacklistEvent for an external change (those that
