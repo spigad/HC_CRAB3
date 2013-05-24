@@ -42,8 +42,8 @@ class ExternalQueueUpdate(object):
                                    ATLAS_TOPOLOGY.get_site_from_siteid(site.name))
             self.update_site_field(site, 'ddm',
                                    ATLAS_TOPOLOGY.get_ddm_from_siteid(site.name))
-            self.set_site_option(site, HEPSPEC_OPTION,
-                                 ATLAS_TOPOLOGY.get_hepspec_from_siteid(site.name))
+            SiteOption.set_option(site, HEPSPEC_OPTION,
+                                  ATLAS_TOPOLOGY.get_hepspec_from_siteid(site.name))
         except ATLASTopologyError, ae:
             logging.error(ae)
         # Get current status from PanDA client.
