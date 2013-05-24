@@ -141,7 +141,7 @@ INSTALLED_APPS = (
     'hc.cms',
     'hc.lhcb',
     'varnishapp',
-    'raven.contrib.django',
+    'raven.contrib.django.raven_compat',
     'south',
 )
 
