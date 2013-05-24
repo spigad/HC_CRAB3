@@ -1,63 +1,41 @@
-#!/usr/bin/env python
-
 from django.utils.timezone import now
 from hc.atlas.models import GlobalOption
-import commands, sys
+import logging
+import os
 
-def checkNightly(rel,cmtconfig):
-    # Check release on CVMFS
-    cmd = "ls -l /cvmfs/atlas-nightlies.cern.ch/repo/sw/nightlies/%s/%s/ | grep latest" %(cmtconfig,rel)
-    rc, out = commands.getstatusoutput(cmd)
-    dirrel = "rel_0"
-    if rc!=0:
-        print "ERROR during execution of: '%s' " %cmd
-        return
-    else:
-        dirrel = out[-5:]
+"""Monitor of the Athena nightly on CVMFS.
 
-    # Get last rel from DB
-    tmprel = rel.replace('.','')
-    tmpvar = 'last_nightly_%s_value' %tmprel
-    try:
-        dbrel = GlobalOption.objects.get(option_name=tmpvar)
-    except GlobalOption.DoesNotExist:
-        GlobalOption(option_name=tmpvar, option_value=dirrel).save()
-        dbrel = GlobalOption.objects.get(option_name=tmpvar)
-        tmpvar = 'last_nightly_%s_change' %tmprel
-        GlobalOption(option_name=tmpvar, option_value=now()).save()
+This script monitors the deployment of new Athena nightlies on CVMFS and
+updates the metadata for the nightly testing templates accordingly.
+"""
 
-    # If CVMFS rel values is different from DB value -> update
-    if not dbrel.option_value==dirrel:
+NIGHTLY_DIR = '/cvmfs/atlas-nightlies.cern.ch/repo/sw/nightlies'
+
+
+class CheckNightly(object):
+    """Monitors the deployment for several nightly versions being tested."""
+
+    def check_nightly(self, release, cmtconfig):
+        """Checks the presence of a release and a platform."""
         try:
-            dbrel = GlobalOption.objects.get(option_name=tmpvar)
-            dbrel.option_value = dirrel
-            dbrel.save()
-        except GlobalOption.DoesNotExist:
-            GlobalOption(option_name=tmpvar, option_value=dirrel).save()
+            rel_dir = os.readlink(os.path.join(NIGHTLY_DIR, cmtconfig,
+                                               release, 'latest'))
+        except OSError:
+            logging.error('CMVFS path for nightly %s, %s, latest not found',
+                          release, cmtconfig)
+            return
 
-        tmpvar = 'last_nightly_%s_change' %tmprel
-        try:
-            lastchange = GlobalOption.objects.get(option_name=tmpvar)
-            lastchange.option_value = now()
-            lastchange.save()
-        except GlobalOption.DoesNotExist:
-            GlobalOption(option_name=tmpvar, option_value=now()).save()
+        option_name = 'last_nightly_%s_%s' % release.replace('.', '')
+        if GlobalOption.set_option(option_name % 'value', rel_dir):
+            GlobalOption.set_option(option_name % 'change', now())
+            logging.info('Athena CVMFS release for %s on %s changed to %s',
+                         release, cmtconfig, rel_dir)
+        else:
+            logging.info('Athena CVMFS release for %s on %s not changed',
+                         release, cmtconfig, rel_dir)
 
-        try:
-            print "CVMFS %s release changed. Update HammerCloud DB with: %s, %s" %(rel, dirrel, lastchange.option_value) 
-        except:
-            pass
-    else:
-        try:
-            tmpvar = 'last_nightly_%s_change' %tmprel
-            lastchange = GlobalOption.objects.get(option_name=tmpvar)
-            print "CVMFS %s release unchanged. DB entries: %s, %s" %(rel, dbrel.option_value, lastchange.option_value)
-        except:
-            pass
-
-    return
-
-if __name__ == "__main__" :
-    checkNightly("17.X.0","x86_64-slc5-gcc43-opt")
-    checkNightly("18.X.0","x86_64-slc5-gcc43-opt")
-    checkNightly("17.2.X","i686-slc5-gcc43-opt")
+    def run(self):
+        self.check_nightly("17.X.0", "x86_64-slc5-gcc43-opt")
+        self.check_nightly("18.X.0", "x86_64-slc5-gcc43-opt")
+        self.check_nightly("17.2.X", "i686-slc5-gcc43-opt")
+        return True
