@@ -134,7 +134,7 @@ class GlobalOptionBase(models.Model):
       cls.set_option('autoexclusion_author', user)
 
   @classmethod
-  def set_option(cls, option_name, option_value):
+  def set_option(cls, option_name, option_value, forced=False):
     """Sets the value for an option.
 
     Will update or create a new option value for the given option_name.
@@ -143,13 +143,23 @@ class GlobalOptionBase(models.Model):
         cls: is the class object to process, in this case GlobalOption.
         option_name: name for the option, must be unique.
         option_value: value (str) for the option.
+        forced: force the setting the new option whether is chaning or not.
+
+    Returns:
+        True if the option was changed, False if not.
     """
     try:
       option = cls.objects.get(option_name=option_name)
-      option.option_value = option_value
-      option.save()
+      if option.option_value != option_value or forced:
+        option.option_value = option_value
+        option.save()
+        return True
+      return False
+    except cls.MultipleObjectsReturned:
+      raise ValueError('The option is corrupted (multiple values)')
     except cls.DoesNotExist:
       cls(option_name=option_name, option_value=option_value).save()
+      return True
 
   class Meta:
     abstract = True
@@ -502,6 +512,35 @@ class SiteOptionBase(models.Model):
   
   #site     -> hc.core.base.models.keys.fk.generator.generateFK('Site','SiteOption','site',{})
 
+  @classmethod
+  def set_option(cls, site, option_name, option_value, forced=False):
+    """Sets the value for an option.
+
+    Will update or create a new option value for the given option_name.
+
+    Arguments:
+        cls: is the class object to process, in this case GlobalOption.
+        site: site to search for the option.
+        option_name: name for the option, must be unique.
+        option_value: value (str) for the option.
+        forced: force the setting the new option whether is chaning or not.
+
+    Returns:
+        True if the option was changed, False if not.
+    """
+    try:
+      option = cls.objects.get(site=site, option_name=option_name)
+      if option.option_value != option_value or forced:
+        option.option_value = option_value
+        option.save()
+        return True
+      return False
+    except cls.MultipleObjectsReturned:
+      raise ValueError('The option is corrupted (multiple values)')
+    except cls.DoesNotExist:
+      cls(site=site, option_name=option_name, option_value=option_value).save()
+      return True
+
   class Meta:
     abstract = True
     db_table = u'site_option'
@@ -529,10 +568,9 @@ class TemplateBase(models.Model):
     (u'stress', u'stress'),
   )
   
-  TYPE_CHOICES = (
+  PROCESSING_CLASS_CHOICES = (
     (u'analysis', u'analysis'),
     (u'production', u'production'),
-    (u'nightly', u'nightly'),
   )
 
   id                 = models.AutoField(primary_key=True)
@@ -546,7 +584,10 @@ class TemplateBase(models.Model):
   is_golden          = models.BooleanField(default=0,blank=True)
   obsolete           = models.BooleanField(default=0,blank=True)
   period             = models.IntegerField(default=0)
-  type               = models.CharField(blank=True,default='analysis',choices = TYPE_CHOICES, max_length = 31)
+  type               = models.CharField(blank=True, max_length = 31)
+  processing_class   = models.CharField(choices = PROCESSING_CLASS_CHOICES, max_length = 31)
+  quality            = models.CharField(blank=True, max_length = 31)
+  processing_meta    = models.CharField(blank=True, max_length = 31)
 
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Template','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Template','usercode',{})
