@@ -45,7 +45,7 @@ class ExternalQueueUpdate(object):
             SiteOption.set_option(site, HEPSPEC_OPTION,
                                   ATLAS_TOPOLOGY.get_hepspec_from_siteid(site.name))
         except ATLASTopologyError, ae:
-            logging.error(ae)
+            logging.info(ae)
         # Get current status from PanDA client.
         try:
             status = Client.PandaSites[site.name]['status']
