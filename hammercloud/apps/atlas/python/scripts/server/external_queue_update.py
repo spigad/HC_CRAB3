@@ -51,7 +51,7 @@ class ExternalQueueUpdate(object):
             status = Client.PandaSites[site.name]['status']
             comment = Client.PandaSites[site.name]['comment']
         except KeyError:
-            logging.warning("No information found for %s in PanDA", site.name)
+            logging.info("No information found for %s in PanDA", site.name)
             return
         # Get current status stored in the DB.
         try:
