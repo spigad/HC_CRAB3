@@ -25,7 +25,7 @@ class CheckNightly(object):
                           release, cmtconfig)
             return
 
-        option_name = 'last_nightly_%s_%s' % release.replace('.', '')
+        option_name = 'last_nightly_%s_%%s' % release.replace('.', '')
         if GlobalOption.set_option(option_name % 'value', rel_dir):
             GlobalOption.set_option(option_name % 'change', now())
             logging.info('Athena CVMFS release for %s on %s changed to %s',
