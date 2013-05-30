@@ -21,21 +21,21 @@ class CheckNightly(object):
             rel_dir = os.readlink(os.path.join(NIGHTLY_DIR, cmtconfig,
                                                release, 'latest'))
         except OSError:
-            logging.error('CMVFS path for nightly %s, %s, latest not found',
+            logging.info('CMVFS path for nightly %s, %s, latest not found',
                           release, cmtconfig)
             return
 
-        option_name = 'last_nightly_%s_%%s' % release.replace('.', '')
-        if GlobalOption.set_option(option_name % 'value', rel_dir):
-            GlobalOption.set_option(option_name % 'change', now())
+        option_name = 'last_nightly_%s_' % release.replace('.', '')
+        if GlobalOption.set_option(option_name + 'value', rel_dir):
+            GlobalOption.set_option(option_name + 'change', now())
             logging.info('Athena CVMFS release for %s on %s changed to %s',
                          release, cmtconfig, rel_dir)
         else:
             logging.info('Athena CVMFS release for %s on %s not changed',
-                         release, cmtconfig, rel_dir)
+                         release, cmtconfig)
 
     def run(self):
-        self.check_nightly("17.X.0", "x86_64-slc5-gcc43-opt")
-        self.check_nightly("18.X.0", "x86_64-slc5-gcc43-opt")
-        self.check_nightly("17.2.X", "i686-slc5-gcc43-opt")
+        self.check_nightly('17.X.0', 'x86_64-slc5-gcc43-opt')
+        self.check_nightly('18.X.0', 'x86_64-slc5-gcc43-opt')
+        self.check_nightly('17.2.X', 'i686-slc5-gcc43-opt')
         return True
