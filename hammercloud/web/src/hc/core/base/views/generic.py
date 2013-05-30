@@ -1479,10 +1479,20 @@ class GenericView(object):
             result_filters = result_filters & Q(test__in=tests)
         sites = filter(None, request.GET.getlist('site'))
         if sites:
-            site_filters = site_filters & Q(id__in=sites)
+            try:
+                map(int, sites)
+            except:
+                pass
+            else:
+                site_filters = site_filters & Q(id__in=sites)
         clouds = filter(None, request.GET.getlist('cloud'))
         if clouds:
-            site_filters = site_filters & Q(cloud__id__in=clouds)
+            try:
+                map(int, clouds)
+            except:
+                pass
+            else:
+                site_filters = site_filters & Q(cloud__id__in=clouds)
         templates = filter(None, request.GET.getlist('template'))
         if templates:
             result_filters = result_filters & Q(test__template__id__in=templates)
