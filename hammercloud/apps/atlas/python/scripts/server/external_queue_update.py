@@ -38,10 +38,11 @@ class ExternalQueueUpdate(object):
            existing in the site options table."""
         # Update the information coming from the ATLAS topology.
         try:
-            self.update_site_field(site, 'real_name',
-                                   ATLAS_TOPOLOGY.get_site_from_siteid(site.name))
-            self.update_site_field(site, 'ddm',
-                                   ATLAS_TOPOLOGY.get_ddm_from_siteid(site.name))
+            # Disable this since breaks submission.
+            # self.update_site_field(site, 'real_name',
+            #                        ATLAS_TOPOLOGY.get_site_from_siteid(site.name))
+            # self.update_site_field(site, 'ddm',
+            #                        ATLAS_TOPOLOGY.get_ddm_from_siteid(site.name))
             SiteOption.set_option(site, HEPSPEC_OPTION,
                                   ATLAS_TOPOLOGY.get_hepspec_from_siteid(site.name))
         except ATLASTopologyError, ae:
