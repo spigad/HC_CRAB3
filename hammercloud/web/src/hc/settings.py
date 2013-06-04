@@ -152,10 +152,10 @@ INSTALLED_APPS = (
 # more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'root': {
-        'level': 'WARNING',
-        'handlers': ['sentry'],
+        'level': 'DEBUG',
+        'handlers': ['console', 'sentry'],
     },
     'filters': {
         'require_debug_false': {
@@ -173,7 +173,7 @@ LOGGING = {
             'class': 'raven.contrib.django.handlers.SentryHandler',
         },
         'console': {
-            'level': 'DEBUG',
+            'level': 'DEBUG' if DEBUG else 'INFO',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose'
         },
@@ -181,13 +181,14 @@ LOGGING = {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'verbose',
             'include_html': True,
         }
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
+            'handlers': ['sentry', 'mail_admins'],
+            'level': 'WARNING',
             'propagate': True,
         },
         'raven': {
