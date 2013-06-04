@@ -18,7 +18,7 @@ MINI_CACHE = 5 * 60  # 5 minutes.
 # GENERAL VIEWS
 #######################################################
 
-@cache_page(LONG_CACHE)
+#@cache_page(LONG_CACHE)
 @GenView_dec(params={'on': True})
 def index(request):
     pass
