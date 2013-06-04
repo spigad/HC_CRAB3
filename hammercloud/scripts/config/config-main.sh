@@ -16,9 +16,10 @@ export HCAPP=$HCDIR/apps/$APP
 echo ' HCAPP='$HCAPP
 
 # Activate the HammerCloud virtualenv.
-source /afs/cern.ch/sw/lcg/external/gcc/4.7/x86_64-slc6/setup.sh
 source $HCDIR/external/bin/activate
+source /afs/cern.ch/sw/lcg/external/gcc/4.7/x86_64-slc6/setup.sh /afs/cern.ch/sw/lcg/contrib
 echo ' PATH='$PATH
+echo ' LD_LIBRARY_PATH='$LD_LIBRARY_PATH
 
 # Export HammerCloud python zone.
 export PYTHONPATH=$HCDIR/python:$HCDIR/apps:$HCDIR/web/src
