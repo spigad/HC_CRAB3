@@ -830,6 +830,7 @@ class TestBase(models.Model):
   mtime              = models.DateTimeField(auto_now=True)
   is_golden          = models.BooleanField(default=0,blank=True)
   period             = models.IntegerField(default=0)
+  processing_meta    = models.CharField(blank=True, max_length = 31)
 
   #jobtemplate      -> hc.core.base.models.keys.fk.generator.generateFK('JobTemplate','Test','jobtemplate',{})
   #usercode         -> hc.core.base.models.keys.fk.generator.generateFK('UserCode','Test','usercode',{})
@@ -955,18 +956,24 @@ class TestBase(models.Model):
       except:
         metricperm = t[0].metricperm
 
-      self.jobtemplate    = jobtemplate
-      self.usercode       = usercode
-      self.optionfile     = optionfile     
-      self.inputtype      = inputtype
-      self.output_dataset = output_dataset
-      self.testoption     = testoption
-      self.template       = template
-      self.gangabin       = gangabin
-      self.extraargs      = extraargs
-      self.is_golden      = is_golden
-      self.period         = period
-      self.metricperm     = metricperm
+      try:
+        processing_meta = self.processing_meta
+      except:
+        processing_meta = t[0].processing_meta
+
+      self.jobtemplate     = jobtemplate
+      self.usercode        = usercode
+      self.optionfile      = optionfile
+      self.inputtype       = inputtype
+      self.output_dataset  = output_dataset
+      self.testoption      = testoption
+      self.template        = template
+      self.gangabin        = gangabin
+      self.extraargs       = extraargs
+      self.is_golden       = is_golden
+      self.period          = period
+      self.metricperm      = metricperm
+      self.processing_meta = processing_meta
 
       self.state = final_state
       super(TestBase, self).save()
@@ -986,6 +993,7 @@ class TestBase(models.Model):
       self.extraargs        = obj.extraargs
       self.is_golden        = obj.is_golden
       self.period           = obj.period
+      self.processing_meta  = obj.processing_meta
 
       super(TestBase, self).save()
 
