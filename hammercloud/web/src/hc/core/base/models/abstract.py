@@ -881,6 +881,7 @@ class TestBase(models.Model):
         return 0
 
     test = custom_import('hc.'+self._meta.app_label+'.models.Test')
+    go   = custom_import('hc.'+self._meta.app_label+'.models.GlobalOption')
     t    = test.objects.filter(id = self.id)
 
     dontsave = ['error','completed']
@@ -956,11 +957,6 @@ class TestBase(models.Model):
       except:
         metricperm = t[0].metricperm
 
-      try:
-        processing_meta = self.processing_meta
-      except:
-        processing_meta = t[0].processing_meta
-
       self.jobtemplate     = jobtemplate
       self.usercode        = usercode
       self.optionfile      = optionfile
@@ -973,7 +969,6 @@ class TestBase(models.Model):
       self.is_golden       = is_golden
       self.period          = period
       self.metricperm      = metricperm
-      self.processing_meta = processing_meta
 
       self.state = final_state
       super(TestBase, self).save()
@@ -993,7 +988,6 @@ class TestBase(models.Model):
       self.extraargs        = obj.extraargs
       self.is_golden        = obj.is_golden
       self.period           = obj.period
-      self.processing_meta  = obj.processing_meta
 
       super(TestBase, self).save()
 
@@ -1080,6 +1074,13 @@ class TestBase(models.Model):
                                 active=tsa.active,
                                 actions=tsa.actions)
           tsa.save({'new':True})
+
+      # Calculate the processing_meta for this test.
+      try:
+        self.processing_meta = go.objects.get(option_name='last_nightly_%s_value' % self.template.processing_meta).option_value
+      except:
+        # TODO(rmedrano): log here something!
+        self.processing_meta = ''
 
       # Storing the final state.
       self.state = final_state
