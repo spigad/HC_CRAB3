@@ -211,6 +211,11 @@ def ajaxreports(request, site_id):
     pass
 
 
+@GenView_dec(params={'on': False})
+def ajaxnightly(request):
+    pass
+
+
 #######################################################
 # ROBOT VIEWS
 #######################################################
@@ -290,6 +295,11 @@ def contact_unset(request):
 
 @GenView_dec(params={'on': False})
 def robot_ssb(request):
+    pass
+
+
+@GenView_dec(params={'on': False})
+def nightly(request):
     pass
 
 

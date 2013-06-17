@@ -17,6 +17,7 @@ from hc.core.utils.generic.class_func import custom_import
 from hc.core.utils.generic.dic_config import DicConfig
 from hc.core.utils.hc.datahelper import Datahelper
 from hc.core.utils.hc.stats import Stats
+from itertools import groupby
 import dateutil.parser
 import re
 import time
@@ -921,6 +922,29 @@ class GenericView(object):
                            [defaultContext])
         return HttpResponse(template.render(c), content_type='application/json')
 
+    def ajaxnightly(self, request, dic={'Test': None}, *args, **kwargs):
+        """Data reporter for the nightly view.
+
+        Reports the data for the nightly view in JSON format to be used by the
+        nightly() view and other tools freely.
+        """
+        Test = dic['Test']
+        app = Test.__module__.split('.')[1]
+        tests = (Test.objects.filter(template__type='nightly')
+                             .filter(starttime__gt=now() - timedelta(days=7))
+                             .prefetch_related('getSummaryTests_for_test')
+                             .order_by('template__id', '-id'))
+        for test in tests:
+            test.summary = test.getSummaryTests_for_test.all()[0]
+        groups = {}
+        for template_id, group in groupby(tests, lambda t: t.template_id):
+            # Django templates don't like _grouper objects.
+            groups[template_id] = list(group)
+        t = loader.select_template(['%s/json/nightly.txt' % app,
+                                    'core/app/json/nightly.txt'])
+        c = RequestContext(request, {'groups': groups}, [defaultContext])
+        return HttpResponse(t.render(c), content_type='application/json')
+
 #######################################################
 # # ROBOT BLOCK
 #######################################################
@@ -1338,6 +1362,20 @@ class GenericView(object):
                 raise Http404
 
         return HttpResponse('The email notifications for "%s" will not be sent to sites.' % sitename)
+
+
+    def nightly(self, request, dic={'Test': None}, *args, **kwargs):
+        """Main view for the nightlies report.
+
+        Shows the template of the report, which will load the JSON data.
+        """
+        Test = dic['Test']
+        app = Test.__module__.split('.')[1]
+
+        t = loader.select_template(['%s/robot/nightly.html' % (app),
+                                    'core/app/robot/nightly.html'])
+        c = RequestContext(request, {}, [defaultContext])
+        return HttpResponse(t.render(c))
 
 
 #######################################################

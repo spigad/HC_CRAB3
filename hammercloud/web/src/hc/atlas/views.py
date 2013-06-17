@@ -18,7 +18,6 @@ MINI_CACHE = 5 * 60  # 5 minutes.
 # GENERAL VIEWS
 #######################################################
 
-#@cache_page(LONG_CACHE)
 @GenView_dec(params={'on': True})
 def index(request):
     pass
@@ -212,6 +211,11 @@ def ajaxreports(request, site_id):
     pass
 
 
+@GenView_dec(params={'on': True})
+def ajaxnightly(request):
+    pass
+
+
 #######################################################
 # ROBOT VIEWS
 #######################################################
@@ -302,6 +306,11 @@ def contact_unset(request):
 @cache_page(SHORT_CACHE)
 @GenView_dec(params={'on': True})
 def robot_ssb(request):
+    pass
+
+
+@GenView_dec(params={'on': True})
+def nightly(request):
     pass
 
 

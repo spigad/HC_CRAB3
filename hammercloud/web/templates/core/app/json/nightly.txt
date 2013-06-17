@@ -1,0 +1,22 @@
+{
+	{% for template_id, tests in groups.items %}
+	"{{ template_id}}": {
+		{% for test in tests %}
+			"{{ test.id }}": {
+				"description": "{{ test.template.description}}",
+				"url": "{% url test-view app test.id %}",
+				"starttime": "{{ test.starttime|date:"cO" }}",
+				"endtime": "{{ test.endtime|date:"cO" }}",
+				"state": "{{ test.state }}",
+				"host": "{{ test.host.name }}",
+				"rel": "{{ test.processing_meta }}",
+				"quality": "{{ test.template.quality }}",
+				"class": "{{ test.template.processing_class }}",
+				"total_jobs": "{{ test.summary.total }}",
+				"failed_jobs": "{{ test.summary.failed }}",
+				"completed_jobs": "{{ test.summary.completed }}"
+			}{% if not forloop.last %},{% endif %}
+		{% endfor %}
+	}{% if not forloop.last %},{% endif %}
+	{% endfor %}
+}
