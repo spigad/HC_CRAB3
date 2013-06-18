@@ -52,6 +52,11 @@ class GenericView(object):
         test = dic['Test']
         app = test.__module__.split('.')[1]
 
+        try:
+            other = kwargs['params']['other']
+        except KeyError:
+            other = None
+
         # Prefetch everything to minimize queries. This lookup does only
         # 2 queries for this view -- O(1). Avoid sorting as well.
         tests = (test.objects
@@ -66,8 +71,10 @@ class GenericView(object):
         stress = filter(lambda x: x.template.category == 'stress'
                             and not x.is_golden, tests)
         functional = filter(lambda x: x.template.category == 'functional'
-                                and not x.is_golden, tests)
+                                and not x.is_golden
+                                and not x.template.type == other, tests)
         golden = filter(lambda x: x.is_golden, tests)
+        other = filter(lambda x: x.template.type == other, tests)
 
         dh = Datahelper()
         stress = dh.annotateTests(stress)
@@ -79,7 +86,8 @@ class GenericView(object):
         c = RequestContext(request,
                            {'tests': {'golden': golden,
                                       'stress': stress,
-                                      'functional': functional}},
+                                      'functional': functional,
+                                      'other': other}},
                            [defaultContext])
         return HttpResponse(t.render(c))
 

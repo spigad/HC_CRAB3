@@ -18,7 +18,8 @@ MINI_CACHE = 5 * 60  # 5 minutes.
 # GENERAL VIEWS
 #######################################################
 
-@GenView_dec(params={'on': True})
+@GenView_dec(params={'on': True,
+                     'other': 'nightly'})
 def index(request):
     pass
 

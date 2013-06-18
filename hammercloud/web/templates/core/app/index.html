@@ -4,7 +4,7 @@
 
   <p>Welcome to HammerCloud-{{app|upper}}.</p>
 
-  {% block runningjobs_extra %}{% endblock %}
+  {% block runningjobs_golden %}{% endblock %}
 
   {% for key,list in tests.items %}
      {% if key == "functional" or key == "stress" %}
@@ -51,10 +51,6 @@
     {% endif %}
   {% endfor %}
 
-
-  {{stress}}
-  
-  {{functional}}
-
+{% block runningjobs_other %}{% endblock %}
 
 {% endblock %}
