@@ -930,8 +930,8 @@ class GenericView(object):
         """
         Test = dic['Test']
         app = Test.__module__.split('.')[1]
-        tests = (Test.objects.filter(template__type='nightly')
-                             .filter(starttime__gt=now() - timedelta(days=7))
+        tests = (Test.objects.filter(template__type='nightly',
+                                     starttime__gt=now() - timedelta(days=7))
                              .prefetch_related('getSummaryTests_for_test')
                              .order_by('template__id', '-id'))
         for test in tests:
@@ -1371,7 +1371,6 @@ class GenericView(object):
         """
         Test = dic['Test']
         app = Test.__module__.split('.')[1]
-
         t = loader.select_template(['%s/robot/nightly.html' % (app),
                                     'core/app/robot/nightly.html'])
         c = RequestContext(request, {}, [defaultContext])
