@@ -5,7 +5,7 @@
   <script type="text/javascript" src="{{ STATIC_URL }}js/highcharts/highcharts.js"></script>
   <script type="text/javascript">
     function load_report(report_name) {
-        $.ajax({url: "/hc/app/atlas/ajax/reports/" + report_name + "/",
+        $.ajax({url: "{{ url ajaxreport-view app }}" + report_name + "/",
             timeout: 5000,
             dataType: "script",
             error: function() {
