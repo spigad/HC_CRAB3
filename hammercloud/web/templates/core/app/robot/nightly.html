@@ -2,8 +2,72 @@
 
 {% block title %}{{block.super}} | Nightly tests{% endblock %}
 
+{% block css %}
+  {{ block.super }}
+  <link type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+{% endblock %}
+
+{% block javascript %}
+  {{block.super}}
+  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js"></script>
+  <script type="text/javascript">
+    function load_report() {
+        $.ajax({url: "{% url ajaxnightly-view app %}",
+            timeout: 5000,
+            dataType: "json",
+            error: function() {
+                     alert("There has been an error loading the report data.");
+                   },
+            statusCode: { 404: function() {
+                                 alert("The report requested was not found.");
+                               }
+                        },
+            success: function(data) {
+                options = {collapsible: true,
+                           active: false,
+                           heightStyle: "content",
+                           icons: {
+                               header: "ui-icon-circle-arrow-e",
+                               activeHeader: "ui-icon-circle-arrow-s"
+                           }}
+                $("#templatelist").empty();
+                $.each(data, function(key, tests) {
+                    var header = '<h3>Template ' + key + '</h3>';
+                    var content = $('<div></div>');
+                    $.each(tests, function(test_id, test) {
+                        $(content).append('<h4>Test ' + test_id + ' - ' + test["state"] + '</h4>')
+                        var inner = $('<div></div>')
+                        $(inner).append('<p>Release: ' + test["rel"] + '</p>');
+                        $(inner).append('<p>Running time: ' + test["starttime"] + ' - ' + test["endtime"] + '</p>')
+                        $(inner).append('<p>Jobs (failed/completed): ' + test["total_jobs"] + ' (' + test["failed_jobs"] + '/' + test["completed_jobs"]+ ')' + '</p>')
+                        $(inner).append('<p>Class: ' + test["class"] + '</p>')
+                        $(content).append(inner)
+                    });
+                    $(content).accordion(options);
+                    $('#templatelist').append(header, content)
+                                      .accordion('destroy')
+                                      .accordion(options);
+                });
+            }
+           });
+    }
+    function reload_form() {
+        $('#templatelist').append('<img src="{{ STATIC_URL }}images/ajax-loader.gif" alt="loading..." />');
+        load_report();
+    }
+  </script>
+{% endblock %}
+
+{% block docready %}
+  {{ block.super }}
+  $('#templatelist').accordion();
+  reload_form();
+{% endblock %}
+
 {% block content %}
 
 <h2>Nightly tests for {{ app|upper }}</h2>
+
+<div id="templatelist"></div>
 
 {% endblock %}
