@@ -53,9 +53,9 @@ class GenericView(object):
         app = test.__module__.split('.')[1]
 
         try:
-            other = kwargs['params']['other']
+            other_kw = kwargs['params']['other']
         except KeyError:
-            other = None
+            other_kw = None
 
         # Prefetch everything to minimize queries. This lookup does only
         # 2 queries for this view -- O(1). Avoid sorting as well.
@@ -69,17 +69,20 @@ class GenericView(object):
                      .order_by())
 
         stress = filter(lambda x: x.template.category == 'stress'
-                            and not x.is_golden, tests)
+                            and not x.is_golden
+                            and not x.template.type == other_kw, tests)
         functional = filter(lambda x: x.template.category == 'functional'
                                 and not x.is_golden
-                                and not x.template.type == other, tests)
+                                and not x.template.type == other_kw, tests)
         golden = filter(lambda x: x.is_golden, tests)
-        other = filter(lambda x: x.template.type == other, tests)
+        other = filter(lambda x: x.template.type == other_kw
+                          and not x.is_golden, tests)
 
         dh = Datahelper()
         stress = dh.annotateTests(stress)
         functional = dh.annotateTests(functional)
         golden = dh.annotateTests(golden)
+        other = dh.annotateTests(other)
 
         t = loader.select_template(['%s/index.html' % (app),
                                     'core/app/index.html'])

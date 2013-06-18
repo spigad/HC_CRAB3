@@ -59,7 +59,7 @@
            </thead>
            <tbody>
              {% load hc_tags %}
-             {% for test in tests.golden %}
+             {% for test in tests.other %}
                <tr onmouseover="ChangeColor(this, true); this.style.cursor='pointer';"
                    onmouseout="ChangeColor(this, false); this.style.cursor='default';"
                    onclick="DoNav('{% url test-view app test.id %}');">
