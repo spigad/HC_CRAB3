@@ -21,7 +21,7 @@ class DeleteOldTestDirs(object):
         try:
             days_to_keep = int(dic['--days'])
         except KeyError:
-            days_to_keep = 14
+            days_to_keep = 7
             logging.info('Defaulting to %d days to keep', days_to_keep)
         doit = '--doit' in dic
         hcdir = os.environ['HCDIR']

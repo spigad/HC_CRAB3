@@ -57,7 +57,7 @@ def run(dic):
 if __name__ == '__main__':
     try:
         dic = {}
-        opts, _ = getopt.getopt(sys.argv[1:], SHORT_OPS, LONG_OPS)
+        opts, _ = getopt.gnu_getopt(sys.argv[1:], SHORT_OPS, LONG_OPS)
         for opt, arg in opts:
             dic[opt] = arg
         sys.exit(run(dic))
