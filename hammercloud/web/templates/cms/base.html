@@ -1,5 +1,10 @@
 {% extends 'core/app/base.html' %}
 
+{% block meta %}
+  {{ block.super }}
+  <meta http-equiv="refresh" content="120" />
+{% endblock %}
+
 {% block menu %}
 <li><a href="{% url index-view app %}">Home</a></li>
 <li><a href="{% url testlist-view app,'all' %}">Tests</a>
