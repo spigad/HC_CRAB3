@@ -1,4 +1,4 @@
 [gerrit]
-host=hc-services.cern.ch
+host=hc-gerrit
 port=29418
 project=HammerCloud.git

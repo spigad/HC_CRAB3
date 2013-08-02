@@ -1,0 +1,12 @@
+# Copy or append this config to yout ~/.ssh/config
+
+Host hc-gerrit
+     User <gerrit username>
+     Hostname hc-services.cern.ch
+     Port 29418
+     PubkeyAuthentication yes
+     IdentityFile <path to your private key>
+     ForwardX11 no
+     ForwardX11Trusted no
+     GSSAPIAuthentication no
+     GSSAPIDelegateCredentials no
