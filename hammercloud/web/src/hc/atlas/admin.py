@@ -71,7 +71,11 @@ class UserCodeAdmin(UserCodeAdminBase):
 ##
 
 class SiteAdmin(SiteAdminBase):
-  pass
+  list_display = ('name', 'description', 'cloud', 'backend', 'enabled')
+  fieldsets = [
+    (None, {'fields': ['name','alternate_name','description','cloud','backend','ddm','enabled','queue','monitoring_link']}),
+  ]
+  #pass
 
 class SiteOptionAdmin(SiteOptionAdminBase):
   pass
