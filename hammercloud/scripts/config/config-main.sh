@@ -19,9 +19,6 @@ echo ' HCAPP='$HCAPP
 export SL_RELEASE=`sed -rn 's/.*([0-9])\.[0-9].*/\1/p' /etc/redhat-release`
 echo ' SL_RELEASE='$SL_RELEASE
 
-# We need the GCC 4.7 from AFS.
-source /afs/cern.ch/sw/lcg/external/gcc/4.7/x86_64-slc$SL_RELEASE/setup.sh /afs/cern.ch/sw/lcg/contrib
-
 # Activate the HammerCloud virtualenv.
 source $HCDIR/external/bin/activate
 echo ' PATH='$PATH
