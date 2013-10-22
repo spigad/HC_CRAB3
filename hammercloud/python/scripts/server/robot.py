@@ -11,7 +11,10 @@ class Robot:
       return 1
 
     # Look for the app robot script and run it.
-    app_script = custom_import('%s.python.scripts.server.robot.Robot' % (app))
+    try:
+      app_script = custom_import('%s.python.scripts.server.robot.Robot' % (app))
+    except ImportError:
+      app_script = None
 
     if app_script:
       try:
