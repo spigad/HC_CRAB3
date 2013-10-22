@@ -560,7 +560,7 @@ class GenericView(object):
         app = summary_test.__module__.split('.')[1]
 
         searchableColumns = {}
-        jsonTemplatePath = 'core/app/json/'
+        jsonTemplatePath = None
 
         if type == 'testsites':
             querySet = summary_test_site.objects.filter(test__id=id)
@@ -580,7 +580,7 @@ class GenericView(object):
 
             querySet = querySet.only('test_site__test__id',
                                      *columnIndexNameMap.values())
-            jsonTemplatePath += 'testsites.txt'
+            jsonTemplatePath = 'testsites.txt'
 
         elif type == 'testsummary':
             querySet = (summary_test_site.objects
@@ -596,7 +596,7 @@ class GenericView(object):
                 columnIndexNameMap[i + 1] = metr[i].name
                 searchableColumns[metr[i].name] = metr[i].name
 
-            jsonTemplatePath = str(app) + '/json/' + str(qs0.test.metricperm.name) + '.txt'
+            jsonTemplatePath = str(qs0.test.metricperm.name) + '.txt'
 
         elif type.startswith('testlist'):
             mode = type.replace('testlist', '')
@@ -626,7 +626,7 @@ class GenericView(object):
 
             querySet = querySet.only('test__template__description', *columnIndexNameMap.values())
 
-            jsonTemplatePath += 'testlist.txt'
+            jsonTemplatePath = 'testlist.txt'
 
         elif type == 'robotlist':
 #            yesterday = date.today()-timedelta(1)
@@ -640,7 +640,7 @@ class GenericView(object):
 #            querySet = summary_robot.objects.filter(day=yesterday)
             querySet = summary_robot.objects.filter(day=day)
             columnIndexNameMap = {0:'site__name', 1:'completed', 2:'failed', 3:'total', 4:'efficiency', 5:'efficiencyNorm', 6:'errorrate', 7:'errorrateNorm'}
-            jsonTemplatePath += 'robotlist.txt'
+            jsonTemplatePath = 'robotlist.txt'
 
         elif type == 'testjobs':
             querySet = (result.objects
@@ -662,7 +662,7 @@ class GenericView(object):
                                   6: 'start_time',
                                   7: 'stop_time',
                                   8: 'reason'}
-            jsonTemplatePath += 'testjobs.txt'
+            jsonTemplatePath = 'testjobs.txt'
 
         elif type == 'robotjobs':
             #            yesterday = date.today()-timedelta(1)
@@ -676,7 +676,7 @@ class GenericView(object):
             querySet = result.objects.filter(mtime__gt=day).filter(mtime__lt=day + timedelta(days=1)).filter(test__template__category='functional').exclude(ganga_subjobid=1000000)
             columnIndexNameMap = {0:'ganga_status', 1:'site__name', 2:'test__id', 3:'ganga_jobid', 4:'ganga_subjobid', 5:'backendID', 6:'submit_time', 7:'start_time', 8:'stop_time', 9:'reason'}
 
-            jsonTemplatePath += 'robotjobs.txt'
+            jsonTemplatePath = 'robotjobs.txt'
 
         elif type == 'testreasons':
             querySet = (result.objects.filter(test__id=id)
@@ -687,7 +687,7 @@ class GenericView(object):
                                                         1: 'site__name'
                                                         }
 
-            jsonTemplatePath += 'testreasons.txt'
+            jsonTemplatePath = 'testreasons.txt'
 
         else:
             raise Http404

@@ -9,13 +9,13 @@
     [   
         "{{job.ganga_status}}",
         "{{job.site.name}}",
-	"{{job.ganga_jobid}}",
-        "{{job.ganga_subjobid}}",
+        "<a href='http://{{ job.test.host.name }}/test_{{ job.test.id }}/gangadir/workspace/gangarbt/LocalXML/{{job.ganga_jobid}}/output/' target='_blank'>{{job.ganga_jobid}}</a>",
+        "<a href='http://{{ job.test.host.name }}/test_{{ job.test.id }}/gangadir/workspace/gangarbt/LocalXML/{{job.ganga_jobid}}/output/res/CMSSW_{{job.ganga_subjobid|add:"1"}}.stdout' target='_blank'>{{job.ganga_subjobid}}</a>",
         {% if job.backendID %}"{{job.backendID}}"{% else %}""{% endif %},
         {% if job.submit_time %}"{{job.submit_time|date:'d/M'}},{{job.submit_time|time:'P'}}"{% else %}""{% endif %},
         {% if job.start_time %}"{{job.start_time|date:'d/M'}},{{job.start_time|time:'P'}}"{% else %}""{% endif %},
         {% if job.stop_time %}"{{job.stop_time|date:'d/M'}},{{job.stop_time|time:'P'}}"{% else %}""{% endif %},
-	{% if job.actual_ce %}"{{ job.actual_ce }}"{% else %}"N/A"{% endif %}
+	{% if job.destination %}"{{ job.destination }}"{% else %}"N/A"{% endif %}
     ]
 
     {% if not forloop.last %}

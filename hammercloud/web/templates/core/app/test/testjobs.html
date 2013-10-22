@@ -22,7 +22,9 @@
         }
        {% block custom_row_callback %}
          {% if config.monitoring_url %}
-           $('td:eq(4)', nRow).html('<a href="{{ config.monitoring_url }}' + aData[4] + '" target="blank">' + aData[4] + '</a>');
+	   if (aData[4]) {
+             $('td:eq(4)', nRow).html('<a href="{{ config.monitoring_url }}' + aData[4] + '" target="blank">' + 'Dashboard' + '</a>');
+	   }
          {% endif %}
        {% endblock %}
        return nRow;
@@ -84,7 +86,7 @@
         <th>Submit<span>code: submit<br>value: &lt;YY:MM:DD hh:mm:ss&gt;</span></th>
         <th>Start&nbsp;&nbsp;<span>code: start<br>value: &lt;YY:MM:DD hh:mm:ss&gt;</span></th>
         <th>End&nbsp;&nbsp;&nbsp;<span>code: end<br>value: &lt;YY:MM:DD hh:mm:ss&gt;</span></th>
-        <th>Reason<span>code: reason<br>value: &lt;string&gt;</span></th>
+	<th>CE<span>code: ce<br>value: &lt;string&gt;</span></th>
       </tr>
     </thead>
     <tbody></tbody>
@@ -98,7 +100,7 @@
         <th>Submit</th>
         <th>Start</th>
         <th>End</th>
-        <th>Reason</th>
+	<th>CE</th>
       </tr>
     </tfoot>
   </table>

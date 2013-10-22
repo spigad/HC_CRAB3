@@ -1,6 +1,7 @@
 from django.db.models  import  Q
-from django.template.loader import render_to_string
+from django.template.loader import select_template, render_to_string
 from django.http import HttpResponse
+from django.template import RequestContext
 
 
 def escape_json_string(string):
@@ -174,5 +175,8 @@ def get_records(request, querySet, columnIndexNameMap, searchableColumns, jsonTe
   escaped_locals = locals()
   for k in escaped_locals:
     escaped_locals[k] = escape_json_string(escaped_locals[k])
-  jstonString = render_to_string(jsonTemplatePath, escaped_locals)
-  return HttpResponse(jstonString, mimetype="application/javascript")
+    
+  t = select_template(['%s/json/%s' % (app, jsonTemplatePath),
+                       'core/app/json/%s' % jsonTemplatePath])
+  c = RequestContext(request, escaped_locals)
+  return HttpResponse(t.render(c), mimetype="application/javascript")
