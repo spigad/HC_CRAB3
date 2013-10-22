@@ -13,4 +13,4 @@ def dispatcher(request, app, *args, **kwargs):
         m = custom_import('hc.' + app + '.views.' + func)
         return m(request, *args, **kwargs)
     except (ImportError, KeyError, TypeError):
-        raise Http404
+        raise
