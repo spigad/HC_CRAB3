@@ -266,6 +266,13 @@ class SiteOptionAdminBase(ActionsAdminBase):
 
 class TemplateAdminBase(ActionsAdminBase):
 
+  def queryset(self, request):
+    #Hide obsolete templates if user != superuser
+    qs = super(TemplateAdminBase, self).queryset(request)
+    if request.user.is_superuser:
+      return qs
+    return qs.filter(active=True)
+
   #inlines -> customized at plugin level
   list_display = ('id',
                   'category',
