@@ -35,8 +35,7 @@ class TestReport:
       return 0
 
     if not test.endtime >= now():
-      print '[ERROR][%s][test_report] Test %s entime value is on the past.'%(app,testid)
-      return 0
+      print '[WARNING][%s][test_report] Test %s entime value is on the past.'%(app,testid)
 
     print '[INFO][%s][test_report] Reporting jobs for Test %s.'%(app,testid)
 
