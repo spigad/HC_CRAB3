@@ -1,8 +1,5 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('hc.core.base.xhr.XHR',
-  url(r'^app/(?P<app>[a-z]+)/xhr/json/$'    , 'jsonXhr', name ='jsonXhr-view'),
-#  url(r'^app/(?P<app>[a-z]+)/xhr/yaml/$'    , 'yamlXhr', name ='yamlXhr-view'),
-#  url(r'^app/(?P<app>[a-z]+)/xhr/xml/$'     , 'xmlXhr' , name ='xmlXhr-view')
-  )
-
+    url(r'^app/(?P<app>[a-z]+)/xhr/json/$', 'jsonXhr', name ='jsonXhr-view'),
+)

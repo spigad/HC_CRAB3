@@ -1,6 +1,5 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import patterns, url
 
 urlpatterns = patterns('hc.core.base.xmlrpc.XMLRPC',
-  url(r'^xmlrpc$'    , 'rpc_handler', name ='rpc_handler-view'),
-  )
-
+    url(r'^xmlrpc$', 'rpc_handler', name ='rpc_handler-view'),
+)
