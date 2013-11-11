@@ -3,8 +3,7 @@
 # Wrapper to start up a Django shell with the HC environment set.
 # ARGUMENTS: <command> (a Django CLI command, by default shell)
 
-COMMAND=$1
-shift
+COMMAND=$*
 
 # Setup HammerCloud.
 HCDIR=`which $0 | sed 's/\/scripts/ /g' | awk '{print $1}'`
