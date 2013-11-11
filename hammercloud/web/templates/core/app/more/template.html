@@ -6,12 +6,12 @@
   <div id="standard">
     <h2>
       {{ template.description }}
-      <a href="{% url portal-view %}feed/app/{{app}}/template/{{template.id}}/"><img src="{{ STATIC_URL }}images/rss_{{app}}.ico" border="0"></a>
+      <a href="{% url "portal-view" %}feed/app/{{app}}/template/{{template.id}}/"><img src="{{ STATIC_URL }}images/rss_{{app}}.ico" border="0"></a>
     </h2>
     <div id="standard_menu">
-       <a href="{% url statistics-view app %}?type=plot&template={{template.id}}&sort_by=template">&nbsp;PLOTS&nbsp;</a>
-       <a href="{% url statistics-view app %}?type=timeline&template={{template.id}}&sort_by=template">&nbsp;TIMELINES&nbsp;</a>
-       <a href="{% url statistics-view app %}?type=rank&template={{template.id}}&sort_by=template">&nbsp;RANKS&nbsp;</a>
+       <a href="{% url "statistics-view" app %}?type=plot&template={{template.id}}&sort_by=template">&nbsp;PLOTS&nbsp;</a>
+       <a href="{% url "statistics-view" app %}?type=timeline&template={{template.id}}&sort_by=template">&nbsp;TIMELINES&nbsp;</a>
+       <a href="{% url "statistics-view" app %}?type=rank&template={{template.id}}&sort_by=template">&nbsp;RANKS&nbsp;</a>
     </div>
     <table>
       <tr><th>Id:</th><td colspan="5">{{ template.id }}</td></tr>
@@ -34,7 +34,7 @@
 
       <tr><th>Hosts ({{ template.hosts|length }}):</th><td colspan="5">{% load hc_tags %}
         {% for template_host in template.hosts %}
-          <a href={% url host-view app template_host.host.id %}>{{ template_host.host|hostEntity }}</a>,
+          <a href={% url "host-view" app template_host.host.id %}>{{ template_host.host|hostEntity }}</a>,
         {% endfor %}
       </td></tr>
 
@@ -49,7 +49,7 @@
       {% if template.sites %}
         {% for template_site in template.sites %}
           <tr>
-            <td><a href="{% url site-view app template_site.site.id %}">{{ template_site.site.name }}</a></td>
+            <td><a href="{% url "site-view" app template_site.site.id %}">{{ template_site.site.name }}</a></td>
             <td>{{ template_site.num_datasets_per_bulk }}</td>
             <td>{{ template_site.min_queue_depth }}</td>
             <td>{{ template_site.max_running_jobs }}</td>

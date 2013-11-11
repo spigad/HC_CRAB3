@@ -242,7 +242,7 @@
       {% if dialog %}
       <div id="sec_list">
         <a id="show_help" title="button">Show help</a>
-        <form method="post" action="{% url statistics-view app%}">
+        <form method="post" action="{% url "statistics-view" app%}">
           {% csrf_token %}
 
           <h3>Basic configuration</h3>

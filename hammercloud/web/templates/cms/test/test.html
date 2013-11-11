@@ -7,7 +7,7 @@
     Ganga Job Template: {{ test.jobtemplate }}<br />
     User code: {{ test.usercode }}<br />
     Option file: {{ test.optionfile }}<br />
-    Template: <a href="{% url template-view app test.template.id %}">{{ test.template.description }}</a><br />
+    Template: <a href="{% url "template-view" app test.template.id %}">{{ test.template.description }}</a><br />
     <a href="http://{{ test.host.name }}/test_{{ test.id }}">Logs</a>
   </p>
 {% endblock %}

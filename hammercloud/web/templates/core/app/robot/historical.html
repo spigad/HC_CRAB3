@@ -110,7 +110,7 @@
 
   {% load hc_tags %}
 
-  <form id="historical_form" method="GET" action="{% url historical-view app%}">
+  <form id="historical_form" method="GET" action="{% url "historical-view" app%}">
     <label for="from">from: </label><input type="text" id="from" name="from" class="daypicker"/>
     <label for="to"> &raquo; to: </label><input type="text" id="to" name="to" class="daypicker">
     <input id="historical_submit" type="submit" value="Go"/>
@@ -143,7 +143,7 @@
           <td onclick="highlightSite(this);" class='rowsitename'>{{site|chop:20}}</td>
           {% for sr in srs%}
 
-            <td onclick="DoNav('{% url robotsite-view app,sr.site.id %}?day={{sr.day|date:"Y-m-d"}}');" class="{% if sr.efficiency > 0.95 %}ongreen{% else %}{% if sr.efficiency > 0.8 %}onyellow{% else %}{% if sr.efficiency >= 0.0 %}onred{% else %}{% if sr.efficiency == -1.0 %}ongrey{% else %}onblue{% endif %}{% endif %}{% endif %}{% endif %} {{sr.day|date:'Y-m-d'}} rowsite">
+            <td onclick="DoNav('{% url "robotsite-view" app sr.site.id %}?day={{sr.day|date:"Y-m-d"}}');" class="{% if sr.efficiency > 0.95 %}ongreen{% else %}{% if sr.efficiency > 0.8 %}onyellow{% else %}{% if sr.efficiency >= 0.0 %}onred{% else %}{% if sr.efficiency == -1.0 %}ongrey{% else %}onblue{% endif %}{% endif %}{% endif %}{% endif %} {{sr.day|date:'Y-m-d'}} rowsite">
             <span style='display:none;' class="c2v">{{sr.efficiency|floatformat:2}}</span> 
             </td>
 

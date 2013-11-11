@@ -9,7 +9,7 @@
     {% for metric in metric_types %}
       <tr onmouseover="ChangeBiColor(this, true,{{ forloop.counter }}); this.style.cursor='hand';"
           onmouseout="ChangeBiColor(this, false,0); this.style.cursor='default';"
-          onclick="DoNav('{% url metric_type-view app metric.id %}');">
+          onclick="DoNav('{% url "metric_type-view" app metric.id %}');">
         <td>{{ metric.id }}.-</td><td>{{ metric.title }}</td><td>&raquo;</td>
       </tr>
     {% endfor %}

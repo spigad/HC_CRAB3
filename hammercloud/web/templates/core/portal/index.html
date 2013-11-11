@@ -16,7 +16,7 @@
       {% for app in apps %}
         <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='pointer';"
             onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
-            onclick="DoNav('{% url index-view app %}');">
+            onclick="DoNav('{% url "index-view" app %}');">
           <td id="{{app}}">{{app}}</td>
         </tr>
       {% endfor %}
@@ -25,7 +25,7 @@
     <p>No apps.</p>
   {% endif %}
 
-  <h1>HammerCloud <a href="{% url portal-view %}feed/"><img src="{{ STATIC_URL }}images/rss_grey.ico" border="0" alt="rss"/></a></h1>
+  <h1>HammerCloud <a href="{% url "portal-view" %}feed/"><img src="{{ STATIC_URL }}images/rss_grey.ico" border="0" alt="rss"/></a></h1>
   </div>
 
   <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>

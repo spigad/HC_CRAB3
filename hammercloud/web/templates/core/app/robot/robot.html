@@ -21,7 +21,7 @@
 
 {% block docready %}
   {{block.super}}
-  generateTable(false,[{% for site in sites %}['{{site.name}}','{{site.eff|floatformat:3}}','{{site.backend.name}}','{{site.cloud.name}}','{% url robotsite-view app, site.id %}'],{% endfor %}],'Efficiency');
+  generateTable(false,[{% for site in sites %}['{{site.name}}','{{site.eff|floatformat:3}}','{{site.backend.name}}','{{site.cloud.name}}','{% url "robotsite-view" app site.id %}'],{% endfor %}],'Efficiency');
 {% endblock %}
 
 {% block content %}
@@ -30,19 +30,19 @@
 
   <h2>
     Robot for {{day|date:'M d, Y'}}
-    <form id="robot_form" method="GET" action="{% url robot-view app%}">
+    <form id="robot_form" method="GET" action="{% url "robot-view" app%}">
       <input type="hidden" id="day" name="day"/>
     </form>
   </h2>
   {% block robot_links %}{% endblock %}
   <ul class='map_options'>
-    <li class="in" onClick="zoomInOut(this,[{% for site in sites %}['{{site.name}}','{{site.eff|floatformat:3}}','{{site.backend.name}}','{{site.cloud.name}}','{% url robotsite-view app, site.id %}'],{% endfor %}],'Efficiency');"><span style='font-size:16px;'>Z</span><i>oo</i><span style='font-size:16px;'>M</span> IN&OUT</li>
+    <li class="in" onClick="zoomInOut(this,[{% for site in sites %}['{{site.name}}','{{site.eff|floatformat:3}}','{{site.backend.name}}','{{site.cloud.name}}','{% url "robotsite-view" app site.id %}'],{% endfor %}],'Efficiency');"><span style='font-size:16px;'>Z</span><i>oo</i><span style='font-size:16px;'>M</span> IN&OUT</li>
     <li> -- </li>
-    <li onClick="DoNav('{% url robotlist-view app %}');">S<i>W</i>IT<i>C</i>H to list</li>
+    <li onClick="DoNav('{% url "robotlist-view" app %}');">S<i>W</i>IT<i>C</i>H to list</li>
     <li> -- </li>
-    <li onClick="DoNav('{% url robotstats-view app %}');">S<i>W</i>IT<i>C</i>H to statistics</li>
+    <li onClick="DoNav('{% url "robotstats-view" app %}');">S<i>W</i>IT<i>C</i>H to statistics</li>
     <li> -- </li>
-    <li onClick="DoNav('{% url robotjobs-view app %}');">S<i>W</i>IT<i>C</i>H to jobs</li>
+    <li onClick="DoNav('{% url "robotjobs-view" app %}');">S<i>W</i>IT<i>C</i>H to jobs</li>
   </ul>
 
   <div id='grid'>

@@ -17,7 +17,7 @@
         "{{sum.test_site.max_running_jobs}}",
         {% if sum.test_site.resubmit_enabled  %}"yes"{% else %}"no"{% endif %},
         {% if sum.test_site.resubmit_force %}"yes"{% else %}"no"{% endif %},
-        "<span onClick=\"siteJobs(this, '{% url ajaxtestjobs-view app, sum.test_site.test_id, sum.test_site.site_id %}');\">&raquo;</span>"
+        "<span onClick=\"siteJobs(this, '{% url "ajaxtestjobs-view" app sum.test_site.test_id sum.test_site.site_id %}');\">&raquo;</span>"
     ]
 
     {% if not forloop.last %}

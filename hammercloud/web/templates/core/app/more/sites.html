@@ -9,7 +9,7 @@
     {% for site in sites %}
       <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
           onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
-          onclick="DoNav('{% url site-view app site.id %}');">
+          onclick="DoNav('{% url "site-view" app site.id %}');">
         <td>{{ site.id }}.-</td><td>{{ site.name }}</td><td>&raquo;</td>
       </tr>
     {% endfor %}

@@ -7,12 +7,12 @@
   <div id="standard">
     <h2>
       {{ cloud.name }}
-      <a href="{% url portal-view %}feed/app/{{app}}/cloud/{{cloud.id}}/"><img src="{{ STATIC_URL }}images/rss_{{app}}.ico" border="0"></a>
+      <a href="{% url "portal-view" %}feed/app/{{app}}/cloud/{{cloud.id}}/"><img src="{{ STATIC_URL }}images/rss_{{app}}.ico" border="0"></a>
     </h2>
     <div id="standard_menu">
-       <a href="{% url statistics-view app %}?type=plot&cloud={{cloud.id}}&sort_by=cloud">&nbsp;PLOTS&nbsp;</a>
-       <a href="{% url statistics-view app%}?type=timeline&cloud={{cloud.id}}&sort_by=cloud">&nbsp;TIMELINES&nbsp;</a>
-       <a href="{% url statistics-view app %}?type=rank&cloud={{cloud.id}}&sort_by=cloud">&nbsp;RANKS&nbsp;</a>
+       <a href="{% url "statistics-view" app %}?type=plot&cloud={{cloud.id}}&sort_by=cloud">&nbsp;PLOTS&nbsp;</a>
+       <a href="{% url "statistics-view" app%}?type=timeline&cloud={{cloud.id}}&sort_by=cloud">&nbsp;TIMELINES&nbsp;</a>
+       <a href="{% url "statistics-view" app %}?type=rank&cloud={{cloud.id}}&sort_by=cloud">&nbsp;RANKS&nbsp;</a>
     </div>
     <table>
       <tr><th>Id:</th><td colspan="3">{{ cloud.id }}</td></tr>
@@ -22,7 +22,7 @@
       {% if cloud.sites %}
         {% for site in cloud.sites %}
           <tr>
-            <td><a href="{% url site-view app site.id %}">{{ site.name }}</a></td>
+            <td><a href="{% url "site-view" app site.id %}">{{ site.name }}</a></td>
             <td>{{ site.ddm }}</td>
             <td>{{ site.queue }}</td>
             <td>

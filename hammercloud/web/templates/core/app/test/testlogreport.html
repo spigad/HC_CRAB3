@@ -10,15 +10,15 @@
 
 {% if error %}
   <p><span style="color:red;">{{ error }}</span><br/>
-    <a href="{% url test-view app,test.id %}"><h3>Click here to Proceed!</h3></a>
+    <a href="{% url "test-view" app test.id %}"><h3>Click here to Proceed!</h3></a>
   </p>
 {% else %}
   {% if done %}
     <p><span style="color: green;">You incident has been reported.</span><br/>
-      <a href="{% url test-view app,test.id %}"><h3>Click here to Proceed</h3></a>
+      <a href="{% url "test-view" app test.id %}"><h3>Click here to Proceed</h3></a>
     </p>
   {% else %}
-    <form action="{% url ajaxtestlogreport-view app,test.id %}" method="post">{% csrf_token %}
+    <form action="{% url "ajaxtestlogreport-view" app test.id %}" method="post">{% csrf_token %}
     {{ form.as_p }}
     <input type="button" value="Cancel" onclick="window.location='url test-view test_id'" />
     <input type="submit" value="Report" />

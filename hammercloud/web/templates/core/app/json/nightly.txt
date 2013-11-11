@@ -4,7 +4,7 @@
 		{% for test in tests %}
 			"{{ test.id }}": {
 				"description": "{{ test.template.description}}",
-				"url": "{% url test-view app test.id %}",
+				"url": "{% url "test-view" app test.id %}",
 				"starttime": "{{ test.starttime|date:"cO" }}",
 				"endtime": "{{ test.endtime|date:"cO" }}",
 				"state": "{{ test.state }}",

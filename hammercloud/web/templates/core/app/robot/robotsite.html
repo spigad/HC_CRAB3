@@ -26,7 +26,7 @@
 
   <h2>
     Robot at {{site.name}} for {{day|date:'M d, Y'}}
-    <form id="robot_form" method="GET" action="{% url robotsite-view app, site.id %}">
+    <form id="robot_form" method="GET" action="{% url "robotsite-view" app site.id %}">
       <input type="hidden" id="day" name="day"/>
     </form>
   </h2>

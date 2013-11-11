@@ -36,7 +36,7 @@
       $('#robotlist_table').dataTable({
         "sPaginationType": 'full_numbers',
         "bServerSide": true,
-        "sAjaxSource": "{% url get_list-view app,'robotlist',0 %}?day={{day|date:"Y-m-d"}}",
+        "sAjaxSource": "{% url "get_list-view" app 'robotlist' 0 %}?day={{day|date:"Y-m-d"}}",
         "aaSorting" : [[ 5, "desc" ]],
         "aoColumns":[
           null,null,null,null,null,null,null,null,
@@ -95,17 +95,17 @@
 
   <h2>
     Robot for {{day|date:'M d, Y'}}
-    <form id="robot_form" method="GET" action="{% url robotlist-view app%}">
+    <form id="robot_form" method="GET" action="{% url "robotlist-view" app%}">
       <input type="hidden" id="day" name="day"/>
     </form>
   </h2>
 
   <ul class='map_options'>
-    <li onClick="DoNav('{% url robot-view app %}');">S<i>W</i>IT<i>C</i>H to map</li> 
+    <li onClick="DoNav('{% url "robot-view" app %}');">S<i>W</i>IT<i>C</i>H to map</li> 
     <li> -- </li>
-    <li onClick="DoNav('{% url robotstats-view app %}');">S<i>W</i>IT<i>C</i>H to statistics</li>
+    <li onClick="DoNav('{% url "robotstats-view" app %}');">S<i>W</i>IT<i>C</i>H to statistics</li>
     <li> -- </li>
-    <li onClick="DoNav('{% url robotjobs-view app %}');">S<i>W</i>IT<i>C</i>H to jobs</li>
+    <li onClick="DoNav('{% url "robotjobs-view" app %}');">S<i>W</i>IT<i>C</i>H to jobs</li>
   </ul>
 
   <table cellpadding="0" cellspacing="0" border="0" class="display" id="robotlist_table">

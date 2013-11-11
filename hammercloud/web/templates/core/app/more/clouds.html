@@ -9,7 +9,7 @@
     {% for cloud in clouds %}
       <tr onmouseover="ChangeBiColor(this, true,{{ forloop.counter }}); this.style.cursor='hand';"
           onmouseout="ChangeBiColor(this, false,0); this.style.cursor='default';"
-          onclick="DoNav('{% url cloud-view app cloud.id %}');">
+          onclick="DoNav('{% url "cloud-view" app cloud.id %}');">
         <td>{{ cloud.id }}.-</td><td>{{ cloud.code }}</td><td>&raquo;</td>
       </tr>
     {% endfor %}

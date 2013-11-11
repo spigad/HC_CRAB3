@@ -10,38 +10,38 @@
 
   <div id='info_box_l'>
     <div id='box_content_l'>
-    <p style='font-size:75px;float:left;'><a href="{% url sites-view app %}">SITES</a></p>
+    <p style='font-size:75px;float:left;'><a href="{% url "sites-view" app %}">SITES</a></p>
     Learn more about...
     <div style='clear:both;'></div>
-    and <a href="{% url clouds-view app %}">CLOUDS</a>...
+    and <a href="{% url "clouds-view" app %}">CLOUDS</a>...
     </div>
   </div>
   <div id='info_box_r'>
     <div id='box_content_r'>
-    <p>Learn more about <a href="{% url templates-view app %}">TEMPLATES</a>.</p>
+    <p>Learn more about <a href="{% url "templates-view" app %}">TEMPLATES</a>.</p>
     </div>
   </div>
   <div id='info_box_r'>
     <div id='box_content_r'>
-    <p>Learn more about <a href="{% url hosts-view app %}">HOSTS</a>.</p>
+    <p>Learn more about <a href="{% url "hosts-view" app %}">HOSTS</a>.</p>
     </div>
   </div>
   <div id='info_box_r'>
     <div id='box_content_r'>
-    <p>Learn more about <a href="{% url metric_types-view app %}">METRICS</a> and their <a href="{% url metric_permissions-view app %}">PERMISSIONS</a>.</p>
+    <p>Learn more about <a href="{% url "metric_types-view" app %}">METRICS</a> and their <a href="{% url "metric_permissions-view" app %}">PERMISSIONS</a>.</p>
     </div>
   </div>
   <div id='info_box_r'>
     <div id='box_content_r'>
-    <p>Learn more about <a href="{% url backends-view app %}">BACKENDS</a>.</p>
+    <p>Learn more about <a href="{% url "backends-view" app %}">BACKENDS</a>.</p>
     </div>
   </div>
   <div id='info_box'>
     <div id='box_content'>
     <p>Learn more about available files. Do you want to download them and take a closer look ?</p>
-    <p><a href="{% url dspatterns-view app %}">DSPATTERNS</a>, <a href="{% url jobtemplates-view app %}">JOB TEMPLATES</a>, 
-       <a href="{% url optionfiles-view app %}">OPTION FILES</a>, 
-       <a href="{% url testoptions-view app %}">TEST OPTIONS</a> and <a href="{% url usercodes-view app %}">USER CODES</a></p>
+    <p><a href="{% url "dspatterns-view" app %}">DSPATTERNS</a>, <a href="{% url "jobtemplates-view" app %}">JOB TEMPLATES</a>, 
+       <a href="{% url "optionfiles-view" app %}">OPTION FILES</a>, 
+       <a href="{% url "testoptions-view" app %}">TEST OPTIONS</a> and <a href="{% url "usercodes-view" app %}">USER CODES</a></p>
     </div>
   </div> 
 

@@ -56,49 +56,49 @@
         {% if user.is_authenticated %}
           <div style="float: right;">
             You are connected as {{ user.username }},
-            <a style="text-decoration: underline;" href="{% url logout-view %}?next=/hc/app/{{ app }}">click here to Logout!</a>
+            <a style="text-decoration: underline;" href="{% url "logout-view" %}?next=/hc/app/{{ app }}">click here to Logout!</a>
           </div>
         {% endif %}
 
         <h1 style="margin-bottom: 20px;	text-align: left;">
-          <a href="{% url portal-view %}">HammerCloud</a> | <a href="{% url index-view app %}">{{app|upper}}</a>
-          <a href="{% url portal-view %}feed/app/{{app}}/"><img src="{{ STATIC_URL }}images/rss_{{app}}.ico" border="0" alt="rss"/></a>
+          <a href="{% url "portal-view" %}">HammerCloud</a> | <a href="{% url "index-view" app %}">{{app|upper}}</a>
+          <a href="{% url "portal-view" %}feed/app/{{app}}/"><img src="{{ STATIC_URL }}images/rss_{{app}}.ico" border="0" alt="rss"/></a>
         </h1>
 
         <div style="float: right; color: #ffffff; margin: 7px 10px auto auto;">
-          <a style="color: #ffffff;" href="{% url portal-view %}admin/{{ app }}/">Administration</a>
+          <a style="color: #ffffff;" href="{% url "portal-view" %}admin/{{ app }}/">Administration</a>
         </div>
 
         <div id="menu-top">
           <ul id="jsddm">
 
             {% block menu %}
-              <li><a href="{% url index-view app %}">Home</a></li>
-              <li><a href="{% url testlist-view app,'all' %}">Tests</a>
+              <li><a href="{% url "index-view" app %}">Home</a></li>
+              <li><a href="{% url "testlist-view" app 'all' %}">Tests</a>
                 <ul>
-                  <li><a href="{% url testlist-view app,'functional' %}">All functional</a></li>
-                  <li><a href="{% url testlist-view app,'stress' %}">All stress</a></li>
-                  <li><a href="{% url testlist-view app,'all' %}">All</a></li>
+                  <li><a href="{% url "testlist-view" app 'functional' %}">All functional</a></li>
+                  <li><a href="{% url "testlist-view" app 'stress' %}">All stress</a></li>
+                  <li><a href="{% url "testlist-view" app 'all' %}">All</a></li>
                 </ul>
               </li>
-              <li><a href="{% url statistics-view app %}">Reports</a>
+              <li><a href="{% url "statistics-view" app %}">Reports</a>
                 <ul>
-                  <li><a href="{% url statistics-view app %}?type=plot">Plots</a></li>
-                  <li><a href='{% url statistics-view app %}?type=rank'>Ranks</a></li>
-                  <li><a href='{% url statistics-view app %}?type=timeline'>Timelines</a></li>
+                  <li><a href="{% url "statistics-view" app %}?type=plot">Plots</a></li>
+                  <li><a href='{% url "statistics-view" app %}?type=rank'>Ranks</a></li>
+                  <li><a href='{% url "statistics-view" app %}?type=timeline'>Timelines</a></li>
                 </ul>
               </li>
-              <li><a href="{% url robot-view app %}">Robot</a>
+              <li><a href="{% url "robot-view" app %}">Robot</a>
                 <ul>
-                  <li><a href='{% url historical-view app %}'>Historical</a></li>
-                  <li><a href='{% url autoexclusion-view app %}'>AutoExclusion</a></li>
-                  <li><a href='{% url incidents-view app %}'>Incidents</a></li>
-                  <li><a href='{% url joberrors-view app %}'>Job errors</a></li>
+                  <li><a href='{% url "historical-view" app %}'>Historical</a></li>
+                  <li><a href='{% url "autoexclusion-view" app %}'>AutoExclusion</a></li>
+                  <li><a href='{% url "incidents-view" app %}'>Incidents</a></li>
+                  <li><a href='{% url "joberrors-view" app %}'>Job errors</a></li>
                 </ul>
               </li>
-              <li><a href="{% url more-view app %}">More HC...</a>
+              <li><a href="{% url "more-view" app %}">More HC...</a>
                 <ul>
-                  {% comment %}<li><a href="{% url evolution-view app %}">Evolution</a></li>{% endcomment %}
+                  {% comment %}<li><a href="{% url "evolution-view" app %}">Evolution</a></li>{% endcomment %}
                 </ul>
               </li>
             {% endblock %}

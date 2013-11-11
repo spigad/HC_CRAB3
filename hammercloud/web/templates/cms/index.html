@@ -20,7 +20,7 @@
              {% for test in tests.golden %}
                <tr onmouseover="ChangeColor(this, true); this.style.cursor='pointer';"
                    onmouseout="ChangeColor(this, false); this.style.cursor='default';"
-                   onclick="DoNav('{% url test-view app test.id %}');">
+                   onclick="DoNav('{% url "test-view" app test.id %}');">
                  <td class="box-{{ test.state }}">{{ test.state }}</td>
                  <td>{{ test.id }}</td>
                  <td>{{ test.host|hostEntity }}</td>

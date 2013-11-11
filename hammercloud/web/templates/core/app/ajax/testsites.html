@@ -4,7 +4,7 @@
     $('#{{type}}_table').dataTable({
       "sPaginationType": 'full_numbers',
       "bServerSide": true,
-      "sAjaxSource": "{% url get_list-view app,type,test_id %}",          
+      "sAjaxSource": "{% url "get_list-view" app type test_id %}",          
       "aaSorting" : [[ 0, "desc" ]],
       "sDom": 'T<"clear">lfrtip',
 
@@ -31,7 +31,7 @@
   function siteJobs(val,url){
 	$('#tabs').tabs('url',3,url);
     $("#tabs").tabs("option","selected",3);
-    $('#tabs').tabs('url',3,'{% url ajaxtestjobs-view app, test_id %}');
+    $('#tabs').tabs('url',3,'{% url "ajaxtestjobs-view" app test_id %}');
   };
 
 </script>

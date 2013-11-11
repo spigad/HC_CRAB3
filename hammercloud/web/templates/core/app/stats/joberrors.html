@@ -49,7 +49,7 @@
     <tbody>
       {% for s in site_data %}
         <tr style="background-color: {% if s.finished == 0 %}#CCCCCC{% else %}{% if s.efficiency < 0.8 %}#FF9999{% else %}{% if s.efficiency < 0.95 %}#FFFF99{% else %}#BCED91{% endif %}{% endif %}{% endif %}">
-        <td>{{ s.site.name }}</td><td>{{ s.finished|intcomma }}</td><td><a href="{% url abortedjobs-view app %}?site={{ s.site.id }}{% for key,value in get_params.items %}&{{ key }}={{ value }}{% endfor %}">{{ s.aborted|intcomma }} &raquo;</a></td><td><a href="{% url failedjobs-view app %}?site={{ s.site.id }}{% for key,value in get_params.items %}&{{ key }}={{ value }}{% endfor %}">{{ s.failed|intcomma }} &raquo;</a></td><td>{{ s.efficiency|floatformat:"3" }}</td></tr>
+        <td>{{ s.site.name }}</td><td>{{ s.finished|intcomma }}</td><td><a href="{% url "abortedjobs-view" app %}?site={{ s.site.id }}{% for key,value in get_params.items %}&{{ key }}={{ value }}{% endfor %}">{{ s.aborted|intcomma }} &raquo;</a></td><td><a href="{% url "failedjobs-view" app %}?site={{ s.site.id }}{% for key,value in get_params.items %}&{{ key }}={{ value }}{% endfor %}">{{ s.failed|intcomma }} &raquo;</a></td><td>{{ s.efficiency|floatformat:"3" }}</td></tr>
       {% endfor %}
     </tbody>
   </table>

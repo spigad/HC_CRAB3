@@ -9,9 +9,9 @@
       {{ metric_type.title }}
     </h2>
     <div id="standard_menu">    
-       <a href="{% url statistics-view app %}?type=plot&metric_type={{metric_type.id}}&sort_by=metric">&nbsp;PLOTS&nbsp;</a>
-       <a href="{% url statistics-view app %}?type=plot&metric_type={{metric_type.id}}&sort_by=metric">&nbsp;TIMELINES&nbsp;</a>
-       <a href="{% url statistics-view app %}?type=plot&metric_type={{metric_type.id}}&sort_by=metric">&nbsp;RANK&nbsp;</a>
+       <a href="{% url "statistics-view" app %}?type=plot&metric_type={{metric_type.id}}&sort_by=metric">&nbsp;PLOTS&nbsp;</a>
+       <a href="{% url "statistics-view" app %}?type=plot&metric_type={{metric_type.id}}&sort_by=metric">&nbsp;TIMELINES&nbsp;</a>
+       <a href="{% url "statistics-view" app %}?type=plot&metric_type={{metric_type.id}}&sort_by=metric">&nbsp;RANK&nbsp;</a>
     </div>
     <table>
       <tr><th>Id:</th><td>{{ metric_type.id }}</td></tr>

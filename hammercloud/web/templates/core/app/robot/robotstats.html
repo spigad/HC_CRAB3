@@ -24,20 +24,20 @@
 
   <h2>
     Robot for {{day|date:'M d, Y'}}
-    <form id="robot_form" method="GET" action="{% url robotstats-view app %}">
+    <form id="robot_form" method="GET" action="{% url "robotstats-view" app %}">
       <input type="hidden" id="day" name="day"/>
     </form>
   </h2>
 
   <ul class='map_options'>
-    <li onClick="DoNav('{% url robot-view app %}');">S<i>W</i>IT<i>C</i>H to map</li> 
+    <li onClick="DoNav('{% url "robot-view" app %}');">S<i>W</i>IT<i>C</i>H to map</li> 
     <li> -- </li>
-    <li onClick="DoNav('{% url robotlist-view app %}');">S<i>W</i>IT<i>C</i>H to list</li>
+    <li onClick="DoNav('{% url "robotlist-view" app %}');">S<i>W</i>IT<i>C</i>H to list</li>
     <li> -- </li>
-    <li onClick="DoNav('{% url robotjobs-view app %}');">S<i>W</i>IT<i>C</i>H to jobs</li>
+    <li onClick="DoNav('{% url "robotjobs-view" app %}');">S<i>W</i>IT<i>C</i>H to jobs</li>
   </ul>
 
-  {% for url in urls %}
+  {% for url "in" urls %}
 
     <img src="{{url}}"/>
 

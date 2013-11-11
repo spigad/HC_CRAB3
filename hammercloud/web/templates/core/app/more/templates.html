@@ -9,7 +9,7 @@
     {% for template in templates %}
       <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
           onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
-          onclick="DoNav('{% url template-view app template.id %}');">
+          onclick="DoNav('{% url "template-view" app template.id %}');">
         <td>{{ template.id }}.-</td><td>{{ template.description }}</td><td>&raquo;</td>
       </tr>
     {% endfor %}

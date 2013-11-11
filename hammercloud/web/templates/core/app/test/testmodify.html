@@ -6,12 +6,12 @@
   <h2>Test  Modify - Test {{ test.id }}</h2>
   {%if error%}
     {{ error }}<br />
-    <a href="{% url test-view app,test.id %}"><h3>Click here to Proceed!</h3></a>
+    <a href="{% url "test-view" app test.id %}"><h3>Click here to Proceed!</h3></a>
   {% else %}
     {% if done %}
       <p>
         <h2 style="color: green;">{{ message }}</h2>
-        <a href="{% url test-view app,test.id %}"><h3>Click here to Proceed</h3></a>
+        <a href="{% url "test-view" app test.id %}"><h3>Click here to Proceed</h3></a>
       </p>
     {% else %}
       <h3 style="text-align: left;">Test Properties</h3>
@@ -40,7 +40,7 @@
             </tr>
           {% endfor %}
         </table>
-        <input type="button" value="Cancel" onclick="window.location='{% url test-view app,test.id %}'" />
+        <input type="button" value="Cancel" onclick="window.location='{% url "test-view" app test.id %}'" />
         <input type="submit" value="Submit" />
         <h4 style="text-align: left;">Don't try to modify the site, it won't change!</h4>
       </form>

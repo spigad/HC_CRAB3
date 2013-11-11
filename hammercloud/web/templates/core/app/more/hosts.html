@@ -9,7 +9,7 @@
     {% for host in hosts %}
       <tr onmouseover="ChangeBiColor(this, true, {{ forloop.counter }}); this.style.cursor='hand';"
           onmouseout="ChangeBiColor(this, false, 0); this.style.cursor='default';"
-          onclick="DoNav('{% url host-view app host.id %}');">
+          onclick="DoNav('{% url "host-view" app host.id %}');">
         <td>{{ host.id }}.-</td><td>{{ host|hostEntity }}</td><td>&raquo;</td>
       </tr>
     {% endfor %}
