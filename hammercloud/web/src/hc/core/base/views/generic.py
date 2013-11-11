@@ -1133,7 +1133,7 @@ class GenericView(object):
             else:
                 LENGTH = day_to - day_from
 
-        srs = sr.objects.filter(day__gte=day_from).filter(day__lte=day_to)
+        srs = sr.objects.select_related('site').filter(day__gte=day_from).filter(day__lte=day_to)
         site = dic['Site']
 
         hists = {}
