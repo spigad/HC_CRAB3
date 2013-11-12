@@ -32,6 +32,10 @@ echo ' PYTHONPATH='$PYTHONPATH
 export DJANGO_SETTINGS_MODULE='hc.settings'
 echo ' DJANGO_SETTINGS_MODULE='$DJANGO_SETTINGS_MODULE
 
+# Security config for Python 2.6.8+
+# http://www.ocert.org/advisories/ocert-2011-003.html
+export PYTHONHASHSEED=random
+
 # Look for app specific settings.
 if [ -e $HCAPP/scripts/config/config-main.sh ] ; then
     source $HCAPP/scripts/config/config-main.sh $*
