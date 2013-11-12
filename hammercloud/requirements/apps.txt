@@ -1,5 +1,5 @@
 distribute>=0.6.28
-Django<1.6
+Django<1.7
 GChartWrapper
 MySQL-python
 South
