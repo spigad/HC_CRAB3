@@ -1,10 +1,10 @@
 distribute>=0.6.28
-Django<1.7
+Django<1.6
 GChartWrapper
 MySQL-python
 South
-django-debug-toolbar==dev
-git+https://github.com/m3drano/django-debug-toolbar-user-panel.git
+django-debug-toolbar
+git+https://github.com/playfire/django-debug-toolbar-user-panel.git
 git+https://github.com/joymax/django-dtpanel-htmltidy.git
 django-extensions
 git+https://github.com/m3drano/django-varnish.git
