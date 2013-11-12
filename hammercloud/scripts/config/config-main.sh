@@ -25,7 +25,7 @@ echo ' PATH='$PATH
 echo ' LD_LIBRARY_PATH='$LD_LIBRARY_PATH
 
 # Export HammerCloud python zone.
-export PYTHONPATH=$HCDIR/python:$HCDIR/apps:$HCDIR/web/src
+export PYTHONPATH=$HCDIR/python:$HCDIR/apps:$HCDIR/web/src:$PYTHONPATH
 echo ' PYTHONPATH='$PYTHONPATH
 
 # Export HammerCloud settings.
