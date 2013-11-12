@@ -113,6 +113,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'hc.ssl.SSLRedirect',
+    'hc.varnish.DeleteSessionOnLogoutMiddleware',
 )
 
 ROOT_URLCONF = 'hc.urls'
@@ -208,6 +209,7 @@ LOGGING = {
 try:
     from hc.local_settings import *
     INSTALLED_APPS += EXTRA_APPS
+    MIDDLEWARE_CLASSES += EXTRA_MIDDLEWARE
     if DEBUG:
         INSTALLED_APPS += DEBUG_APPS
         MIDDLEWARE_CLASSES += DEBUG_MIDDLEWARE
