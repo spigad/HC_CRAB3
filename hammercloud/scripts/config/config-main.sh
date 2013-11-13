@@ -19,10 +19,15 @@ echo ' HCAPP='$HCAPP
 export SL_RELEASE=`sed -rn 's/.*([0-9])\.[0-9].*/\1/p' /etc/redhat-release`
 echo ' SL_RELEASE='$SL_RELEASE
 
+# Import the GCC from AFS (Python is compiled with this one).
+source /afs/cern.ch/sw/lcg/external/gcc/4.7/x86_64-slc$SL_RELEASE/setup.sh /afs/cern.ch/sw/lcg/contrib
+
 # Activate the HammerCloud virtualenv.
-source $HCDIR/external/bin/activate
+source $HCDIR/external/venvs/sl$SL_RELEASE/bin/activate
 echo ' PATH='$PATH
 echo ' LD_LIBRARY_PATH='$LD_LIBRARY_PATH
+echo " * Running on `python --version 2>&1`"
+echo " * Running on GCC `gcc --version | grep ^gcc | sed 's/^.* //g' | sed 's/-.*/ /g'`"
 
 # Export HammerCloud python zone.
 export PYTHONPATH=$HCDIR/python:$HCDIR/apps:$HCDIR/web/src:$PYTHONPATH

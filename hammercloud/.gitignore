@@ -40,6 +40,6 @@ web/static/
 web/src/hc/local_settings.py
 apps/*/config/x509*
 external/ganga
-external/include
+external/venvs
 apps/*/logs/
 apps/*/testdirs/
