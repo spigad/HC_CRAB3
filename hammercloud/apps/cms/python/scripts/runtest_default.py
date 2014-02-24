@@ -7,10 +7,10 @@ from lib.summary import summary
 from cms.utils import utils_wrapper
 
 from hc.core.utils.hc.stats import Stats
-from numpy import *
+#from numpy import *
 
 import sys,time,random,gc
-import numpy
+#import numpy
 import types
 
 from Ganga.Core.GangaThread import GangaThread
@@ -20,17 +20,14 @@ logger = getLogger(name='run_test')
 ##
 ## CHECK IF WE HAVE RECEIVED TESTID
 ##
-
 try:
   testid = int(sys.argv[1])
 except IndexError:
   print '  ERROR! Test ID required.'
   sys.exit()
-
 ## 
 ## EXTRACT TEST OBJECT FROM DB
 ##
-
 try:
   test = Test.objects.get(pk=testid)
   if test.pause:
@@ -49,11 +46,9 @@ for rfield in Result._meta.fields:
   if rfield.__class__.__name__ == 'DateTimeField':
     value_types['DateTimeField'] += [rfield.name]
 
-
 ##
 ## AUXILIAR FUNTIONS
 ##
-
 def test_active():
 
   if test.starttime < datetime.now() and test.endtime > datetime.now():
@@ -79,11 +74,10 @@ def test_sleep(t):
   time.sleep(t)
 
 
-
 ##
 ## UPDATE DATASETS
 ##
-
+"""
 def updateDatasets(site):
 
   patterns = [ td.dspattern.pattern for td in test.getTestDspatterns_for_test.all() ]
@@ -122,13 +116,18 @@ def updateDatasets(site):
 
   random.shuffle(datasets)
   return datasets[0]
-  
+"""  
 ##
 ## COPY JOB
 ##
-
 def _copyJob(job):
 
+  try:
+    site = job.inputdata.sitewhitelist[0]
+  except:
+    logger.error('The site cannot be read from the Ganga CRABDataset (process_subjob)')
+    return
+  """
   try:
     site = job.inputdata.CE_white_list
     if site is None:
@@ -136,26 +135,12 @@ def _copyJob(job):
   except:
     logger.error('The site cannot be read from the Ganga CRABDataset (_copyJob)')
     return
-
+  """
   logger.info('Copying job %d'%job.id)
   nRetries = 5
 
   try:
     j=job.copy()
-    previous_datasetpath = j.inputdata.datasetpath
-#    logger.info('Previous input datasets = %s'%previous_datasetpath)
-
-    # ONLY ONE DATASET PER JOB !
-    num = 1
-
-#    try:
-#      j.inputdata.datasetpath = updateDatasets(site)
-#    except:
-#      logger.warning('Unexpected error:'+str(sys.exc_info()[0]))
-#      logger.warning('Failed to get new datasets. Using previous datasets.')
-#      j.inputdata.datasetpath = previous_datasetpath
-
-#    logger.info('New input datasets = %s'%j.inputdata.datasetpath)
     j.submit()
 
     test_state = test.getTestStates_for_test.filter(ganga_jobid=job.id)
@@ -198,9 +183,8 @@ def _copyJob(job):
   test_site.resubmit_enabled = 0
   test_site.save()    
 
-
 def copyJob(job):
-
+  """
   try:
     site = job.inputdata.CE_white_list
     if site is None:
@@ -208,8 +192,19 @@ def copyJob(job):
   except:
     logger.error('The site cannot be read from the Ganga CRABDataset (copyJob)')
     return
+  """
+  try:
+    site = job.inputdata.sitewhitelist[0]
+  except:
+    logger.error('The site cannot be read from the Ganga CRABDataset (process_subjob)')
+    return
 
-  logger.debug('copyJob called for job %d at site %s'%(job.id,site))
+  logger.info('copyJob called for job %d, taskname %s' % (job.id, job.backend.taskname))
+  if job.subjobs:
+    logger.info('Got the subjobs, can check for load')
+  elif not job.status == 'failed':
+    logger.info('No subjobs, not failed: not copying')
+    return
 
   test_site = test.getTestSites_for_test.filter(site__name=site)
   if not test_site:
@@ -235,7 +230,7 @@ def copyJob(job):
     if test_state[0].copied:
       logger.debug('Not copying job %d: test_state(test,jobid).copied is True'%(job.id))
       return
-
+  
   # submitted
   submitted = test.getResults_for_test.filter(ganga_status='s').filter(site__name=site).count()
 
@@ -250,9 +245,9 @@ def copyJob(job):
     logger.debug('Not copying job %d: %d running > %d max'%(job.id,running,test_site.max_running_jobs))
     return
 
-  if len(job.subjobs) < 1:
-    logger.debug('Job %d has 0 subjobs. Not copying.'%job.id)
-    return
+  #if len(job.subjobs) < 1:
+  #  logger.debug('Job %d has 0 subjobs. Not copying.'%job.id)
+  #  return
 
   # total last 1 hours
   total = test.getResults_for_test.filter(site__name=site).filter(ganga_status__in=['c','f']).filter(mtime__gt=datetime.now()-timedelta(hours=1)).count()
@@ -263,7 +258,6 @@ def copyJob(job):
   logger.warning('Job %d at %s ran the gauntlet: %d submitted, %d running, %d failed, %d finished'%(job.id,site,submitted,running,failed,total))
   _copyJob(job)
   return
-
 
 
 ##
@@ -312,9 +306,7 @@ def print_summary():
   for j in jobs:
 
     try:
-      site = j.inputdata.CE_white_list
-      if site is None:
-        site = j.inputdata.target_site
+      site = j.inputdata.sitewhitelist[0]
     except:
       logger.error('The site cannot be read from the Ganga CRABDataset (print_summary 1)')
       site = '<unknown>'
@@ -344,9 +336,7 @@ def print_summary():
       continue
 
     try:
-      site = j.inputdata.CE_white_list
-      if site is None:
-        site = j.inputdata.target_site
+      site = j.inputdata.sitewhitelist[0]
     except:
       logger.error('The site cannot be read from the Ganga CRABDataset (print_summary 2)')
       site = '<unknown>'
@@ -364,6 +354,60 @@ def print_summary():
 ## PROCESS SUBJOBS
 ##
 
+def process_subjob(job, subjob):
+
+  try:
+    site = job.inputdata.sitewhitelist[0]
+  except:
+    logger.error('The site cannot be read from the Ganga CRABDataset (process_subjob)')
+    return
+
+  # return if result is already fixed
+  result = test.getResults_for_test.filter(ganga_jobid=job.id).filter(ganga_subjobid=subjob.id)
+  if result and result[0].fixed:
+    logger.debug('subjob result is already fixed in database... skipping')
+    return False
+
+  results = {'ganga_status':subjob.status[0],'ganga_time_1':subjob.time.new(),'ganga_time_2':subjob.time.submitting(),'ganga_time_3':subjob.time.submitted(),'ganga_time_5':subjob.time.final()}
+
+  result = test.getResults_for_test.filter(site__name=site).filter(ganga_jobid=job.id).filter(ganga_subjobid=subjob.id)
+  if result:
+    result = result[0]
+  else:
+    try:
+      site = Site.objects.filter(name=site)[0]
+    except:
+      logger.error('The site "%s" cannot be get from DB (process_subjob)' % site)
+      return
+    try:
+      result = Result(test=test,site=site,ganga_jobid=job.id,ganga_subjobid=subjob.id,ganga_status=subjob.status[0], fixed=0)
+    except:
+      logger.error('The result for site "%s" and ganga IDs (%d,%d) cannot be get from DB (process_subjob)' % (site, job.id, subjob.id))
+      return
+  
+  for k,v in results.items():
+    if k in value_types['DateTimeField'] and type(v) == types.StringType:
+      if v:
+        v = datetime.strptime(v,'%Y-%m-%d %H:%M:%S')
+      else:
+        continue
+    if v is not None and (type(v) != str or len(v) > 0) and v != 'NULL' and v != '""':
+      setattr(result,k,v)
+  try:
+    result.save()
+  except ValueError:
+    logger.error('Could not save result object => %s', repr(result.__dict__))
+
+  if result.ganga_status in ('c','f'):
+    logger.debug('Subjob is in final state, marking row as fixed')
+    result.fixed = 1
+    try:
+      result.save()    
+    except ValueError:
+      logger.error('Could not save fixed result object => %s', repr(result.__dict__))
+
+
+"""
 def process_subjob(job,subjob):
 
   try:
@@ -528,12 +572,11 @@ def process_subjob(job,subjob):
       result.save()    
     except ValueError:
       logger.error('Could not save fixed result object => %s', repr(result.__dict__))
-
+"""
 
 ##
 ## SUMMARIZE
 ##
-
 def summarize():
   logger.info('Summarize (using lib)')
   summary.summarize('cms',test,completed=False)
@@ -542,7 +585,6 @@ def summarize():
 ##
 ## PLOT
 ##
-
 def plot(completed=False):
   logger.info('Plot (using lib)')
   summary.plot('cms',test,completed=completed)
@@ -553,8 +595,7 @@ def plot(completed=False):
 ## MAIN LOOP
 ##
 
-logger.info('HammerCloud runtest.py started for test %d'%testid)
-
+#logger.info('HammerCloud runtest.py started for test %d'%testid)
 def hc_plot_summarize():
   test_sleep(60)
   while(not pt.should_stop()):
@@ -568,11 +609,9 @@ def hc_plot_summarize():
 def hc_copy_thread():
   test_sleep(60)
   logger.info('HC Copy Thread: Connected to DB')
-  while (test_active() and not test_paused() and not ct.should_stop()):
+  while(not ct.should_stop()):
     logger.debug('HC Copy Thread: TOP OF MAIN LOOP')
     for job in jobs:
-      if test_paused() or ct.should_stop():
-        break
       copyJob(job)
     test_sleep(30)
 
@@ -586,7 +625,6 @@ logger.info('Connected to DB')
 if len(jobs):
   ct.start()
   pt.start()
-
   while (test_active() and not test_paused()):
 
     #We need to refresh the test object
@@ -601,14 +639,15 @@ if len(jobs):
     for job in jobs:
       for subjob in job.subjobs:
         try:
+          #print "subjob: ", subjob.backend.crabid, subjob.status #process_subjob(job,subjob)
           process_subjob(job,subjob)
         except:
 	  raise
           logger.warning('Exception in process_subjob:')
           logger.warning(sys.exc_info()[0])
           logger.warning(sys.exc_info()[1])
-      if test_paused():
-        break
+      #if test_paused():
+      #  break
     test_sleep(30)
 else:
   logger.warning('No jobs to monitor. Exiting now.')
@@ -618,7 +657,6 @@ pt.stop()
 ct.stop()
 
 paused = test_paused()
-
 if not paused:
   test.state   = 'completed'
   test.endtime = datetime.now()
@@ -636,11 +674,10 @@ if not paused:
   except:
     logger.warning('Error killing jobs. PLEASE CHECK !')
 
-logger.info('HammerCloud runtest.py exiting')
-logger.info('Buf before, the last plots...')
-
-summarize()
-plot(True)
-
+#logger.info('HammerCloud runtest.py exiting')
+#logger.info('Buf before, the last plots...')
+#
+#summarize()
+#plot(True)
 logger.info('Over and out. Have a good day.')
 
