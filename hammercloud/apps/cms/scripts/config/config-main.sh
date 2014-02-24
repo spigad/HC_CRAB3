@@ -59,3 +59,16 @@ export CMS_CRAB_CACHE_DIR=$TMPDIR
 echo ' TMPDIR='$TMPDIR
 echo ' CMS_SITEDB_CACHE_DIR='$CMS_SITEDB_CACHE_DIR
 echo ' CMS_CRAB_CACHE_DIR='$CMS_CRAB_CACHE_DIR
+
+
+# Save the current paths, so we can restore them after sourcing PanDA tools.
+HAMMERCLOUD_ORIGINAL_PYTHONPATH=$PYTHONPATH
+HAMMERCLOUD_ORIGINAL_PATH=$PATH
+
+source  /afs/cern.ch/cms/ccs/wm/scripts/Crab/CRAB3/crab.sh
+source /afs/cern.ch/cms/LCG/LCG-2/UI/cms_ui_env.sh
+
+# Restore the original paths, so we use our own Python and Ganga.
+export PYTHONPATH=$HAMMERCLOUD_ORIGINAL_PYTHONPATH:$PYTHONPATH
+export PATH=$HAMMERCLOUD_ORIGINAL_PATH:$PATH
+
