@@ -56,7 +56,8 @@ class TestGenerate:
       HCDIR = os.environ['HCDIR']
     else:
       HCDIR = '/tmp'
-  
+
+    """  
     if os.environ.has_key('CMSSW_VERSION'):
       CMSSW_VERSION = os.environ['CMSSW_VERSION']
       if not str(CMSSW_VERSION) == str(inputtype):
@@ -70,9 +71,10 @@ class TestGenerate:
 #    if not CMSSW_VERSION in usercode:
 #      print 'Usercode selected (%s) does not match CMSSW_VERSION (%s)'%(usercode,CMSSW_VERSION)    
 #      return 0
+    """
+    PSET = HCDIR+'/apps/cms/inputfiles/'+str(usercode)
 
-    PSET = HCDIR+'/external/cms/crab/configurations/'+str(usercode)
-
+    """
     print "**** Start DBS discovery"
     
     datasets = {}
@@ -117,12 +119,37 @@ class TestGenerate:
       print "   end  : "+str(datetime.now())
 
     print "**** End DBS discovery"
-
+    """
     total = 0
     fid = 0
 
-    for site in sites.keys():
+    for ts in test_sites:
+      maxnumdataset = sitenumjobs[ts.site.name]
+      print('\n*** Generating %d tasks for site %s \n'%(maxnumdataset,ts.site.name))
+      fid = fid+1
 
+      for index in xrange(maxnumdataset):
+        ff = open(jobtemplate,'r')
+        outFile_content = ff.read()
+        ff.close()
+
+        outFile_content = outFile_content.replace('####WORKFLOW####', "HC_%s_%s_%s" % (str(test.template).split()[0], ts.site.name, datetime.now().strftime("%Y%m%d%H%M%S")))
+        outFile_content = outFile_content.replace('####DATASETPATH####', datasetpatterns[index])
+        outFile_content = outFile_content.replace('####PSET####', PSET)
+        outFile_content = outFile_content.replace('####SITEWHITELIST####', ts.site.name)
+        outFile_content = outFile_content.replace('####CMSSW####', str(inputtype))
+
+        outFileName = os.path.join( basePath, outFilePath, '%d_%03d_%s.py'%(fid,1,ts.site.name) )
+        print outFileName
+        outFile = open(outFileName,'w')
+        outFile.write(outFile_content)
+        outFile.write('\n')
+        outFile.close()
+        total += 1
+
+
+    """
+    for site in sites.keys():
       hasdata=False
       try:
         if len(datasets[site]) > 0:
@@ -132,7 +159,6 @@ class TestGenerate:
       if not hasdata:
         print 'skipping site %s with no available data'%site
         continue
-
       index = 0
       while sitenumjobs[site] > 0:
 
@@ -140,42 +166,37 @@ class TestGenerate:
         # site specific number of jobs
         maxnumdataset = sitenumjobs[site]
 
-        print('\n*** Generating %d jobs for site %s (ddm location %s)\n'%(maxnumdataset,site,sites[site]))
+        print('\n*** Generating %d tasks for site %s \n'%(maxnumdataset,site))
 
         if len(datasets[site]) < 1:
           print "skipping %s"%location
           sitenumjobs[site] = 0
 
-        else:
+        ff = open(jobtemplate,'r')
+        outFile_content = ff.read()
+        ff.close()
 
-          if index == len(datasets[site]):
-            index = 0
+        outFile_content = outFile_content.replace('####DATASETPATH####', datasets[site][index])
+        outFile_content = outFile_content.replace('####PSET####', PSET)
+        outFile_content = outFile_content.replace('####CE_WHITE_LIST####', site)
+        outFile_content = outFile_content.replace('####SE_WHITE_LIST####', sites[site])
 
-          ff = open(jobtemplate,'r')
-          outFile_content = ff.read()
-          ff.close()
+        # 1 because there is only one dataset.
+        outFileName = os.path.join( basePath, outFilePath, '%d_%03d_%s.py'%(fid,1,site) )
+        outFile = open(outFileName,'w')
+        outFile.write(outFile_content)
+        outFile.write('\n')
+        outFile.close()
 
-          outFile_content = outFile_content.replace('####DATASETPATH####', datasets[site][index])
-          outFile_content = outFile_content.replace('####PSET####', PSET)
-          outFile_content = outFile_content.replace('####CE_WHITE_LIST####', site)
-          outFile_content = outFile_content.replace('####SE_WHITE_LIST####', sites[site])
+        print '    Generated: %s: %s, %d, %s ' %(site, sites[site], 1, datasets[site][index])
+        print '    %02d datasets generated at %s: %s' %(1, site, sites[site])
 
-          # 1 because there is only one dataset.
-          outFileName = os.path.join( basePath, outFilePath, '%d_%03d_%s.py'%(fid,1,site) )
-          outFile = open(outFileName,'w')
-          outFile.write(outFile_content)
-          outFile.write('\n')
-          outFile.close()
-
-          print '    Generated: %s: %s, %d, %s ' %(site, sites[site], 1, datasets[site][index])
-          print '    %02d datasets generated at %s: %s' %(1, site, sites[site])
-
-          # reuse the datasets if not enough jobs
-          if 1 < sitenumjobs[site]:
-            print '  %s not done. generating more jobs'%site
-          sitenumjobs[site]=sitenumjobs[site]-1
-          index += 1
-          total += 1
-
+        # reuse the datasets if not enough jobs
+        if 1 < sitenumjobs[site]:
+          print '  %s not done. generating more jobs'%site
+        sitenumjobs[site]=sitenumjobs[site]-1
+        index += 1
+        total += 1
+        """
     print '\n**** TOTAL %02d jobs generated' %(total)
     return 1    
