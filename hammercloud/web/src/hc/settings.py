@@ -13,7 +13,7 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 HC_DIR = os.path.dirname(BASE_DIR)
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DEBUG_PROPAGATE_EXCEPTIONS = DEBUG
 
@@ -156,9 +156,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.humanize',
     'hc.core',
-    'hc.atlas',
+    #'hc.atlas',
     'hc.cms',
-    'hc.lhcb',
+    #'hc.lhcb',
     'varnishapp',
     'raven.contrib.django.raven_compat',
     'south',
@@ -202,12 +202,12 @@ LOGGING = {
             'class': 'django.utils.log.AdminEmailHandler',
             'formatter': 'verbose',
             'include_html': True,
-        }
+        },
     },
     'loggers': {
         'django.request': {
             'handlers': ['mail_admins', 'sentry'],
-            'level': 'WARNING',
+            'level': 'DEBUG',
             'propagate': True,
         },
         'raven': {
