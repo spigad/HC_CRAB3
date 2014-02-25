@@ -72,7 +72,7 @@ class TestGenerate:
 #      print 'Usercode selected (%s) does not match CMSSW_VERSION (%s)'%(usercode,CMSSW_VERSION)    
 #      return 0
     """
-    PSET = HCDIR+'/apps/cms/inputfiles/'+str(usercode)
+    PSET = HCDIR+'/apps/cms/inputfiles/usercode/'+str(usercode)
 
     """
     print "**** Start DBS discovery"
