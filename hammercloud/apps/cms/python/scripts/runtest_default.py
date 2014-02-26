@@ -203,8 +203,13 @@ def copyJob(job):
   if job.subjobs:
     logger.info('Got the subjobs, can check for load')
   elif not job.status == 'failed':
-    logger.info('No subjobs, not failed: not copying')
+    logger.info('Not copying: no subjobs, not failed')
     return
+
+  jobresults = test.getResults_for_test.filter(ganga_jobid=job.id).count()
+  if not jobresults:
+    logger.info('Not copying: no subjobs in the DB yet for Job %s' % job.id)
+    return 
 
   test_site = test.getTestSites_for_test.filter(site__name=site)
   if not test_site:
